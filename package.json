@@ -7,7 +7,7 @@
   "scripts": {
     "dev": "node --watch src/main.js",
     "format": "prettier -w {src,test}/**/*.js",
-    "prepare": "npx husky install",
+    "prepare": "husky",
     "lint:fix": "eslint --fix {src,test}/**/*.js"
   },
   "author": "Willian Marques (willian.goncalves4@gmail.com)",
