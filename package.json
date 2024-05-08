@@ -5,7 +5,7 @@
   "main": "src/main.js",
   "type": "module",
   "scripts": {
-    "dev": "node --watch src/main.js",
+    "dev:auth": "node --watch src/auth/main.js",
     "format": "prettier -w {src,test}/**/*.js",
     "prepare": "husky",
     "lint:fix": "eslint --fix {src,test}/**/*.js"
@@ -18,5 +18,9 @@
     "globals": "^15.1.0",
     "husky": "^9.0.11",
     "prettier": "^3.2.5"
+  },
+  "dependencies": {
+    "awilix": "^10.0.2",
+    "winston": "^3.13.0"
   }
 }
