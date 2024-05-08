@@ -1,16 +1,15 @@
 import { randomBytes } from 'node:crypto';
 import { createServer } from 'node:net';
 
-const PORT = 11002;
-const ADDRESS = '127.0.0.1';
-
 export default class AuthServer {
     #server;
     #connections = new Map();
     #logger;
+    #config;
 
-    constructor({ logger }) {
+    constructor({ logger, config }) {
         this.#logger = logger;
+        this.#config = config;
     }
 
     setup() {
@@ -51,6 +50,8 @@ export default class AuthServer {
     }
 
     start() {
-        this.#server.listen(PORT, ADDRESS, () => this.#logger.info(`auth server running on: ${ADDRESS}:${PORT}`));
+        this.#server.listen(this.#config.SERVER_PORT, this.#config.SERVER_ADDRESS, () => {
+            this.#logger.info(`auth server running on: ${this.#config.SERVER_ADDRESS}:${this.#config.SERVER_PORT} 🔥 `);
+        });
     }
 }

@@ -5,7 +5,7 @@
   "main": "src/main.js",
   "type": "module",
   "scripts": {
-    "dev:auth": "node --watch src/auth/main.js",
+    "dev:auth": "node --env-file=.env --watch src/auth/main.js",
     "format": "prettier -w {src,test}/**/*.js",
     "prepare": "husky",
     "lint:fix": "eslint --fix {src,test}/**/*.js"
