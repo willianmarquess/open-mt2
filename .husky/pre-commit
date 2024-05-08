@@ -1,0 +1,5 @@
+echo "CODE FORMAT HOOK"
+npm run format
+
+echo "CODE LINT HOOK"
+npm run format

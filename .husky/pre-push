@@ -1,0 +1,5 @@
+echo "TEST ALL HOOK"
+#npm run test
+
+echo "TEST COVERAGE HOOK"
+#npm run coverage
