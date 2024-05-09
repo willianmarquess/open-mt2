@@ -1,15 +1,18 @@
-import { randomBytes } from 'node:crypto';
 import { createServer } from 'node:net';
+import { Connection } from '../../core/networking/Connection.js';
+import ConnectionState from '../../core/enum/ConnectionState.js';
 
 export default class AuthServer {
     #server;
     #connections = new Map();
     #logger;
     #config;
+    #packets;
 
-    constructor({ logger, config }) {
+    constructor({ logger, config, packets }) {
         this.#logger = logger;
         this.#config = config;
+        this.#packets = packets;
     }
 
     setup() {
@@ -18,40 +21,34 @@ export default class AuthServer {
     }
 
     #onListener(socket) {
-        const connection = {};
+        const connection = new Connection({
+            socket,
+            logger: this.#logger,
+            packets: this.#packets,
+        });
         this.#connections.set(connection.id, connection);
 
-        connection.setPhase({});
-        this.#startHandShake(connection);
+        this.#logger.info(`[IN][CONNECT SOCKET EVENT] New connection: ID: ${connection.id}`);
+        connection.state = ConnectionState.HANDSHAKE;
+        connection.startHandShake();
 
         socket.on('close', this.#onClose.bind(this, connection));
         socket.on('data', this.#onData.bind(this, connection));
     }
 
     #onClose(connection) {
-        this.#logger.info(`closing connection: ID: ${connection.id}`);
+        this.#logger.info(`[IN][CLOSE SOCKET EVENT] Closing connection: ID: ${connection.id}`);
         this.#connections.delete(connection.id);
     }
 
     #onData(connection, data) {
-        this.#logger.info('DATA >>>', data);
-    }
-
-    #startHandShake(connection) {
-        const id = randomBytes(4).readUInt32LE();
-        connection.send(
-            {},
-            {
-                id,
-                delta: 0,
-                time: 122619,
-            },
-        );
+        this.#logger.info(`[IN][DATA SOCKET EVENT] Data received from ID: ${connection.id}`);
+        connection.onData(data);
     }
 
     start() {
         this.#server.listen(this.#config.SERVER_PORT, this.#config.SERVER_ADDRESS, () => {
-            this.#logger.info(`auth server running on: ${this.#config.SERVER_ADDRESS}:${this.#config.SERVER_PORT} 🔥 `);
+            this.#logger.info(`Auth server running on: ${this.#config.SERVER_ADDRESS}:${this.#config.SERVER_PORT} 🔥 `);
         });
     }
 }
