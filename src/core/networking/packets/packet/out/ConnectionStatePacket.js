@@ -1,12 +1,12 @@
-import PacketHeader from '../../enum/PacketHeader.js';
-import Packet from './Packet.js';
+import PacketHeaderEnum from '../../../../enum/PacketHeaderEnum.js';
+import PacketOut from './PacketOut.js';
 
-export default class ConnectionStatePacket extends Packet {
+export default class ConnectionStatePacket extends PacketOut {
     #state;
 
     constructor({ state } = {}) {
         super({
-            header: PacketHeader.CONNECTION_STATE,
+            header: PacketHeaderEnum.CONNECTION_STATE,
             name: 'ConnectionStatePacket',
             length: 2,
         });

@@ -1,6 +1,6 @@
 import { randomBytes, randomUUID } from 'crypto';
-import ConnectionStatePacket from './packets/ConnectionStatePacket.js';
-import HandshakePacket from './packets/HandshakePacket.js';
+import HandshakePacket from './packets/packet/bidirectional/HandshakePacket.js';
+import ConnectionStatePacket from './packets/packet/out/ConnectionStatePacket.js';
 
 export class Connection {
     #id;
@@ -30,11 +30,12 @@ export class Connection {
     }
 
     #updateState() {
+        this.#logger.debug(`[OUT][STATE] value: ${this.#state}`);
         this.send(new ConnectionStatePacket({ state: this.#state }));
     }
 
     send(packet) {
-        this.#logger.info(`[OUT][PACKET] name: ${packet.name}`);
+        this.#logger.debug(`[OUT][PACKET] name: ${packet.name}`);
         this.#socket.write(packet.pack());
     }
 
@@ -49,15 +50,19 @@ export class Connection {
         );
     }
 
-    onData(data) {
+    async onData(data) {
         const header = data[0];
 
-        const packet = this.#packets.get(header);
+        const packetExists = this.#packets.has(header);
 
-        if (packet) {
-            this.#logger.info(`[IN][PACKET] name: ${packet.name}`);
-            console.log(packet.unpack(data));
-            this.#logger.info(packet.unpack(data));
+        if (!packetExists) {
+            this.#logger.debug(`[IN][PACKET] Unknow packet: ${data[0]}`);
+            return;
         }
+
+        const { packet, createHandler } = this.#packets.get(header);
+        this.#logger.debug(`[IN][PACKET] name: ${packet.name}`);
+        const handler = createHandler();
+        await handler.execute(this, packet.unpack(data));
     }
 }

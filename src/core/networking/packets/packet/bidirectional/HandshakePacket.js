@@ -1,15 +1,15 @@
-import PacketHeader from '../../enum/PacketHeader.js';
-import BufferUtil from '../../util/BufferUtil.js';
-import Packet from './Packet.js';
+import PacketHeaderEnum from '../../../../enum/PacketHeaderEnum.js';
+import BufferUtil from '../../../../util/BufferUtil.js';
+import PacketBidirectional from './PacketBidirectional.js';
 
-export default class HandshakePacket extends Packet {
+export default class HandshakePacket extends PacketBidirectional {
     #id;
     #time;
     #delta;
 
     constructor({ id, time, delta } = {}) {
         super({
-            header: PacketHeader.HANDSHAKE,
+            header: PacketHeaderEnum.HANDSHAKE,
             name: 'HandshakePacket',
             length: 13,
         });

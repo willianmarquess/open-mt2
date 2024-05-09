@@ -1,6 +1,6 @@
 import { createServer } from 'node:net';
 import { Connection } from '../../core/networking/Connection.js';
-import ConnectionState from '../../core/enum/ConnectionState.js';
+import ConnectionState from '../../core/enum/ConnectionStateEnum.js';
 
 export default class AuthServer {
     #server;
@@ -28,7 +28,7 @@ export default class AuthServer {
         });
         this.#connections.set(connection.id, connection);
 
-        this.#logger.info(`[IN][CONNECT SOCKET EVENT] New connection: ID: ${connection.id}`);
+        this.#logger.debug(`[IN][CONNECT SOCKET EVENT] New connection: ID: ${connection.id}`);
         connection.state = ConnectionState.HANDSHAKE;
         connection.startHandShake();
 
@@ -37,12 +37,12 @@ export default class AuthServer {
     }
 
     #onClose(connection) {
-        this.#logger.info(`[IN][CLOSE SOCKET EVENT] Closing connection: ID: ${connection.id}`);
+        this.#logger.debug(`[IN][CLOSE SOCKET EVENT] Closing connection: ID: ${connection.id}`);
         this.#connections.delete(connection.id);
     }
 
     #onData(connection, data) {
-        this.#logger.info(`[IN][DATA SOCKET EVENT] Data received from ID: ${connection.id}`);
+        this.#logger.debug(`[IN][DATA SOCKET EVENT] Data received from ID: ${connection.id}`);
         connection.onData(data);
     }
 

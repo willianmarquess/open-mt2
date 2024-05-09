@@ -122,3 +122,49 @@
 {"level":"info","message":"[IN][DATA SOCKET EVENT] Data received from ID: c033435d-2d0a-4222-a7f6-ca0cbbaaba73","timestamp":"2024-05-09T01:47:24.592Z"}
 {"level":"info","message":"[IN][PACKET] name: HandshakePacket","timestamp":"2024-05-09T01:47:24.594Z"}
 {"level":"info","message":{},"timestamp":"2024-05-09T01:47:46.877Z"}
+{"level":"info","message":"Auth server running on: 127.0.0.1:11002 🔥 ","timestamp":"2024-05-09T13:38:40.969Z"}
+{"level":"info","message":"Auth server running on: 127.0.0.1:11002 🔥 ","timestamp":"2024-05-09T13:38:41.546Z"}
+{"level":"info","message":"Auth server running on: 127.0.0.1:11002 🔥 ","timestamp":"2024-05-09T13:39:04.557Z"}
+{"level":"info","message":"[IN][CONNECT SOCKET EVENT] New connection: ID: 5f5cffbc-48b4-4a95-b262-1cf8e1a2af4c","timestamp":"2024-05-09T13:43:03.453Z"}
+{"level":"info","message":"[OUT][PACKET] name: ConnectionStatePacket","timestamp":"2024-05-09T13:43:03.455Z"}
+{"level":"info","message":"[OUT][PACKET] name: HandshakePacket","timestamp":"2024-05-09T13:43:03.458Z"}
+{"level":"info","message":"[IN][DATA SOCKET EVENT] Data received from ID: 5f5cffbc-48b4-4a95-b262-1cf8e1a2af4c","timestamp":"2024-05-09T13:43:03.483Z"}
+{"level":"info","message":"[IN][PACKET] name: HandshakePacket","timestamp":"2024-05-09T13:43:03.484Z"}
+{"level":"info","message":{},"timestamp":"2024-05-09T13:43:03.486Z"}
+{"level":"info","message":"[IN][CONNECT SOCKET EVENT] New connection: ID: 2654065f-ef4d-48de-b392-2cff0c007579","timestamp":"2024-05-09T13:43:21.287Z"}
+{"level":"info","message":"[OUT][PACKET] name: ConnectionStatePacket","timestamp":"2024-05-09T13:43:21.289Z"}
+{"level":"info","message":"[OUT][PACKET] name: HandshakePacket","timestamp":"2024-05-09T13:43:21.292Z"}
+{"level":"info","message":"[IN][DATA SOCKET EVENT] Data received from ID: 2654065f-ef4d-48de-b392-2cff0c007579","timestamp":"2024-05-09T13:43:21.320Z"}
+{"level":"info","message":"[IN][PACKET] name: HandshakePacket","timestamp":"2024-05-09T13:43:21.321Z"}
+{"level":"info","message":{},"timestamp":"2024-05-09T13:43:21.322Z"}
+{"level":"info","message":"Auth server running on: 127.0.0.1:11002 🔥 ","timestamp":"2024-05-09T13:55:25.106Z"}
+{"level":"info","message":"Auth server running on: 127.0.0.1:11002 🔥 ","timestamp":"2024-05-09T13:55:48.263Z"}
+{"level":"info","message":"Auth server running on: 127.0.0.1:11002 🔥 ","timestamp":"2024-05-09T13:56:16.743Z"}
+{"level":"info","message":"Auth server running on: 127.0.0.1:11002 🔥 ","timestamp":"2024-05-09T13:59:50.472Z"}
+{"level":"info","message":"Auth server running on: 127.0.0.1:11002 🔥 ","timestamp":"2024-05-09T14:00:27.424Z"}
+{"level":"info","message":"Auth server running on: 127.0.0.1:11002 🔥 ","timestamp":"2024-05-09T14:04:40.454Z"}
+{"level":"info","message":"Auth server running on: 127.0.0.1:11002 🔥 ","timestamp":"2024-05-09T14:07:19.230Z"}
+{"level":"info","message":"Auth server running on: 127.0.0.1:11002 🔥 ","timestamp":"2024-05-09T14:09:04.945Z"}
+{"level":"info","message":"Auth server running on: 127.0.0.1:11002 🔥 ","timestamp":"2024-05-09T14:09:32.684Z"}
+{"level":"info","message":"Auth server running on: 127.0.0.1:11002 🔥 ","timestamp":"2024-05-09T14:11:10.537Z"}
+{"level":"info","message":"Auth server running on: 127.0.0.1:11002 🔥 ","timestamp":"2024-05-09T14:13:12.051Z"}
+{"level":"info","message":"Auth server running on: 127.0.0.1:11002 🔥 ","timestamp":"2024-05-09T14:13:38.796Z"}
+{"level":"info","message":"Auth server running on: 127.0.0.1:11002 🔥 ","timestamp":"2024-05-09T14:16:00.704Z"}
+{"level":"info","message":"Auth server running on: 127.0.0.1:11002 🔥 ","timestamp":"2024-05-09T14:16:08.236Z"}
+{"level":"info","message":"Auth server running on: 127.0.0.1:11002 🔥 ","timestamp":"2024-05-09T14:16:29.782Z"}
+{"level":"info","message":"Auth server running on: 127.0.0.1:11002 🔥 ","timestamp":"2024-05-09T14:16:55.656Z"}
+{"level":"info","message":"Auth server running on: 127.0.0.1:11002 🔥 ","timestamp":"2024-05-09T14:17:15.416Z"}
+{"level":"info","message":"Auth server running on: 127.0.0.1:11002 🔥 ","timestamp":"2024-05-09T14:23:20.561Z"}
+{"level":"info","message":"Auth server running on: 127.0.0.1:11002 🔥 ","timestamp":"2024-05-09T14:29:58.752Z"}
+{"level":"info","message":"Auth server running on: 127.0.0.1:11002 🔥 ","timestamp":"2024-05-09T14:30:07.259Z"}
+{"level":"info","message":"Auth server running on: 127.0.0.1:11002 🔥 ","timestamp":"2024-05-09T14:32:00.719Z"}
+{"level":"info","message":"Auth server running on: 127.0.0.1:11002 🔥 ","timestamp":"2024-05-09T14:32:11.773Z"}
+{"level":"info","message":"Auth server running on: 127.0.0.1:11002 🔥 ","timestamp":"2024-05-09T14:32:37.746Z"}
+{"level":"info","message":"Auth server running on: 127.0.0.1:11002 🔥 ","timestamp":"2024-05-09T14:32:57.276Z"}
+{"level":"info","message":"Auth server running on: 127.0.0.1:11002 🔥 ","timestamp":"2024-05-09T14:34:28.000Z"}
+{"level":"info","message":"Auth server running on: 127.0.0.1:11002 🔥 ","timestamp":"2024-05-09T14:34:49.611Z"}
+{"level":"info","message":"Auth server running on: 127.0.0.1:11002 🔥 ","timestamp":"2024-05-09T14:37:00.773Z"}
+{"level":"info","message":"Auth server running on: 127.0.0.1:11002 🔥 ","timestamp":"2024-05-09T14:40:26.347Z"}
+{"level":"info","message":"Auth server running on: 127.0.0.1:11002 🔥 ","timestamp":"2024-05-09T14:40:26.952Z"}
+{"level":"info","message":"Auth server running on: 127.0.0.1:11002 🔥 ","timestamp":"2024-05-09T14:49:00.493Z"}
+{"level":"info","message":"Auth server running on: 127.0.0.1:11002 🔥 ","timestamp":"2024-05-09T14:49:08.906Z"}

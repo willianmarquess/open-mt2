@@ -30,12 +30,4 @@ export default class Packet {
     haveSubHeader() {
         return !!this.#subHeader && this.#subHeader > 0;
     }
-
-    pack() {
-        throw new Error('this method must be overwritten');
-    }
-
-    static unpack() {
-        throw new Error('this method must be overwritten');
-    }
 }
