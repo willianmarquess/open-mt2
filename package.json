@@ -21,6 +21,7 @@
   },
   "dependencies": {
     "awilix": "^10.0.2",
+    "mysql2": "^3.9.7",
     "winston": "^3.13.0"
   }
 }

@@ -1,6 +1,6 @@
 import { createServer } from 'node:net';
-import { Connection } from '../../core/networking/Connection.js';
 import ConnectionState from '../../core/enum/ConnectionStateEnum.js';
+import AuthConnection from './AuthConnection.js';
 
 export default class AuthServer {
     #server;
@@ -8,8 +8,11 @@ export default class AuthServer {
     #logger;
     #config;
     #packets;
+    #container;
 
-    constructor({ logger, config, packets }) {
+    constructor(container) {
+        this.#container = container;
+        const { logger, config, packets } = this.#container;
         this.#logger = logger;
         this.#config = config;
         this.#packets = packets;
@@ -21,7 +24,7 @@ export default class AuthServer {
     }
 
     #onListener(socket) {
-        const connection = new Connection({
+        const connection = new AuthConnection({
             socket,
             logger: this.#logger,
             packets: this.#packets,
@@ -42,8 +45,9 @@ export default class AuthServer {
     }
 
     #onData(connection, data) {
+        this.#container.createScope();
         this.#logger.debug(`[IN][DATA SOCKET EVENT] Data received from ID: ${connection.id}`);
-        connection.onData(data);
+        connection.onData(data, this.#container);
     }
 
     start() {

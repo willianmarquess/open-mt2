@@ -1,9 +1,9 @@
 import { container } from './Container.js';
+import Application from './app/Application.js';
 
 function main() {
     try {
-        const { server } = container.cradle;
-        server.setup().start();
+        new Application(container).start();
     } catch (error) {
         console.error('error when init auth server', error);
         process.exit(1);

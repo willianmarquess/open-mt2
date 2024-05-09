@@ -168,3 +168,82 @@
 {"level":"info","message":"Auth server running on: 127.0.0.1:11002 🔥 ","timestamp":"2024-05-09T14:40:26.952Z"}
 {"level":"info","message":"Auth server running on: 127.0.0.1:11002 🔥 ","timestamp":"2024-05-09T14:49:00.493Z"}
 {"level":"info","message":"Auth server running on: 127.0.0.1:11002 🔥 ","timestamp":"2024-05-09T14:49:08.906Z"}
+{"level":"info","message":"Auth server running on: 127.0.0.1:11002 🔥 ","timestamp":"2024-05-09T15:03:05.774Z"}
+{"level":"info","message":"Auth server running on: 127.0.0.1:11002 🔥 ","timestamp":"2024-05-09T15:03:31.241Z"}
+{"level":"info","message":"Auth server running on: 127.0.0.1:11002 🔥 ","timestamp":"2024-05-09T15:04:13.091Z"}
+{"level":"info","message":"Auth server running on: 127.0.0.1:11002 🔥 ","timestamp":"2024-05-09T15:04:24.690Z"}
+{"level":"info","message":"Auth server running on: 127.0.0.1:11002 🔥 ","timestamp":"2024-05-09T19:05:00.013Z"}
+{"level":"info","message":"Auth server running on: 127.0.0.1:11002 🔥 ","timestamp":"2024-05-09T19:05:19.384Z"}
+{"level":"info","message":"Auth server running on: 127.0.0.1:11002 🔥 ","timestamp":"2024-05-09T19:05:26.014Z"}
+{"level":"info","message":"Auth server running on: 127.0.0.1:11002 🔥 ","timestamp":"2024-05-09T19:05:53.606Z"}
+{"level":"info","message":"Auth server running on: 127.0.0.1:11002 🔥 ","timestamp":"2024-05-09T19:06:12.964Z"}
+{"level":"info","message":"Auth server running on: 127.0.0.1:11002 🔥 ","timestamp":"2024-05-09T19:06:25.862Z"}
+{"level":"info","message":"Auth server running on: 127.0.0.1:11002 🔥 ","timestamp":"2024-05-09T19:06:34.917Z"}
+{"level":"info","message":"Auth server running on: 127.0.0.1:11002 🔥 ","timestamp":"2024-05-09T19:19:04.279Z"}
+{"level":"info","message":"[APP] Init application","timestamp":"2024-05-09T19:40:03.832Z"}
+{"level":"info","message":"[DBMANAGER] Connecting with database","timestamp":"2024-05-09T19:40:03.845Z"}
+{"level":"info","message":"Auth server running on: 127.0.0.1:11002 🔥 ","timestamp":"2024-05-09T19:40:03.849Z"}
+{"0":"CREATE DATABASE IF NOT EXISTS `accounts`","level":"info","message":"[DBMANAGER] Executing database scripts: ","timestamp":"2024-05-09T19:40:03.860Z"}
+{"level":"info","message":"[APP] Init application","timestamp":"2024-05-09T19:40:24.255Z"}
+{"level":"info","message":"[DBMANAGER] Connecting with database","timestamp":"2024-05-09T19:40:24.270Z"}
+{"level":"info","message":"Auth server running on: 127.0.0.1:11002 🔥 ","timestamp":"2024-05-09T19:40:24.273Z"}
+{"0":"CREATE DATABASE IF NOT EXISTS `accounts`","level":"info","message":"[DBMANAGER] Executing database scripts: ","timestamp":"2024-05-09T19:40:24.281Z"}
+{"level":"info","message":"[APP] Init application","timestamp":"2024-05-09T19:42:44.230Z"}
+{"level":"info","message":"[DBMANAGER] Connecting with database","timestamp":"2024-05-09T19:42:44.245Z"}
+{"level":"info","message":"Auth server running on: 127.0.0.1:11002 🔥 ","timestamp":"2024-05-09T19:42:44.248Z"}
+{"0":"CREATE DATABASE IF NOT EXISTS `accounts`","level":"info","message":"[DBMANAGER] Executing database scripts: ","timestamp":"2024-05-09T19:42:44.255Z"}
+{"level":"info","message":"[APP] Init application","timestamp":"2024-05-09T19:43:00.218Z"}
+{"level":"info","message":"[DBMANAGER] Connecting with database","timestamp":"2024-05-09T19:43:00.232Z"}
+{"level":"info","message":"Auth server running on: 127.0.0.1:11002 🔥 ","timestamp":"2024-05-09T19:43:00.235Z"}
+{"0":"CREATE DATABASE IF NOT EXISTS `accounts`","level":"info","message":"[DBMANAGER] Executing database scripts: ","timestamp":"2024-05-09T19:43:00.242Z"}
+{"level":"info","message":"[APP] Init application","timestamp":"2024-05-09T19:44:20.189Z"}
+{"level":"info","message":"[DBMANAGER] Connecting with database","timestamp":"2024-05-09T19:44:20.202Z"}
+{"level":"info","message":"Auth server running on: 127.0.0.1:11002 🔥 ","timestamp":"2024-05-09T19:44:20.206Z"}
+{"0":"CREATE DATABASE IF NOT EXISTS `accounts`","level":"info","message":"[DBMANAGER] Executing database scripts: ","timestamp":"2024-05-09T19:44:20.214Z"}
+{"level":"info","message":"[APP] Init application","timestamp":"2024-05-09T19:45:17.738Z"}
+{"level":"info","message":"[DBMANAGER] Connecting with database","timestamp":"2024-05-09T19:45:17.753Z"}
+{"level":"info","message":"Auth server running on: 127.0.0.1:11002 🔥 ","timestamp":"2024-05-09T19:45:17.757Z"}
+{"0":"CREATE DATABASE IF NOT EXISTS `accounts`","level":"info","message":"[DBMANAGER] Executing database scripts: ","timestamp":"2024-05-09T19:45:17.767Z"}
+{"level":"info","message":"[APP] Init application","timestamp":"2024-05-09T19:46:44.537Z"}
+{"level":"info","message":"[DBMANAGER] Connecting with database","timestamp":"2024-05-09T19:46:44.550Z"}
+{"level":"info","message":"Auth server running on: 127.0.0.1:11002 🔥 ","timestamp":"2024-05-09T19:46:44.553Z"}
+{"0":"CREATE DATABASE IF NOT EXISTS `accounts`","level":"info","message":"[DBMANAGER] Executing database scripts: ","timestamp":"2024-05-09T19:46:44.560Z"}
+{"level":"info","message":"[APP] Init application","timestamp":"2024-05-09T19:46:55.023Z"}
+{"level":"info","message":"[DBMANAGER] Connecting with database","timestamp":"2024-05-09T19:46:55.036Z"}
+{"level":"info","message":"Auth server running on: 127.0.0.1:11002 🔥 ","timestamp":"2024-05-09T19:46:55.040Z"}
+{"0":"CREATE DATABASE IF NOT EXISTS `accounts`","level":"info","message":"[DBMANAGER] Executing database scripts: ","timestamp":"2024-05-09T19:46:55.047Z"}
+{"level":"info","message":"[APP] Init application","timestamp":"2024-05-09T19:47:11.669Z"}
+{"level":"info","message":"[DBMANAGER] Connecting with database","timestamp":"2024-05-09T19:47:11.683Z"}
+{"level":"info","message":"Auth server running on: 127.0.0.1:11002 🔥 ","timestamp":"2024-05-09T19:47:11.686Z"}
+{"0":"CREATE DATABASE IF NOT EXISTS `accounts`","level":"info","message":"[DBMANAGER] Executing database scripts: ","timestamp":"2024-05-09T19:47:11.693Z"}
+{"level":"info","message":"[APP] Init application","timestamp":"2024-05-09T19:47:27.824Z"}
+{"level":"info","message":"[DBMANAGER] Connecting with database","timestamp":"2024-05-09T19:47:27.836Z"}
+{"level":"info","message":"Auth server running on: 127.0.0.1:11002 🔥 ","timestamp":"2024-05-09T19:47:27.840Z"}
+{"0":"CREATE DATABASE IF NOT EXISTS `accounts`","level":"info","message":"[DBMANAGER] Executing database scripts: ","timestamp":"2024-05-09T19:47:27.849Z"}
+{"level":"info","message":"[APP] Init application","timestamp":"2024-05-09T19:48:33.184Z"}
+{"level":"info","message":"[DBMANAGER] Connecting with database","timestamp":"2024-05-09T19:48:33.206Z"}
+{"level":"info","message":"Auth server running on: 127.0.0.1:11002 🔥 ","timestamp":"2024-05-09T19:48:33.214Z"}
+{"0":"CREATE DATABASE IF NOT EXISTS `accounts`","level":"info","message":"[DBMANAGER] Executing database scripts: ","timestamp":"2024-05-09T19:48:33.230Z"}
+{"level":"info","message":"[DBMANAGER] Connected with success","timestamp":"2024-05-09T19:48:33.470Z"}
+{"level":"info","message":"[APP] Application started 🚀","timestamp":"2024-05-09T19:48:33.471Z"}
+{"level":"info","message":"[APP] Init application","timestamp":"2024-05-09T19:49:25.416Z"}
+{"level":"info","message":"[DBMANAGER] Connecting with database","timestamp":"2024-05-09T19:49:25.429Z"}
+{"level":"info","message":"Auth server running on: 127.0.0.1:11002 🔥 ","timestamp":"2024-05-09T19:49:25.433Z"}
+{"level":"info","message":"[DBMANAGER] Executing database scripts: CREATE DATABASE IF NOT EXISTS `accounts`","timestamp":"2024-05-09T19:49:25.440Z"}
+{"level":"info","message":"[DBMANAGER] Connected with success","timestamp":"2024-05-09T19:49:25.479Z"}
+{"level":"info","message":"[APP] Application started 🚀","timestamp":"2024-05-09T19:49:25.479Z"}
+{"level":"info","message":"[APP] Init application","timestamp":"2024-05-09T19:50:17.315Z"}
+{"level":"info","message":"[DBMANAGER] Connecting with database","timestamp":"2024-05-09T19:50:17.320Z"}
+{"level":"info","message":"[DBMANAGER] Executing database scripts: CREATE DATABASE IF NOT EXISTS `accounts`","timestamp":"2024-05-09T19:50:17.327Z"}
+{"level":"info","message":"[DBMANAGER] Connected with success","timestamp":"2024-05-09T19:50:17.368Z"}
+{"level":"info","message":"[APP] Application started 🚀","timestamp":"2024-05-09T19:50:17.378Z"}
+{"level":"info","message":"Auth server running on: 127.0.0.1:11002 🔥 ","timestamp":"2024-05-09T19:50:17.380Z"}
+{"level":"info","message":"[APP] Init application","timestamp":"2024-05-09T19:51:15.947Z"}
+{"level":"info","message":"[DBMANAGER] Connecting with database","timestamp":"2024-05-09T19:51:15.952Z"}
+{"level":"info","message":"[DBMANAGER] Executing database scripts: CREATE DATABASE IF NOT EXISTS `accounts`,CREATE IF NOT EXISTS TABLE account_status (    id INT PRIMARY KEY AUTO_INCREMENT,    client_status VARCHAR(255) NOT NULL,    allow_login BOOLEAN NOT NULL,    description TEXT,    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP),CREATE IF NOT EXISTS TABLE account (    id CHAR(36) PRIMARY KEY,    username VARCHAR(255) NOT NULL,    password VARCHAR(255) NOT NULL,    email VARCHAR(255),    status INT NOT NULL,    last_login DATETIME,    delete_code VARCHAR(255),    account_status_id INT,    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,    FOREIGN KEY (account_status_id) REFERENCES account_status(id))","timestamp":"2024-05-09T19:51:15.965Z"}
+{"level":"info","message":"[APP] Init application","timestamp":"2024-05-09T19:53:56.051Z"}
+{"level":"info","message":"[DBMANAGER] Connecting with database","timestamp":"2024-05-09T19:53:56.055Z"}
+{"level":"info","message":"[DBMANAGER] Executing database scripts: CREATE DATABASE IF NOT EXISTS `accounts`,CREATE TABLE IF NOT EXISTS accounts.account_status (    id INT PRIMARY KEY AUTO_INCREMENT,    client_status VARCHAR(255) NOT NULL,    allow_login BOOLEAN NOT NULL,    description TEXT,    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP),CREATE TABLE IF NOT EXISTS accounts.account (    id CHAR(36) PRIMARY KEY,    username VARCHAR(255) NOT NULL,    password VARCHAR(255) NOT NULL,    email VARCHAR(255),    status INT NOT NULL,    last_login DATETIME,    delete_code VARCHAR(255),    account_status_id INT,    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,    FOREIGN KEY (account_status_id) REFERENCES account_status(id))","timestamp":"2024-05-09T19:53:56.070Z"}
+{"level":"info","message":"[DBMANAGER] Connected with success","timestamp":"2024-05-09T19:53:56.147Z"}
+{"level":"info","message":"[APP] Application started 🚀","timestamp":"2024-05-09T19:53:56.157Z"}
+{"level":"info","message":"Auth server running on: 127.0.0.1:11002 🔥 ","timestamp":"2024-05-09T19:53:56.159Z"}

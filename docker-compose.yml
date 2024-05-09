@@ -1,0 +1,41 @@
+version: "3.8"
+services:
+  # inventory-ms:
+  #     image: node:latest
+  #     container_name: inventory-ms
+  #     env_file:
+  #     - ./.env
+  #     restart: always
+  #     ports:
+  #       - $APP_PORT:$APP_PORT
+  #       - 9229:9229
+  #     environment:
+  #       - APP_PORT=$APP_PORT
+  #       - WRITEDB_PORT=$WRITEDB_PORT
+  #       - WRITEDB_USER=$WRITEDB_USER
+  #       - WRITEDB_ROOT_PASSWORD=$WRITEDB_ROOT_PASSWORD
+  #       - WRITEDB_DATABASE_NAME=$WRITEDB_DATABASE_NAME
+  #       - WRITEDB_HOST=write-db
+  #       - READDB_HOST=read-db
+  #       - READDB_ROOT_USER=$READDB_ROOT_USER
+  #       - READDB_ROOT_PASSWORD=$READDB_ROOT_PASSWORD
+  #       - READDB_DATABASE_NAME=$READDB_DATABASE_NAME
+  #       - READDB_PORT=$READDB_PORT
+  #     volumes:
+  #       - .:/usr/app
+  #     depends_on: 
+  #       - write-db
+  #     working_dir: /usr/app
+  #     command: bash -c "npm install && npm run start:dev"
+
+  database:
+    image: mysql:5.7
+    container_name: database
+    restart: always
+    env_file:
+      - ./.env
+    environment:
+      MYSQL_DATABASE: $DB_DATABASE_NAME
+      MYSQL_ROOT_PASSWORD: $DB_ROOT_PASSWORD
+    ports:
+      - $DB_PORT:$DB_PORT
