@@ -1,4 +1,4 @@
-import PacketHeaderEnum from '../../../../enum/PacketHeaderEnum.js';
+import PacketHeaderEnum from '../../../../../enum/PacketHeaderEnum.js';
 import PacketOut from './PacketOut.js';
 
 export default class ConnectionStatePacket extends PacketOut {

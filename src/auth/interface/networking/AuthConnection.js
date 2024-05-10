@@ -1,6 +1,6 @@
 import { randomBytes } from 'crypto';
-import Connection from '../../core/networking/Connection.js';
-import HandshakePacket from '../../core/networking/packets/packet/bidirectional/HandshakePacket.js';
+import Connection from '../../../core/interface/networking/Connection.js';
+import HandshakePacket from '../../../core/interface/networking/packets/packet/bidirectional/HandshakePacket.js';
 
 export default class AuthConnection extends Connection {
     startHandShake() {

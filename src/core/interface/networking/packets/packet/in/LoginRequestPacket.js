@@ -1,4 +1,4 @@
-import PacketHeaderEnum from '../../../../enum/PacketHeaderEnum.js';
+import PacketHeaderEnum from '../../../../../enum/PacketHeaderEnum.js';
 import PacketIn from './PacketIn.js';
 
 export default class LoginRequestPacket extends PacketIn {

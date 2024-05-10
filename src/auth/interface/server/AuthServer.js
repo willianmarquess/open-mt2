@@ -1,6 +1,6 @@
 import { createServer } from 'node:net';
-import ConnectionState from '../../core/enum/ConnectionStateEnum.js';
-import AuthConnection from './AuthConnection.js';
+import ConnectionState from '../../../core/enum/ConnectionStateEnum.js';
+import AuthConnection from '../networking/AuthConnection.js';
 
 export default class AuthServer {
     #server;
@@ -11,11 +11,10 @@ export default class AuthServer {
     #container;
 
     constructor(container) {
+        this.#logger = container.logger;
+        this.#config = container.config;
+        this.#packets = container.packets;
         this.#container = container;
-        const { logger, config, packets } = this.#container;
-        this.#logger = logger;
-        this.#config = config;
-        this.#packets = packets;
     }
 
     setup() {
@@ -45,14 +44,20 @@ export default class AuthServer {
     }
 
     #onData(connection, data) {
-        //this.#container.createScope();
+        this.#container.containerInstance.createScope();
         this.#logger.debug(`[IN][DATA SOCKET EVENT] Data received from ID: ${connection.id}`);
         connection.onData(data, this.#container);
     }
 
     start() {
-        this.#server.listen(this.#config.SERVER_PORT, this.#config.SERVER_ADDRESS, () => {
-            this.#logger.info(`Auth server running on: ${this.#config.SERVER_ADDRESS}:${this.#config.SERVER_PORT} 🔥 `);
+        return new Promise((resolve, reject) => {
+            this.#server.listen(this.#config.SERVER_PORT, this.#config.SERVER_ADDRESS, (err) => {
+                if (err) reject(err);
+                this.#logger.info(
+                    `Auth server running on: ${this.#config.SERVER_ADDRESS}:${this.#config.SERVER_PORT} 🔥 `,
+                );
+                resolve();
+            });
         });
     }
 }

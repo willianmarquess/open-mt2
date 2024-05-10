@@ -1,4 +1,4 @@
-import PacketHeaderEnum from '../../enum/PacketHeaderEnum.js';
+import PacketHeaderEnum from '../../../enum/PacketHeaderEnum.js';
 import HandshakePacketHandler from './handlers/HandshakePacketHandler.js';
 import LoginRequestPacketHandler from './handlers/LoginRequestPacketHandler.js';
 import HandshakePacket from './packet/bidirectional/HandshakePacket.js';
