@@ -45,7 +45,7 @@ export default class AuthServer {
     }
 
     #onData(connection, data) {
-        this.#container.createScope();
+        //this.#container.createScope();
         this.#logger.debug(`[IN][DATA SOCKET EVENT] Data received from ID: ${connection.id}`);
         connection.onData(data, this.#container);
     }

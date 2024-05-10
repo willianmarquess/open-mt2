@@ -1,5 +1,5 @@
 import PacketHeaderEnum from '../../../../enum/PacketHeaderEnum.js';
-import BufferUtil from '../../../../util/BufferUtil.js';
+import BufferReader from '../../../buffer/BufferReader.js';
 import PacketIn from './PacketIn.js';
 
 export default class LoginRequestPacket extends PacketIn {
@@ -11,7 +11,7 @@ export default class LoginRequestPacket extends PacketIn {
         super({
             header: PacketHeaderEnum.LOGIN_REQUEST,
             name: 'LoginRequestPacket',
-            length: 13,
+            size: 13,
         });
         this.#username = username;
         this.#password = password;
@@ -30,12 +30,13 @@ export default class LoginRequestPacket extends PacketIn {
         return this.#key;
     }
 
-    pack() {}
-
     static unpack(buffer) {
-        const username = BufferUtil.bufferToString(buffer, 1, 32);
-        const password = BufferUtil.bufferToString(buffer, 32, 49);
-        const key = BufferUtil.bufferToNumber(buffer, 49);
+        const bufferReader = new BufferReader();
+        bufferReader.setBuffer(buffer);
+        const username = bufferReader.readString(31);
+        const password = bufferReader.readString(16);
+        const key = bufferReader.readUInt32LE();
+
         return new LoginRequestPacket({
             username,
             password,

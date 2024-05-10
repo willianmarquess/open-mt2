@@ -8,16 +8,17 @@ export default class ConnectionStatePacket extends PacketOut {
         super({
             header: PacketHeaderEnum.CONNECTION_STATE,
             name: 'ConnectionStatePacket',
-            length: 2,
+            size: 2,
         });
         this.#state = state;
     }
 
     pack() {
-        const buffer = Buffer.alloc(this.length);
-        buffer[0] = this.header;
-        buffer[1] = this.#state;
-        return buffer;
+        this.bufferWriter.writeUint8(this.#state);
+        // const buffer = Buffer.alloc(this.length);
+        // buffer[0] = this.header;
+        // buffer[1] = this.#state;
+        return this.bufferWriter.buffer;
     }
 
     static unpack(buffer) {

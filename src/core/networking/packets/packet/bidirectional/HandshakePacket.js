@@ -11,7 +11,7 @@ export default class HandshakePacket extends PacketBidirectional {
         super({
             header: PacketHeaderEnum.HANDSHAKE,
             name: 'HandshakePacket',
-            length: 13,
+            size: 13,
         });
         this.#id = id;
         this.#time = time;
@@ -19,12 +19,9 @@ export default class HandshakePacket extends PacketBidirectional {
     }
 
     pack() {
-        const headerBuffer = Buffer.from([this.header]);
-        const idBuffer = BufferUtil.numberToBuffer(this.#id);
-        const timeBuffer = BufferUtil.numberToBuffer(this.#time);
-        const deltaBuffer = BufferUtil.numberToBuffer(this.#delta);
+        this.bufferWriter.writeUint32LE(this.#id).writeUint32LE(this.#time).writeUint32LE(this.#delta);
 
-        return Buffer.concat([headerBuffer, idBuffer, timeBuffer, deltaBuffer]);
+        return this.bufferWriter.buffer;
     }
 
     static unpack(buffer) {

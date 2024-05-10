@@ -1,13 +1,13 @@
 export default class Packet {
     #header;
     #subHeader;
-    #length;
+    #size;
     #name;
 
-    constructor({ header, subHeader, length, name }) {
+    constructor({ header, subHeader, size, name }) {
         this.#header = header;
         this.#subHeader = subHeader;
-        this.#length = length;
+        this.#size = size;
         this.#name = name;
     }
 
@@ -23,8 +23,8 @@ export default class Packet {
         return this.#subHeader;
     }
 
-    get length() {
-        return this.#length;
+    get size() {
+        return this.#size;
     }
 
     haveSubHeader() {
