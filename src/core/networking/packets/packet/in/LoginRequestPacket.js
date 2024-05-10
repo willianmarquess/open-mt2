@@ -1,5 +1,4 @@
 import PacketHeaderEnum from '../../../../enum/PacketHeaderEnum.js';
-import BufferReader from '../../../buffer/BufferReader.js';
 import PacketIn from './PacketIn.js';
 
 export default class LoginRequestPacket extends PacketIn {
@@ -30,17 +29,11 @@ export default class LoginRequestPacket extends PacketIn {
         return this.#key;
     }
 
-    static unpack(buffer) {
-        const bufferReader = new BufferReader();
-        bufferReader.setBuffer(buffer);
-        const username = bufferReader.readString(31);
-        const password = bufferReader.readString(16);
-        const key = bufferReader.readUInt32LE();
-
-        return new LoginRequestPacket({
-            username,
-            password,
-            key,
-        });
+    unpack(buffer) {
+        this.bufferReader.setBuffer(buffer);
+        this.#username = this.bufferReader.readString(31);
+        this.#password = this.bufferReader.readString(16);
+        this.#key = this.bufferReader.readUInt32LE();
+        return this;
     }
 }

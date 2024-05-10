@@ -15,16 +15,6 @@ export default class ConnectionStatePacket extends PacketOut {
 
     pack() {
         this.bufferWriter.writeUint8(this.#state);
-        // const buffer = Buffer.alloc(this.length);
-        // buffer[0] = this.header;
-        // buffer[1] = this.#state;
         return this.bufferWriter.buffer;
-    }
-
-    static unpack(buffer) {
-        const state = buffer[1];
-        return new ConnectionStatePacket({
-            state,
-        });
     }
 }

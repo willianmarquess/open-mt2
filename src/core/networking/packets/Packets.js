@@ -9,14 +9,14 @@ export default () =>
         [
             PacketHeaderEnum.HANDSHAKE,
             {
-                packet: HandshakePacket,
+                packet: new HandshakePacket(),
                 createHandler: (params) => new HandshakePacketHandler(params),
             },
         ],
         [
             PacketHeaderEnum.LOGIN_REQUEST,
             {
-                packet: LoginRequestPacket,
+                packet: new LoginRequestPacket(),
                 createHandler: (params) => new LoginRequestPacketHandler(params),
             },
         ],
