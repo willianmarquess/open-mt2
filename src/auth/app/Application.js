@@ -1,16 +1,24 @@
 export default class Application {
-    #container;
+    #logger;
+    #server;
+    #databaseManager;
 
-    constructor(container) {
-        this.#container = container;
+    constructor({ logger, server, databaseManager }) {
+        this.#server = server;
+        this.#logger = logger;
+        this.#databaseManager = databaseManager;
     }
 
     async start() {
-        const { logger, server, databaseManager } = this.#container.cradle;
+        this.#logger.info('[APP] Init application');
+        await this.#databaseManager.init();
+        await this.#server.setup().start();
+        this.#logger.info('[APP] Application started 🚀');
+    }
 
-        logger.info('[APP] Init application');
-        await databaseManager.init();
-        await server.setup().start();
-        logger.info('[APP] Application started 🚀');
+    async close() {
+        this.#logger.info('[APP] Closing application... 🛬');
+        await this.#server.close();
+        await this.#databaseManager.close();
     }
 }

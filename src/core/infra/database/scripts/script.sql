@@ -1,6 +1,6 @@
-CREATE DATABASE IF NOT EXISTS `accounts`;
+CREATE DATABASE IF NOT EXISTS `auth`;
 
-CREATE TABLE IF NOT EXISTS accounts.account_status (
+CREATE TABLE IF NOT EXISTS auth.account_status (
     id INT PRIMARY KEY AUTO_INCREMENT,
     client_status VARCHAR(20) NOT NULL,
     allow_login BOOLEAN NOT NULL,
@@ -9,7 +9,7 @@ CREATE TABLE IF NOT EXISTS accounts.account_status (
     updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
 );
 
-CREATE TABLE IF NOT EXISTS accounts.account (
+CREATE TABLE IF NOT EXISTS auth.account (
     id CHAR(36) PRIMARY KEY,
     username VARCHAR(255) NOT NULL,
     password VARCHAR(255) NOT NULL,
@@ -22,7 +22,9 @@ CREATE TABLE IF NOT EXISTS accounts.account (
     FOREIGN KEY (account_status_id) REFERENCES account_status(id) ON DELETE CASCADE
 );
 
-CREATE TABLE IF NOT EXISTS player (
+CREATE DATABASE IF NOT EXISTS `game`;
+
+CREATE TABLE IF NOT EXISTS game.player (
     id CHAR(36) PRIMARY KEY,
     account_id CHAR(36) NOT NULL,
     empire TINYINT UNSIGNED NOT NULL,
@@ -49,12 +51,3 @@ CREATE TABLE IF NOT EXISTS player (
     given_status_points INT UNSIGNED NOT NULL,
     available_status_points INT UNSIGNED NOT NULL
 );
--- DELETE FROM account where id = 'e34fd5ab-fb3b-428e-935b-7db5bd08a3e5';
-
--- INSERT INTO `account_status` (`id`, `allow_login`, `client_status`, `description`)
--- VALUES (1, TRUE, 'OK', 'Default Status');
-
--- INSERT INTO `account` (`id`, `delete_code`, `email`, `last_login`, `password`, 
--- `account_status_id`, `username`)
--- VALUES ('e34fd5ab-fb3b-428e-935b-7db5bd08a3e5', '1234567', 'admin@test.com', NULL, 
--- '$2y$10$5e9nP50E64iy8vaSMwrRWO7vCfnA7.p5XpIDHC3hPdi6BCtTF7rBS', 1, 'admin');

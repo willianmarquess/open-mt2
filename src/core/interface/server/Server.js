@@ -58,4 +58,13 @@ export default class Server {
             });
         });
     }
+
+    close() {
+        return new Promise((resolve, reject) => {
+            this.#server.close((err) => {
+                if (err) reject(err);
+                resolve();
+            });
+        });
+    }
 }

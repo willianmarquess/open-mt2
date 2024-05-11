@@ -42,4 +42,8 @@ export default class DatabaseManager {
         await this.#executeScripts();
         this.#logger.info('[DBMANAGER] Connected with success');
     }
+
+    close() {
+        return this.#connection.end();
+    }
 }
