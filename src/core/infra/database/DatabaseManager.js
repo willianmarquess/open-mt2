@@ -29,9 +29,12 @@ export default class DatabaseManager {
 
     async #executeScripts() {
         const script = await loadScript();
-        this.#logger.info(`[DBMANAGER] Executing database scripts: ${script}`);
-        const promises = script.map((s) => this.connection.execute(s));
-        await Promise.all(promises);
+        this.#logger.info(`[DBMANAGER] Executing database scripts...`);
+
+        for await (const s of script) {
+            this.#logger.debug(`[DBMANAGER] Executing command: ${s}`);
+            await this.connection.execute(s);
+        }
     }
 
     async init() {
