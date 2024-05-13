@@ -1,5 +1,6 @@
-import { randomUUID } from 'crypto';
+import { randomBytes, randomUUID } from 'crypto';
 import ConnectionStatePacket from './packets/packet/out/ConnectionStatePacket.js';
+import HandshakePacket from './packets/packet/bidirectional/HandshakePacket.js';
 
 export default class Connection {
     #id;
@@ -36,6 +37,17 @@ export default class Connection {
     send(packet) {
         this.#logger.debug(`[OUT][PACKET] name: ${packet.name}`);
         this.#socket.write(packet.pack());
+    }
+
+    startHandShake() {
+        const id = randomBytes(4).readUInt32LE();
+        this.send(
+            new HandshakePacket({
+                id,
+                time: performance.now(),
+                delta: 0,
+            }),
+        );
     }
 
     async onData(data, container) {

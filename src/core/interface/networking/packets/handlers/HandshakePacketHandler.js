@@ -13,22 +13,20 @@ export default class HandshakePacketHandler {
 
         const isSynchEnough = delta >= 0 && delta <= 50;
 
-        if (!isSynchEnough) {
-            this.#logger.info(
-                `Handshake is not synchronized enough: ${Math.floor(delta)} ms, sending hadshake again..`,
-            );
-            const newDelta = (performance.now() - packet.time) / 2;
-            connection.send(
-                new HandshakePacket({
-                    id: packet.id,
-                    time: performance.now(),
-                    delta: newDelta,
-                }),
-            );
+        if (isSynchEnough) {
+            this.#logger.info(`Server and client is synchronized enough with delta: ${Math.floor(delta)} ms`);
+            connection.state = ConnectionStateEnum.AUTH;
             return;
         }
 
-        this.#logger.info(`Server and client is synchronized enough with delta: ${Math.floor(delta)} ms`);
-        connection.state = ConnectionStateEnum.AUTH;
+        this.#logger.info(`Handshake is not synchronized enough: ${Math.floor(delta)} ms, sending hadshake again..`);
+        const newDelta = (performance.now() - packet.time) / 2;
+        connection.send(
+            new HandshakePacket({
+                id: packet.id,
+                time: performance.now(),
+                delta: newDelta,
+            }),
+        );
     }
 }
