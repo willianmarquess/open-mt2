@@ -13,6 +13,7 @@ export default class HandshakePacketHandler {
             this.#logger.info(`[HANDSHAKE] A different package was received than the one sent..`);
             this.#logger.info(`[HANDSHAKE] Send phase to close..`);
             connection.state = ConnectionStateEnum.CLOSE;
+            //TODO: send connection close and remove connection from server list;
             return;
         }
 

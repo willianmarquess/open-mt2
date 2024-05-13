@@ -17,7 +17,7 @@ export default class LoginRequestPacketHandler {
         const account = await this.#accountRepository.findByUsername(packet.username);
 
         if (!account) {
-            this.#logger.info(`[LOGIN_REQUEST] Username not found ${packet.username}`);
+            this.#logger.info(`[LOGIN_REQUEST] Username not found for username ${packet.username}`);
             connection.send(
                 new LoginFailedPacket({
                     status: LoginStatusEnum.LOGIN_OR_PASS_INCORRECT,
