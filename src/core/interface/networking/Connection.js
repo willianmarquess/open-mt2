@@ -9,11 +9,17 @@ export default class Connection {
     #logger;
     #packets;
 
+    #lastHandshake;
+
     constructor({ socket, logger, packets }) {
         this.#id = randomUUID();
         this.#socket = socket;
         this.#logger = logger;
         this.#packets = packets;
+    }
+
+    get lastHandshake() {
+        return this.#lastHandshake;
     }
 
     get id() {
@@ -41,13 +47,13 @@ export default class Connection {
 
     startHandShake() {
         const id = randomBytes(4).readUInt32LE();
-        this.send(
-            new HandshakePacket({
-                id,
-                time: performance.now(),
-                delta: 0,
-            }),
-        );
+        const handshake = new HandshakePacket({
+            id,
+            time: performance.now(),
+            delta: 0,
+        });
+        this.#lastHandshake = handshake;
+        this.send(handshake);
     }
 
     async onData(data, container) {

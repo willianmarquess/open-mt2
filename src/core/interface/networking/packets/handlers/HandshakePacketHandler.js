@@ -9,22 +9,40 @@ export default class HandshakePacketHandler {
     }
 
     async execute(connection, packet) {
-        const delta = performance.now() - (packet.time + packet.delta);
+        if (packet.id !== connection.lastHandshake.id) {
+            this.#logger.info(`[HANDSHAKE] A different package was received than the one sent..`);
+            this.#logger.info(`[HANDSHAKE] Send phase to close..`);
+            connection.state = ConnectionStateEnum.CLOSE;
+            return;
+        }
 
+        const currentTime = performance.now();
+        const delta = currentTime - (packet.time + packet.delta);
         const isSynchEnough = delta >= 0 && delta <= 50;
 
         if (isSynchEnough) {
-            this.#logger.info(`Server and client is synchronized enough with delta: ${Math.floor(delta)} ms`);
+            this.#logger.info(
+                `[HANDSHAKE] Server and client is synchronized enough with delta: ${Math.floor(delta)} ms`,
+            );
             connection.state = ConnectionStateEnum.AUTH;
             return;
         }
 
-        this.#logger.info(`Handshake is not synchronized enough: ${Math.floor(delta)} ms, sending hadshake again..`);
-        const newDelta = (performance.now() - packet.time) / 2;
+        this.#logger.info(`[HANDSHAKE] Is not synchronized enough: ${Math.floor(delta)} ms, sending hadshake again..`);
+
+        let newDelta = (currentTime - packet.time) / 2;
+
+        if (newDelta < 0) {
+            this.#logger.info(
+                `[HANDSHAKE] Is too low ${delta}, calculating new delta using this value: ${connection.lastHandshake.time}`,
+            );
+            newDelta = (currentTime - connection.lastHandshake.time) / 2;
+        }
+
         connection.send(
             new HandshakePacket({
                 id: packet.id,
-                time: performance.now(),
+                time: currentTime,
                 delta: newDelta,
             }),
         );

@@ -1,4 +1,5 @@
 export default {
+    CLOSE: 0,
     HANDSHAKE: 1,
     LOGIN: 2,
     SELECT: 3,
