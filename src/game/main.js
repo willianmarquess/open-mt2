@@ -1,7 +1,7 @@
 import { container } from './Container.js';
-import AuthApplication from './app/AuthApplication.js';
+import GameApplication from './app/GameApplication.js';
 
-const app = new AuthApplication(container.cradle);
+const app = new GameApplication(container.cradle);
 
 app.start().catch((error) => {
     console.error('error when start application', error);
