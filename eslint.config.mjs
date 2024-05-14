@@ -10,5 +10,15 @@ export default [
     rules: {
       'no-control-regex': 'off'
     }
-  }
+  },
+  {
+    files: [
+        "test/**"
+    ],
+    languageOptions: {
+        globals: {
+            ...globals.mocha
+        }
+    }
+}
 ];

@@ -9,15 +9,18 @@
     "dev:game": "node --env-file=.env --watch src/game/main.js",
     "format": "prettier -w {src,test}/**/*.js",
     "prepare": "husky",
-    "lint:fix": "eslint --fix {src,test}/**/*.js"
+    "lint:fix": "eslint --fix {src,test}/**/*.js",
+    "test:unit": "mocha --config test/.mocharc.unit.json --exit"
   },
   "author": "Willian Marques (willian.goncalves4@gmail.com)",
   "license": "ISC",
   "devDependencies": {
     "@eslint/js": "^9.2.0",
+    "chai": "^5.1.1",
     "eslint": "^9.2.0",
     "globals": "^15.1.0",
     "husky": "^9.0.11",
+    "mocha": "^10.4.0",
     "prettier": "^3.2.5"
   },
   "dependencies": {
