@@ -1,0 +1,137 @@
+<mxfile host="app.diagrams.net" modified="2024-05-14T15:36:58.774Z" agent="Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124.0.0.0 Safari/537.36" etag="nWE2nYEUJShnY30JsZYL" version="24.4.0" type="device">
+  <diagram name="Page-1" id="2YBvvXClWsGukQMizWep">
+    <mxGraphModel dx="1585" dy="422" grid="0" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="0" pageScale="1" pageWidth="850" pageHeight="1100" math="0" shadow="0">
+      <root>
+        <mxCell id="0" />
+        <mxCell id="1" parent="0" />
+        <mxCell id="aM9ryv3xv72pqoxQDRHE-1" value="Client" style="shape=umlLifeline;perimeter=lifelinePerimeter;whiteSpace=wrap;html=1;container=0;dropTarget=0;collapsible=0;recursiveResize=0;outlineConnect=0;portConstraint=eastwest;newEdgeStyle={&quot;edgeStyle&quot;:&quot;elbowEdgeStyle&quot;,&quot;elbow&quot;:&quot;vertical&quot;,&quot;curved&quot;:0,&quot;rounded&quot;:0};" parent="1" vertex="1">
+          <mxGeometry x="50" y="40" width="100" height="300" as="geometry" />
+        </mxCell>
+        <mxCell id="aM9ryv3xv72pqoxQDRHE-2" value="" style="html=1;points=[];perimeter=orthogonalPerimeter;outlineConnect=0;targetShapes=umlLifeline;portConstraint=eastwest;newEdgeStyle={&quot;edgeStyle&quot;:&quot;elbowEdgeStyle&quot;,&quot;elbow&quot;:&quot;vertical&quot;,&quot;curved&quot;:0,&quot;rounded&quot;:0};" parent="aM9ryv3xv72pqoxQDRHE-1" vertex="1">
+          <mxGeometry x="45" y="70" width="10" height="210" as="geometry" />
+        </mxCell>
+        <mxCell id="aM9ryv3xv72pqoxQDRHE-3" value="1 - user sends login and password" style="html=1;verticalAlign=bottom;startArrow=oval;endArrow=block;startSize=8;edgeStyle=elbowEdgeStyle;elbow=vertical;curved=0;rounded=0;" parent="aM9ryv3xv72pqoxQDRHE-1" target="aM9ryv3xv72pqoxQDRHE-2" edge="1">
+          <mxGeometry x="-1" y="40" relative="1" as="geometry">
+            <mxPoint x="-15" y="70" as="sourcePoint" />
+            <mxPoint x="-35" y="60" as="offset" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="aM9ryv3xv72pqoxQDRHE-5" value="Auth Server" style="shape=umlLifeline;perimeter=lifelinePerimeter;whiteSpace=wrap;html=1;container=0;dropTarget=0;collapsible=0;recursiveResize=0;outlineConnect=0;portConstraint=eastwest;newEdgeStyle={&quot;edgeStyle&quot;:&quot;elbowEdgeStyle&quot;,&quot;elbow&quot;:&quot;vertical&quot;,&quot;curved&quot;:0,&quot;rounded&quot;:0};" parent="1" vertex="1">
+          <mxGeometry x="360" y="40" width="100" height="300" as="geometry" />
+        </mxCell>
+        <mxCell id="aM9ryv3xv72pqoxQDRHE-6" value="" style="html=1;points=[];perimeter=orthogonalPerimeter;outlineConnect=0;targetShapes=umlLifeline;portConstraint=eastwest;newEdgeStyle={&quot;edgeStyle&quot;:&quot;elbowEdgeStyle&quot;,&quot;elbow&quot;:&quot;vertical&quot;,&quot;curved&quot;:0,&quot;rounded&quot;:0};" parent="aM9ryv3xv72pqoxQDRHE-5" vertex="1">
+          <mxGeometry x="45" y="70" width="10" height="210" as="geometry" />
+        </mxCell>
+        <mxCell id="rTxqe4_PgwfDD1Q39MDL-20" style="edgeStyle=elbowEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;elbow=horizontal;curved=0;" edge="1" parent="aM9ryv3xv72pqoxQDRHE-5">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="55" y="213" as="sourcePoint" />
+            <mxPoint x="55" y="231" as="targetPoint" />
+            <Array as="points">
+              <mxPoint x="80" y="224" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="rTxqe4_PgwfDD1Q39MDL-26" value="9 - authentication server validates whether username and password are valid" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];" vertex="1" connectable="0" parent="rTxqe4_PgwfDD1Q39MDL-20">
+          <mxGeometry x="-0.0347" relative="1" as="geometry">
+            <mxPoint x="190" as="offset" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="rTxqe4_PgwfDD1Q39MDL-27" style="edgeStyle=elbowEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;elbow=horizontal;curved=0;" edge="1" parent="aM9ryv3xv72pqoxQDRHE-5">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="55" y="151" as="sourcePoint" />
+            <mxPoint x="55" y="171" as="targetPoint" />
+            <Array as="points">
+              <mxPoint x="79" y="154" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="rTxqe4_PgwfDD1Q39MDL-28" value="6 - auth server validates if client and server are sync enough" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];" vertex="1" connectable="0" parent="rTxqe4_PgwfDD1Q39MDL-27">
+          <mxGeometry x="-0.0347" relative="1" as="geometry">
+            <mxPoint x="150" y="1" as="offset" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="aM9ryv3xv72pqoxQDRHE-7" value="2 - client connects with auth server" style="html=1;verticalAlign=bottom;endArrow=block;edgeStyle=elbowEdgeStyle;elbow=vertical;curved=0;rounded=0;" parent="1" source="aM9ryv3xv72pqoxQDRHE-2" target="aM9ryv3xv72pqoxQDRHE-6" edge="1">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="195" y="130" as="sourcePoint" />
+            <Array as="points">
+              <mxPoint x="180" y="120" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="aM9ryv3xv72pqoxQDRHE-9" value="3 - auth server sends state packet with &quot;handshake&quot;" style="html=1;verticalAlign=bottom;endArrow=block;edgeStyle=elbowEdgeStyle;elbow=vertical;curved=0;rounded=0;" parent="1" edge="1">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="405" y="142" as="sourcePoint" />
+            <Array as="points">
+              <mxPoint x="190" y="142" />
+            </Array>
+            <mxPoint x="105" y="142" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="rTxqe4_PgwfDD1Q39MDL-2" value="4 - auth server sends handshake packet" style="html=1;verticalAlign=bottom;endArrow=block;edgeStyle=elbowEdgeStyle;elbow=vertical;curved=0;rounded=0;" edge="1" parent="1">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="405" y="163" as="sourcePoint" />
+            <Array as="points">
+              <mxPoint x="190" y="163" />
+            </Array>
+            <mxPoint x="105" y="163" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="rTxqe4_PgwfDD1Q39MDL-3" style="edgeStyle=elbowEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;elbow=vertical;curved=0;" edge="1" parent="1">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="105" y="184.28571428571433" as="sourcePoint" />
+            <mxPoint x="405" y="184.28571428571433" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="rTxqe4_PgwfDD1Q39MDL-4" value="5 - client returns the same handshake package" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];" vertex="1" connectable="0" parent="rTxqe4_PgwfDD1Q39MDL-3">
+          <mxGeometry x="0.0674" y="1" relative="1" as="geometry">
+            <mxPoint x="-14" y="-9" as="offset" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="rTxqe4_PgwfDD1Q39MDL-8" style="edgeStyle=elbowEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;elbow=vertical;curved=0;" edge="1" parent="1" target="aM9ryv3xv72pqoxQDRHE-2">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="405" y="221.28571428571433" as="sourcePoint" />
+            <mxPoint x="100" y="221" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="rTxqe4_PgwfDD1Q39MDL-9" value="7 - auth server sends state packet with &quot;auth&quot;" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];" vertex="1" connectable="0" parent="rTxqe4_PgwfDD1Q39MDL-8">
+          <mxGeometry x="0.1013" y="-2" relative="1" as="geometry">
+            <mxPoint x="13" y="-9" as="offset" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="rTxqe4_PgwfDD1Q39MDL-10" style="edgeStyle=elbowEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;elbow=horizontal;curved=0;" edge="1" parent="1">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="105" y="244.28571428571433" as="sourcePoint" />
+            <mxPoint x="405" y="244.28571428571433" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="rTxqe4_PgwfDD1Q39MDL-11" value="8 - client sends login request packet with user and pass" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];" vertex="1" connectable="0" parent="rTxqe4_PgwfDD1Q39MDL-10">
+          <mxGeometry x="0.0552" y="1" relative="1" as="geometry">
+            <mxPoint x="-8" y="-9" as="offset" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="rTxqe4_PgwfDD1Q39MDL-29" style="edgeStyle=elbowEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;elbow=vertical;curved=0;" edge="1" parent="1">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="405" y="287.1428571428571" as="sourcePoint" />
+            <mxPoint x="105" y="287.1428571428571" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="rTxqe4_PgwfDD1Q39MDL-30" value="10 - auth server sends login success packet" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];" vertex="1" connectable="0" parent="rTxqe4_PgwfDD1Q39MDL-29">
+          <mxGeometry x="0.0857" y="1" relative="1" as="geometry">
+            <mxPoint x="7" y="-11" as="offset" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="rTxqe4_PgwfDD1Q39MDL-31" style="edgeStyle=elbowEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;elbow=vertical;curved=0;" edge="1" parent="1">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="105" y="311.1428571428571" as="sourcePoint" />
+            <mxPoint x="405" y="311.1428571428571" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="rTxqe4_PgwfDD1Q39MDL-32" value="11 - client closes connection with auth server" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];" vertex="1" connectable="0" parent="rTxqe4_PgwfDD1Q39MDL-31">
+          <mxGeometry x="-0.04" relative="1" as="geometry">
+            <mxPoint y="-9" as="offset" />
+          </mxGeometry>
+        </mxCell>
+      </root>
+    </mxGraphModel>
+  </diagram>
+</mxfile>
