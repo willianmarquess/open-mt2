@@ -28,12 +28,23 @@ export default class Server {
     }
 
     setup() {
-        this.#server = createServer(this.onListener.bind(this));
+        this.#server = createServer(this.#onListener.bind(this));
         return this;
     }
 
-    onListener() {
+    createConnection() {
         throw new Error('this method must be overwritten');
+    }
+
+    #onListener(socket) {
+        const connection = this.createConnection(socket);
+        this.connections.set(connection.id, connection);
+
+        this.logger.debug(`[IN][CONNECT SOCKET EVENT] New connection: ID: ${connection.id}`);
+        connection.startHandShake();
+
+        socket.on('close', this.onClose.bind(this, connection));
+        socket.on('data', this.onData.bind(this, connection));
     }
 
     onClose(connection) {
@@ -51,9 +62,7 @@ export default class Server {
         return new Promise((resolve, reject) => {
             this.#server.listen(this.#config.SERVER_PORT, this.#config.SERVER_ADDRESS, (err) => {
                 if (err) reject(err);
-                this.#logger.info(
-                    `Auth server running on: ${this.#config.SERVER_ADDRESS}:${this.#config.SERVER_PORT} 🔥 `,
-                );
+                this.#logger.info(`Server running on: ${this.#config.SERVER_ADDRESS}:${this.#config.SERVER_PORT} 🔥 `);
                 resolve();
             });
         });

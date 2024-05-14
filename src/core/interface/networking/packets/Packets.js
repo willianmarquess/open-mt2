@@ -1,8 +1,10 @@
 import PacketHeaderEnum from '../../../enum/PacketHeaderEnum.js';
 import HandshakePacketHandler from './handlers/HandshakePacketHandler.js';
 import LoginRequestPacketHandler from './handlers/LoginRequestPacketHandler.js';
+import ServerStatusRequestPacketHandler from './handlers/ServerStatusRequestPacketHandler.js';
 import HandshakePacket from './packet/bidirectional/HandshakePacket.js';
 import LoginRequestPacket from './packet/in/LoginRequestPacket.js';
+import ServerStatusRequestPacket from './packet/in/ServerStatusRequestPacket.js';
 
 export default () =>
     new Map([
@@ -18,6 +20,13 @@ export default () =>
             {
                 packet: new LoginRequestPacket(),
                 createHandler: (params) => new LoginRequestPacketHandler(params),
+            },
+        ],
+        [
+            PacketHeaderEnum.SERVER_STATUS_REQUEST,
+            {
+                packet: new ServerStatusRequestPacket(),
+                createHandler: (params) => new ServerStatusRequestPacketHandler(params),
             },
         ],
     ]);

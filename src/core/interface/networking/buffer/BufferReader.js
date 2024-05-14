@@ -13,6 +13,18 @@ export default class BufferReader {
         return value;
     }
 
+    readUInt16LE() {
+        const value = this.#buffer.readUint16LE(this.#lastPos);
+        this.#lastPos += 2;
+        return value;
+    }
+
+    readUInt8() {
+        const value = this.#buffer.readInt8(this.#lastPos);
+        this.#lastPos += 1;
+        return value;
+    }
+
     readString(size = 0) {
         size ||= this.#buffer.byteLength;
         const value = this.#buffer

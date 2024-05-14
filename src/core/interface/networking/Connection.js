@@ -1,6 +1,7 @@
 import { randomBytes, randomUUID } from 'crypto';
 import ConnectionStatePacket from './packets/packet/out/ConnectionStatePacket.js';
 import HandshakePacket from './packets/packet/bidirectional/HandshakePacket.js';
+import ConnectionStateEnum from '../../enum/ConnectionStateEnum.js';
 
 export default class Connection {
     #id;
@@ -18,8 +19,16 @@ export default class Connection {
         this.#packets = packets;
     }
 
+    get logger() {
+        return this.#logger;
+    }
+
     get lastHandshake() {
         return this.#lastHandshake;
+    }
+
+    set lastHandshake(value) {
+        this.#lastHandshake = value;
     }
 
     get id() {
@@ -46,6 +55,7 @@ export default class Connection {
     }
 
     startHandShake() {
+        this.state = ConnectionStateEnum.HANDSHAKE;
         const id = randomBytes(4).readUInt32LE();
         const handshake = new HandshakePacket({
             id,
@@ -70,5 +80,13 @@ export default class Connection {
         this.#logger.debug(`[IN][PACKET] name: ${packet.name}`);
         const handler = createHandler(container);
         await handler.execute(this, packet.unpack(data));
+    }
+
+    onHandshakeSuccess() {
+        throw new Error('this method must be overwritten');
+    }
+
+    close() {
+        this.#socket.emit('close', false);
     }
 }
