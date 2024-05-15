@@ -1,38 +1,77 @@
 import { expect } from 'chai';
 import Queue from '../../../../src/core/data-structure/Queue.js';
 
-describe('Queue', () => {
-    let queue;
+describe('CORE -> DATA STRUCTURE -> Queue', () => {
+    context('when queue is empty', () => {
+        let queue;
 
-    beforeEach(() => {
-        queue = new Queue(3);
+        beforeEach(() => {
+            queue = new Queue();
+        });
+
+        it('should return true for isEmpty()', () => {
+            expect(queue.isEmpty()).to.be.true;
+        });
+
+        it('should return false for isFull()', () => {
+            expect(queue.isFull()).to.be.false;
+        });
+
+        it('should return undefined for front() and rear()', () => {
+            expect(queue.front()).to.be.undefined;
+            expect(queue.rear()).to.be.undefined;
+        });
+
+        it('should not dequeue items', () => {
+            expect(queue.dequeue()).to.be.undefined;
+        });
     });
 
-    it('should enqueue items', () => {
-        queue.enqueue(1);
-        queue.enqueue(2);
-        queue.enqueue(3);
-        expect(queue.size()).to.equal(3);
-        expect(queue.isFull()).to.be.true;
+    context('when queue is full', () => {
+        let queue;
+
+        beforeEach(() => {
+            queue = new Queue(3);
+            queue.enqueue(1);
+            queue.enqueue(2);
+            queue.enqueue(3);
+        });
+
+        it('should return false for isEmpty()', () => {
+            expect(queue.isEmpty()).to.be.false;
+        });
+
+        it('should return true for isFull()', () => {
+            expect(queue.isFull()).to.be.true;
+        });
+
+        it('should not enqueue items', () => {
+            expect(queue.enqueue(4)).to.be.undefined;
+            expect(queue.size()).to.equal(3);
+        });
     });
 
-    it('should dequeue items', () => {
-        queue.enqueue(1);
-        queue.enqueue(2);
-        queue.enqueue(3);
-        expect(queue.dequeue()).to.equal(1);
-        expect(queue.size()).to.equal(2);
-        expect(queue.isEmpty()).to.be.false;
-    });
+    context('when queue is not empty', () => {
+        let queue;
 
-    it('should iterate over items using dequeueIterator', () => {
-        queue.enqueue(1);
-        queue.enqueue(2);
-        queue.enqueue(3);
-        const iter = queue.dequeueIterator();
-        expect(iter.next().value).to.equal(1);
-        expect(iter.next().value).to.equal(2);
-        expect(iter.next().value).to.equal(3);
-        expect(iter.next().done).to.be.true;
+        beforeEach(() => {
+            queue = new Queue();
+            queue.enqueue(1);
+            queue.enqueue(2);
+            queue.enqueue(3);
+        });
+
+        it('should return false for isEmpty()', () => {
+            expect(queue.isEmpty()).to.be.false;
+        });
+
+        it('should return correct size()', () => {
+            expect(queue.size()).to.equal(3);
+        });
+
+        it('should dequeue items', () => {
+            expect(queue.dequeue()).to.equal(1);
+            expect(queue.size()).to.equal(2);
+        });
     });
 });

@@ -3,18 +3,22 @@ export default class Queue {
     #items;
     #frontPos;
     #rearPos;
+    #length;
 
     constructor(size = Number.MAX_SAFE_INTEGER) {
         this.#maxSize = size;
         this.#items = {};
         this.#frontPos = 0;
-        this.#rearPos = 0;
+        this.#rearPos = -1;
+        this.#length = 0;
     }
 
     dequeue() {
         if (this.isEmpty()) return;
         const dequeued = this.front();
-        delete this.#items[this.#frontPos++];
+        delete this.#items[(this.#frontPos %= this.#maxSize)];
+        this.#frontPos++;
+        this.#length--;
         return dequeued;
     }
 
@@ -26,26 +30,41 @@ export default class Queue {
 
     enqueue(item) {
         if (this.isFull()) return;
-        this.#items[this.#rearPos++] = item;
+        this.#rearPos++;
+        this.#length++;
+        this.#items[(this.#rearPos %= this.#maxSize)] = item;
     }
 
     isFull() {
-        return this.size() === this.#maxSize;
+        return this.#length >= this.#maxSize;
     }
 
     isEmpty() {
-        return this.size() < 1;
+        return this.#length < 1;
     }
 
     rear() {
-        return this.#items[this.#rearPos - 1];
+        return this.#items[this.#rearPos];
     }
 
     front() {
-        return this.#items[this.#frontPos];
+        if (this.isEmpty()) return;
+        return this.#items[this.#frontPos % this.#maxSize];
     }
 
     size() {
-        return this.#rearPos - this.#frontPos;
+        return this.#length;
     }
 }
+
+const queue = new Queue(3);
+queue.enqueue(1);
+queue.enqueue(2);
+queue.enqueue(3);
+queue.dequeue();
+queue.enqueue(4);
+queue.enqueue(5);
+console.log(queue.size()); //.to.equal(3);
+console.log(queue.isFull()); //.to.be.true;
+console.log(queue.front()); //.to.equal(2);
+console.log(queue.rear()); //.to.equal(5);
