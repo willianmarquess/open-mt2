@@ -68,6 +68,6 @@ export default class Connection {
     }
 
     close() {
-        this.#socket.emit('close', false);
+        this.#socket.destroy();
     }
 }

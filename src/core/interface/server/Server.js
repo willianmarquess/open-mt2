@@ -49,6 +49,7 @@ export default class Server {
 
         socket.on('close', this.onClose.bind(this, connection));
         socket.on('data', this.onData.bind(this, connection));
+        socket.on('error', (err) => this.#logger.error(err));
     }
 
     onClose(connection) {
