@@ -15,6 +15,10 @@ export default class Server {
         this.#packets = container.packets;
     }
 
+    get container() {
+        return this.#container;
+    }
+
     get packets() {
         return this.#packets;
     }
@@ -50,12 +54,6 @@ export default class Server {
     onClose(connection) {
         this.#logger.debug(`[IN][CLOSE SOCKET EVENT] Closing connection: ID: ${connection.id}`);
         this.#connections.delete(connection.id);
-    }
-
-    onData(connection, data) {
-        this.#container.containerInstance.createScope();
-        this.#logger.debug(`[IN][DATA SOCKET EVENT] Data received from ID: ${connection.id}`);
-        connection.onData(data, this.#container);
     }
 
     start() {

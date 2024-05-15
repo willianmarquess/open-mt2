@@ -8,15 +8,17 @@ export default class Connection {
     #state;
     #socket;
     #logger;
-    #packets;
 
     #lastHandshake;
 
-    constructor({ socket, logger, packets }) {
+    constructor({ socket, logger }) {
         this.#id = randomUUID();
         this.#socket = socket;
         this.#logger = logger;
-        this.#packets = packets;
+    }
+
+    get socket() {
+        return this.#socket;
     }
 
     get logger() {
@@ -49,11 +51,6 @@ export default class Connection {
         this.send(new ConnectionStatePacket({ state: this.#state }));
     }
 
-    send(packet) {
-        this.#logger.debug(`[OUT][PACKET] name: ${packet.name}`);
-        this.#socket.write(packet.pack());
-    }
-
     startHandShake() {
         this.state = ConnectionStateEnum.HANDSHAKE;
         const id = randomBytes(4).readUInt32LE();
@@ -64,22 +61,6 @@ export default class Connection {
         });
         this.#lastHandshake = handshake;
         this.send(handshake);
-    }
-
-    async onData(data, container) {
-        const header = data[0];
-
-        const packetExists = this.#packets.has(header);
-
-        if (!packetExists) {
-            this.#logger.debug(`[IN][PACKET] Unknow header packet: ${data[0]}`);
-            return;
-        }
-
-        const { packet, createHandler } = this.#packets.get(header);
-        this.#logger.debug(`[IN][PACKET] name: ${packet.name}`);
-        const handler = createHandler(container);
-        await handler.execute(this, packet.unpack(data));
     }
 
     onHandshakeSuccess() {

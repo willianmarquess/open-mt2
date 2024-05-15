@@ -56,15 +56,3 @@ export default class Queue {
         return this.#length;
     }
 }
-
-const queue = new Queue(3);
-queue.enqueue(1);
-queue.enqueue(2);
-queue.enqueue(3);
-queue.dequeue();
-queue.enqueue(4);
-queue.enqueue(5);
-console.log(queue.size()); //.to.equal(3);
-console.log(queue.isFull()); //.to.be.true;
-console.log(queue.front()); //.to.equal(2);
-console.log(queue.rear()); //.to.equal(5);

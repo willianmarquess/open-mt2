@@ -6,4 +6,9 @@ export default class AuthConnection extends Connection {
         this.logger.info('[HANDSHAKE] Finished');
         this.state = ConnectionStateEnum.AUTH;
     }
+
+    send(packet) {
+        this.logger.debug(`[OUT][PACKET] name: ${packet.name}`);
+        this.socket.write(packet.pack());
+    }
 }
