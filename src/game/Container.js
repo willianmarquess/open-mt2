@@ -5,6 +5,7 @@ import Packets from '../core/interface/networking/packets/Packets.js';
 import DatabaseManager from '../core/infra/database/DatabaseManager.js';
 import Config from './infra/config/Config.js';
 import World from '../core/domain/entities/World.js';
+import CacheProvider from '../core/infra/cache/CacheProvider.js';
 
 const container = createContainer();
 
@@ -16,6 +17,7 @@ container.register({
     packets: asFunction(Packets).singleton(),
     databaseManager: asClass(DatabaseManager).singleton(),
     world: asClass(World).singleton(),
+    cacheProvider: asClass(CacheProvider).singleton(),
 });
 
 export { container };

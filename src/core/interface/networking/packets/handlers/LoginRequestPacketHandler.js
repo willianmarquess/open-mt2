@@ -3,6 +3,7 @@ import { randomBytes } from 'crypto';
 import LoginStatusEnum from '../../../../enum/LoginStatusEnum.js';
 import LoginFailedPacket from '../packet/out/LoginFailedPacket.js';
 import LoginSuccessPacket from '../packet/out/LoginSuccess.js';
+import CacheKeyGenerator from '../../../../util/CacheKeyGenerator.js';
 
 const TOKEN_EXPIRATION_SECS = 60;
 const LOGIN_SUCCESS_RESULT = 1;
@@ -46,10 +47,10 @@ export default class LoginRequestPacketHandler {
         const key = randomBytes(4).readUInt32LE();
 
         await this.#cacheProvider.set(
-            `token:${key}`,
+            CacheKeyGenerator.createTokenKey(key),
             JSON.stringify({
                 username: packet.username,
-                accouuntId: account.id,
+                accountId: account.id,
             }),
             TOKEN_EXPIRATION_SECS,
         );

@@ -1,7 +1,7 @@
 import PacketHeaderEnum from '../../../../../enum/PacketHeaderEnum.js';
 import PacketIn from './PacketIn.js';
 
-export default class TokenPacket extends PacketIn {
+export default class AuthTokenPacket extends PacketIn {
     #username;
     #key;
     #Xteakeys;
@@ -9,7 +9,7 @@ export default class TokenPacket extends PacketIn {
     constructor({ username, key, Xteakeys } = {}) {
         super({
             header: PacketHeaderEnum.TOKEN,
-            name: 'TokenPacket',
+            name: 'AuthTokenPacket',
             size: 50,
         });
         this.#username = username;
