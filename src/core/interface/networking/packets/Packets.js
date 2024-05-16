@@ -2,9 +2,11 @@ import PacketHeaderEnum from '../../../enum/PacketHeaderEnum.js';
 import HandshakePacketHandler from './handlers/HandshakePacketHandler.js';
 import LoginRequestPacketHandler from './handlers/LoginRequestPacketHandler.js';
 import ServerStatusRequestPacketHandler from './handlers/ServerStatusRequestPacketHandler.js';
+import TokenPacketHandler from './handlers/TokenPacketHandler.js';
 import HandshakePacket from './packet/bidirectional/HandshakePacket.js';
 import LoginRequestPacket from './packet/in/LoginRequestPacket.js';
 import ServerStatusRequestPacket from './packet/in/ServerStatusRequestPacket.js';
+import TokenPacket from './packet/in/TokenPacket.js';
 
 export default () =>
     new Map([
@@ -27,6 +29,13 @@ export default () =>
             {
                 packet: new ServerStatusRequestPacket(),
                 createHandler: (params) => new ServerStatusRequestPacketHandler(params),
+            },
+        ],
+        [
+            PacketHeaderEnum.TOKEN,
+            {
+                packet: new TokenPacket(),
+                createHandler: (params) => new TokenPacketHandler(params),
             },
         ],
     ]);

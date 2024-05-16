@@ -6,4 +6,5 @@ export default {
     LOGIN_SUCCESS: 0x96,
     SERVER_STATUS: 0xd2,
     SERVER_STATUS_REQUEST: 0xce,
+    TOKEN: 0x6d,
 };
