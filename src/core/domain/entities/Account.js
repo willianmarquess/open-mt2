@@ -1,4 +1,4 @@
-import Entity from '../../../core/domain/entities/Entity.js';
+import Entity from './Entity.js';
 
 export default class Account extends Entity {
     #username;

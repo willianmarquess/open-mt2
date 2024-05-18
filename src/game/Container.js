@@ -4,8 +4,8 @@ import Logger from '../core/infra/logger/Logger.js';
 import Packets from '../core/interface/networking/packets/Packets.js';
 import DatabaseManager from '../core/infra/database/DatabaseManager.js';
 import Config from './infra/config/Config.js';
-import World from '../core/domain/entities/World.js';
 import CacheProvider from '../core/infra/cache/CacheProvider.js';
+import World from '../core/domain/World.js';
 
 const container = createContainer();
 

@@ -1,5 +1,5 @@
-import Account from '../../domain/entities/Account.js';
-import AccountStatus from '../../domain/entities/AccountStatus.js';
+import Account from '../../../core/domain/entities/Account.js';
+import AccountStatus from '../../../core/domain/entities/AccountStatus.js';
 
 export default class AccountRepository {
     #databaseManager;
