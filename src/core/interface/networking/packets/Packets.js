@@ -7,6 +7,8 @@ import HandshakePacket from './packet/bidirectional/HandshakePacket.js';
 import LoginRequestPacket from './packet/in/LoginRequestPacket.js';
 import ServerStatusRequestPacket from './packet/in/ServerStatusRequestPacket.js';
 import AuthTokenPacket from './packet/in/AuthTokenPacket.js';
+import EmpirePacket from './packet/bidirectional/EmpirePacket.js';
+import EmpirePacketHandler from './handlers/EmpirePacketHandler.js';
 
 export default () =>
     new Map([
@@ -36,6 +38,13 @@ export default () =>
             {
                 packet: new AuthTokenPacket(),
                 createHandler: (params) => new AuthTokenPacketHandler(params),
+            },
+        ],
+        [
+            PacketHeaderEnum.EMPIRE,
+            {
+                packet: new EmpirePacket(),
+                createHandler: (params) => new EmpirePacketHandler(params),
             },
         ],
     ]);

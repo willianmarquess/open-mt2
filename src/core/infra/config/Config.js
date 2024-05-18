@@ -6,4 +6,5 @@ export default () => ({
     CACHE_HOST: process.env.CACHE_HOST,
     CACHE_PORT: process.env.CACHE_PORT,
     CACHE_PING_INTERVAL: process.env.CACHE_PING_INTERVAL,
+    MIGRATE: process.env.MIGRATE,
 });

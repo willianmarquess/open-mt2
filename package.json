@@ -7,6 +7,8 @@
   "scripts": {
     "dev:auth": "node --env-file=.env --watch src/auth/main.js",
     "dev:game": "node --env-file=.env --watch src/game/main.js",
+    "dev:auth:migrate": "cross-env MIGRATE=true node --env-file=.env --watch src/auth/main.js",
+    "dev:game:migrate": "cross-env MIGRATE=true node --env-file=.env --watch src/game/main.js",
     "format": "prettier -w {src,test}/**/*.js",
     "prepare": "husky",
     "lint:fix": "eslint --fix {src,test}/**/*.js",
@@ -26,6 +28,7 @@
   "dependencies": {
     "awilix": "^10.0.2",
     "bcrypt": "^5.1.1",
+    "cross-env": "^7.0.3",
     "mysql2": "^3.9.7",
     "redis": "^4.6.13",
     "winston": "^3.13.0"

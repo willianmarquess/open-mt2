@@ -1,4 +1,3 @@
-import bcrypt from 'bcrypt';
 import { randomBytes } from 'crypto';
 import LoginStatusEnum from '../../../../enum/LoginStatusEnum.js';
 import LoginFailedPacket from '../packet/out/LoginFailedPacket.js';
@@ -12,11 +11,13 @@ export default class LoginRequestPacketHandler {
     #accountRepository;
     #logger;
     #cacheProvider;
+    #encryptionProvider;
 
-    constructor({ accountRepository, logger, cacheProvider }) {
+    constructor({ accountRepository, logger, cacheProvider, encryptionProvider }) {
         this.#accountRepository = accountRepository;
         this.#logger = logger;
         this.#cacheProvider = cacheProvider;
+        this.#encryptionProvider = encryptionProvider;
     }
 
     async execute(connection, packet) {
@@ -32,7 +33,7 @@ export default class LoginRequestPacketHandler {
             return;
         }
 
-        const isPasswordValid = await bcrypt.compare(packet.password, account.password);
+        const isPasswordValid = await this.#encryptionProvider.compare(packet.password, account.password);
 
         if (!isPasswordValid) {
             this.#logger.info(`[LOGIN_REQUEST] Invalid password for username ${packet.username}`);

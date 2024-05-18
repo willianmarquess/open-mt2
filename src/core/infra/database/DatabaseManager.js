@@ -28,6 +28,7 @@ export default class DatabaseManager {
     }
 
     async #executeScripts() {
+        if (!this.#config.MIGRATE) return;
         const script = await loadScript();
         this.#logger.info(`[DBMANAGER] Executing database scripts...`);
 

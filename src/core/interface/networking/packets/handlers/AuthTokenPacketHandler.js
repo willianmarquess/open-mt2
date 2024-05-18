@@ -30,6 +30,7 @@ export default class AuthTokenPacketHandler {
 
         //TODO: we need to validate if already exists chars for this username
         //We nedd to receive 0x5A packet (empirepacket)
+        connection.accountId = token.accountId;
         connection.state = ConnectionStateEnum.SELECT;
     }
 }
