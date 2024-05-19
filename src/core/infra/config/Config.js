@@ -1,3 +1,5 @@
+import empire from './data/empire.json' with { type: 'json' };
+
 export default () => ({
     DB_HOST: process.env.DB_HOST,
     DB_PORT: process.env.DB_PORT,
@@ -7,4 +9,5 @@ export default () => ({
     CACHE_PORT: process.env.CACHE_PORT,
     CACHE_PING_INTERVAL: process.env.CACHE_PING_INTERVAL,
     MIGRATE: process.env.MIGRATE,
+    empire,
 });

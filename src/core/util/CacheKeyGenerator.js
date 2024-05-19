@@ -1,4 +1,4 @@
-export default class TokenKeyGenerator {
+export default class CacheKeyGenerator {
     static createTokenKey(key) {
         return `token:${key}`;
     }

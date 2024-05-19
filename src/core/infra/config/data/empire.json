@@ -1,0 +1,14 @@
+{
+    "red": {
+        "startPosX": "475000",
+        "startPosY": "966100"
+    },
+    "yellow": {
+        "startPosX": "60000",
+        "startPosY": "156000"
+    },
+    "blue": {
+        "startPosX": "963400",
+        "startPosY": "278200"
+    }
+}

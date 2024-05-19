@@ -6,6 +6,7 @@ import DatabaseManager from '../core/infra/database/DatabaseManager.js';
 import Config from './infra/config/Config.js';
 import CacheProvider from '../core/infra/cache/CacheProvider.js';
 import World from '../core/domain/World.js';
+import PlayerRepository from './infra/database/PlayerRepository.js';
 
 const container = createContainer();
 
@@ -18,6 +19,7 @@ container.register({
     databaseManager: asClass(DatabaseManager).singleton(),
     world: asClass(World).singleton(),
     cacheProvider: asClass(CacheProvider).singleton(),
+    playerRepository: asClass(PlayerRepository).singleton(),
 });
 
 export { container };

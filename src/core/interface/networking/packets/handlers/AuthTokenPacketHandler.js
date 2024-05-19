@@ -28,8 +28,18 @@ export default class AuthTokenPacketHandler {
             return;
         }
 
+        //we should get this from cache or db
+        // const empireIdKey = CacheKeyGenerator.createEmpireKey(token.accountId);
+        // const empireIdExists = await this.#cacheProvider.exists(empireIdKey);
+
+        // if(empireIdExists) {
+        //     const empireId = await this.#cacheProvider.get(empireIdKey);
+        //     connection.send(new EmpirePacket({
+        //         empireId
+        //     }));
+        // }
+
         //TODO: we need to validate if already exists chars for this username
-        //We nedd to receive 0x5A packet (empirepacket)
         connection.accountId = token.accountId;
         connection.state = ConnectionStateEnum.SELECT;
     }

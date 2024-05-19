@@ -152,6 +152,17 @@ export default class PlayerRepository {
         return this.#mapToEntity(players[0]);
     }
 
+    async getByAccountId(accountId) {
+        const [players] = await this.#databaseManager.connection.query(
+            `
+        SELECT * FROM game.player WHERE accountId = ?;
+        `,
+            [accountId],
+        );
+
+        return players.map((p) => this.#mapToEntity(p));
+    }
+
     #mapToEntity(player) {
         if (!player) return;
 

@@ -4,7 +4,7 @@ export default class Player extends Entity {
     #accountId;
     #empire;
     #playerClass;
-    #skillGroup;
+    #skillGroup = 0;
     #playTime = 0;
     #level = 1;
     #experience = 0;
@@ -59,7 +59,7 @@ export default class Player extends Entity {
         this.#accountId = accountId;
         this.#empire = empire;
         this.#playerClass = playerClass;
-        this.#skillGroup = skillGroup;
+        this.#skillGroup = skillGroup ?? this.#skillGroup;
         this.#playTime = playTime ?? this.#playTime;
         this.#level = level ?? this.#level;
         this.#experience = experience ?? this.#experience;

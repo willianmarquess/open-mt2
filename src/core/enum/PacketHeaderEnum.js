@@ -8,4 +8,5 @@ export default {
     SERVER_STATUS_REQUEST: 0xce,
     TOKEN: 0x6d,
     EMPIRE: 0x5a,
+    CREATE_CHARACTER: 0x04,
 };

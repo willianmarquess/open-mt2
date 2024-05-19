@@ -14,13 +14,13 @@ export default class EmpirePacketHandler {
         const isValidEmpire = empireId > 0 && empireId < 4;
 
         if (!isValidEmpire) {
-            this.#logger.error(`[EMPIRE] Invalid empire ${empireId}`);
+            this.#logger.info(`[EMPIRE] Invalid empire ${empireId}`);
             connection.close();
             return;
         }
 
         if (!connection.accountId) {
-            this.#logger.error(`[EMPIRE] The connection does not have an accountId, this cannot happen`);
+            this.#logger.info(`[EMPIRE] The connection does not have an accountId, this cannot happen`);
             connection.close();
             return;
         }

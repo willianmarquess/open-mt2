@@ -9,6 +9,8 @@ import ServerStatusRequestPacket from './packet/in/ServerStatusRequestPacket.js'
 import AuthTokenPacket from './packet/in/AuthTokenPacket.js';
 import EmpirePacket from './packet/bidirectional/EmpirePacket.js';
 import EmpirePacketHandler from './handlers/EmpirePacketHandler.js';
+import CreateCharacterPacket from './packet/in/CreateCharacterPacket.js';
+import CreateCharacterPacketHandler from './handlers/CreateCharacterPacketHandler.js';
 
 export default () =>
     new Map([
@@ -45,6 +47,13 @@ export default () =>
             {
                 packet: new EmpirePacket(),
                 createHandler: (params) => new EmpirePacketHandler(params),
+            },
+        ],
+        [
+            PacketHeaderEnum.CREATE_CHARACTER,
+            {
+                packet: new CreateCharacterPacket(),
+                createHandler: (params) => new CreateCharacterPacketHandler(params),
             },
         ],
     ]);
