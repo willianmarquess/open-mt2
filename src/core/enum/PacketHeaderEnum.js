@@ -9,4 +9,5 @@ export default {
     TOKEN: 0x6d,
     EMPIRE: 0x5a,
     CREATE_CHARACTER: 0x04,
+    CREATE_CHARACTER_SUCCESS: 0x08,
 };

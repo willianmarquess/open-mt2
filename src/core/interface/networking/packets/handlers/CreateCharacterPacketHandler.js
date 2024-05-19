@@ -1,5 +1,18 @@
 import Player from '../../../../domain/entities/Player.js';
 import CacheKeyGenerator from '../../../../util/CacheKeyGenerator.js';
+import CreateCharacterSucessPacket from '../packet/out/CreateCharacterSuccess.js';
+
+function ipToInt(ip) {
+    var parts = ip.split('.');
+    var res = 0;
+
+    res += parseInt(parts[0], 10) << 24;
+    res += parseInt(parts[1], 10) << 16;
+    res += parseInt(parts[2], 10) << 8;
+    res += parseInt(parts[3], 10);
+
+    return res;
+}
 
 const MAX_PLAYERS_PER_ACCOUNT = 4;
 // const clazzToJobMap = {
@@ -36,6 +49,7 @@ export default class CreateCharacterPacketHandler {
     }
 
     async execute(connection, packet) {
+        console.log(packet.playerName);
         const { accountId } = connection;
         if (!accountId) {
             this.#logger.info(`[EMPIRE] The connection does not have an accountId, this cannot happen`);
@@ -94,12 +108,29 @@ export default class CreateCharacterPacketHandler {
 
         const playerId = await this.#playerRepository.create(player);
 
-        // await this.#playerService.create({
-        //     accountId: connection.accountId,
-        //     name: packet.playerName,
-        //     clazz: packet.clazz,
-        //     appearance: packet.appearance,
-        //     slot: packet.slot,
-        // });
+        const createCharPacket = new CreateCharacterSucessPacket({
+            slot: packet.slot,
+            character: {
+                name: player.name,
+                clazz: player.playerClass,
+                bodyPart: player.bodyPart,
+                hairPart: player.hairPart,
+                level: player.level,
+                skillGroup: player.skillGroup,
+                playTime: player.playTime,
+                port: this.#config.SERVER_PORT,
+                ip: ipToInt('127.0.0.1'),
+                id: playerId,
+                nameChange: 0,
+                positionX: player.positionX,
+                positionY: player.positionY,
+                ht: player.ht,
+                st: player.st,
+                dx: player.dx,
+                iq: player.iq,
+            },
+        });
+
+        connection.send(createCharPacket);
     }
 }

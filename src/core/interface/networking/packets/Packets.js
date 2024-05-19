@@ -17,42 +17,42 @@ export default () =>
         [
             PacketHeaderEnum.HANDSHAKE,
             {
-                packet: new HandshakePacket(),
+                createPacket: () => new HandshakePacket(),
                 createHandler: (params) => new HandshakePacketHandler(params),
             },
         ],
         [
             PacketHeaderEnum.LOGIN_REQUEST,
             {
-                packet: new LoginRequestPacket(),
+                createPacket: () => new LoginRequestPacket(),
                 createHandler: (params) => new LoginRequestPacketHandler(params),
             },
         ],
         [
             PacketHeaderEnum.SERVER_STATUS_REQUEST,
             {
-                packet: new ServerStatusRequestPacket(),
+                createPacket: () => new ServerStatusRequestPacket(),
                 createHandler: (params) => new ServerStatusRequestPacketHandler(params),
             },
         ],
         [
             PacketHeaderEnum.TOKEN,
             {
-                packet: new AuthTokenPacket(),
+                createPacket: () => new AuthTokenPacket(),
                 createHandler: (params) => new AuthTokenPacketHandler(params),
             },
         ],
         [
             PacketHeaderEnum.EMPIRE,
             {
-                packet: new EmpirePacket(),
+                createPacket: () => new EmpirePacket(),
                 createHandler: (params) => new EmpirePacketHandler(params),
             },
         ],
         [
             PacketHeaderEnum.CREATE_CHARACTER,
             {
-                packet: new CreateCharacterPacket(),
+                createPacket: () => new CreateCharacterPacket(),
                 createHandler: (params) => new CreateCharacterPacketHandler(params),
             },
         ],

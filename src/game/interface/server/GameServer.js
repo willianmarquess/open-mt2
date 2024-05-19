@@ -19,17 +19,19 @@ export default class GameServer extends Server {
             return;
         }
 
-        const { packet, createHandler } = this.packets.get(header);
-
+        const { createPacket, createHandler } = this.packets.get(header);
+        const packet = createPacket();
+        const handler = createHandler(this.container);
         this.#incomingMessages.enqueue({
             packet: packet.unpack(data),
-            handler: createHandler(this.container),
+            handler,
             connection,
         });
     }
 
     processMessages() {
         for (const { packet, handler, connection } of this.#incomingMessages.dequeueIterator()) {
+            this.logger.debug(`[IN][PACKET] processing packet: ${handler.constructor.name}`);
             handler.execute(connection, packet).catch((err) => this.logger.error(err));
         }
     }

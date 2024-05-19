@@ -26,12 +26,18 @@ export default class BufferReader {
     }
 
     readString(size = 0) {
-        size ||= this.#buffer.byteLength;
-        const value = this.#buffer
-            .subarray(this.#lastPos, this.#lastPos + size)
-            .toString()
-            .replace(/\x00/g, '');
+        size ||= this.#buffer.byteLength - this.#lastPos;
+        const subBuffer = this.#buffer.subarray(this.#lastPos, this.#lastPos + size);
+        const nullIndex = subBuffer.indexOf(0);
+
+        if (nullIndex === -1) {
+            const result = subBuffer.toString('ascii');
+            this.#lastPos += size;
+            return result;
+        }
+
+        const result = subBuffer.subarray(0, nullIndex).toString('ascii');
         this.#lastPos += size;
-        return value;
+        return result;
     }
 }

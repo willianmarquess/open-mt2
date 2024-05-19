@@ -36,9 +36,18 @@ export default class BufferWriter {
         return this;
     }
 
-    writeString(value) {
-        this.#buffer.write(value, this.#lastPos);
-        this.#lastPos += Buffer.byteLength(value);
+    writeString(value, length) {
+        const asciiBytes = Buffer.from(value, 'ascii').subarray(0, length - 1);
+        asciiBytes.copy(this.#buffer, this.#lastPos);
+
+        const fillStart = this.#lastPos + asciiBytes.length;
+        const fillEnd = this.#lastPos + length - 1;
+        this.#buffer.fill(0, fillStart, fillEnd);
+
+        this.#buffer[fillEnd] = 0;
+
+        this.#lastPos += length;
+
         return this;
     }
 }

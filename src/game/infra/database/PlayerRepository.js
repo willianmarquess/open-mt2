@@ -8,7 +8,7 @@ export default class PlayerRepository {
     }
 
     async create(player) {
-        return this.#databaseManager.connection.query(
+        const [result] = await this.#databaseManager.connection.query(
             `
         insert into game.player (
             accountId, 
@@ -68,6 +68,8 @@ export default class PlayerRepository {
                 player.availableStatusPoints,
             ],
         );
+
+        return result.insertId;
     }
 
     async nameAlreadyExists(name) {
