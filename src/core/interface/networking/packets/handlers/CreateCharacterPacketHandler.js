@@ -1,112 +1,72 @@
-import Player from '../../../../domain/entities/Player.js';
-import CacheKeyGenerator from '../../../../util/CacheKeyGenerator.js';
+import ErrorTypesEnum from '../../../../enum/ErrorTypesEnum.js';
+import Ip from '../../../../util/Ip.js';
 import CreateCharacterSucessPacket from '../packet/out/CreateCharacterSuccess.js';
 
-function ipToInt(ip) {
-    var parts = ip.split('.');
-    var res = 0;
-
-    res += parseInt(parts[0], 10) << 24;
-    res += parseInt(parts[1], 10) << 16;
-    res += parseInt(parts[2], 10) << 8;
-    res += parseInt(parts[3], 10);
-
-    return res;
-}
-
-const MAX_PLAYERS_PER_ACCOUNT = 4;
-// const clazzToJobMap = {
-//     0: 0,
-//     4: 0,
-//     1: 1,
-//     5: 1,
-//     2: 2,
-//     6: 2,
-//     3: 3,
-//     7: 3,
-// };
-
-const empireIdToEmpireNameMap = {
-    1: 'red',
-    2: 'yellow',
-    3: 'blue',
-};
-
-//const getJob = (clazz) => clazzToJobMap[clazz] || clazzToJobMap[0];
-const getEmpire = (empireId) => empireIdToEmpireNameMap[empireId];
+/**
+ * @typedef {Object} container
+ * @property {Object} logger - The logger instance used for logging information.
+ * @property {Object} config - The configuration object containing necessary settings.
+ * @property {CreateCharacterUseCase} createCharacterUseCase - The use case instance for creating characters.
+ */
 
 export default class CreateCharacterPacketHandler {
     #logger;
-    #cacheProvider;
-    #playerRepository;
     #config;
+    #createCharacterUseCase;
 
-    constructor({ logger, cacheProvider, playerRepository, config }) {
+    /**
+     * Creates an instance of CreateCharacterPacketHandler.
+     *
+     * @param {container} dependencies - The dependencies required by the handler.
+     * @param {Object} dependencies.logger - The logger instance used for logging information.
+     * @param {Object} dependencies.config - The configuration object containing necessary settings.
+     * @param {CreateCharacterUseCase} dependencies.createCharacterUseCase - The use case instance for creating characters.
+     */
+    constructor({ logger, config, createCharacterUseCase }) {
         this.#logger = logger;
-        this.#cacheProvider = cacheProvider;
-        this.#playerRepository = playerRepository;
         this.#config = config;
+        this.#createCharacterUseCase = createCharacterUseCase;
     }
 
     async execute(connection, packet) {
-        console.log(packet.playerName);
         const { accountId } = connection;
         if (!accountId) {
-            this.#logger.info(`[EMPIRE] The connection does not have an accountId, this cannot happen`);
+            this.#logger.info(
+                `[CreateCharacterPacketHandler] The connection does not have an accountId, this cannot happen`,
+            );
             connection.close();
             return;
         }
 
-        const nameAlreadyExists = await this.#playerRepository.nameAlreadyExists(packet.playerName);
-
-        if (nameAlreadyExists) {
-            //send create char failure packet -> header 0x09
-            return;
-        }
-
-        //const job = getJob(clazz);
-
-        const players = await this.#playerRepository.getByAccountId(accountId);
-
-        if (players.length > MAX_PLAYERS_PER_ACCOUNT) {
-            this.#logger.info(`[EMPIRE] The player account is full`);
-            connection.close();
-            return;
-        }
-
-        const key = CacheKeyGenerator.createEmpireKey(accountId);
-        const empireIdExists = await this.#cacheProvider.exists(key);
-
-        if (!empireIdExists) {
-            this.#logger.info(`[EMPIRE] The empire was not selected before.`);
-            connection.close();
-            return;
-        }
-
-        const empireId = await this.#cacheProvider.get(key);
-        const positionX = this.#config.empire[getEmpire(empireId)].startPosX;
-        const positionY = this.#config.empire[getEmpire(empireId)].startPosY;
-
-        //todo add config to each job initial config
-        const player = Player.create({
+        const result = await this.#createCharacterUseCase.execute({
             accountId,
-            name: packet.playerName,
-            empire: empireId,
+            playerName: packet.name,
             playerClass: packet.clazz,
-            appearance: packet.appearance, //verify this
-            slot: packet.slot, //verify this
-            positionX,
-            positionY,
-            st: 10,
-            ht: 10,
-            dx: 10,
-            iq: 10,
-            health: 1000,
-            mana: 500,
-            stamina: 500,
+            appearance: packet.appearance,
+            slot: packet.slot,
         });
 
-        const playerId = await this.#playerRepository.create(player);
+        if (result.hasError()) {
+            const { error } = result;
+
+            switch (error) {
+                case ErrorTypesEnum.NAME_ALREADY_EXISTS:
+                    //send failure packet
+                    break;
+                case ErrorTypesEnum.ACCOUNT_FULL:
+                case ErrorTypesEnum.EMPIRE_NOT_SELECTED:
+                    connection.close();
+                    break;
+                default:
+                    this.#logger.error(`[CreateCharacterPacketHandler] Unknown error: ${result.error}`);
+                    connection.close();
+                    break;
+            }
+
+            return;
+        }
+
+        const { data: player } = result;
 
         const createCharPacket = new CreateCharacterSucessPacket({
             slot: packet.slot,
@@ -119,8 +79,8 @@ export default class CreateCharacterPacketHandler {
                 skillGroup: player.skillGroup,
                 playTime: player.playTime,
                 port: this.#config.SERVER_PORT,
-                ip: ipToInt('127.0.0.1'),
-                id: playerId,
+                ip: Ip.toInt('127.0.0.1'),
+                id: player.id,
                 nameChange: 0,
                 positionX: player.positionX,
                 positionY: player.positionY,
