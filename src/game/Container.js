@@ -9,6 +9,7 @@ import World from '../core/domain/World.js';
 import PlayerRepository from './infra/database/PlayerRepository.js';
 import AuthenticateUseCase from './app/usecase/AuthenticateUseCase.js';
 import CreateCharacterUseCase from './app/usecase/CreateCharacterUseCase.js';
+import LoadCharactersUseCase from './app/usecase/LoadCharactersUseCase.js';
 
 const container = createContainer();
 
@@ -24,6 +25,7 @@ container.register({
     playerRepository: asClass(PlayerRepository).singleton(),
     authenticateUseCase: asClass(AuthenticateUseCase).scoped(),
     createCharacterUseCase: asClass(CreateCharacterUseCase).scoped(),
+    loadCharactersUseCase: asClass(LoadCharactersUseCase).scoped(),
 });
 
 export { container };

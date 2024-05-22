@@ -5,4 +5,5 @@ export default {
     INVALID_TOKEN: 3,
     INVALID_USERNAME: 4,
     INVALID_PASSWORD: 5,
+    EMPTY_ACCOUNT: 6,
 };

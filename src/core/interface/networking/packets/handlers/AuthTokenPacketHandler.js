@@ -1,52 +1,46 @@
 import ConnectionStateEnum from '../../../../enum/ConnectionStateEnum.js';
-import ErrorTypesEnum from '../../../../enum/ErrorTypesEnum.js';
+import EmpirePacket from '../packet/bidirectional/EmpirePacket.js';
 
 export default class AuthTokenPacketHandler {
-    #logger;
     #authenticateUseCase;
+    #loadCharactersUseCase;
 
-    constructor({ logger, authenticateUseCase }) {
-        this.#logger = logger;
+    constructor({ authenticateUseCase, loadCharactersUseCase }) {
         this.#authenticateUseCase = authenticateUseCase;
+        this.#loadCharactersUseCase = loadCharactersUseCase;
     }
 
     async execute(connection, packet) {
-        const result = await this.#authenticateUseCase.execute({
+        const authResult = await this.#authenticateUseCase.execute({
             key: packet.key,
             username: packet.username,
         });
 
-        if (result.hasError()) {
-            const { error } = result;
-
-            switch (error) {
-                case ErrorTypesEnum.INVALID_TOKEN:
-                    connection.close();
-                    break;
-                default:
-                    this.#logger.error(`[AuthTokenPacketHandler] Unknown error: ${result.error}`);
-                    connection.close();
-                    break;
-            }
-
+        if (authResult.hasError()) {
+            connection.close();
             return;
         }
 
-        //we should get this from cache or db
-        // const empireIdKey = CacheKeyGenerator.createEmpireKey(token.accountId);
-        // const empireIdExists = await this.#cacheProvider.exists(empireIdKey);
-
-        // if(empireIdExists) {
-        //     const empireId = await this.#cacheProvider.get(empireIdKey);
-        //     connection.send(new EmpirePacket({
-        //         empireId
-        //     }));
-        // }
-
-        //TODO: we need to validate if already exists chars for this username
-
-        const { data: token } = result;
+        const { data: token } = authResult;
         connection.accountId = token.accountId;
+
+        const loadCharactersResult = await this.#loadCharactersUseCase.execute({
+            accountId: token.accountId,
+        });
+
+        if (loadCharactersResult.isOk()) {
+            const {
+                data: { empireId },
+            } = loadCharactersResult;
+
+            connection.send(
+                new EmpirePacket({
+                    empireId,
+                }),
+            );
+            //we need to send player packet
+        }
+
         connection.state = ConnectionStateEnum.SELECT;
     }
 }
