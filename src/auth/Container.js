@@ -7,6 +7,7 @@ import AccountRepository from './infra/database/AccountRepository.js';
 import Config from './infra/config/Config.js';
 import CacheProvider from '../core/infra/cache/CacheProvider.js';
 import EncryptionProvider from '../core/infra/encryption/EncryptionProvider.js';
+import LoginUseCase from './app/usecase/LoginUseCase.js';
 
 const container = createContainer();
 
@@ -20,6 +21,7 @@ container.register({
     accountRepository: asClass(AccountRepository).scoped(),
     cacheProvider: asClass(CacheProvider).singleton(),
     encryptionProvider: asClass(EncryptionProvider).singleton(),
+    loginUseCase: asClass(LoginUseCase).scoped(),
 });
 
 export { container };

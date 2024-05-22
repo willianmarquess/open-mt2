@@ -3,4 +3,6 @@ export default {
     ACCOUNT_FULL: 1,
     EMPIRE_NOT_SELECTED: 2,
     INVALID_TOKEN: 3,
+    INVALID_USERNAME: 4,
+    INVALID_PASSWORD: 5,
 };
