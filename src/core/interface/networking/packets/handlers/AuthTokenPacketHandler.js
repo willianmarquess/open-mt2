@@ -1,30 +1,34 @@
 import ConnectionStateEnum from '../../../../enum/ConnectionStateEnum.js';
-import CacheKeyGenerator from '../../../../util/CacheKeyGenerator.js';
+import ErrorTypesEnum from '../../../../enum/ErrorTypesEnum.js';
 
 export default class AuthTokenPacketHandler {
     #logger;
-    #cacheProvider;
+    #authenticateUseCase;
 
-    constructor({ logger, cacheProvider }) {
+    constructor({ logger, authenticateUseCase }) {
         this.#logger = logger;
-        this.#cacheProvider = cacheProvider;
+        this.#authenticateUseCase = authenticateUseCase;
     }
 
     async execute(connection, packet) {
-        const key = CacheKeyGenerator.createTokenKey(packet.key);
-        const tokenExists = await this.#cacheProvider.exists(key);
+        const result = await this.#authenticateUseCase.execute({
+            key: packet.key,
+            username: packet.username,
+        });
 
-        if (!tokenExists) {
-            this.#logger.info(`[AUTHTOKEN] Invalid token for username: ${packet.username}`);
-            connection.close();
-            return;
-        }
+        if (result.hasError()) {
+            const { error } = result;
 
-        const token = JSON.parse(await this.#cacheProvider.get(key));
+            switch (error) {
+                case ErrorTypesEnum.INVALID_TOKEN:
+                    connection.close();
+                    break;
+                default:
+                    this.#logger.error(`[AuthTokenPacketHandler] Unknown error: ${result.error}`);
+                    connection.close();
+                    break;
+            }
 
-        if (packet.username !== token.username) {
-            this.#logger.info(`[AUTHTOKEN] Invalid token for username: ${packet.username}`);
-            connection.close();
             return;
         }
 
@@ -40,6 +44,8 @@ export default class AuthTokenPacketHandler {
         // }
 
         //TODO: we need to validate if already exists chars for this username
+
+        const { data: token } = result;
         connection.accountId = token.accountId;
         connection.state = ConnectionStateEnum.SELECT;
     }
