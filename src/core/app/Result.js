@@ -27,6 +27,6 @@ export default class Result {
     }
 
     hasError() {
-        return !this.ok && !!this.error;
+        return !this.isOk() && !!this.error;
     }
 }
