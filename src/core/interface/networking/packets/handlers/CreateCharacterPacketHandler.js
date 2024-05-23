@@ -1,6 +1,6 @@
 import ErrorTypesEnum from '../../../../enum/ErrorTypesEnum.js';
 import Ip from '../../../../util/Ip.js';
-import CreateCharacterSucessPacket from '../packet/out/CreateCharacterSuccess.js';
+import CreateCharacterSuccessPacket from '../packet/out/CreateCharacterSuccessPacket.js';
 
 /**
  * @typedef {Object} container
@@ -41,7 +41,7 @@ export default class CreateCharacterPacketHandler {
         const result = await this.#createCharacterUseCase.execute({
             accountId,
             playerName: packet.name,
-            playerClass: packet.clazz,
+            playerClass: packet.playerClass,
             appearance: packet.appearance,
             slot: packet.slot,
         });
@@ -68,11 +68,11 @@ export default class CreateCharacterPacketHandler {
 
         const { data: player } = result;
 
-        const createCharPacket = new CreateCharacterSucessPacket({
+        const createCharPacket = new CreateCharacterSuccessPacket({
             slot: packet.slot,
             character: {
                 name: player.name,
-                clazz: player.playerClass,
+                playerClass: player.playerClass,
                 bodyPart: player.bodyPart,
                 hairPart: player.hairPart,
                 level: player.level,

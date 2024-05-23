@@ -23,10 +23,10 @@ export default class Result {
     }
 
     isOk() {
-        return !!this.data;
+        return !this.hasError();
     }
 
     hasError() {
-        return !this.isOk() && !!this.error;
+        return !!this.error;
     }
 }

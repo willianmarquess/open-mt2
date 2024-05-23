@@ -84,9 +84,9 @@ export default class CreateCharacterUseCase {
             accountId,
             name: playerName,
             empire: empireId,
-            playerClass: playerClass,
-            appearance: appearance, //verify this
-            slot: slot, //verify this
+            playerClass,
+            appearance, //verify this
+            slot, //verify this
             positionX,
             positionY,
             st: 10,
@@ -100,6 +100,6 @@ export default class CreateCharacterUseCase {
 
         const playerId = await this.#playerRepository.create(player);
         player.id = playerId;
-        return player;
+        return Result.ok(player);
     }
 }

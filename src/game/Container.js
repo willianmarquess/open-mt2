@@ -10,6 +10,7 @@ import PlayerRepository from './infra/database/PlayerRepository.js';
 import AuthenticateUseCase from './app/usecase/AuthenticateUseCase.js';
 import CreateCharacterUseCase from './app/usecase/CreateCharacterUseCase.js';
 import LoadCharactersUseCase from './app/usecase/LoadCharactersUseCase.js';
+import SelectEmpireUseCase from './app/usecase/SelectEmpireUseCase.js';
 
 const container = createContainer();
 
@@ -26,6 +27,7 @@ container.register({
     authenticateUseCase: asClass(AuthenticateUseCase).scoped(),
     createCharacterUseCase: asClass(CreateCharacterUseCase).scoped(),
     loadCharactersUseCase: asClass(LoadCharactersUseCase).scoped(),
+    selectEmpireUseCase: asClass(SelectEmpireUseCase).scoped(),
 });
 
 export { container };

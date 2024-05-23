@@ -4,10 +4,10 @@ import PacketIn from './PacketIn.js';
 export default class CreateCharacterPacket extends PacketIn {
     #slot;
     #playerName;
-    #clazz;
+    #playerClass;
     #appearance;
 
-    constructor({ slot, playerName, clazz, appearance } = {}) {
+    constructor({ slot, playerName, playerClass, appearance } = {}) {
         super({
             header: PacketHeaderEnum.CREATE_CHARACTER,
             name: 'CreateCharacterPacket',
@@ -15,7 +15,7 @@ export default class CreateCharacterPacket extends PacketIn {
         });
         this.#slot = slot;
         this.#playerName = playerName;
-        this.#clazz = clazz;
+        this.#playerClass = playerClass;
         this.#appearance = appearance;
     }
 
@@ -27,8 +27,8 @@ export default class CreateCharacterPacket extends PacketIn {
         return this.#playerName;
     }
 
-    get clazz() {
-        return this.#clazz;
+    get playerClass() {
+        return this.#playerClass;
     }
 
     get appearance() {
@@ -39,7 +39,7 @@ export default class CreateCharacterPacket extends PacketIn {
         this.bufferReader.setBuffer(buffer);
         this.#slot = this.bufferReader.readUInt8();
         this.#playerName = this.bufferReader.readString(25);
-        this.#clazz = this.bufferReader.readUInt16LE();
+        this.#playerClass = this.bufferReader.readUInt16LE();
         this.#appearance = this.bufferReader.readUInt8();
         return this;
     }

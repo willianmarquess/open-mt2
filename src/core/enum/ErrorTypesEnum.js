@@ -6,4 +6,5 @@ export default {
     INVALID_USERNAME: 5,
     INVALID_PASSWORD: 6,
     EMPTY_ACCOUNT: 7,
+    INVALID_EMPIRE: 8,
 };
