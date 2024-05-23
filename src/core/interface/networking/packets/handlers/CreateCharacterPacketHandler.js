@@ -1,5 +1,6 @@
 import ErrorTypesEnum from '../../../../enum/ErrorTypesEnum.js';
 import Ip from '../../../../util/Ip.js';
+import CreateCharacterFailurePacket from '../packet/out/CreateCharacterFailurePacket.js';
 import CreateCharacterSuccessPacket from '../packet/out/CreateCharacterSuccessPacket.js';
 
 /**
@@ -51,7 +52,7 @@ export default class CreateCharacterPacketHandler {
 
             switch (error) {
                 case ErrorTypesEnum.NAME_ALREADY_EXISTS:
-                    //send failure packet
+                    connection.send(new CreateCharacterFailurePacket({ reason: 0 }));
                     break;
                 case ErrorTypesEnum.ACCOUNT_FULL:
                 case ErrorTypesEnum.EMPIRE_NOT_SELECTED:
@@ -79,7 +80,7 @@ export default class CreateCharacterPacketHandler {
                 skillGroup: player.skillGroup,
                 playTime: player.playTime,
                 port: this.#config.SERVER_PORT,
-                ip: Ip.toInt('127.0.0.1'),
+                ip: Ip.toInt(this.#config.SERVER_ADDRESS),
                 id: player.id,
                 nameChange: 0,
                 positionX: player.positionX,
