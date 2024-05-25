@@ -1,13 +1,17 @@
 import ConnectionStateEnum from '../../../../enum/ConnectionStateEnum.js';
+import Ip from '../../../../util/Ip.js';
 import EmpirePacket from '../packet/bidirectional/EmpirePacket.js';
+import CharactersInfoPacket from '../packet/out/CharactersInfoPacket.js';
 
 export default class AuthTokenPacketHandler {
     #authenticateUseCase;
     #loadCharactersUseCase;
+    #config;
 
-    constructor({ authenticateUseCase, loadCharactersUseCase }) {
+    constructor({ authenticateUseCase, loadCharactersUseCase, config }) {
         this.#authenticateUseCase = authenticateUseCase;
         this.#loadCharactersUseCase = loadCharactersUseCase;
+        this.#config = config;
     }
 
     async execute(connection, packet) {
@@ -30,7 +34,7 @@ export default class AuthTokenPacketHandler {
 
         if (loadCharactersResult.isOk()) {
             const {
-                data: { empireId },
+                data: { empireId, players },
             } = loadCharactersResult;
 
             connection.send(
@@ -38,7 +42,29 @@ export default class AuthTokenPacketHandler {
                     empireId,
                 }),
             );
-            //we need to send player packet
+            const characterInfoPacket = new CharactersInfoPacket();
+            players.forEach((player, index) => {
+                characterInfoPacket.addCharacter(index, {
+                    name: player.name,
+                    playerClass: player.playerClass,
+                    bodyPart: player.bodyPart,
+                    hairPart: player.hairPart,
+                    level: player.level,
+                    skillGroup: player.skillGroup,
+                    playTime: player.playTime,
+                    port: this.#config.SERVER_PORT,
+                    ip: Ip.toInt(this.#config.SERVER_ADDRESS),
+                    id: player.id,
+                    nameChange: 0,
+                    positionX: player.positionX,
+                    positionY: player.positionY,
+                    ht: player.ht,
+                    st: player.st,
+                    dx: player.dx,
+                    iq: player.iq,
+                });
+            });
+            connection.send(characterInfoPacket);
         }
 
         connection.state = ConnectionStateEnum.SELECT;

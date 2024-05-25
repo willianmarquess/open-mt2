@@ -20,4 +20,8 @@ export default class Entity {
     get id() {
         return this.#id;
     }
+
+    set id(value) {
+        this.#id = value;
+    }
 }

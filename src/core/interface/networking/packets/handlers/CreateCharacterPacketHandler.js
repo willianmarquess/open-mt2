@@ -1,3 +1,4 @@
+import CreateCharacterFailureReasonEnum from '../../../../enum/CreateCharacterFailureReasonEnum.js';
 import ErrorTypesEnum from '../../../../enum/ErrorTypesEnum.js';
 import Ip from '../../../../util/Ip.js';
 import CreateCharacterFailurePacket from '../packet/out/CreateCharacterFailurePacket.js';
@@ -41,7 +42,7 @@ export default class CreateCharacterPacketHandler {
 
         const result = await this.#createCharacterUseCase.execute({
             accountId,
-            playerName: packet.name,
+            playerName: packet.playerName,
             playerClass: packet.playerClass,
             appearance: packet.appearance,
             slot: packet.slot,
@@ -52,7 +53,11 @@ export default class CreateCharacterPacketHandler {
 
             switch (error) {
                 case ErrorTypesEnum.NAME_ALREADY_EXISTS:
-                    connection.send(new CreateCharacterFailurePacket({ reason: 0 }));
+                    connection.send(
+                        new CreateCharacterFailurePacket({
+                            reason: CreateCharacterFailureReasonEnum.NAME_ALREADY_EXISTS,
+                        }),
+                    );
                     break;
                 case ErrorTypesEnum.ACCOUNT_FULL:
                 case ErrorTypesEnum.EMPIRE_NOT_SELECTED:

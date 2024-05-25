@@ -1,12 +1,12 @@
 import PacketHeaderEnum from '../../../../../enum/PacketHeaderEnum.js';
 import PacketOut from './PacketOut.js';
 
-const defaultCharacter = {
+const defaultCharacterInfo = {
     id: 0,
     name: '',
     playerClass: 0,
-    level: 1,
-    playTime: 1,
+    level: 0,
+    playTime: 0,
     st: 0,
     ht: 0,
     dx: 0,
@@ -17,7 +17,7 @@ const defaultCharacter = {
     positionX: 0,
     positionY: 0,
     ip: 0,
-    port: 13001,
+    port: '',
     skillGroup: 0,
 };
 
@@ -25,7 +25,7 @@ export default class CreateCharacterSuccessPacket extends PacketOut {
     #slot;
     #character;
 
-    constructor({ slot, character = defaultCharacter } = {}) {
+    constructor({ slot, character = defaultCharacterInfo } = {}) {
         super({
             header: PacketHeaderEnum.CREATE_CHARACTER_SUCCESS,
             name: 'CreateCharacterSuccessPacket',

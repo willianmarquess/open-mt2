@@ -11,7 +11,7 @@ export default class SelectEmpireUseCase {
         this.#cacheProvider = cacheProvider;
     }
 
-    async execute(empireId) {
+    async execute({ empireId, accountId }) {
         const isValidEmpire = empireId > 0 && empireId < 4;
 
         if (!isValidEmpire) {
@@ -19,7 +19,7 @@ export default class SelectEmpireUseCase {
             return Result.error(ErrorTypesEnum.INVALID_EMPIRE);
         }
 
-        const key = CacheKeyGenerator.createEmpireKey(connection.accountId);
+        const key = CacheKeyGenerator.createEmpireKey(accountId);
         await this.#cacheProvider.set(key, empireId);
 
         return Result.ok();

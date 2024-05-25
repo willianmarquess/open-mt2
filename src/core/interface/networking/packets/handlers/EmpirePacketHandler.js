@@ -15,7 +15,7 @@ export default class EmpirePacketHandler {
         }
         const { empireId } = packet;
 
-        const result = await this.#selectEmpireUseCase.execute(empireId);
+        const result = await this.#selectEmpireUseCase.execute({ empireId, accountId: connection.accountId });
 
         if (result.hasError()) {
             connection.close();
