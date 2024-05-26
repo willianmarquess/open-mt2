@@ -58,10 +58,10 @@ export default class AuthTokenPacketHandler {
                     nameChange: 0,
                     positionX: player.positionX,
                     positionY: player.positionY,
-                    ht: player.ht,
-                    st: player.st,
-                    dx: player.dx,
-                    iq: player.iq,
+                    ht: player.ht, //vit
+                    st: 100, //str
+                    dx: player.dx, //des
+                    iq: player.iq, //int
                 });
             });
             connection.send(characterInfoPacket);

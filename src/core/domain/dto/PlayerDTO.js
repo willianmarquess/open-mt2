@@ -24,6 +24,7 @@ export default class PlayerDTO {
     name;
     givenStatusPoints;
     availableStatusPoints;
+    slot;
 
     constructor({
         id,
@@ -51,6 +52,7 @@ export default class PlayerDTO {
         name = '',
         givenStatusPoints = 0,
         availableStatusPoints = 0,
+        slot = 0,
     }) {
         this.id = id;
         this.createdAt = createdAt;
@@ -77,5 +79,6 @@ export default class PlayerDTO {
         this.name = name;
         this.givenStatusPoints = givenStatusPoints;
         this.availableStatusPoints = availableStatusPoints;
+        this.slot = slot;
     }
 }

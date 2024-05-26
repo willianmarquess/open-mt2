@@ -23,6 +23,7 @@ export default class Player extends Entity {
     #name;
     #givenStatusPoints = 0;
     #availableStatusPoints = 0;
+    #slot = 0;
 
     constructor({
         id,
@@ -50,6 +51,7 @@ export default class Player extends Entity {
         name,
         givenStatusPoints,
         availableStatusPoints,
+        slot,
     }) {
         super({
             id,
@@ -78,6 +80,7 @@ export default class Player extends Entity {
         this.#name = name;
         this.#givenStatusPoints = givenStatusPoints ?? this.#givenStatusPoints;
         this.#availableStatusPoints = availableStatusPoints ?? this.#availableStatusPoints;
+        this.#slot = slot ?? this.#slot;
     }
 
     get accountId() {
@@ -147,6 +150,10 @@ export default class Player extends Entity {
         return this.#availableStatusPoints;
     }
 
+    get slot() {
+        return this.#slot;
+    }
+
     static create({
         id,
         accountId,
@@ -173,6 +180,7 @@ export default class Player extends Entity {
         name,
         givenStatusPoints,
         availableStatusPoints,
+        slot,
     }) {
         return new Player({
             id,
@@ -200,6 +208,7 @@ export default class Player extends Entity {
             name,
             givenStatusPoints,
             availableStatusPoints,
+            slot,
         });
     }
 }

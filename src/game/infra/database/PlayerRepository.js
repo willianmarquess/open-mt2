@@ -34,11 +34,12 @@ export default class PlayerRepository {
             hairPart, 
             name, 
             givenStatusPoints, 
-            availableStatusPoints
+            availableStatusPoints,
+            slot
         )
             values
         (
-            ?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?
+            ?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?
         );
         `,
             [
@@ -66,6 +67,7 @@ export default class PlayerRepository {
                 player.name,
                 player.givenStatusPoints,
                 player.availableStatusPoints,
+                player.slot,
             ],
         );
 
@@ -110,7 +112,8 @@ export default class PlayerRepository {
             hairPart = ?, 
             name = ?, 
             givenStatusPoints = ?, 
-            availableStatusPoints = ?
+            availableStatusPoints = ?,
+            slot = ?
         WHERE id = ?;
         `,
             [
@@ -138,6 +141,7 @@ export default class PlayerRepository {
                 player.name,
                 player.givenStatusPoints,
                 player.availableStatusPoints,
+                player.slot,
                 player.id,
             ],
         );
@@ -205,6 +209,7 @@ export default class PlayerRepository {
             name,
             givenStatusPoints,
             availableStatusPoints,
+            slot,
         } = player;
 
         return new PlayerDTO({
@@ -233,6 +238,7 @@ export default class PlayerRepository {
             name,
             givenStatusPoints,
             availableStatusPoints,
+            slot,
         });
     }
 }
