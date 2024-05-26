@@ -1,5 +1,8 @@
 import Player from '../../../../domain/entities/Player.js';
 import ConnectionStateEnum from '../../../../enum/ConnectionStateEnum.js';
+import CharacterDetailsPacket from '../packet/out/CharacterDetailsPacket.js';
+import CharacterPointsPacket from '../packet/out/CharacterPointsPacket.js';
+import CharacterUpdatePacket from '../packet/out/CharacterUpdatePacket.js';
 
 export default class SelectCharacterPacketHandler {
     #logger;
@@ -33,5 +36,27 @@ export default class SelectCharacterPacketHandler {
         const player = Player.create(playerData);
 
         connection.player = player;
+
+        connection.send(
+            new CharacterDetailsPacket({
+                vid: player.id,
+                playerClass: player.playerClass,
+                playerName: player.name,
+                skillGroup: player.skillGroup,
+                posX: player.positionX,
+                posY: player.positionY,
+                posZ: 0,
+                empireId: player.empire,
+            }),
+        );
+        //just fake, we need to send real points
+        connection.send(new CharacterPointsPacket());
+        connection.send(
+            new CharacterUpdatePacket({
+                vid: player.id,
+                attackSpeed: 200,
+                moveSpeed: 200,
+            }),
+        );
     }
 }

@@ -13,6 +13,10 @@ import CreateCharacterPacket from './packet/in/CreateCharacterPacket.js';
 import CreateCharacterPacketHandler from './handlers/CreateCharacterPacketHandler.js';
 import SelectCharacterPacket from './packet/in/SelectCharacterPacket.js';
 import SelectCharacterPacketHandler from './handlers/SelectCharacterPacketHandler.js';
+import ClientVersionPacket from './packet/in/ClientVersionPacket.js';
+import ClientVersionPacketHandler from './handlers/ClientVersionPacketHandler.js';
+import EnterGamePacket from './packet/in/EnterGamePacket.js';
+import EnterGamePacketHandler from './handlers/EnterGamePacketHandler.js';
 
 export default () =>
     new Map([
@@ -63,6 +67,20 @@ export default () =>
             {
                 createPacket: () => new SelectCharacterPacket(),
                 createHandler: (params) => new SelectCharacterPacketHandler(params),
+            },
+        ],
+        [
+            PacketHeaderEnum.CLIENT_VERSION,
+            {
+                createPacket: () => new ClientVersionPacket(),
+                createHandler: (params) => new ClientVersionPacketHandler(params),
+            },
+        ],
+        [
+            PacketHeaderEnum.ENTER_GAME,
+            {
+                createPacket: () => new EnterGamePacket(),
+                createHandler: (params) => new EnterGamePacketHandler(params),
             },
         ],
     ]);
