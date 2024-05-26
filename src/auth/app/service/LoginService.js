@@ -5,7 +5,7 @@ import CacheKeyGenerator from '../../../core/util/CacheKeyGenerator.js';
 
 const TOKEN_EXPIRATION_SECS = 60;
 
-export default class LoginUseCase {
+export default class LoginService {
     #accountRepository;
     #logger;
     #cacheProvider;
@@ -22,14 +22,14 @@ export default class LoginUseCase {
         const account = await this.#accountRepository.findByUsername(username);
 
         if (!account) {
-            this.#logger.info(`[LoginUseCase] Username not found for username ${username}`);
+            this.#logger.info(`[LoginService] Username not found for username ${username}`);
             return Result.error(ErrorTypesEnum.INVALID_USERNAME);
         }
 
         const isPasswordValid = await this.#encryptionProvider.compare(password, account.password);
 
         if (!isPasswordValid) {
-            this.#logger.info(`[LoginUseCase] Invalid password for username ${username}`);
+            this.#logger.info(`[LoginService] Invalid password for username ${username}`);
             return Result.error(ErrorTypesEnum.INVALID_PASSWORD);
         }
 

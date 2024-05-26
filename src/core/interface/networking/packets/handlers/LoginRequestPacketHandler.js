@@ -3,14 +3,14 @@ import LoginSuccessPacket from '../packet/out/LoginSuccess.js';
 const LOGIN_SUCCESS_RESULT = 1;
 
 export default class LoginRequestPacketHandler {
-    #loginUseCase;
+    #loginService;
 
-    constructor({ loginUseCase }) {
-        this.#loginUseCase = loginUseCase;
+    constructor({ loginService }) {
+        this.#loginService = loginService;
     }
 
     async execute(connection, packet) {
-        const result = await this.#loginUseCase.execute({
+        const result = await this.#loginService.execute({
             username: packet.username,
             password: packet.password,
         });

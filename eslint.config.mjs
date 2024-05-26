@@ -3,6 +3,9 @@ import pluginJs from "@eslint/js";
 
 export default [
   {
+    ignores: ["src/core/infra/config/*"]
+  },
+  {
     languageOptions: { globals: globals.node },
   },
   pluginJs.configs.recommended,
@@ -13,12 +16,12 @@ export default [
   },
   {
     files: [
-        "test/**"
+      "test/**"
     ],
     languageOptions: {
-        globals: {
-            ...globals.mocha
-        }
+      globals: {
+        ...globals.mocha
+      }
     }
-}
+  }
 ];

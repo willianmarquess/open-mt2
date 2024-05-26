@@ -3,11 +3,11 @@ import ConnectionStateEnum from '../../../../enum/ConnectionStateEnum.js';
 
 export default class SelectCharacterPacketHandler {
     #logger;
-    #loadCharacterUseCase;
+    #loadCharacterService;
 
-    constructor({ logger, loadCharacterUseCase }) {
+    constructor({ logger, loadCharacterService }) {
         this.#logger = logger;
-        this.#loadCharacterUseCase = loadCharacterUseCase;
+        this.#loadCharacterService = loadCharacterService;
     }
 
     async execute(connection, packet) {
@@ -21,7 +21,7 @@ export default class SelectCharacterPacketHandler {
 
         connection.state = ConnectionStateEnum.LOADING;
 
-        const result = await this.#loadCharacterUseCase.execute({ accountId: connection.accountId, slot: packet.slot });
+        const result = await this.#loadCharacterService.execute({ accountId: connection.accountId, slot: packet.slot });
 
         if (result.hasError()) {
             connection.close();

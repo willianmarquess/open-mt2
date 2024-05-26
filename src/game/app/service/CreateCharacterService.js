@@ -33,7 +33,7 @@ const getEmpire = (empireId) => empireIdToEmpireNameMap[empireId];
  * @property {number} slot - The slot in which the character is to be created.
  */
 
-export default class CreateCharacterUseCase {
+export default class CreateCharacterService {
     #logger;
     #cacheProvider;
     #playerRepository;
@@ -57,14 +57,14 @@ export default class CreateCharacterUseCase {
         const nameAlreadyExists = await this.#playerRepository.nameAlreadyExists(playerName);
 
         if (nameAlreadyExists) {
-            this.#logger.info(`[CreateCharacterUseCase] The player name: ${playerName} already exists.`);
+            this.#logger.info(`[CreateCharacterService] The player name: ${playerName} already exists.`);
             return Result.error(ErrorTypesEnum.NAME_ALREADY_EXISTS);
         }
 
         const players = await this.#playerRepository.getByAccountId(accountId);
 
         if (players.length > MAX_PLAYERS_PER_ACCOUNT) {
-            this.#logger.info(`[CreateCharacterUseCase] The player account is full`);
+            this.#logger.info(`[CreateCharacterService] The player account is full`);
             return Result.error(ErrorTypesEnum.ACCOUNT_FULL);
         }
 
@@ -72,7 +72,7 @@ export default class CreateCharacterUseCase {
         const empireIdExists = await this.#cacheProvider.exists(key);
 
         if (!empireIdExists) {
-            this.#logger.info(`[CreateCharacterUseCase] The empire was not selected before.`);
+            this.#logger.info(`[CreateCharacterService] The empire was not selected before.`);
             return Result.error(ErrorTypesEnum.EMPIRE_NOT_SELECTED);
         }
 
@@ -86,7 +86,7 @@ export default class CreateCharacterUseCase {
             empire: empireId,
             playerClass,
             appearance, //verify this
-            slot, //verify this
+            slot,
             positionX,
             positionY,
             st: 10,

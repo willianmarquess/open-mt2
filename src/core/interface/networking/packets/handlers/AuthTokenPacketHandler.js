@@ -4,18 +4,18 @@ import EmpirePacket from '../packet/bidirectional/EmpirePacket.js';
 import CharactersInfoPacket from '../packet/out/CharactersInfoPacket.js';
 
 export default class AuthTokenPacketHandler {
-    #authenticateUseCase;
-    #loadCharactersUseCase;
+    #authenticateService;
+    #loadCharactersService;
     #config;
 
-    constructor({ authenticateUseCase, loadCharactersUseCase, config }) {
-        this.#authenticateUseCase = authenticateUseCase;
-        this.#loadCharactersUseCase = loadCharactersUseCase;
+    constructor({ authenticateService, loadCharactersService, config }) {
+        this.#authenticateService = authenticateService;
+        this.#loadCharactersService = loadCharactersService;
         this.#config = config;
     }
 
     async execute(connection, packet) {
-        const authResult = await this.#authenticateUseCase.execute({
+        const authResult = await this.#authenticateService.execute({
             key: packet.key,
             username: packet.username,
         });
@@ -28,7 +28,7 @@ export default class AuthTokenPacketHandler {
         const { data: token } = authResult;
         connection.accountId = token.accountId;
 
-        const loadCharactersResult = await this.#loadCharactersUseCase.execute({
+        const loadCharactersResult = await this.#loadCharactersService.execute({
             accountId: token.accountId,
         });
 
@@ -42,6 +42,7 @@ export default class AuthTokenPacketHandler {
                     empireId,
                 }),
             );
+
             const characterInfoPacket = new CharactersInfoPacket();
             players.forEach((player, index) => {
                 characterInfoPacket.addCharacter(index, {
@@ -59,7 +60,7 @@ export default class AuthTokenPacketHandler {
                     positionX: player.positionX,
                     positionY: player.positionY,
                     ht: player.ht, //vit
-                    st: 100, //str
+                    st: player.st, //str
                     dx: player.dx, //des
                     iq: player.iq, //int
                 });

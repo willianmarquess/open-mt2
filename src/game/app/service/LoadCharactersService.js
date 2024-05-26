@@ -1,7 +1,7 @@
 import Result from '../../../core/app/Result.js';
 import ErrorTypesEnum from '../../../core/enum/ErrorTypesEnum.js';
 
-export default class LoadCharactersUseCase {
+export default class LoadCharactersService {
     #logger;
     #playerRepository;
 
@@ -14,7 +14,7 @@ export default class LoadCharactersUseCase {
         const players = await this.#playerRepository.getByAccountId(accountId);
 
         if (players?.length < 1) {
-            this.#logger.info(`[LoadCharactersUseCase] Empty account.`);
+            this.#logger.info(`[LoadCharactersService] Empty account.`);
             return Result.error(ErrorTypesEnum.EMPTY_ACCOUNT);
         }
 

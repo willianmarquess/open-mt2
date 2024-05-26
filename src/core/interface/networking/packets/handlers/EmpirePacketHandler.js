@@ -1,10 +1,10 @@
 export default class EmpirePacketHandler {
     #logger;
-    #selectEmpireUseCase;
+    #selectEmpireService;
 
-    constructor({ logger, selectEmpireUseCase }) {
+    constructor({ logger, selectEmpireService }) {
         this.#logger = logger;
-        this.#selectEmpireUseCase = selectEmpireUseCase;
+        this.#selectEmpireService = selectEmpireService;
     }
 
     async execute(connection, packet) {
@@ -15,7 +15,7 @@ export default class EmpirePacketHandler {
         }
         const { empireId } = packet;
 
-        const result = await this.#selectEmpireUseCase.execute({ empireId, accountId: connection.accountId });
+        const result = await this.#selectEmpireService.execute({ empireId, accountId: connection.accountId });
 
         if (result.hasError()) {
             connection.close();

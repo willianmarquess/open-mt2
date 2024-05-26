@@ -7,11 +7,11 @@ import Config from './infra/config/Config.js';
 import CacheProvider from '../core/infra/cache/CacheProvider.js';
 import World from '../core/domain/World.js';
 import PlayerRepository from './infra/database/PlayerRepository.js';
-import AuthenticateUseCase from './app/usecase/AuthenticateUseCase.js';
-import CreateCharacterUseCase from './app/usecase/CreateCharacterUseCase.js';
-import LoadCharactersUseCase from './app/usecase/LoadCharactersUseCase.js';
-import SelectEmpireUseCase from './app/usecase/SelectEmpireUseCase.js';
-import LoadCharacterUseCase from './app/usecase/LoadCharacterUseCase.js';
+import AuthenticateService from './app/service/AuthenticateService.js';
+import CreateCharacterService from './app/service/CreateCharacterService.js';
+import LoadCharactersService from './app/service/LoadCharactersService.js';
+import SelectEmpireService from './app/service/SelectEmpireService.js';
+import LoadCharacterService from './app/service/LoadCharacterService.js';
 
 const container = createContainer();
 
@@ -25,11 +25,11 @@ container.register({
     world: asClass(World).singleton(),
     cacheProvider: asClass(CacheProvider).singleton(),
     playerRepository: asClass(PlayerRepository).singleton(),
-    authenticateUseCase: asClass(AuthenticateUseCase).scoped(),
-    createCharacterUseCase: asClass(CreateCharacterUseCase).scoped(),
-    loadCharactersUseCase: asClass(LoadCharactersUseCase).scoped(),
-    selectEmpireUseCase: asClass(SelectEmpireUseCase).scoped(),
-    loadCharacterUseCase: asClass(LoadCharacterUseCase).scoped(),
+    authenticateService: asClass(AuthenticateService).scoped(),
+    createCharacterService: asClass(CreateCharacterService).scoped(),
+    loadCharactersService: asClass(LoadCharactersService).scoped(),
+    selectEmpireService: asClass(SelectEmpireService).scoped(),
+    loadCharacterService: asClass(LoadCharacterService).scoped(),
 });
 
 export { container };

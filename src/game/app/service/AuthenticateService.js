@@ -8,7 +8,7 @@ import CacheKeyGenerator from '../../../core/util/CacheKeyGenerator.js';
  * @property {string} username - The username to be authenticated.
  */
 
-export default class AuthenticateUseCase {
+export default class AuthenticateService {
     #logger;
     #cacheProvider;
 
@@ -29,14 +29,14 @@ export default class AuthenticateUseCase {
         const tokenExists = await this.#cacheProvider.exists(cacheKey);
 
         if (!tokenExists) {
-            this.#logger.info(`[AuthenticateUseCase] Invalid token for username: ${username}`);
+            this.#logger.info(`[AuthenticateService] Invalid token for username: ${username}`);
             return Result.error(ErrorTypesEnum.INVALID_TOKEN);
         }
 
         const token = JSON.parse(await this.#cacheProvider.get(cacheKey));
 
         if (username !== token.username) {
-            this.#logger.info(`[AuthenticateUseCase] Invalid token for username: ${username}`);
+            this.#logger.info(`[AuthenticateService] Invalid token for username: ${username}`);
             return Result.error(ErrorTypesEnum.INVALID_TOKEN);
         }
 

@@ -2,7 +2,7 @@ import Result from '../../../core/app/Result.js';
 import ErrorTypesEnum from '../../../core/enum/ErrorTypesEnum.js';
 import CacheKeyGenerator from '../../../core/util/CacheKeyGenerator.js';
 
-export default class SelectEmpireUseCase {
+export default class SelectEmpireService {
     #logger;
     #cacheProvider;
 
@@ -15,7 +15,7 @@ export default class SelectEmpireUseCase {
         const isValidEmpire = empireId > 0 && empireId < 4;
 
         if (!isValidEmpire) {
-            this.#logger.info(`[SelectEmpireUseCase] Invalid empire ${empireId}`);
+            this.#logger.info(`[SelectEmpireService] Invalid empire ${empireId}`);
             return Result.error(ErrorTypesEnum.INVALID_EMPIRE);
         }
 

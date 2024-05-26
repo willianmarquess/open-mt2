@@ -8,13 +8,13 @@ import CreateCharacterSuccessPacket from '../packet/out/CreateCharacterSuccessPa
  * @typedef {Object} container
  * @property {Object} logger - The logger instance used for logging information.
  * @property {Object} config - The configuration object containing necessary settings.
- * @property {CreateCharacterUseCase} createCharacterUseCase - The use case instance for creating characters.
+ * @property {CreateCharacterService} createCharacterService - The use case instance for creating characters.
  */
 
 export default class CreateCharacterPacketHandler {
     #logger;
     #config;
-    #createCharacterUseCase;
+    #createCharacterService;
 
     /**
      * Creates an instance of CreateCharacterPacketHandler.
@@ -22,12 +22,12 @@ export default class CreateCharacterPacketHandler {
      * @param {container} dependencies - The dependencies required by the handler.
      * @param {Object} dependencies.logger - The logger instance used for logging information.
      * @param {Object} dependencies.config - The configuration object containing necessary settings.
-     * @param {CreateCharacterUseCase} dependencies.createCharacterUseCase - The use case instance for creating characters.
+     * @param {createCharacterService} dependencies.createCharacterService - The use case instance for creating characters.
      */
-    constructor({ logger, config, createCharacterUseCase }) {
+    constructor({ logger, config, createCharacterService }) {
         this.#logger = logger;
         this.#config = config;
-        this.#createCharacterUseCase = createCharacterUseCase;
+        this.#createCharacterService = createCharacterService;
     }
 
     async execute(connection, packet) {
@@ -40,7 +40,7 @@ export default class CreateCharacterPacketHandler {
             return;
         }
 
-        const result = await this.#createCharacterUseCase.execute({
+        const result = await this.#createCharacterService.execute({
             accountId,
             playerName: packet.playerName,
             playerClass: packet.playerClass,
