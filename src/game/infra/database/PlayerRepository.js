@@ -1,4 +1,4 @@
-import Player from '../../../core/domain/entities/Player.js';
+import PlayerDTO from '../../../core/domain/dto/PlayerDTO.js';
 
 export default class PlayerRepository {
     #databaseManager;
@@ -165,6 +165,17 @@ export default class PlayerRepository {
         return players.map((p) => this.#mapToEntity(p));
     }
 
+    async getByAccountIdAndSlot(accountId, slot) {
+        const [players] = await this.#databaseManager.connection.query(
+            `
+        SELECT * FROM game.player WHERE accountId = ? and slot = ?;
+        `,
+            [accountId, slot],
+        );
+
+        return this.#mapToEntity(players[0]);
+    }
+
     #mapToEntity(player) {
         if (!player) return;
 
@@ -196,7 +207,7 @@ export default class PlayerRepository {
             availableStatusPoints,
         } = player;
 
-        return Player.create({
+        return new PlayerDTO({
             id,
             accountId,
             createdAt,

@@ -29,7 +29,7 @@ export default class CharactersInfoPacket extends PacketOut {
     constructor() {
         super({
             header: PacketHeaderEnum.CHARACTERS_LIST,
-            name: 'CharactersListPacket',
+            name: 'CharactersInfoPacket',
             size: 329,
         });
     }

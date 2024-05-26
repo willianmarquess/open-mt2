@@ -11,6 +11,8 @@ import EmpirePacket from './packet/bidirectional/EmpirePacket.js';
 import EmpirePacketHandler from './handlers/EmpirePacketHandler.js';
 import CreateCharacterPacket from './packet/in/CreateCharacterPacket.js';
 import CreateCharacterPacketHandler from './handlers/CreateCharacterPacketHandler.js';
+import SelectCharacterPacket from './packet/in/SelectCharacterPacket.js';
+import SelectCharacterPacketHandler from './handlers/SelectCharacterPacketHandler.js';
 
 export default () =>
     new Map([
@@ -54,6 +56,13 @@ export default () =>
             {
                 createPacket: () => new CreateCharacterPacket(),
                 createHandler: (params) => new CreateCharacterPacketHandler(params),
+            },
+        ],
+        [
+            PacketHeaderEnum.SELECT_CHARACTER,
+            {
+                createPacket: () => new SelectCharacterPacket(),
+                createHandler: (params) => new SelectCharacterPacketHandler(params),
             },
         ],
     ]);

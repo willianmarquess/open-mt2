@@ -11,6 +11,7 @@ import AuthenticateUseCase from './app/usecase/AuthenticateUseCase.js';
 import CreateCharacterUseCase from './app/usecase/CreateCharacterUseCase.js';
 import LoadCharactersUseCase from './app/usecase/LoadCharactersUseCase.js';
 import SelectEmpireUseCase from './app/usecase/SelectEmpireUseCase.js';
+import LoadCharacterUseCase from './app/usecase/LoadCharacterUseCase.js';
 
 const container = createContainer();
 
@@ -28,6 +29,7 @@ container.register({
     createCharacterUseCase: asClass(CreateCharacterUseCase).scoped(),
     loadCharactersUseCase: asClass(LoadCharactersUseCase).scoped(),
     selectEmpireUseCase: asClass(SelectEmpireUseCase).scoped(),
+    loadCharacterUseCase: asClass(LoadCharacterUseCase).scoped(),
 });
 
 export { container };

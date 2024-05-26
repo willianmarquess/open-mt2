@@ -7,4 +7,5 @@ export default {
     INVALID_PASSWORD: 6,
     EMPTY_ACCOUNT: 7,
     INVALID_EMPIRE: 8,
+    PLAYER_NOT_FOUND: 9,
 };
