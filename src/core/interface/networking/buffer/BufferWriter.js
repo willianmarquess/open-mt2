@@ -50,4 +50,10 @@ export default class BufferWriter {
 
         return this;
     }
+
+    writeFloatLE(value) {
+        this.#buffer.writeFloatLE(value);
+        this.#lastPos += 4;
+        return this;
+    }
 }

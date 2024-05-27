@@ -1,3 +1,4 @@
+import EntityTypeEnum from '../../enum/EntityTypeEnum.js';
 import Entity from './Entity.js';
 
 export default class Player extends Entity {
@@ -24,6 +25,8 @@ export default class Player extends Entity {
     #givenStatusPoints = 0;
     #availableStatusPoints = 0;
     #slot = 0;
+
+    #entityType = EntityTypeEnum.PLAYER;
 
     constructor({
         id,
@@ -81,6 +84,10 @@ export default class Player extends Entity {
         this.#givenStatusPoints = givenStatusPoints ?? this.#givenStatusPoints;
         this.#availableStatusPoints = availableStatusPoints ?? this.#availableStatusPoints;
         this.#slot = slot ?? this.#slot;
+    }
+
+    get entityType() {
+        return this.#entityType;
     }
 
     get accountId() {

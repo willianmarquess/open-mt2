@@ -18,4 +18,8 @@ export default {
     CLIENT_VERSION: 0xf1,
     CHARACTER_UPDATE: 0x13,
     ENTER_GAME: 0x0a,
+    GAME_TIME: 0x6a,
+    CHANNEL: 0x79,
+    CHARACTER_SPAWN: 0x01,
+    CHARACTER_INFO: 0x88,
 };
