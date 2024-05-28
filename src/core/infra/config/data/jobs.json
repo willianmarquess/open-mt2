@@ -1,0 +1,46 @@
+{
+    "warrior": {
+        "common": {
+            "st": 15,
+            "ht": 13,
+            "dx": 8,
+            "iq": 4,
+            "initialHp": 700,
+            "initialMp": 500,
+            "initialStamina": 1000
+        }
+    },
+    "assassin": {
+        "common": {
+            "st": 13,
+            "ht": 7,
+            "dx": 15,
+            "iq": 5,
+            "initialHp": 700,
+            "initialMp": 500,
+            "initialStamina": 1000
+        }
+    },
+    "sura": {
+        "common": {
+            "st": 9,
+            "ht": 7,
+            "dx": 9,
+            "iq": 15,
+            "initialHp": 700,
+            "initialMp": 700,
+            "initialStamina": 1000
+        }
+    },
+    "shaman": {
+        "common": {
+            "st": 10,
+            "ht": 10,
+            "dx": 5,
+            "iq": 15,
+            "initialHp": 700,
+            "initialMp": 700,
+            "initialStamina": 1000
+        }
+    }
+}

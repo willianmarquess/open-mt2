@@ -7,10 +7,12 @@ import CharacterUpdatePacket from '../packet/out/CharacterUpdatePacket.js';
 export default class SelectCharacterPacketHandler {
     #logger;
     #loadCharacterService;
+    #world;
 
-    constructor({ logger, loadCharacterService }) {
+    constructor({ logger, loadCharacterService, world }) {
         this.#logger = logger;
         this.#loadCharacterService = loadCharacterService;
+        this.#world = world;
     }
 
     async execute(connection, packet) {
@@ -33,13 +35,13 @@ export default class SelectCharacterPacketHandler {
 
         const { data: playerData } = result;
 
-        const player = Player.create(playerData);
+        const player = Player.create({ ...playerData, virtualId: this.#world.generateVirtualId() });
 
         connection.player = player;
 
         connection.send(
             new CharacterDetailsPacket({
-                vid: player.id,
+                vid: player.virtualId,
                 playerClass: player.playerClass,
                 playerName: player.name,
                 skillGroup: player.skillGroup,
@@ -53,7 +55,7 @@ export default class SelectCharacterPacketHandler {
         connection.send(new CharacterPointsPacket());
         connection.send(
             new CharacterUpdatePacket({
-                vid: player.id,
+                vid: player.virtualId,
                 attackSpeed: 200,
                 moveSpeed: 200,
             }),

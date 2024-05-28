@@ -1,4 +1,5 @@
 import empire from './data/empire.json' with { type: 'json' };
+import jobs from './data/jobs.json' with { type: 'json' };
 
 export default () => ({
     DB_HOST: process.env.DB_HOST,
@@ -10,4 +11,5 @@ export default () => ({
     CACHE_PING_INTERVAL: process.env.CACHE_PING_INTERVAL,
     MIGRATE: process.env.MIGRATE,
     empire,
+    jobs,
 });

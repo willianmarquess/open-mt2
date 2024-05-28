@@ -10,11 +10,17 @@ export default class World {
     #server;
     #logger;
 
+    #virtualId = 0;
+
     #deltas = new Array();
 
     constructor({ server, logger }) {
         this.#server = server;
         this.#logger = logger;
+    }
+
+    get generateVirtualId() {
+        return ++this.#virtualId;
     }
 
     get players() {

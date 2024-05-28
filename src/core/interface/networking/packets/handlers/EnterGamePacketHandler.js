@@ -33,7 +33,7 @@ export default class EnterGamePacketHandler {
 
         connection.send(
             new CharacterSpawnPacket({
-                vid: player.id,
+                vid: player.virtualId,
                 playerClass: player.playerClass,
                 entityType: player.entityType,
                 attackSpeed: 200,
@@ -45,7 +45,7 @@ export default class EnterGamePacketHandler {
         );
         connection.send(
             new CharacterInfoPacket({
-                vid: player.id,
+                vid: player.virtualId,
                 empireId: player.empire,
                 guildId: 0,
                 level: 1,

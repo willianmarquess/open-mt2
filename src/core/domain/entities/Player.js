@@ -27,6 +27,7 @@ export default class Player extends Entity {
     #slot = 0;
 
     #entityType = EntityTypeEnum.PLAYER;
+    #virtualId;
 
     constructor({
         id,
@@ -55,6 +56,7 @@ export default class Player extends Entity {
         givenStatusPoints,
         availableStatusPoints,
         slot,
+        virtualId,
     }) {
         super({
             id,
@@ -84,6 +86,11 @@ export default class Player extends Entity {
         this.#givenStatusPoints = givenStatusPoints ?? this.#givenStatusPoints;
         this.#availableStatusPoints = availableStatusPoints ?? this.#availableStatusPoints;
         this.#slot = slot ?? this.#slot;
+        this.#virtualId = virtualId;
+    }
+
+    get virtualId() {
+        return this.#virtualId;
     }
 
     get entityType() {
@@ -188,6 +195,7 @@ export default class Player extends Entity {
         givenStatusPoints,
         availableStatusPoints,
         slot,
+        virtualId,
     }) {
         return new Player({
             id,
@@ -216,6 +224,7 @@ export default class Player extends Entity {
             givenStatusPoints,
             availableStatusPoints,
             slot,
+            virtualId,
         });
     }
 }

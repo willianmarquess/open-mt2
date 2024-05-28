@@ -1,28 +1,11 @@
 import Result from '../../../core/app/Result.js';
 import Player from '../../../core/domain/entities/Player.js';
+import EmpireUtil from '../../../core/domain/util/EmpireUtil.js';
+import JobUtil from '../../../core/domain/util/JobUtil.js';
 import ErrorTypesEnum from '../../../core/enum/ErrorTypesEnum.js';
 import CacheKeyGenerator from '../../../core/util/CacheKeyGenerator.js';
 
 const MAX_PLAYERS_PER_ACCOUNT = 4;
-// const clazzToJobMap = {
-//     0: 0,
-//     4: 0,
-//     1: 1,
-//     5: 1,
-//     2: 2,
-//     6: 2,
-//     3: 3,
-//     7: 3,
-// };
-
-const empireIdToEmpireNameMap = {
-    1: 'red',
-    2: 'yellow',
-    3: 'blue',
-};
-
-//const getJob = (clazz) => clazzToJobMap[clazz] || clazzToJobMap[0];
-const getEmpire = (empireId) => empireIdToEmpireNameMap[empireId];
 
 /**
  * @typedef {Object} CreateCharacterInput
@@ -77,8 +60,8 @@ export default class CreateCharacterService {
         }
 
         const empireId = await this.#cacheProvider.get(key);
-        const positionX = this.#config.empire[getEmpire(empireId)].startPosX;
-        const positionY = this.#config.empire[getEmpire(empireId)].startPosY;
+        const className = JobUtil.getClassNameFromClassId(playerClass);
+        const empireName = EmpireUtil.getEmpireName(empireId);
 
         const player = Player.create({
             accountId,
@@ -87,15 +70,15 @@ export default class CreateCharacterService {
             playerClass,
             appearance, //verify this
             slot,
-            positionX,
-            positionY,
-            st: 10,
-            ht: 10,
-            dx: 10,
-            iq: 10,
-            health: 1000,
-            mana: 500,
-            stamina: 500,
+            positionX: this.#config.empire[empireName].startPosX,
+            positionY: this.#config.empire[empireName].startPosY,
+            st: this.#config.jobs[className].st,
+            ht: this.#config.jobs[className].ht,
+            dx: this.#config.jobs[className].dx,
+            iq: this.#config.jobs[className].iq,
+            health: this.#config.jobs[className].initialHp,
+            mana: this.#config.jobs[className].initialMp,
+            stamina: this.#config.jobs[className].initialStamina,
         });
 
         const playerId = await this.#playerRepository.create(player);
