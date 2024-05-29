@@ -70,15 +70,15 @@ export default class CreateCharacterService {
             playerClass,
             appearance, //verify this
             slot,
-            positionX: this.#config.empire[empireName].startPosX,
-            positionY: this.#config.empire[empireName].startPosY,
-            st: this.#config.jobs[className].st,
-            ht: this.#config.jobs[className].ht,
-            dx: this.#config.jobs[className].dx,
-            iq: this.#config.jobs[className].iq,
-            health: this.#config.jobs[className].initialHp,
-            mana: this.#config.jobs[className].initialMp,
-            stamina: this.#config.jobs[className].initialStamina,
+            positionX: Number(this.#config.empire[empireName].startPosX),
+            positionY: Number(this.#config.empire[empireName].startPosY),
+            st: this.#config.jobs[className].common.st,
+            ht: this.#config.jobs[className].common.ht,
+            dx: this.#config.jobs[className].common.dx,
+            iq: this.#config.jobs[className].common.iq,
+            health: this.#config.jobs[className].common.initialHp,
+            mana: this.#config.jobs[className].common.initialMp,
+            stamina: this.#config.jobs[className].common.initialStamina,
         });
 
         const playerId = await this.#playerRepository.create(player);

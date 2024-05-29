@@ -45,9 +45,9 @@ export default class SelectCharacterPacketHandler {
                 playerClass: player.playerClass,
                 playerName: player.name,
                 skillGroup: player.skillGroup,
-                posX: player.positionX,
-                posY: player.positionY,
-                posZ: 0,
+                positionX: player.positionX,
+                positionY: player.positionY,
+                positionZ: 0,
                 empireId: player.empire,
             }),
         );

@@ -4,9 +4,9 @@ import PacketOut from './PacketOut.js';
 export default class CharacterSpawnPacket extends PacketOut {
     #vid;
     #angle = 0;
-    #posX;
-    #posY;
-    #posZ;
+    #positionX;
+    #positionY;
+    #positionZ;
     #entityType;
     #playerClass;
     #moveSpeed;
@@ -17,9 +17,9 @@ export default class CharacterSpawnPacket extends PacketOut {
     constructor({
         vid,
         angle,
-        posX,
-        posY,
-        posZ,
+        positionX,
+        positionY,
+        positionZ,
         entityType,
         playerClass,
         moveSpeed,
@@ -34,9 +34,9 @@ export default class CharacterSpawnPacket extends PacketOut {
         });
         this.#vid = vid;
         this.#angle = angle ?? this.#angle;
-        this.#posX = posX;
-        this.#posY = posY;
-        this.#posZ = posZ;
+        this.#positionX = positionX;
+        this.#positionY = positionY;
+        this.#positionZ = positionZ;
         this.#entityType = entityType;
         this.#playerClass = playerClass;
         this.#moveSpeed = moveSpeed;
@@ -48,9 +48,9 @@ export default class CharacterSpawnPacket extends PacketOut {
     pack() {
         this.bufferWriter.writeUint32LE(this.#vid);
         this.bufferWriter.writeUint32LE(this.#angle);
-        this.bufferWriter.writeUint32LE(this.#posX);
-        this.bufferWriter.writeUint32LE(this.#posY);
-        this.bufferWriter.writeUint32LE(this.#posZ);
+        this.bufferWriter.writeUint32LE(this.#positionX);
+        this.bufferWriter.writeUint32LE(this.#positionY);
+        this.bufferWriter.writeUint32LE(this.#positionZ);
         this.bufferWriter.writeUint8(this.#entityType);
         this.bufferWriter.writeUint16LE(this.#playerClass);
         this.bufferWriter.writeUint8(this.#moveSpeed);

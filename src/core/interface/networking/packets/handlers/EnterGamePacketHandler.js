@@ -38,9 +38,9 @@ export default class EnterGamePacketHandler {
                 entityType: player.entityType,
                 attackSpeed: 200,
                 moveSpeed: 200,
-                posX: player.posX,
-                posY: player.posY,
-                posZ: player.posZ,
+                positionX: player.positionX,
+                positionY: player.positionY,
+                positionZ: 0,
             }),
         );
         connection.send(

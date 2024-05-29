@@ -5,13 +5,13 @@ export default class CharacterDetailsPacket extends PacketOut {
     #vid;
     #playerClass;
     #playerName;
-    #posX;
-    #posY;
-    #posZ;
+    #positionX;
+    #positionY;
+    #positionZ;
     #empireId;
     #skillGroup;
 
-    constructor({ vid, playerClass, playerName, posX, posY, posZ, empireId, skillGroup } = {}) {
+    constructor({ vid, playerClass, playerName, positionX, positionY, positionZ, empireId, skillGroup } = {}) {
         super({
             header: PacketHeaderEnum.CHARACTER_DETAILS,
             name: 'CharacterDetailsPacket',
@@ -20,9 +20,9 @@ export default class CharacterDetailsPacket extends PacketOut {
         this.#vid = vid;
         this.#playerClass = playerClass;
         this.#playerName = playerName;
-        this.#posX = posX;
-        this.#posY = posY;
-        this.#posZ = posZ;
+        this.#positionX = positionX;
+        this.#positionY = positionY;
+        this.#positionZ = positionZ;
         this.#empireId = empireId;
         this.#skillGroup = skillGroup;
     }
@@ -39,16 +39,16 @@ export default class CharacterDetailsPacket extends PacketOut {
         return this.#playerName;
     }
 
-    get posX() {
-        return this.#posX;
+    get positionX() {
+        return this.#positionX;
     }
 
-    get posY() {
-        return this.#posY;
+    get positionY() {
+        return this.#positionY;
     }
 
-    get posZ() {
-        return this.#posZ;
+    get positionZ() {
+        return this.#positionZ;
     }
 
     get empireId() {
@@ -63,9 +63,9 @@ export default class CharacterDetailsPacket extends PacketOut {
         this.bufferWriter.writeUint32LE(this.#vid);
         this.bufferWriter.writeUint16LE(this.#playerClass);
         this.bufferWriter.writeString(this.#playerName, 25);
-        this.bufferWriter.writeUint32LE(this.#posX);
-        this.bufferWriter.writeUint32LE(this.#posY);
-        this.bufferWriter.writeUint32LE(this.#posZ);
+        this.bufferWriter.writeUint32LE(this.#positionX);
+        this.bufferWriter.writeUint32LE(this.#positionY);
+        this.bufferWriter.writeUint32LE(this.#positionZ);
         this.bufferWriter.writeUint8(this.#empireId);
         this.bufferWriter.writeUint8(this.#skillGroup);
 

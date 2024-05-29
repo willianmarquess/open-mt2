@@ -19,7 +19,7 @@ export default class World {
         this.#logger = logger;
     }
 
-    get generateVirtualId() {
+    generateVirtualId() {
         return ++this.#virtualId;
     }
 
