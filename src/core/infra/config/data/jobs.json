@@ -7,7 +7,13 @@
             "iq": 4,
             "initialHp": 700,
             "initialMp": 500,
-            "initialStamina": 1000
+            "initialStamina": 1000,
+            "hpPerLvl": 100,
+            "hpPerHtPoint": 50,
+            "mpPerLvl": 50,
+            "mpPerIqPoint": 20,
+            "initialAttackSpeed": 150,
+            "initialMovementSpeed": 150
         }
     },
     "assassin": {
@@ -18,7 +24,13 @@
             "iq": 5,
             "initialHp": 700,
             "initialMp": 500,
-            "initialStamina": 1000
+            "initialStamina": 1000,
+            "hpPerLvl": 100,
+            "hpPerHtPoint": 50,
+            "mpPerLvl": 50,
+            "mpPerIqPoint": 20,
+            "initialAttackSpeed": 150,
+            "initialMovementSpeed": 150
         }
     },
     "sura": {
@@ -29,7 +41,13 @@
             "iq": 15,
             "initialHp": 700,
             "initialMp": 700,
-            "initialStamina": 1000
+            "initialStamina": 1000,
+            "hpPerLvl": 100,
+            "hpPerHtPoint": 50,
+            "mpPerLvl": 50,
+            "mpPerIqPoint": 20,
+            "initialAttackSpeed": 150,
+            "initialMovementSpeed": 150
         }
     },
     "shaman": {
@@ -40,7 +58,13 @@
             "iq": 15,
             "initialHp": 700,
             "initialMp": 700,
-            "initialStamina": 1000
+            "initialStamina": 1000,
+            "hpPerLvl": 100,
+            "hpPerHtPoint": 50,
+            "mpPerLvl": 50,
+            "mpPerIqPoint": 20,
+            "initialAttackSpeed": 150,
+            "initialMovementSpeed": 150
         }
     }
 }

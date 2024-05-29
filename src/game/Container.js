@@ -12,6 +12,7 @@ import CreateCharacterService from './app/service/CreateCharacterService.js';
 import LoadCharactersService from './app/service/LoadCharactersService.js';
 import SelectEmpireService from './app/service/SelectEmpireService.js';
 import LoadCharacterService from './app/service/LoadCharacterService.js';
+import PlayerFactory from '../core/domain/factories/PlayerFactory.js';
 
 const container = createContainer();
 
@@ -30,6 +31,7 @@ container.register({
     loadCharactersService: asClass(LoadCharactersService).scoped(),
     selectEmpireService: asClass(SelectEmpireService).scoped(),
     loadCharacterService: asClass(LoadCharacterService).scoped(),
+    playerFactory: asClass(PlayerFactory).scoped(),
 });
 
 export { container };

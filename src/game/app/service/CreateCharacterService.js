@@ -20,13 +20,13 @@ export default class CreateCharacterService {
     #logger;
     #cacheProvider;
     #playerRepository;
-    #config;
+    #playerFactory;
 
-    constructor({ logger, cacheProvider, playerRepository, config }) {
+    constructor({ logger, cacheProvider, playerRepository, playerFactory }) {
         this.#logger = logger;
         this.#cacheProvider = cacheProvider;
         this.#playerRepository = playerRepository;
-        this.#config = config;
+        this.#playerFactory = playerFactory;
     }
 
     /**
@@ -60,25 +60,14 @@ export default class CreateCharacterService {
         }
 
         const empireId = await this.#cacheProvider.get(key);
-        const className = JobUtil.getClassNameFromClassId(playerClass);
-        const empireName = EmpireUtil.getEmpireName(empireId);
 
-        const player = Player.create({
-            accountId,
-            name: playerName,
-            empire: empireId,
+        const player = this.#playerFactory.create({
             playerClass,
-            appearance, //verify this
+            empireId,
+            playerName,
+            accountId,
+            appearance,
             slot,
-            positionX: Number(this.#config.empire[empireName].startPosX),
-            positionY: Number(this.#config.empire[empireName].startPosY),
-            st: this.#config.jobs[className].common.st,
-            ht: this.#config.jobs[className].common.ht,
-            dx: this.#config.jobs[className].common.dx,
-            iq: this.#config.jobs[className].common.iq,
-            health: this.#config.jobs[className].common.initialHp,
-            mana: this.#config.jobs[className].common.initialMp,
-            stamina: this.#config.jobs[className].common.initialStamina,
         });
 
         const playerId = await this.#playerRepository.create(player);

@@ -16,6 +16,10 @@ export default class CharacterPointsPacket extends PacketOut {
         return this.#points;
     }
 
+    addPoint(pos, value) {
+        this.#points[pos] = value;
+    }
+
     pack() {
         for (let i = 0; i < 255; i++) {
             this.bufferWriter.writeUint32LE(this.#points[i]);

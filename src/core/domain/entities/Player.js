@@ -1,4 +1,5 @@
 import EntityTypeEnum from '../../enum/EntityTypeEnum.js';
+import PointsEnum from '../../enum/PointsEnum.js';
 import Entity from './Entity.js';
 
 export default class Player extends Entity {
@@ -29,6 +30,8 @@ export default class Player extends Entity {
     #entityType = EntityTypeEnum.PLAYER;
     #virtualId;
 
+    #attackSpeed;
+
     constructor({
         id,
         accountId,
@@ -57,6 +60,7 @@ export default class Player extends Entity {
         availableStatusPoints,
         slot,
         virtualId,
+        attackSpeed
     }) {
         super({
             id,
@@ -87,6 +91,26 @@ export default class Player extends Entity {
         this.#availableStatusPoints = availableStatusPoints ?? this.#availableStatusPoints;
         this.#slot = slot ?? this.#slot;
         this.#virtualId = virtualId;
+
+        this.#attackSpeed = attackSpeed;
+    }
+
+    getPoint(point) {
+        const points = {
+            [PointsEnum.EXPERIENCE]: this.#experience,
+            [PointsEnum.LEVEL]: this.#level,
+            [PointsEnum.ATTACK_SPEED]: this.#attackSpeed
+        };
+
+        return points[point];
+    }
+
+    addExperience(value) {
+        this.#experience += value;
+    }
+
+    addAttackSpeed(value) {
+        this.#attackSpeed += value;
     }
 
     get virtualId() {
