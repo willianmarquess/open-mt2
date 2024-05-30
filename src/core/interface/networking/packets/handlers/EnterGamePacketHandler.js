@@ -36,8 +36,8 @@ export default class EnterGamePacketHandler {
                 vid: player.virtualId,
                 playerClass: player.playerClass,
                 entityType: player.entityType,
-                attackSpeed: 200,
-                moveSpeed: 200,
+                attackSpeed: player.attackSpeed,
+                moveSpeed: player.movementSpeed,
                 positionX: player.positionX,
                 positionY: player.positionY,
                 positionZ: 0,
@@ -47,12 +47,12 @@ export default class EnterGamePacketHandler {
             new CharacterInfoPacket({
                 vid: player.virtualId,
                 empireId: player.empire,
-                guildId: 0,
-                level: 1,
-                mountId: 0,
-                pkMode: 0,
+                guildId: 0, //todo
+                level: player.level,
+                mountId: 0, //todo
+                pkMode: 0, //todo
                 playerName: player.name,
-                rankPoints: 0,
+                rankPoints: 0, //todo
             }),
         );
 

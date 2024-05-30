@@ -1,4 +1,3 @@
-import Player from '../../../../domain/entities/Player.js';
 import ConnectionStateEnum from '../../../../enum/ConnectionStateEnum.js';
 import CharacterDetailsPacket from '../packet/out/CharacterDetailsPacket.js';
 import CharacterPointsPacket from '../packet/out/CharacterPointsPacket.js';
@@ -8,11 +7,13 @@ export default class SelectCharacterPacketHandler {
     #logger;
     #loadCharacterService;
     #world;
+    #playerFactory;
 
-    constructor({ logger, loadCharacterService, world }) {
+    constructor({ logger, loadCharacterService, world, playerFactory }) {
         this.#logger = logger;
         this.#loadCharacterService = loadCharacterService;
         this.#world = world;
+        this.#playerFactory = playerFactory;
     }
 
     async execute(connection, packet) {
@@ -34,9 +35,7 @@ export default class SelectCharacterPacketHandler {
         }
 
         const { data: playerData } = result;
-
-        const player = Player.create({ ...playerData, virtualId: this.#world.generateVirtualId() });
-
+        const player = this.#playerFactory.create({ ...playerData, virtualId: this.#world.generateVirtualId() });
         connection.player = player;
 
         connection.send(
@@ -52,12 +51,18 @@ export default class SelectCharacterPacketHandler {
             }),
         );
         //just fake, we need to send real points
-        connection.send(new CharacterPointsPacket());
+
+        const characterPointsPacket = new CharacterPointsPacket();
+        for (const point in player.getPoints()) {
+            characterPointsPacket.addPoint(point, player.getPoint(point));
+        }
+
+        connection.send(characterPointsPacket);
         connection.send(
             new CharacterUpdatePacket({
                 vid: player.virtualId,
-                attackSpeed: 200,
-                moveSpeed: 200,
+                attackSpeed: player.attackSpeed,
+                moveSpeed: player.movementSpeed,
             }),
         );
     }

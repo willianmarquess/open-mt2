@@ -1,7 +1,4 @@
 import Result from '../../../core/app/Result.js';
-import Player from '../../../core/domain/entities/Player.js';
-import EmpireUtil from '../../../core/domain/util/EmpireUtil.js';
-import JobUtil from '../../../core/domain/util/JobUtil.js';
 import ErrorTypesEnum from '../../../core/enum/ErrorTypesEnum.js';
 import CacheKeyGenerator from '../../../core/util/CacheKeyGenerator.js';
 
@@ -63,8 +60,8 @@ export default class CreateCharacterService {
 
         const player = this.#playerFactory.create({
             playerClass,
-            empireId,
-            playerName,
+            empire: empireId,
+            name: playerName,
             accountId,
             appearance,
             slot,

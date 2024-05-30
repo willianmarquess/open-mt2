@@ -1,5 +1,26 @@
 [
   {
+    "mapName": "map_a2",
+    "posX": 256000,
+    "posY": 665600,
+    "width": 6,
+    "height": 6
+  },
+  {
+    "mapName": "map_b2",
+    "posX": 102400,
+    "posY": 51200,
+    "width": 6,
+    "height": 6
+  },
+  {
+    "mapName": "map_c2",
+    "posX": 665600,
+    "posY": 281600,
+    "width": 6,
+    "height": 6
+  },
+  {
     "mapName": "map_n_snowm_01",
     "posX": 358400,
     "posY": 153600,
@@ -7,39 +28,11 @@
     "height": 6
   },
   {
-    "mapName": "metin2_guild_village_01",
-    "posX": 204800,
-    "posY": 204800,
-    "width": 2,
-    "height": 2
-  },
-  {
-    "mapName": "metin2_guild_village_02",
-    "posX": 614400,
-    "posY": 384000,
-    "width": 2,
-    "height": 2
-  },
-  {
-    "mapName": "metin2_guild_village_03",
-    "posX": 256000,
-    "posY": 819200,
-    "width": 2,
-    "height": 2
-  },
-  {
     "mapName": "metin2_map_a1",
     "posX": 409600,
     "posY": 896000,
     "width": 4,
     "height": 5
-  },
-  {
-    "mapName": "metin2_map_a2_1",
-    "posX": 614400,
-    "posY": 1049600,
-    "width": 6,
-    "height": 6
   },
   {
     "mapName": "metin2_map_a3",
@@ -63,13 +56,6 @@
     "height": 4
   },
   {
-    "mapName": "metin2_map_bayblacksand",
-    "posX": 1049600,
-    "posY": 1510400,
-    "width": 3,
-    "height": 6
-  },
-  {
     "mapName": "metin2_map_c1",
     "posX": 921600,
     "posY": 204800,
@@ -84,144 +70,11 @@
     "height": 4
   },
   {
-    "mapName": "metin2_map_capedragonhead",
-    "posX": 1024000,
-    "posY": 1664000,
-    "width": 6,
-    "height": 6
-  },
-  {
-    "mapName": "metin2_map_dawnmist_dungeon_01",
-    "posX": 768000,
-    "posY": 1408000,
-    "width": 3,
-    "height": 4
-  },
-  {
-    "mapName": "metin2_map_dawnmistwood",
-    "posX": 1177600,
-    "posY": 1664000,
-    "width": 7,
-    "height": 4
-  },
-  {
-    "mapName": "metin2_map_devilsCatacomb",
-    "posX": 307200,
-    "posY": 1203200,
-    "width": 8,
-    "height": 8
-  },
-  {
     "mapName": "metin2_map_deviltower1",
     "posX": 204800,
     "posY": 665600,
     "width": 3,
     "height": 3
-  },
-  {
-    "mapName": "metin2_map_duel",
-    "posX": 844800,
-    "posY": 0,
-    "width": 1,
-    "height": 1
-  },
-  {
-    "mapName": "metin2_map_duel_rub",
-    "posX": 11827200,
-    "posY": 0,
-    "width": 1,
-    "height": 1
-  },
-  {
-    "mapName": "metin2_map_e1_a",
-    "posX": 768000,
-    "posY": 896000,
-    "width": 2,
-    "height": 2
-  },
-  {
-    "mapName": "metin2_map_e1_b",
-    "posX": 819200,
-    "posY": 896000,
-    "width": 2,
-    "height": 2
-  },
-  {
-    "mapName": "metin2_map_e1_c",
-    "posX": 870400,
-    "posY": 896000,
-    "width": 2,
-    "height": 2
-  },
-  {
-    "mapName": "metin2_map_empirewar01",
-    "posX": 665600,
-    "posY": 230400,
-    "width": 2,
-    "height": 2
-  },
-  {
-    "mapName": "metin2_map_empirewar01",
-    "posX": 972800,
-    "posY": 102400,
-    "width": 2,
-    "height": 2
-  },
-  {
-    "mapName": "metin2_map_empirewar02",
-    "posX": 716800,
-    "posY": 230400,
-    "width": 2,
-    "height": 2
-  },
-  {
-    "mapName": "metin2_map_empirewar02",
-    "posX": 921600,
-    "posY": 153600,
-    "width": 2,
-    "height": 2
-  },
-  {
-    "mapName": "metin2_map_empirewar03",
-    "posX": 768000,
-    "posY": 230400,
-    "width": 2,
-    "height": 2
-  },
-  {
-    "mapName": "metin2_map_empirewar03",
-    "posX": 972800,
-    "posY": 153600,
-    "width": 2,
-    "height": 2
-  },
-  {
-    "mapName": "metin2_map_ew02",
-    "posX": 256000,
-    "posY": 51200,
-    "width": 4,
-    "height": 4
-  },
-  {
-    "mapName": "metin2_map_guild_01",
-    "posX": 128000,
-    "posY": 0,
-    "width": 2,
-    "height": 2
-  },
-  {
-    "mapName": "metin2_map_guild_02",
-    "posX": 179200,
-    "posY": 0,
-    "width": 2,
-    "height": 2
-  },
-  {
-    "mapName": "metin2_map_guild_03",
-    "posX": 230400,
-    "posY": 0,
-    "width": 2,
-    "height": 2
   },
   {
     "mapName": "metin2_map_milgyo",
@@ -231,23 +84,79 @@
     "height": 4
   },
   {
-    "mapName": "metin2_map_milgyo_a",
-    "posX": 153600,
-    "posY": 1049600,
+    "mapName": "metin2_map_n_desert_01",
+    "posX": 204800,
+    "posY": 486400,
+    "width": 6,
+    "height": 6
+  },
+  {
+    "mapName": "metin2_map_n_flame_01",
+    "posX": 588800,
+    "posY": 614400,
+    "width": 6,
+    "height": 6
+  },
+  {
+    "mapName": "metin2_map_spiderdungeon",
+    "posX": 51200,
+    "posY": 486400,
+    "width": 3,
+    "height": 3
+  },
+  {
+    "mapName": "metin2_map_spiderdungeon_02",
+    "posX": 665600,
+    "posY": 435200,
     "width": 4,
     "height": 4
   },
   {
-    "mapName": "metin2_map_monkeydungeon",
-    "posX": 768000,
-    "posY": 435200,
+    "mapName": "metin2_map_t1",
+    "posX": 0,
+    "posY": 25600,
     "width": 3,
     "height": 3
+  },
+  {
+    "mapName": "metin2_map_t2",
+    "posX": 6400,
+    "posY": 0,
+    "width": 1,
+    "height": 1
+  },
+  {
+    "mapName": "metin2_map_t3",
+    "posX": 32000,
+    "posY": 0,
+    "width": 1,
+    "height": 1
+  },
+  {
+    "mapName": "metin2_map_t4",
+    "posX": 57600,
+    "posY": 0,
+    "width": 1,
+    "height": 1
+  },
+  {
+    "mapName": "metin2_map_t5",
+    "posX": 793600,
+    "posY": 0,
+    "width": 1,
+    "height": 1
   },
   {
     "mapName": "metin2_map_monkeydungeon",
     "posX": 819200,
     "posY": 51200,
+    "width": 3,
+    "height": 3
+  },
+  {
+    "mapName": "metin2_map_monkeydungeon",
+    "posX": 768000,
+    "posY": 435200,
     "width": 3,
     "height": 3
   },
@@ -280,311 +189,115 @@
     "height": 3
   },
   {
-    "mapName": "metin2_map_mt_th_dungeon_01",
-    "posX": 844800,
-    "posY": 1408000,
-    "width": 3,
-    "height": 3
+    "mapName": "metin2_map_wedding_01",
+    "posX": 819200,
+    "posY": 0,
+    "width": 1,
+    "height": 1
   },
   {
-    "mapName": "metin2_map_mt_thunder",
-    "posX": 1126400,
-    "posY": 1510400,
+    "mapName": "metin2_map_guild_01",
+    "posX": 128000,
+    "posY": 0,
+    "width": 2,
+    "height": 2
+  },
+  {
+    "mapName": "metin2_map_guild_02",
+    "posX": 179200,
+    "posY": 0,
+    "width": 2,
+    "height": 2
+  },
+  {
+    "mapName": "metin2_map_guild_03",
+    "posX": 230400,
+    "posY": 0,
+    "width": 2,
+    "height": 2
+  },
+  {
+    "mapName": "metin2_map_trent",
+    "posX": 281600,
+    "posY": 0,
+    "width": 2,
+    "height": 2
+  },
+  {
+    "mapName": "metin2_map_trent02",
+    "posX": 1049600,
+    "posY": 0,
     "width": 4,
-    "height": 6
+    "height": 4
   },
   {
-    "mapName": "metin2_map_n_desert_01",
-    "posX": 204800,
-    "posY": 486400,
+    "mapName": "gm_guild_build",
+    "posX": 83200,
+    "posY": 0,
+    "width": 1,
+    "height": 1
+  },
+  {
+    "mapName": "metin2_map_duel",
+    "posX": 844800,
+    "posY": 0,
+    "width": 1,
+    "height": 1
+  },
+  {
+    "mapName": "season1/metin2_map_WL_01",
+    "posX": 1049600,
+    "posY": 716800,
     "width": 6,
     "height": 6
   },
   {
-    "mapName": "metin2_map_n_desert_02",
-    "posX": 307200,
-    "posY": 1049600,
-    "width": 6,
-    "height": 6
-  },
-  {
-    "mapName": "metin2_map_n_flame_01",
-    "posX": 588800,
-    "posY": 614400,
-    "width": 6,
-    "height": 6
-  },
-  {
-    "mapName": "metin2_map_n_flame_02",
-    "posX": 460800,
-    "posY": 1049600,
-    "width": 6,
-    "height": 6
-  },
-  {
-    "mapName": "metin2_map_n_flame_dungeon_01",
-    "posX": 742400,
-    "posY": 614400,
-    "width": 3,
-    "height": 3
-  },
-  {
-    "mapName": "metin2_map_nusluck01",
+    "mapName": "season1/metin2_map_nusluck01",
     "posX": 819200,
     "posY": 716800,
     "width": 4,
     "height": 4
   },
   {
-    "mapName": "metin2_map_orclabyrinth",
-    "posX": 1203200,
-    "posY": 1817600,
-    "width": 3,
-    "height": 6
-  },
-  {
-    "mapName": "metin2_map_oxevent",
-    "posX": 742400,
-    "posY": 0,
-    "width": 2,
-    "height": 2
-  },
-  {
-    "mapName": "metin2_map_oxevent",
+    "mapName": "season1/metin2_map_oxevent",
     "posX": 870400,
     "posY": 0,
     "width": 2,
     "height": 2
   },
   {
-    "mapName": "metin2_map_skipia_dungeon_01",
-    "posX": 0,
-    "posY": 1203200,
-    "width": 6,
-    "height": 6
-  },
-  {
-    "mapName": "metin2_map_skipia_dungeon_01",
-    "posX": 0,
-    "posY": 1356800,
-    "width": 6,
-    "height": 6
-  },
-  {
-    "mapName": "metin2_map_skipia_dungeon_01",
-    "posX": 0,
-    "posY": 1510400,
-    "width": 6,
-    "height": 6
-  },
-  {
-    "mapName": "metin2_map_skipia_dungeon_01",
-    "posX": 0,
-    "posY": 1664000,
-    "width": 6,
-    "height": 6
-  },
-  {
-    "mapName": "metin2_map_skipia_dungeon_02",
-    "posX": 153600,
-    "posY": 1203200,
-    "width": 6,
-    "height": 6
-  },
-  {
-    "mapName": "metin2_map_skipia_dungeon_02",
-    "posX": 153600,
-    "posY": 1356800,
-    "width": 6,
-    "height": 6
-  },
-  {
-    "mapName": "metin2_map_skipia_dungeon_02",
-    "posX": 153600,
-    "posY": 1510400,
-    "width": 6,
-    "height": 6
-  },
-  {
-    "mapName": "metin2_map_skipia_dungeon_02",
-    "posX": 153600,
-    "posY": 1664000,
-    "width": 6,
-    "height": 6
-  },
-  {
-    "mapName": "metin2_map_skipia_dungeon_boss",
-    "posX": 819200,
-    "posY": 1049600,
-    "width": 2,
-    "height": 2
-  },
-  {
-    "mapName": "metin2_map_skipia_dungeon_boss",
-    "posX": 819200,
-    "posY": 1100800,
-    "width": 2,
-    "height": 2
-  },
-  {
-    "mapName": "metin2_map_skipia_dungeon_boss",
-    "posX": 819200,
-    "posY": 1203200,
-    "width": 2,
-    "height": 2
-  },
-  {
-    "mapName": "metin2_map_skipia_dungeon_boss2",
-    "posX": 819200,
-    "posY": 1152000,
-    "width": 2,
-    "height": 2
-  },
-  {
-    "mapName": "metin2_map_spiderdungeon",
-    "posX": 51200,
-    "posY": 486400,
-    "width": 3,
-    "height": 3
-  },
-  {
-    "mapName": "metin2_map_spiderdungeon_02",
-    "posX": 665600,
-    "posY": 435200,
-    "width": 4,
-    "height": 4
-  },
-  {
-    "mapName": "metin2_map_spiderdungeon_03",
-    "posX": 51200,
-    "posY": 563200,
-    "width": 3,
-    "height": 3
-  },
-  {
-    "mapName": "metin2_map_spiderdungeon_04",
-    "posX": 102400,
-    "posY": 793600,
-    "width": 3,
-    "height": 3
-  },
-  {
-    "mapName": "metin2_map_sungzi",
-    "posX": 1408000,
-    "posY": 0,
-    "width": 3,
-    "height": 3
-  },
-  {
-    "mapName": "metin2_map_sungzi",
+    "mapName": "season1/metin2_map_sungzi",
     "posX": 921600,
     "posY": 0,
     "width": 2,
     "height": 2
   },
   {
-    "mapName": "metin2_map_sungzi_desert_01",
-    "posX": 1228800,
+    "mapName": "metin2_map_bf",
+    "posX": 972800,
     "posY": 0,
-    "width": 4,
-    "height": 4
-  },
-  {
-    "mapName": "metin2_map_sungzi_desert_01",
-    "posX": 1561600,
-    "posY": 0,
-    "width": 3,
-    "height": 3
-  },
-  {
-    "mapName": "metin2_map_sungzi_desert_hill_01",
-    "posX": 1228800,
-    "posY": 0,
-    "width": 4,
-    "height": 0
-  },
-  {
-    "mapName": "metin2_map_sungzi_desert_hill_01",
-    "posX": 1433600,
-    "posY": 0,
-    "width": 4,
-    "height": 0
-  },
-  {
-    "mapName": "metin2_map_sungzi_desert_hill_02",
-    "posX": 1228800,
-    "posY": 204800,
     "width": 2,
-    "height": 4
+    "height": 2
   },
   {
-    "mapName": "metin2_map_sungzi_desert_hill_02",
-    "posX": 1433600,
-    "posY": 204800,
+    "mapName": "metin2_map_bf_02",
+    "posX": 921600,
+    "posY": 51200,
     "width": 2,
-    "height": 4
+    "height": 2
   },
   {
-    "mapName": "metin2_map_sungzi_desert_hill_03",
-    "posX": 1228800,
-    "posY": 307200,
+    "mapName": "metin2_map_bf_03",
+    "posX": 972800,
+    "posY": 51200,
     "width": 2,
-    "height": 4
-  },
-  {
-    "mapName": "metin2_map_sungzi_desert_hill_03",
-    "posX": 1433600,
-    "posY": 307200,
-    "width": 2,
-    "height": 4
-  },
-  {
-    "mapName": "metin2_map_sungzi_flame_hill_01",
-    "posX": 1126400,
-    "posY": 102400,
-    "width": 2,
-    "height": 4
-  },
-  {
-    "mapName": "metin2_map_sungzi_flame_hill_01",
-    "posX": 1331200,
-    "posY": 0,
-    "width": 4,
-    "height": 0
-  },
-  {
-    "mapName": "metin2_map_sungzi_flame_hill_02",
-    "posX": 1126400,
-    "posY": 204800,
-    "width": 2,
-    "height": 4
-  },
-  {
-    "mapName": "metin2_map_sungzi_flame_hill_02",
-    "posX": 1331200,
-    "posY": 204800,
-    "width": 2,
-    "height": 4
-  },
-  {
-    "mapName": "metin2_map_sungzi_flame_hill_03",
-    "posX": 1126400,
-    "posY": 307200,
-    "width": 2,
-    "height": 4
-  },
-  {
-    "mapName": "metin2_map_sungzi_flame_hill_03",
-    "posX": 1331200,
-    "posY": 307200,
-    "width": 2,
-    "height": 4
+    "height": 2
   },
   {
     "mapName": "metin2_map_sungzi_flame_pass01",
-    "posX": 0,
-    "posY": 1024000,
-    "width": 102400,
+    "posX": 1024000,
+    "posY": 102400,
+    "width": 4,
     "height": 4
   },
   {
@@ -602,220 +315,458 @@
     "height": 4
   },
   {
-    "mapName": "metin2_map_sungzi_milgyo",
+    "mapName": "season1/metin2_map_sungzi_flame_hill_01",
+    "posX": 1126400,
+    "posY": 102400,
+    "width": 2,
+    "height": 4
+  },
+  {
+    "mapName": "season1/metin2_map_sungzi_flame_hill_02",
+    "posX": 1126400,
+    "posY": 204800,
+    "width": 2,
+    "height": 4
+  },
+  {
+    "mapName": "season1/metin2_map_sungzi_flame_hill_03",
+    "posX": 1126400,
+    "posY": 307200,
+    "width": 2,
+    "height": 4
+  },
+  {
+    "mapName": "season1/metin2_map_sungzi_snow",
+    "posX": 1152000,
+    "posY": 0,
+    "width": 3,
+    "height": 3
+  },
+  {
+    "mapName": "season1/metin2_map_sungzi_snow_pass01",
+    "posX": 1177600,
+    "posY": 102400,
+    "width": 2,
+    "height": 4
+  },
+  {
+    "mapName": "season1/metin2_map_sungzi_snow_pass02",
+    "posX": 1177600,
+    "posY": 204800,
+    "width": 2,
+    "height": 4
+  },
+  {
+    "mapName": "season1/metin2_map_sungzi_snow_pass03",
+    "posX": 1177600,
+    "posY": 307200,
+    "width": 2,
+    "height": 4
+  },
+  {
+    "mapName": "season1/metin2_map_sungzi_desert_01",
+    "posX": 1228800,
+    "posY": 0,
+    "width": 4,
+    "height": 4
+  },
+  {
+    "mapName": "season1/metin2_map_sungzi_desert_hill_01",
+    "posX": 1228800,
+    "posY": 102400,
+    "width": 2,
+    "height": 4
+  },
+  {
+    "mapName": "season1/metin2_map_sungzi_desert_hill_02",
+    "posX": 1228800,
+    "posY": 204800,
+    "width": 2,
+    "height": 4
+  },
+  {
+    "mapName": "season1/metin2_map_sungzi_desert_hill_03",
+    "posX": 1228800,
+    "posY": 307200,
+    "width": 2,
+    "height": 4
+  },
+  {
+    "mapName": "season1/metin2_map_sungzi_milgyo",
     "posX": 1331200,
     "posY": 0,
     "width": 3,
     "height": 3
   },
   {
-    "mapName": "metin2_map_sungzi_milgyo_pass01",
-    "posX": 1280000,
+    "mapName": "season1/metin2_map_sungzi",
+    "posX": 1408000,
     "posY": 0,
-    "width": 4,
-    "height": 0
-  },
-  {
-    "mapName": "metin2_map_sungzi_milgyo_pass02",
-    "posX": 1280000,
-    "posY": 204800,
-    "width": 2,
-    "height": 4
-  },
-  {
-    "mapName": "metin2_map_sungzi_milgyo_pass03",
-    "posX": 1280000,
-    "posY": 307200,
-    "width": 2,
-    "height": 4
-  },
-  {
-    "mapName": "metin2_map_sungzi_snow",
-    "posX": 0,
-    "posY": 1152000,
-    "width": 0,
+    "width": 3,
     "height": 3
   },
   {
-    "mapName": "metin2_map_sungzi_snow",
+    "mapName": "season1/metin2_map_sungzi_snow",
     "posX": 1484800,
     "posY": 0,
     "width": 3,
     "height": 3
   },
   {
-    "mapName": "metin2_map_sungzi_snow_pass01",
-    "posX": 1382400,
+    "mapName": "season1/metin2_map_sungzi_desert_01",
+    "posX": 1561600,
     "posY": 0,
-    "width": 4,
-    "height": 0
-  },
-  {
-    "mapName": "metin2_map_sungzi_snow_pass01",
-    "posX": 1177600,
-    "posY": 0,
-    "width": 4,
-    "height": 0
-  },
-  {
-    "mapName": "metin2_map_sungzi_snow_pass02",
-    "posX": 1177600,
-    "posY": 204800,
-    "width": 2,
-    "height": 4
-  },
-  {
-    "mapName": "metin2_map_sungzi_snow_pass02",
-    "posX": 1382400,
-    "posY": 204800,
-    "width": 2,
-    "height": 4
-  },
-  {
-    "mapName": "metin2_map_sungzi_snow_pass03",
-    "posX": 1177600,
-    "posY": 307200,
-    "width": 2,
-    "height": 4
-  },
-  {
-    "mapName": "metin2_map_sungzi_snow_pass03",
-    "posX": 1382400,
-    "posY": 307200,
-    "width": 2,
-    "height": 4
-  },
-  {
-    "mapName": "metin2_map_t1",
-    "posX": 0,
-    "posY": 25600,
     "width": 3,
     "height": 3
   },
   {
-    "mapName": "metin2_map_t2",
-    "posX": 0,
-    "posY": 0,
-    "width": 1,
-    "height": 1
+    "mapName": "season1/metin2_map_sungzi_milgyo_pass01",
+    "posX": 1280000,
+    "posY": 102400,
+    "width": 2,
+    "height": 4
   },
   {
-    "mapName": "metin2_map_t3",
-    "posX": 25600,
-    "posY": 0,
-    "width": 1,
-    "height": 1
+    "mapName": "season1/metin2_map_sungzi_milgyo_pass02",
+    "posX": 1280000,
+    "posY": 204800,
+    "width": 2,
+    "height": 4
   },
   {
-    "mapName": "metin2_map_t4",
-    "posX": 51200,
-    "posY": 0,
-    "width": 1,
-    "height": 1
+    "mapName": "season1/metin2_map_sungzi_milgyo_pass03",
+    "posX": 1280000,
+    "posY": 307200,
+    "width": 2,
+    "height": 4
   },
   {
-    "mapName": "metin2_map_t5",
-    "posX": 793600,
-    "posY": 25600,
-    "width": 1,
-    "height": 1
+    "mapName": "season1/metin2_map_sungzi_flame_hill_01",
+    "posX": 1331200,
+    "posY": 102400,
+    "width": 2,
+    "height": 4
   },
   {
-    "mapName": "metin2_map_trent",
-    "posX": 281600,
-    "posY": 0,
+    "mapName": "season1/metin2_map_sungzi_flame_hill_02",
+    "posX": 1331200,
+    "posY": 204800,
+    "width": 2,
+    "height": 4
+  },
+  {
+    "mapName": "season1/metin2_map_sungzi_flame_hill_03",
+    "posX": 1331200,
+    "posY": 307200,
+    "width": 2,
+    "height": 4
+  },
+  {
+    "mapName": "season1/metin2_map_sungzi_snow_pass01",
+    "posX": 1382400,
+    "posY": 102400,
+    "width": 2,
+    "height": 4
+  },
+  {
+    "mapName": "season1/metin2_map_sungzi_snow_pass02",
+    "posX": 1382400,
+    "posY": 204800,
+    "width": 2,
+    "height": 4
+  },
+  {
+    "mapName": "season1/metin2_map_sungzi_snow_pass03",
+    "posX": 1382400,
+    "posY": 307200,
+    "width": 2,
+    "height": 4
+  },
+  {
+    "mapName": "season1/metin2_map_sungzi_desert_hill_01",
+    "posX": 1433600,
+    "posY": 102400,
+    "width": 2,
+    "height": 4
+  },
+  {
+    "mapName": "season1/metin2_map_sungzi_desert_hill_02",
+    "posX": 1433600,
+    "posY": 204800,
+    "width": 2,
+    "height": 4
+  },
+  {
+    "mapName": "season1/metin2_map_sungzi_desert_hill_03",
+    "posX": 1433600,
+    "posY": 307200,
+    "width": 2,
+    "height": 4
+  },
+  {
+    "mapName": "season1/metin2_map_ew02",
+    "posX": 256000,
+    "posY": 51200,
+    "width": 4,
+    "height": 4
+  },
+  {
+    "mapName": "season2/metin2_map_empirewar01",
+    "posX": 972800,
+    "posY": 102400,
     "width": 2,
     "height": 2
   },
   {
-    "mapName": "metin2_map_trent02",
-    "posX": 1049600,
-    "posY": 0,
+    "mapName": "season2/metin2_map_empirewar02",
+    "posX": 921600,
+    "posY": 153600,
+    "width": 2,
+    "height": 2
+  },
+  {
+    "mapName": "season2/metin2_map_empirewar03",
+    "posX": 972800,
+    "posY": 153600,
+    "width": 2,
+    "height": 2
+  },
+  {
+    "mapName": "season2/map_n_snowm_02",
+    "posX": 0,
+    "posY": 1049600,
+    "width": 6,
+    "height": 6
+  },
+  {
+    "mapName": "season2/metin2_map_milgyo_a",
+    "posX": 153600,
+    "posY": 1049600,
     "width": 4,
     "height": 4
   },
   {
-    "mapName": "metin2_map_trent02_a",
-    "posX": 921600,
+    "mapName": "season2/metin2_map_n_desert_02",
+    "posX": 307200,
     "posY": 1049600,
-    "width": 3,
-    "height": 3
+    "width": 6,
+    "height": 6
   },
   {
-    "mapName": "metin2_map_trent_a",
+    "mapName": "season2/metin2_map_n_flame_02",
+    "posX": 460800,
+    "posY": 1049600,
+    "width": 6,
+    "height": 6
+  },
+  {
+    "mapName": "season2/metin2_map_a2_1",
+    "posX": 614400,
+    "posY": 1049600,
+    "width": 6,
+    "height": 6
+  },
+  {
+    "mapName": "season2/metin2_map_trent_a",
     "posX": 768000,
     "posY": 1049600,
     "width": 2,
     "height": 2
   },
   {
-    "mapName": "metin2_map_wedding_01",
-    "posX": 819200,
-    "posY": 0,
-    "width": 1,
-    "height": 1
-  },
-  {
-    "mapName": "metin2_map_wl_01",
-    "posX": 1049600,
-    "posY": 716800,
-    "width": 6,
-    "height": 6
-  },
-  {
-    "mapName": "gm_guild_build",
-    "posX": 76800,
-    "posY": 0,
-    "width": 1,
-    "height": 1
-  },
-  {
-    "mapName": "metin2_map_guild_inside01",
-    "posX": 793600,
-    "posY": 0,
-    "width": 1,
-    "height": 1
-  },
-  {
-    "mapName": "metin2_map_n_flame_dragon",
-    "posX": 307200,
-    "posY": 1510400,
-    "width": 1,
-    "height": 1
-  },
-  {
-    "mapName": "metin2_guild_war1",
-    "posX": 1049600,
-    "posY": 1049600,
-    "width": 1,
-    "height": 1
-  },
-  {
-    "mapName": "metin2_guild_war2",
-    "posX": 1075200,
+    "mapName": "season2/metin2_map_trent02_a",
+    "posX": 921600,
     "posY": 1049600,
     "width": 3,
     "height": 3
   },
   {
-    "mapName": "metin2_guild_war3",
-    "posX": 1152000,
-    "posY": 1049600,
-    "width": 1,
-    "height": 1
+    "mapName": "season2/metin2_map_skipia_dungeon_01",
+    "posX": 0,
+    "posY": 1203200,
+    "width": 6,
+    "height": 6
   },
   {
-    "mapName": "metin2_guild_war4",
-    "posX": 1177600,
+    "mapName": "metin2_map_skipia_dungeon_02",
+    "posX": 153600,
+    "posY": 1203200,
+    "width": 6,
+    "height": 6
+  },
+  {
+    "mapName": "season2/metin2_map_skipia_dungeon_01",
+    "posX": 0,
+    "posY": 1356800,
+    "width": 6,
+    "height": 6
+  },
+  {
+    "mapName": "season2/metin2_map_skipia_dungeon_01",
+    "posX": 0,
+    "posY": 1510400,
+    "width": 6,
+    "height": 6
+  },
+  {
+    "mapName": "season2/metin2_map_skipia_dungeon_01",
+    "posX": 0,
+    "posY": 1664000,
+    "width": 6,
+    "height": 6
+  },
+  {
+    "mapName": "metin2_map_skipia_dungeon_02",
+    "posX": 153600,
+    "posY": 1356800,
+    "width": 6,
+    "height": 6
+  },
+  {
+    "mapName": "metin2_map_skipia_dungeon_02",
+    "posX": 153600,
+    "posY": 1510400,
+    "width": 6,
+    "height": 6
+  },
+  {
+    "mapName": "metin2_map_skipia_dungeon_02",
+    "posX": 153600,
+    "posY": 1664000,
+    "width": 6,
+    "height": 6
+  },
+  {
+    "mapName": "season2/metin2_map_empirewar01",
+    "posX": 665600,
+    "posY": 230400,
+    "width": 2,
+    "height": 2
+  },
+  {
+    "mapName": "season2/metin2_map_empirewar02",
+    "posX": 716800,
+    "posY": 230400,
+    "width": 2,
+    "height": 2
+  },
+  {
+    "mapName": "season2/metin2_map_empirewar03",
+    "posX": 768000,
+    "posY": 230400,
+    "width": 2,
+    "height": 2
+  },
+  {
+    "mapName": "season1/metin2_map_oxevent",
+    "posX": 742400,
+    "posY": 0,
+    "width": 2,
+    "height": 2
+  },
+  {
+    "mapName": "metin2_map_skipia_dungeon_boss",
+    "posX": 819200,
     "posY": 1049600,
     "width": 2,
     "height": 2
   },
   {
-    "mapName": "metin2_map_pvm_spawn",
-    "posX": 4966400,
-    "posY": 7884800,
+    "mapName": "metin2_map_skipia_dungeon_boss",
+    "posX": 819200,
+    "posY": 1100800,
+    "width": 2,
+    "height": 2
+  },
+  {
+    "mapName": "metin2_map_skipia_dungeon_boss2",
+    "posX": 819200,
+    "posY": 1152000,
+    "width": 2,
+    "height": 2
+  },
+  {
+    "mapName": "metin2_map_skipia_dungeon_boss",
+    "posX": 819200,
+    "posY": 1203200,
+    "width": 2,
+    "height": 2
+  },
+  {
+    "mapName": "metin2_map_devilsCatacomb",
+    "posX": 307200,
+    "posY": 1203200,
+    "width": 8,
+    "height": 8
+  },
+  {
+    "mapName": "metin2_map_spiderdungeon_03",
+    "posX": 51200,
+    "posY": 563200,
     "width": 3,
+    "height": 3
+  },
+  {
+    "mapName": "Metin2_map_CapeDragonHead",
+    "posX": 1024000,
+    "posY": 1664000,
+    "width": 6,
+    "height": 6
+  },
+  {
+    "mapName": "metin2_map_Mt_Thunder",
+    "posX": 1126400,
+    "posY": 1510400,
+    "width": 4,
+    "height": 6
+  },
+  {
+    "mapName": "metin2_map_dawnmistwood",
+    "posX": 1177600,
+    "posY": 1664000,
+    "width": 7,
+    "height": 4
+  },
+  {
+    "mapName": "metin2_map_BayBlackSand",
+    "posX": 1049600,
+    "posY": 1510400,
+    "width": 3,
+    "height": 6
+  },
+  {
+    "mapName": "metin2_guild_village_01",
+    "posX": 204800,
+    "posY": 204800,
+    "width": 2,
+    "height": 2
+  },
+  {
+    "mapName": "metin2_guild_village_02",
+    "posX": 614400,
+    "posY": 384000,
+    "width": 2,
+    "height": 2
+  },
+  {
+    "mapName": "metin2_guild_village_03",
+    "posX": 256000,
+    "posY": 819200,
+    "width": 2,
+    "height": 2
+  },
+  {
+    "mapName": "metin2_map_n_flame_dungeon_01",
+    "posX": 742400,
+    "posY": 614400,
+    "width": 3,
+    "height": 3
+  },
+  {
+    "mapName": "metin2_map_n_snow_dungeon_01",
+    "posX": 512000,
+    "posY": 153600,
+    "width": 4,
     "height": 3
   }
 ]
