@@ -21,7 +21,7 @@ export default class AuthenticateService {
      * Executes the authentication process.
      *
      * @param {AuthenticateInput} authenticateInput - The input required for authentication.
-     * @returns {Promise<Result>} A promise that resolves to a Result object indicating success or failure.
+     * @returns {Promise<void>} A promise that resolves to a void.
      */
     async execute(authenticateInput) {
         const { key, username } = authenticateInput;

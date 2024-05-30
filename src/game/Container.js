@@ -7,12 +7,14 @@ import Config from './infra/config/Config.js';
 import CacheProvider from '../core/infra/cache/CacheProvider.js';
 import World from '../core/domain/World.js';
 import PlayerRepository from './infra/database/PlayerRepository.js';
-import AuthenticateService from './app/service/AuthenticateService.js';
 import CreateCharacterService from './app/service/CreateCharacterService.js';
 import LoadCharactersService from './app/service/LoadCharactersService.js';
 import SelectEmpireService from './app/service/SelectEmpireService.js';
-import LoadCharacterService from './app/service/LoadCharacterService.js';
 import PlayerFactory from '../core/domain/factories/PlayerFactory.js';
+import SelectCharacterService from './app/service/SelectCharacterService.js';
+import AuthenticateService from './domain/service/AuthenticateService.js';
+import EnterGameService from './app/service/EnterGameService.js';
+import SpawnCharacterService from './domain/service/SpawnCharacterService.js';
 
 const container = createContainer();
 
@@ -30,8 +32,10 @@ container.register({
     createCharacterService: asClass(CreateCharacterService).scoped(),
     loadCharactersService: asClass(LoadCharactersService).scoped(),
     selectEmpireService: asClass(SelectEmpireService).scoped(),
-    loadCharacterService: asClass(LoadCharacterService).scoped(),
+    selectCharacterService: asClass(SelectCharacterService).scoped(),
     playerFactory: asClass(PlayerFactory).scoped(),
+    enterGameService: asClass(EnterGameService).scoped(),
+    spawnCharacterService: asClass(SpawnCharacterService).scoped(),
 });
 
 export { container };

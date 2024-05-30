@@ -1,12 +1,13 @@
-import Result from '../../../core/app/Result.js';
-import ErrorTypesEnum from '../../../core/enum/ErrorTypesEnum.js';
+import CreateCharacterFailureReasonEnum from '../../../core/enum/CreateCharacterFailureReasonEnum.js';
+import CreateCharacterFailurePacket from '../../../core/interface/networking/packets/packet/out/CreateCharacterFailurePacket.js';
+import CreateCharacterSuccessPacket from '../../../core/interface/networking/packets/packet/out/CreateCharacterSuccessPacket.js';
 import CacheKeyGenerator from '../../../core/util/CacheKeyGenerator.js';
+import Ip from '../../../core/util/Ip.js';
 
 const MAX_PLAYERS_PER_ACCOUNT = 4;
 
 /**
  * @typedef {Object} CreateCharacterInput
- * @property {number} accountId - The account ID of the player.
  * @property {string} playerName - The name of the player character.
  * @property {number} playerClass - The class of the player character.
  * @property {number} appearance - The appearance of the player character.
@@ -18,34 +19,51 @@ export default class CreateCharacterService {
     #cacheProvider;
     #playerRepository;
     #playerFactory;
+    #config;
 
-    constructor({ logger, cacheProvider, playerRepository, playerFactory }) {
+    constructor({ logger, cacheProvider, playerRepository, playerFactory, config }) {
         this.#logger = logger;
         this.#cacheProvider = cacheProvider;
         this.#playerRepository = playerRepository;
         this.#playerFactory = playerFactory;
+        this.#config = config;
     }
 
     /**
      * Executes the character creation process.
-     *
+     * @param {connection} [connection] - represents the connection interface between client and server
      * @param {CreateCharacterInput} [createCharacterInput=createCharacterInputDefault] - The input for creating a character.
-     * @returns {Promise<Result>} A promise that resolves to a Result object indicating success or failure.
+     * @returns {Promise<void>} A promise that resolves to a void.
      */
-    async execute(createCharacterInput) {
-        const { playerName, accountId, playerClass, appearance, slot } = createCharacterInput;
+    async execute(connection, createCharacterInput) {
+        const { accountId } = connection;
+        if (!accountId) {
+            this.#logger.info(
+                `[CreateCharacterPacketHandler] The connection does not have an accountId, this cannot happen`,
+            );
+            connection.close();
+            return;
+        }
+
+        const { playerName, playerClass, appearance, slot } = createCharacterInput;
         const nameAlreadyExists = await this.#playerRepository.nameAlreadyExists(playerName);
 
         if (nameAlreadyExists) {
             this.#logger.info(`[CreateCharacterService] The player name: ${playerName} already exists.`);
-            return Result.error(ErrorTypesEnum.NAME_ALREADY_EXISTS);
+            connection.send(
+                new CreateCharacterFailurePacket({
+                    reason: CreateCharacterFailureReasonEnum.NAME_ALREADY_EXISTS,
+                }),
+            );
+            return;
         }
 
         const players = await this.#playerRepository.getByAccountId(accountId);
 
         if (players.length > MAX_PLAYERS_PER_ACCOUNT) {
             this.#logger.info(`[CreateCharacterService] The player account is full`);
-            return Result.error(ErrorTypesEnum.ACCOUNT_FULL);
+            connection.close();
+            return;
         }
 
         const key = CacheKeyGenerator.createEmpireKey(accountId);
@@ -53,7 +71,8 @@ export default class CreateCharacterService {
 
         if (!empireIdExists) {
             this.#logger.info(`[CreateCharacterService] The empire was not selected before.`);
-            return Result.error(ErrorTypesEnum.EMPIRE_NOT_SELECTED);
+            connection.close();
+            return;
         }
 
         const empireId = await this.#cacheProvider.get(key);
@@ -68,7 +87,30 @@ export default class CreateCharacterService {
         });
 
         const playerId = await this.#playerRepository.create(player);
-        player.id = playerId;
-        return Result.ok(player);
+
+        connection.send(
+            new CreateCharacterSuccessPacket({
+                slot,
+                character: {
+                    name: player.name,
+                    playerClass: player.playerClass,
+                    bodyPart: player.bodyPart,
+                    hairPart: player.hairPart,
+                    level: player.level,
+                    skillGroup: player.skillGroup,
+                    playTime: player.playTime,
+                    port: this.#config.SERVER_PORT,
+                    ip: Ip.toInt(this.#config.SERVER_ADDRESS),
+                    id: playerId,
+                    nameChange: 0,
+                    positionX: player.positionX,
+                    positionY: player.positionY,
+                    ht: player.ht,
+                    st: player.st,
+                    dx: player.dx,
+                    iq: player.iq,
+                },
+            }),
+        );
     }
 }
