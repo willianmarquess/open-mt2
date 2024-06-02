@@ -366,4 +366,8 @@ export default class Player extends Entity {
             slot: this.#slot,
         });
     }
+
+    tick() {
+        console.log('updating...');
+    }
 }

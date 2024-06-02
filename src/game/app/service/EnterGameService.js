@@ -6,9 +6,11 @@ import GameTimePacket from '../../../core/interface/networking/packets/packet/ou
 
 export default class EnterGameService {
     #logger;
+    #world;
 
-    constructor({ logger }) {
+    constructor({ logger, world }) {
         this.#logger = logger;
+        this.#world = world;
     }
 
     execute(connection) {
@@ -53,5 +55,6 @@ export default class EnterGameService {
 
         //world should spawn player
         //player should send inventory
+        this.#world.spawn(player);
     }
 }

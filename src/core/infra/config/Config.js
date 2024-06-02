@@ -1,5 +1,6 @@
 import empire from './data/empire.json' with { type: 'json' };
 import jobs from './data/jobs.json' with { type: 'json' };
+import atlas from './data/atlasinfo.json' with { type: 'json' };
 
 export default () => ({
     DB_HOST: process.env.DB_HOST,
@@ -12,4 +13,5 @@ export default () => ({
     MIGRATE: process.env.MIGRATE,
     empire,
     jobs,
+    atlas,
 });
