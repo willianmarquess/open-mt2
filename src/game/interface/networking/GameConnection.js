@@ -1,5 +1,6 @@
 import CharacterInitiatedEvent from '../../../core/domain/entities/player/events/CharacterInitiatedEvent.js';
 import CharacterSpawnedEvent from '../../../core/domain/entities/player/events/CharacterSpawnedEvent.js';
+import OtherCharacterUpdatedEvent from '../../../core/domain/entities/player/events/OtherCharacterUpdatedOtherCharacterUpdatedEvent.js';
 import ConnectionStateEnum from '../../../core/enum/ConnectionStateEnum.js';
 import Connection from '../../../core/interface/networking/Connection.js';
 import CharacterDetailsPacket from '../../../core/interface/networking/packets/packet/out/CharacterDetailsPacket.js';
@@ -36,10 +37,41 @@ export default class GameConnection extends Connection {
         this.#player = newPlayer;
         this.#player.subscribe(CharacterSpawnedEvent.type, this.#onCharacterSpawned.bind(this));
         this.#player.subscribe(CharacterInitiatedEvent.type, this.#onCharacterInitiated.bind(this));
+        this.#player.subscribe(OtherCharacterUpdatedEvent.type, this.#onOtherCharacterUpdated.bind(this));
     }
 
     get player() {
         return this.#player;
+    }
+
+    #onOtherCharacterUpdated(otherCharacterUpdatedEvent) {
+        const { otherEntity } = otherCharacterUpdatedEvent;
+
+        this.send(
+            new CharacterSpawnPacket({
+                vid: otherEntity.virtualId,
+                playerClass: otherEntity.playerClass,
+                entityType: otherEntity.entityType,
+                attackSpeed: otherEntity.attackSpeed,
+                moveSpeed: otherEntity.movementSpeed,
+                positionX: otherEntity.positionX,
+                positionY: otherEntity.positionY,
+                positionZ: 0,
+            }),
+        );
+
+        this.send(
+            new CharacterInfoPacket({
+                vid: otherEntity.virtualId,
+                empireId: otherEntity.empire,
+                guildId: 0, //todo
+                level: otherEntity.level,
+                mountId: 0, //todo
+                pkMode: 0, //todo
+                playerName: otherEntity.name,
+                rankPoints: 0, //todo
+            }),
+        );
     }
 
     #onCharacterInitiated() {

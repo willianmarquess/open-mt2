@@ -5,6 +5,7 @@ import PlayerDTO from '../../dto/PlayerDTO.js';
 import Entity from '../Entity.js';
 import CharacterSpawnedEvent from './events/CharacterSpawnedEvent.js';
 import CharacterInitiatedEvent from './events/CharacterInitiatedEvent.js';
+import OtherCharacterUpdatedEvent from './events/OtherCharacterUpdatedOtherCharacterUpdatedEvent.js';
 
 export default class Player extends Entity {
     #accountId;
@@ -390,5 +391,9 @@ export default class Player extends Entity {
 
     init() {
         this.#emitter.emit(CharacterInitiatedEvent.type, new CharacterInitiatedEvent());
+    }
+
+    showOtherEntity(otherEntity) {
+        this.#emitter.emit(OtherCharacterUpdatedEvent.type, new OtherCharacterUpdatedEvent({ otherEntity }));
     }
 }
