@@ -1,4 +1,4 @@
-import Player from '../entities/Player.js';
+import Player from '../entities/player/Player.js';
 import EmpireUtil from '../util/EmpireUtil.js';
 import JobUtil from '../util/JobUtil.js';
 

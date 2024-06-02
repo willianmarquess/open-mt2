@@ -1,7 +1,10 @@
-import EntityTypeEnum from '../../enum/EntityTypeEnum.js';
-import PointsEnum from '../../enum/PointsEnum.js';
-import PlayerDTO from '../dto/PlayerDTO.js';
-import Entity from './Entity.js';
+import { EventEmitter } from 'node:events';
+import EntityTypeEnum from '../../../enum/EntityTypeEnum.js';
+import PointsEnum from '../../../enum/PointsEnum.js';
+import PlayerDTO from '../../dto/PlayerDTO.js';
+import Entity from '../Entity.js';
+import CharacterSpawnedEvent from './events/CharacterSpawnedEvent.js';
+import CharacterInitiatedEvent from './events/CharacterInitiatedEvent.js';
 
 export default class Player extends Entity {
     #accountId;
@@ -45,6 +48,8 @@ export default class Player extends Entity {
 
     #attackSpeed;
     #movementSpeed;
+
+    #emitter = new EventEmitter();
 
     constructor({
         id,
@@ -368,6 +373,22 @@ export default class Player extends Entity {
     }
 
     tick() {
-        console.log('updating...');
+        //todo
+    }
+
+    subscribe(eventName, calback) {
+        this.#emitter.on(eventName, calback);
+    }
+
+    unsubscribe(eventName) {
+        this.#emitter.off(eventName);
+    }
+
+    spawn() {
+        this.#emitter.emit(CharacterSpawnedEvent.type, new CharacterSpawnedEvent());
+    }
+
+    init() {
+        this.#emitter.emit(CharacterInitiatedEvent.type, new CharacterInitiatedEvent());
     }
 }

@@ -3,12 +3,14 @@ import ConnectionStateEnum from '../../../core/enum/ConnectionStateEnum.js';
 export default class SelectCharacterService {
     #logger;
     #playerRepository;
-    #spawnCharacterService;
+    #playerFactory;
+    #world;
 
-    constructor({ playerRepository, logger, spawnCharacterService }) {
+    constructor({ playerRepository, logger, playerFactory, world }) {
         this.#logger = logger;
         this.#playerRepository = playerRepository;
-        this.#spawnCharacterService = spawnCharacterService;
+        this.#playerFactory = playerFactory;
+        this.#world = world;
     }
 
     async execute(connection, { slot }) {
@@ -28,6 +30,8 @@ export default class SelectCharacterService {
             return;
         }
 
-        return this.#spawnCharacterService.execute(connection, playerFounded);
+        const player = this.#playerFactory.create({ ...playerFounded, virtualId: this.#world.generateVirtualId() });
+        connection.player = player;
+        player.init();
     }
 }

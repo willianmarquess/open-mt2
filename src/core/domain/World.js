@@ -1,6 +1,6 @@
 import Grid from '../util/Grid.js';
 import Area from './Area.js';
-import Player from './entities/Player.js';
+import Player from './entities/player/Player.js';
 
 const TICKS_PER_SECONDS = 10;
 const AREA_UNIT = 25600;
@@ -98,7 +98,7 @@ export default class World {
         const area = this.getArea(entity.positionX, entity.positionY);
 
         if (!area) {
-            this.#logger.info(`[WORLD] Inválid location x: ${entity.positionX}, y: ${entity.positionY}`);
+            this.#logger.info(`[WORLD] Invalid location x: ${entity.positionX}, y: ${entity.positionY}`);
             return;
         }
 
