@@ -1,0 +1,27 @@
+{
+  "ScriptType": "MotionData",
+  "MotionFileName": "D:\\Ymir Work\\pc\\assassin\\skill\\shoot.GR2",
+  "MotionDuration": 2,
+  "Accumulation": [],
+  "MotionEventData": {
+    "MotionEventDataCount": 2
+  },
+  "Event00": {
+    "MotionEventType": 1,
+    "StartingTime": 0.076923,
+    "AttachingEnable": 1,
+    "AttachingBoneName": "Bip01 Footsteps",
+    "FollowingEnable": 1,
+    "EffectFileName": "d:/ymir work/pc/assassin/effect/hwajopa_energy.mse",
+    "EffectPosition": "0.000000 0.000000 0.000000"
+  },
+  "Event01": {
+    "MotionEventType": 1,
+    "StartingTime": 0.169231,
+    "AttachingEnable": 1,
+    "AttachingBoneName": "equip_left",
+    "FollowingEnable": 1,
+    "EffectFileName": "d:/ymir work/pc/assassin/effect/hwajopa_arrowenergy.mse",
+    "EffectPosition": "0.000000 0.000000 0.000000"
+  }
+}

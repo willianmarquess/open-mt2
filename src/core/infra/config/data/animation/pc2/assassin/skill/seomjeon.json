@@ -1,0 +1,45 @@
+{
+  "ScriptType": "MotionData",
+  "MotionFileName": "d:/ymir work/pc/assassin/skill/seomjeon.gr2",
+  "MotionDuration": 1.5,
+  "Accumulation": [],
+  "MotionEventData": {
+    "MotionEventDataCount": 4
+  },
+  "Event00": {
+    "MotionEventType": 1,
+    "StartingTime": 0.042308,
+    "AttachingEnable": 0,
+    "AttachingBoneName": "Bip01 HeadNub",
+    "FollowingEnable": 0,
+    "EffectFileName": "d:/ymir work/pc/assassin/effect/seomjeom_start.mse",
+    "EffectPosition": "0.000000 0.000000 0.000000"
+  },
+  "Event01": {
+    "MotionEventType": 1,
+    "StartingTime": 0.05,
+    "AttachingEnable": 0,
+    "AttachingBoneName": "Bip01 HeadNub",
+    "FollowingEnable": 0,
+    "EffectFileName": "d:/ymir work/pc/assassin/effect/seomjeom_end.mse",
+    "EffectPosition": "0.000000 0.000000 0.000000"
+  },
+  "Event02": {
+    "MotionEventType": 1,
+    "StartingTime": 0.496154,
+    "AttachingEnable": 1,
+    "AttachingBoneName": "Bip01 Footsteps",
+    "FollowingEnable": 1,
+    "EffectFileName": "d:/ymir work/pc/assassin/effect/seomjeom_blow.mse",
+    "EffectPosition": "0.000000 0.000000 0.000000"
+  },
+  "Event03": {
+    "MotionEventType": 1,
+    "StartingTime": 0.303846,
+    "AttachingEnable": 1,
+    "AttachingBoneName": "equip_right",
+    "FollowingEnable": 1,
+    "EffectFileName": "d:/ymir work/pc/assassin/effect/seomjeom_hand.mse",
+    "EffectPosition": "0.000000 0.000000 0.000000"
+  }
+}

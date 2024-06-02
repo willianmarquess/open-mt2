@@ -1,0 +1,20 @@
+{
+  "ScriptType": "MotionData",
+  "MotionFileName": "D:\\Ymir Work\\pc\\sura\\skill\\gwigeom.GR2",
+  "MotionDuration": 2,
+  "Accumulation": [],
+  "CancelEnableSkill": 0,
+  "MotionEventData": {
+    "MotionEventDataCount": 1
+  },
+  "Event00": {
+    "MotionEventType": 1,
+    "StartingTime": 0.353846,
+    "IndependentFlag": 0,
+    "AttachingEnable": 1,
+    "AttachingBoneName": "equip_right",
+    "FollowingEnable": 1,
+    "EffectFileName": "d:/ymir work/pc/sura/effect/gwigeom.mse",
+    "EffectPosition": "0.000000 0.000000 0.000000"
+  }
+}

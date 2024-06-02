@@ -1,0 +1,38 @@
+{
+  "ScriptType": "MotionData",
+  "MotionFileName": "D:\\Ymir Work\\pc\\sura\\skill\\geomhwan.GR2",
+  "MotionDuration": 2,
+  "Accumulation": [],
+  "CancelEnableSkill": 0,
+  "MotionEventData": {
+    "MotionEventDataCount": 3
+  },
+  "Event00": {
+    "MotionEventType": 1,
+    "StartingTime": 1.379487,
+    "IndependentFlag": 0,
+    "AttachingEnable": 1,
+    "AttachingBoneName": "equip_right",
+    "FollowingEnable": 1,
+    "EffectFileName": "d:/ymir work/pc/sura/effect/geomhwagyeokhand_fallow.mse",
+    "EffectPosition": "0.000000 0.000000 0.000000"
+  },
+  "Event01": {
+    "MotionEventType": 1,
+    "StartingTime": 0.148718,
+    "IndependentFlag": 0,
+    "AttachingEnable": 1,
+    "AttachingBoneName": "equip_right",
+    "FollowingEnable": 1,
+    "EffectFileName": "d:/ymir work/pc/sura/effect/geomhwagyeokhand.mse",
+    "EffectPosition": "0.000000 0.000000 0.000000"
+  },
+  "Event02": {
+    "MotionEventType": 6,
+    "StartingTime": 1.389744,
+    "AttachingEnable": 1,
+    "AttachingBoneName": "equip_right",
+    "FlyFileName": "d:/ymir work/pc/sura/effect/geomhwan_throw.msf",
+    "FlyPosition": "0.000000 0.000000 0.000000"
+  }
+}

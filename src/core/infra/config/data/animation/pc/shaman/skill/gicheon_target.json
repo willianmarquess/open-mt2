@@ -1,0 +1,25 @@
+{
+  "ScriptType": "MotionData",
+  "MotionFileName": "D:\\Ymir Work\\pc\\shaman\\skill\\target.GR2",
+  "MotionDuration": 1.666667,
+  "MotionEventData": {
+    "MotionEventDataCount": 2
+  },
+  "Event00": {
+    "MotionEventType": 1,
+    "StartingTime": 0.081197,
+    "IndependentFlag": 0,
+    "AttachingEnable": 0,
+    "AttachingBoneName": "Bip01 HeadNub",
+    "FollowingEnable": 0,
+    "EffectFileName": "d:/ymir work/pc/shaman/effect/6gicheon_making.mse",
+    "EffectPosition": "0.000000 0.000000 0.000000"
+  },
+  "Event01": {
+    "MotionEventType": 10,
+    "StartingTime": 1.305758,
+    "EffectFileName": "d:/ymir work/pc/shaman/effect/6gicheon_blow.mse",
+    "EffectPosition": "0.000000 0.000000 110.000000",
+    "FollowingEnable": 0
+  }
+}

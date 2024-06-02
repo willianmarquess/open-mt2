@@ -1,0 +1,44 @@
+{
+  "ScriptType": "MotionData",
+  "MotionFileName": "d:/ymir work/pc/warrior/skill/noegeom.gr2",
+  "MotionDuration": 2,
+  "MotionEventData": {
+    "MotionEventDataCount": 3
+  },
+  "Event00": {
+    "MotionEventType": 1,
+    "StartingTime": 1.107692,
+    "IndependentFlag": 0,
+    "AttachingEnable": 1,
+    "AttachingBoneName": "Bip01 Footsteps",
+    "FollowingEnable": 1,
+    "EffectFileName": "d:/ymir work/pc/warrior/effect/noegeomdorae.mse",
+    "EffectPosition": "0.000000 -80.000000 0.000000"
+  },
+  "Event01": {
+    "MotionEventType": 1,
+    "StartingTime": 0.6,
+    "IndependentFlag": 0,
+    "AttachingEnable": 1,
+    "AttachingBoneName": "equip_right_hand",
+    "FollowingEnable": 1,
+    "EffectFileName": "d:/ymir work/pc/warrior/effect/elect.mse",
+    "EffectPosition": "0.000000 0.000000 0.000000"
+  },
+  "Event02": {
+    "MotionEventType": 4,
+    "StartingTime": 1.167883,
+    "DuringTime": 0.2,
+    "AttackType": 3,
+    "HittingType": 1,
+    "StiffenTime": 0,
+    "InvisibleTime": 0.3,
+    "ExternalForce": 0,
+    "CollisionType": 0,
+    "SphereDataCount": 1
+  },
+  "SphereData00": {
+    "Radius": 400,
+    "Position": "0.000000 0.000000 0.000000"
+  }
+}

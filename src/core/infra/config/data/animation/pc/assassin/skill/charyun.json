@@ -1,0 +1,105 @@
+{
+  "ScriptType": "MotionData",
+  "MotionFileName": "D:\\Ymir Work\\pc\\assassin\\skill\\charyun.GR2",
+  "MotionDuration": 1.4,
+  "Accumulation": [],
+  "MotionEventData": {
+    "MotionEventDataCount": 8
+  },
+  "Event00": {
+    "MotionEventType": 1,
+    "StartingTime": 0.369744,
+    "AttachingEnable": 0,
+    "AttachingBoneName": "Bip01 HeadNub",
+    "FollowingEnable": 0,
+    "EffectFileName": "d:/ymir work/pc/assassin/effect/charyunsal.mse",
+    "EffectPosition": "0.000000 0.000000 0.000000"
+  },
+  "Event01": {
+    "MotionEventType": 1,
+    "StartingTime": 0.315897,
+    "AttachingEnable": 1,
+    "AttachingBoneName": "Bip01 L Foot",
+    "FollowingEnable": 1,
+    "EffectFileName": "d:/ymir work/pc/assassin/effect/charyunsal_foot.mse",
+    "EffectPosition": "0.000000 0.000000 0.000000"
+  },
+  "Event02": {
+    "MotionEventType": 1,
+    "StartingTime": 0.13641,
+    "AttachingEnable": 1,
+    "AttachingBoneName": "Bip01 R Foot",
+    "FollowingEnable": 1,
+    "EffectFileName": "d:/ymir work/pc/assassin/effect/charyunsal_foot.mse",
+    "EffectPosition": "0.000000 0.000000 0.000000"
+  },
+  "Event03": {
+    "MotionEventType": 1,
+    "StartingTime": 0.764615,
+    "AttachingEnable": 1,
+    "AttachingBoneName": "Bip01 R Foot",
+    "FollowingEnable": 1,
+    "EffectFileName": "d:/ymir work/pc/assassin/effect/charyunsal_foot.mse",
+    "EffectPosition": "0.000000 0.000000 0.000000"
+  },
+  "Event04": {
+    "MotionEventType": 1,
+    "StartingTime": 0.958462,
+    "AttachingEnable": 1,
+    "AttachingBoneName": "Bip01 L Foot",
+    "FollowingEnable": 1,
+    "EffectFileName": "d:/ymir work/pc/assassin/effect/charyunsal_foot.mse",
+    "EffectPosition": "0.000000 0.000000 0.000000"
+  },
+  "Event05": {
+    "MotionEventType": 4,
+    "StartingTime": 0.3,
+    "DuringTime": 0.2,
+    "AttackingType": 3,
+    "HittingType": 1,
+    "StiffenTime": 0,
+    "InvisibleTime": 0.3,
+    "ExternalForce": 0,
+    "AttackingStartTime": 0,
+    "AttackingEndTime": 10,
+    "AttackingBone": "",
+    "WeaponLength": 0,
+    "HitPosition": []
+  },
+  "CollisionType": 0,
+  "SphereDataCount": 1,
+  "SphereData00": {
+    "Radius": 70,
+    "Position": "0.000000 -250.000000 50.000000"
+  },
+  "Event06": {
+    "MotionEventType": 4,
+    "StartingTime": 0.6,
+    "DuringTime": 0.2,
+    "AttackingType": 3,
+    "HittingType": 1,
+    "StiffenTime": 0,
+    "InvisibleTime": 0.3,
+    "ExternalForce": 0,
+    "AttackingStartTime": 0,
+    "AttackingEndTime": 10,
+    "AttackingBone": "",
+    "WeaponLength": 0,
+    "HitPosition": []
+  },
+  "Event07": {
+    "MotionEventType": 4,
+    "StartingTime": 0.9,
+    "DuringTime": 0.2,
+    "AttackingType": 3,
+    "HittingType": 1,
+    "StiffenTime": 0,
+    "InvisibleTime": 0.3,
+    "ExternalForce": 0,
+    "AttackingStartTime": 0,
+    "AttackingEndTime": 10,
+    "AttackingBone": "",
+    "WeaponLength": 0,
+    "HitPosition": []
+  }
+}

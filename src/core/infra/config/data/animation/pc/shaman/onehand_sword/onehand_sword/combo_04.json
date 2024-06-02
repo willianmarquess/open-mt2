@@ -1,0 +1,55 @@
+{
+  "ScriptType": "MotionData",
+  "MotionFileName": "d:/ymir work/pc/warrior/onehand_sword/combo_04.gr2",
+  "MotionDuration": 1.266667,
+  "Accumulation": [],
+  "CancelEnableSkill": 0,
+  "ComboInputData": {
+    "PreInputTime": 1.057692,
+    "DirectInputTime": 1.057692,
+    "InputLimitTime": 0.730769,
+    "LinkTime": 0
+  },
+  "AttackingData": {
+    "AttackType": 0,
+    "HittingType": 2,
+    "StiffenTime": 0,
+    "InvisibleTime": 0.1,
+    "ExternalForce": 0,
+    "MotionType": 2,
+    "HitDataCount": 1
+  },
+  "HitData00": {
+    "AttackingStartTime": 0,
+    "AttackingEndTime": 0,
+    "AttackingBone": "",
+    "WeaponLength": 0,
+    "HitPosition": []
+  },
+  "MotionEventData": {
+    "MotionEventDataCount": 2
+  },
+  "Event00": {
+    "MotionEventType": 2,
+    "StartingTime": 0.630086,
+    "DuringTime": 0.2,
+    "Power": 300,
+    "AffectingRange": 200
+  },
+  "Event01": {
+    "MotionEventType": 4,
+    "StartingTime": 0.659316,
+    "DuringTime": 0.2,
+    "AttackType": 0,
+    "HittingType": 1,
+    "StiffenTime": 0,
+    "InvisibleTime": 0.3,
+    "ExternalForce": 17,
+    "CollisionType": 0,
+    "SphereDataCount": 1
+  },
+  "SphereData00": {
+    "Radius": 100,
+    "Position": "0.000000 -120.000000 0.000000"
+  }
+}

@@ -1,0 +1,44 @@
+{
+  "ScriptType": "MotionData",
+  "MotionFileName": "D:\\Ymir Work\\pc\\shaman\\skill\\target.GR2",
+  "MotionDuration": 1.666667,
+  "LoopData": {
+    "MotionLoopCount": 3,
+    "LoopCancelEnable": 0,
+    "LoopStartTime": 0.648824,
+    "LoopEndTime": 0.973236
+  },
+  "MotionEventData": {
+    "MotionEventDataCount": 3
+  },
+  "Event00": {
+    "MotionEventType": 1,
+    "StartingTime": 0.231144,
+    "IndependentFlag": 0,
+    "AttachingEnable": 0,
+    "AttachingBoneName": "Bip01 Footsteps",
+    "FollowingEnable": 0,
+    "EffectFileName": "d:/ymir work/pc/shaman/effect/12sohwanbu_me.mse",
+    "EffectPosition": "0.000000 0.000000 0.000000"
+  },
+  "Event01": {
+    "MotionEventType": 1,
+    "StartingTime": 0.381184,
+    "IndependentFlag": 0,
+    "AttachingEnable": 0,
+    "AttachingBoneName": "Bip01 HeadNub",
+    "FollowingEnable": 0,
+    "EffectFileName": "d:/ymir work/pc/shaman/effect/12sohwanbu_making.mse",
+    "EffectPosition": "0.000000 0.000000 0.000000"
+  },
+  "Event02": {
+    "MotionEventType": 1,
+    "StartingTime": 0.843471,
+    "IndependentFlag": 0,
+    "AttachingEnable": 0,
+    "AttachingBoneName": "Bip01 Footsteps",
+    "FollowingEnable": 0,
+    "EffectFileName": "d:/ymir work/pc/shaman/effect/12sohwanbu_making.mse",
+    "EffectPosition": "0.000000 0.000000 0.000000"
+  }
+}

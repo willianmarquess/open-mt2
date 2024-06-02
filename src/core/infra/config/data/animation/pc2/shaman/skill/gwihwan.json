@@ -1,0 +1,18 @@
+{
+  "ScriptType": "MotionData",
+  "MotionFileName": "D:\\Ymir Work\\pc\\shaman\\skill\\me.GR2",
+  "MotionDuration": 1.666667,
+  "MotionEventData": {
+    "MotionEventDataCount": 1
+  },
+  "Event00": {
+    "MotionEventType": 1,
+    "StartingTime": 0.055556,
+    "IndependentFlag": 0,
+    "AttachingEnable": 0,
+    "AttachingBoneName": "Bip01 Footsteps",
+    "FollowingEnable": 0,
+    "EffectFileName": "d:/ymir work/pc/shaman/effect/4gwihwan.mse",
+    "EffectPosition": "0.000000 0.000000 0.000000"
+  }
+}

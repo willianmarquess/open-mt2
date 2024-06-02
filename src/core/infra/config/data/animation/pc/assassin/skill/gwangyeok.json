@@ -1,0 +1,43 @@
+{
+  "ScriptType": "MotionData",
+  "MotionFileName": "D:\\Ymir Work\\pc\\assassin\\skill\\gwangyeok.GR2",
+  "MotionDuration": 2,
+  "Accumulation": [],
+  "LoopData": {
+    "MotionLoopCount": 0,
+    "LoopCancelEnable": 0,
+    "LoopStartTime": 1.441026,
+    "LoopEndTime": 1.461538
+  },
+  "MotionEventData": {
+    "MotionEventDataCount": 3
+  },
+  "Event00": {
+    "MotionEventType": 1,
+    "StartingTime": 0.179487,
+    "IndependentFlag": 0,
+    "AttachingEnable": 0,
+    "AttachingBoneName": "Bip01 HeadNub",
+    "FollowingEnable": 0,
+    "EffectFileName": "d:/ymir work/pc/assassin/effect/gwangyeoksul_energy.mse",
+    "EffectPosition": "0.000000 0.000000 0.000000"
+  },
+  "Event01": {
+    "MotionEventType": 1,
+    "StartingTime": 0.379487,
+    "IndependentFlag": 0,
+    "AttachingEnable": 1,
+    "AttachingBoneName": "equip_left",
+    "FollowingEnable": 1,
+    "EffectFileName": "d:/ymir work/pc/assassin/effect/gwangyeoksul_arrowenergy.mse",
+    "EffectPosition": "0.000000 0.000000 0.000000"
+  },
+  "Event02": {
+    "MotionEventType": 6,
+    "StartingTime": 1.451282,
+    "AttachingEnable": 1,
+    "AttachingBoneName": "equip_right",
+    "FlyFileName": "d:/ymir work/pc/assassin/effect/gwangyeok.msf",
+    "FlyPosition": "0.000000 -100.000000 0.000000"
+  }
+}

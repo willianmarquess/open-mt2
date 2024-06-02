@@ -1,0 +1,27 @@
+{
+  "ScriptType": "MotionData",
+  "MotionFileName": "d:/ymir work/pc/shaman/skill/shoot.gr2",
+  "MotionDuration": 1.5,
+  "CancelEnableSkill": 0,
+  "MotionEventData": {
+    "MotionEventDataCount": 2
+  },
+  "Event00": {
+    "MotionEventType": 1,
+    "StartingTime": 0.657692,
+    "IndependentFlag": 0,
+    "AttachingEnable": 1,
+    "AttachingBoneName": "Bip01 R Finger2",
+    "FollowingEnable": 1,
+    "EffectFileName": "d:/ymir work/pc/shaman/effect/7budongbakbu_making.mse",
+    "EffectPosition": "0.000000 0.000000 0.000000"
+  },
+  "Event01": {
+    "MotionEventType": 6,
+    "StartingTime": 1.042308,
+    "AttachingEnable": 1,
+    "AttachingBoneName": "Bip01 R Finger2",
+    "FlyFileName": "d:/ymir work/pc/shaman/effect/budongbakbu.msf",
+    "FlyPosition": "0.000000 0.000000 0.000000"
+  }
+}
