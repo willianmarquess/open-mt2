@@ -36,6 +36,8 @@ export default class Player extends Entity {
     #availableStatusPoints;
     #slot;
 
+    #appearance;
+
     #entityType = EntityTypeEnum.PLAYER;
     #virtualId;
 
@@ -106,6 +108,7 @@ export default class Player extends Entity {
             baseMovementSpeed = 0,
             baseHealth = 0,
             baseMana = 0,
+            appearance = 0,
         },
         { animationManager },
     ) {
@@ -137,6 +140,7 @@ export default class Player extends Entity {
         this.#givenStatusPoints = givenStatusPoints;
         this.#availableStatusPoints = availableStatusPoints;
         this.#slot = slot;
+        this.#appearance = appearance;
 
         //in game values
         this.#virtualId = virtualId;
@@ -191,6 +195,10 @@ export default class Player extends Entity {
 
     getPoints() {
         return this.#points;
+    }
+
+    get appearance() {
+        return this.#appearance;
     }
 
     get rotation() {
@@ -333,6 +341,7 @@ export default class Player extends Entity {
             baseMovementSpeed,
             baseHealth,
             baseMana,
+            appearance,
         },
         { animationManager },
     ) {
@@ -373,6 +382,7 @@ export default class Player extends Entity {
                 baseMovementSpeed,
                 baseHealth,
                 baseMana,
+                appearance,
             },
             { animationManager },
         );

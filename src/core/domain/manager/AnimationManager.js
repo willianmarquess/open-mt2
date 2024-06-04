@@ -51,7 +51,7 @@ export default class AnimationManager {
         const absoluteFilePath = path.join(currentDir, filePath);
         try {
             const fileContent = await fs.readFile(absoluteFilePath, 'utf8');
-            const animationData = JSON.parse(fileContent);
+            const animationData = JSON.parse(fileContent || '');
             const { MotionDuration: duration, Accumulation = [] } = animationData;
             const [accX = 0, accY = 0, accZ = 0] = Accumulation;
 
@@ -62,7 +62,7 @@ export default class AnimationManager {
                 accZ,
             });
         } catch (error) {
-            console.error(`Error loading animation data from ${filePath}:`, error);
+            this.#logger.error(`Error loading animation data from ${filePath}:${error.message}`);
             return {};
         }
     }

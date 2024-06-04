@@ -1,6 +1,6 @@
 import { expect } from 'chai';
 import sinon from 'sinon';
-import { createClient } from 'redis';
+import redis from 'redis';
 import CacheProvider from '../../../../../src/core/infra/cache/CacheProvider.js';
 
 describe('CacheProvider', () => {
@@ -29,7 +29,7 @@ describe('CacheProvider', () => {
             expire: sinon.stub().resolves(),
             exists: sinon.stub().resolves(),
         };
-        sinon.stub(createClient).returns(redisClient);
+        sinon.stub(redis, 'createClient').returns(redisClient);
         cacheProvider = new CacheProvider({ logger, config });
     });
 

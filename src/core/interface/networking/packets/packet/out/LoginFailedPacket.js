@@ -14,7 +14,7 @@ export default class LoginFailedPacket extends PacketOut {
     }
 
     pack() {
-        this.bufferWriter.writeString(this.#status);
+        this.bufferWriter.writeString(this.#status, this.#status.length);
         return this.bufferWriter.buffer;
     }
 }

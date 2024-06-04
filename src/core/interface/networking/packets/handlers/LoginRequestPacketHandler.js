@@ -17,7 +17,7 @@ export default class LoginRequestPacketHandler {
     async execute(connection, packet) {
         const { username, password } = packet;
 
-        const result = await this.#loginService.execute(connection, {
+        const result = await this.#loginService.execute({
             username,
             password,
         });

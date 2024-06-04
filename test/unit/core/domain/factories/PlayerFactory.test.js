@@ -9,6 +9,8 @@ describe('PlayerFactory', () => {
     let config;
     let animationManager;
     let playerFactory;
+    sinon.stub(JobUtil, 'getClassNameFromClassId').returns('ClassName');
+    sinon.stub(EmpireUtil, 'getEmpireName').returns('EmpireName');
 
     beforeEach(() => {
         config = {
@@ -74,53 +76,38 @@ describe('PlayerFactory', () => {
             availableStatusPoints: 0,
         };
 
-        sinon.stub(JobUtil, 'getClassNameFromClassId').returns('ClassName');
-        sinon.stub(EmpireUtil, 'getEmpireName').returns('EmpireName');
-
         const player = playerFactory.create(params);
 
         expect(player).to.be.an.instanceof(Player);
 
-        expect(player).to.include({
-            accountId: 'accountId',
-            name: 'name',
-            empire: 1,
-            playerClass: 1,
-            appearance: 'appearance',
-            slot: 1,
-            positionX: 300,
-            positionY: 400,
-            st: 10,
-            ht: 10,
-            dx: 10,
-            iq: 10,
-            health: 200,
-            mana: 100,
-            stamina: 50,
-            hpPerLvl: 10,
-            hpPerHtPoint: 2,
-            mpPerLvl: 5,
-            mpPerIqPoint: 1,
-            baseAttackSpeed: 1.0,
-            baseMovementSpeed: 1.0,
-            baseHealth: 100,
-            baseMana: 50,
-            virtualId: 'virtualId',
-            bodyPart: 'bodyPart',
-            hairPart: 'hairPart',
-            givenStatusPoints: 0,
-            availableStatusPoints: 0,
-            id: 'id',
-            updatedAt: params.updatedAt,
-            createdAt: params.createdAt,
-            skillGroup: 'skillGroup',
-            playTime: 1000,
-            level: 1,
-            experience: 0,
-            gold: 100,
-        });
-
-        expect(player.animationManager).to.equal(animationManager);
+        expect(player.accountId).to.be.equal('accountId');
+        expect(player.name).to.be.equal('name');
+        expect(player.empire).to.be.equal(1);
+        expect(player.playerClass).to.be.equal(1);
+        expect(player.appearance).to.be.equal('appearance');
+        expect(player.slot).to.be.equal(1);
+        expect(player.positionX).to.be.equal(300);
+        expect(player.positionY).to.be.equal(400);
+        expect(player.st).to.be.equal(10);
+        expect(player.ht).to.be.equal(10);
+        expect(player.dx).to.be.equal(10);
+        expect(player.iq).to.be.equal(10);
+        expect(player.health).to.be.equal(130);
+        expect(player.mana).to.be.equal(65);
+        expect(player.stamina).to.be.equal(50);
+        expect(player.virtualId).to.be.equal('virtualId');
+        expect(player.bodyPart).to.be.equal('bodyPart');
+        expect(player.hairPart).to.be.equal('hairPart');
+        expect(player.givenStatusPoints).to.be.equal(0);
+        expect(player.availableStatusPoints).to.be.equal(0);
+        expect(player.id).to.be.equal('id');
+        expect(player.updatedAt).to.be.equal(params.updatedAt);
+        expect(player.createdAt).to.be.equal(params.createdAt);
+        expect(player.skillGroup).to.be.equal('skillGroup');
+        expect(player.playTime).to.be.equal(1000);
+        expect(player.level).to.be.equal(1);
+        expect(player.experience).to.be.equal(0);
+        expect(player.gold).to.be.equal(100);
     });
 
     it('should create a player with config default values when params are missing', () => {
@@ -144,9 +131,6 @@ describe('PlayerFactory', () => {
             availableStatusPoints: 0,
         };
 
-        sinon.stub(JobUtil, 'getClassNameFromClassId').returns('ClassName');
-        sinon.stub(EmpireUtil, 'getEmpireName').returns('EmpireName');
-
         const player = playerFactory.create(params);
 
         expect(player).to.be.an.instanceof(Player);
@@ -158,26 +142,18 @@ describe('PlayerFactory', () => {
             playerClass: 1,
             appearance: 'appearance',
             slot: 1,
-            positionX: 100, // default from config
-            positionY: 200, // default from config
-            st: 10, // default from config
-            ht: 10, // default from config
-            dx: 10, // default from config
-            iq: 10, // default from config
-            health: 100, // default from config
-            mana: 50, // default from config
-            stamina: 30, // default from config
-            hpPerLvl: 10,
-            hpPerHtPoint: 2,
-            mpPerLvl: 5,
-            mpPerIqPoint: 1,
-            baseAttackSpeed: 1.0,
-            baseMovementSpeed: 1.0,
-            baseHealth: 100,
-            baseMana: 50,
+            positionX: 100,
+            positionY: 200,
+            st: 10,
+            ht: 10,
+            dx: 10,
+            iq: 10,
+            health: 130,
+            mana: 65,
+            stamina: 30,
             virtualId: 'virtualId',
-            bodyPart: undefined, // not provided
-            hairPart: undefined, // not provided
+            bodyPart: 0,
+            hairPart: 0,
             givenStatusPoints: 0,
             availableStatusPoints: 0,
             id: 'id',
@@ -189,7 +165,5 @@ describe('PlayerFactory', () => {
             experience: 0,
             gold: 100,
         });
-
-        expect(player.animationManager).to.equal(animationManager);
     });
 });

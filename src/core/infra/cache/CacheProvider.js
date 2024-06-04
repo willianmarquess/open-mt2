@@ -1,11 +1,11 @@
-import { createClient } from 'redis';
+import redis from 'redis';
 
 export default class CacheProvider {
     #client;
     #logger;
 
     constructor({ logger, config }) {
-        this.#client = createClient({
+        this.#client = redis.createClient({
             socket: {
                 host: config.CACHE_HOST,
                 port: config.CACHE_PORT,

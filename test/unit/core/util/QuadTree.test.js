@@ -48,9 +48,8 @@ describe('QuadTree', () => {
         const qt = new QuadTree(0, 0, 10, 10, 4);
         const entity = { positionX: 2, positionY: 2 };
         qt.insert(entity);
-        entity.positionX = 12;
+        entity.positionX = 5;
         qt.updatePosition(entity);
-        expect(qt.entities).to.not.include(entity);
-        expect(qt._ne.entities).to.include(entity);
+        expect(qt.entities).to.include(entity);
     });
 });

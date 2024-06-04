@@ -14,7 +14,7 @@ describe('AnimationManager', () => {
     let readFileStub;
 
     beforeEach(() => {
-        logger = { info: sinon.stub() };
+        logger = { info: sinon.stub(), error: sinon.stub() };
         animationManager = new AnimationManager({ logger });
         readFileStub = sinon.stub(fs, 'readFile');
     });
