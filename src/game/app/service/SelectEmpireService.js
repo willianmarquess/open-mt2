@@ -1,3 +1,5 @@
+import Result from '../../../core/app/Result.js';
+import ErrorTypesEnum from '../../../core/enum/ErrorTypesEnum.js';
 import CacheKeyGenerator from '../../../core/util/CacheKeyGenerator.js';
 
 export default class SelectEmpireService {
@@ -9,20 +11,12 @@ export default class SelectEmpireService {
         this.#cacheProvider = cacheProvider;
     }
 
-    async execute(connection, { empireId }) {
-        const { accountId } = connection;
-        if (!accountId) {
-            this.#logger.info(`[SelectEmpireService] The connection does not have an accountId, this cannot happen`);
-            connection.close();
-            return;
-        }
-
+    async execute({ empireId, accountId }) {
         const isValidEmpire = empireId > 0 && empireId < 4;
 
         if (!isValidEmpire) {
             this.#logger.info(`[SelectEmpireService] Invalid empire ${empireId}`);
-            connection.close();
-            return;
+            return Result.error(ErrorTypesEnum.INVALID_EMPIRE);
         }
 
         const key = CacheKeyGenerator.createEmpireKey(accountId);

@@ -1,10 +1,10 @@
-import MovementTypeEnum from '../../../../enum/MovementTypeEnum.js';
-
 export default class CharacterMovePacketHandler {
     #logger;
+    #characterMoveService;
 
-    constructor({ logger }) {
+    constructor({ logger, characterMoveService }) {
         this.#logger = logger;
+        this.#characterMoveService = characterMoveService;
     }
 
     async execute(connection, packet) {
@@ -19,17 +19,6 @@ export default class CharacterMovePacketHandler {
         }
 
         const { movementType, positionX, positionY, arg, rotation, time } = packet;
-
-        switch (movementType) {
-            case MovementTypeEnum.MOVE:
-                player.goto(positionX, positionY, { arg, rotation, time, movementType, positionX, positionY });
-                break;
-            case MovementTypeEnum.WAIT:
-                player.wait(positionX, positionY, { arg, rotation, time, movementType, positionX, positionY });
-                break;
-            default:
-                this.#logger.info(`[CharacterMovePacketHandler] Movement type: ${movementType} not implemented`);
-                break;
-        }
+        await this.#characterMoveService.execute({ player, movementType, positionX, positionY, arg, rotation, time });
     }
 }

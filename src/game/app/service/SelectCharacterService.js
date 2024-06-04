@@ -1,4 +1,5 @@
-import ConnectionStateEnum from '../../../core/enum/ConnectionStateEnum.js';
+import Result from '../../../core/app/Result.js';
+import ErrorTypesEnum from '../../../core/enum/ErrorTypesEnum.js';
 
 export default class SelectCharacterService {
     #logger;
@@ -13,25 +14,16 @@ export default class SelectCharacterService {
         this.#world = world;
     }
 
-    async execute(connection, { slot }) {
-        const { accountId } = connection;
-        if (!accountId) {
-            this.#logger.info(`[SelectCharacterService] The connection does not have an accountId, this cannot happen`);
-            connection.close();
-            return;
-        }
-
-        connection.state = ConnectionStateEnum.LOADING;
+    async execute({ slot, accountId }) {
         const playerFounded = await this.#playerRepository.getByAccountIdAndSlot(accountId, slot);
 
         if (!playerFounded) {
             this.#logger.info(`[SelectCharacterService] Player not found, slot ${slot}.`);
-            connection.close();
-            return;
+            return Result.error(ErrorTypesEnum.PLAYER_NOT_FOUND);
         }
 
         const player = this.#playerFactory.create({ ...playerFounded, virtualId: this.#world.generateVirtualId() });
-        connection.player = player;
-        player.init();
+
+        return Result.ok(player);
     }
 }

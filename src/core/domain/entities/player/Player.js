@@ -4,7 +4,6 @@ import PointsEnum from '../../../enum/PointsEnum.js';
 import PlayerDTO from '../../dto/PlayerDTO.js';
 import Entity from '../Entity.js';
 import CharacterSpawnedEvent from './events/CharacterSpawnedEvent.js';
-import CharacterInitiatedEvent from './events/CharacterInitiatedEvent.js';
 import OtherCharacterUpdatedEvent from './events/OtherCharacterUpdatedEvent.js';
 import AnimationTypeEnum from '../../../enum/AnimationTypeEnum.js';
 import AnimationSubTypeEnum from '../../../enum/AnimationSubTypeEnum.js';
@@ -428,8 +427,8 @@ export default class Player extends Entity {
         }
     }
 
-    subscribe(eventName, calback) {
-        this.#emitter.on(eventName, calback);
+    subscribe(eventName, callback) {
+        this.#emitter.on(eventName, callback);
     }
 
     unsubscribe(eventName) {
@@ -438,10 +437,6 @@ export default class Player extends Entity {
 
     spawn() {
         this.#emitter.emit(CharacterSpawnedEvent.type, new CharacterSpawnedEvent());
-    }
-
-    init() {
-        this.#emitter.emit(CharacterInitiatedEvent.type, new CharacterInitiatedEvent());
     }
 
     showOtherEntity(otherEntity) {

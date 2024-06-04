@@ -1,9 +1,9 @@
 import { randomBytes } from 'crypto';
 import CacheKeyGenerator from '../../../core/util/CacheKeyGenerator.js';
-import LoginSuccessPacket from '../../../core/interface/networking/packets/packet/out/LoginSuccess.js';
+import Result from '../../../core/app/Result.js';
+import ErrorTypesEnum from '../../../core/enum/ErrorTypesEnum.js';
 
 const TOKEN_EXPIRATION_SECS = 60;
-const LOGIN_SUCCESS_RESULT = 1;
 
 export default class LoginService {
     #accountRepository;
@@ -18,21 +18,19 @@ export default class LoginService {
         this.#encryptionProvider = encryptionProvider;
     }
 
-    async execute(connection, { username, password }) {
+    async execute({ username, password }) {
         const account = await this.#accountRepository.findByUsername(username);
 
         if (!account) {
             this.#logger.info(`[LoginService] Username not found for username ${username}`);
-            connection.close();
-            return;
+            return Result.error(ErrorTypesEnum.INVALID_USERNAME);
         }
 
         const isPasswordValid = await this.#encryptionProvider.compare(password, account.password);
 
         if (!isPasswordValid) {
             this.#logger.info(`[LoginService] Invalid password for username ${username}`);
-            connection.close();
-            return;
+            return Result.error(ErrorTypesEnum.INVALID_PASSWORD);
         }
 
         const key = randomBytes(4).readUInt32LE();
@@ -46,11 +44,6 @@ export default class LoginService {
             TOKEN_EXPIRATION_SECS,
         );
 
-        connection.send(
-            new LoginSuccessPacket({
-                key,
-                result: LOGIN_SUCCESS_RESULT,
-            }),
-        );
+        return Result.ok(key);
     }
 }
