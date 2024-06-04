@@ -2,5 +2,9 @@
   "ScriptType": "MotionData",
   "MotionFileName": "d:/ymir work/pc/assassin/general/run.gr2",
   "MotionDuration": 0.6,
-  "Accumulation": []
+  "Accumulation": [
+    0,
+    -270,
+    0
+  ]
 }

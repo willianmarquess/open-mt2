@@ -2,10 +2,12 @@ import Application from '../../core/app/Application.js';
 
 export default class GameApplication extends Application {
     #world;
+    #animationManager;
 
     constructor(container) {
         super(container);
         this.#world = container.world;
+        this.#animationManager = container.animationManager;
     }
 
     async start() {
@@ -13,6 +15,7 @@ export default class GameApplication extends Application {
         await this.databaseManager.init();
         await this.cacheProvider.init();
         await this.server.setup().start();
+        await this.#animationManager.load();
         await this.#world.init();
         this.logger.info('[APP] Game application started 🎮🚀');
     }

@@ -2,5 +2,9 @@
   "ScriptType": "MotionData",
   "MotionFileName": "D:\\YMIR WORK\\pc\\sura\\horse\\run.GR2",
   "MotionDuration": 0.466667,
-  "Accumulation": []
+  "Accumulation": [
+    0,
+    -554.04,
+    0
+  ]
 }

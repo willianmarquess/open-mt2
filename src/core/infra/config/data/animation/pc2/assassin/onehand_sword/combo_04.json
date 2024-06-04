@@ -2,7 +2,11 @@
   "ScriptType": "MotionData",
   "MotionFileName": "d:/ymir work/pc/assassin/onehand_sword/combo_04.gr2",
   "MotionDuration": 1.266667,
-  "Accumulation": [],
+  "Accumulation": [
+    0,
+    -117.3,
+    0
+  ],
   "ComboInputData": {
     "PreInputTime": 1.266667,
     "DirectInputTime": 1.266667,

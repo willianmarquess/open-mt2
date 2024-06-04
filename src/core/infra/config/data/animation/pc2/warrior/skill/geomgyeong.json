@@ -2,7 +2,11 @@
   "ScriptType": "MotionData",
   "MotionFileName": "d:/ymir work/pc/warrior/skill/geomgyeong.gr2",
   "MotionDuration": 2,
-  "Accumulation": [],
+  "Accumulation": [
+    0,
+    0,
+    0
+  ],
   "MotionEventData": {
     "MotionEventDataCount": 3
   },

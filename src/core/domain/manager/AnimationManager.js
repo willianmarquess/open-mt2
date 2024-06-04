@@ -21,6 +21,10 @@ export default class AnimationManager {
         return this.#animations;
     }
 
+    getAnimation(job, type, sub) {
+        return this.#animations[job][type][sub];
+    }
+
     async load() {
         for (const job of Object.values(JobEnum)) {
             for (const type of Object.values(AnimationTypeEnum)) {
@@ -48,11 +52,14 @@ export default class AnimationManager {
         try {
             const fileContent = await fs.readFile(absoluteFilePath, 'utf8');
             const animationData = JSON.parse(fileContent);
+            const { MotionDuration: duration, Accumulation = [] } = animationData;
+            const [accX = 0, accY = 0, accZ = 0] = Accumulation;
+
             return new Animation({
-                duration: animationData['MotionDuration'],
-                accX: animationData['Accumulation'][0] || 0,
-                accY: animationData['Accumulation'][1] || 0,
-                accZ: animationData['Accumulation'][2] || 0,
+                duration,
+                accX,
+                accY,
+                accZ,
             });
         } catch (error) {
             console.error(`Error loading animation data from ${filePath}:`, error);

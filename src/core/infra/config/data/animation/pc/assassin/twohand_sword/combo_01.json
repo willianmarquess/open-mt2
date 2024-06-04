@@ -2,7 +2,11 @@
   "ScriptType": "MotionData",
   "MotionFileName": "D:\\Ymir Work\\pc\\assassin\\dualhand_sword\\combo_01.GR2",
   "MotionDuration": 1,
-  "Accumulation": [],
+  "Accumulation": [
+    0,
+    -88.08,
+    0
+  ],
   "CancelEnableSkill": 0,
   "ComboInputData": {
     "PreInputTime": 0.287179,

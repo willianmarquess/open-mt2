@@ -2,7 +2,11 @@
   "ScriptType": "MotionData",
   "MotionFileName": "d:/ymir work/pc/shaman/fan/combo_01.gr2",
   "MotionDuration": 1.333333,
-  "Accumulation": [],
+  "Accumulation": [
+    0,
+    -90.55,
+    0
+  ],
   "CancelEnableSkill": 0,
   "ComboInputData": {
     "PreInputTime": 0.393162,

@@ -2,7 +2,11 @@
   "ScriptType": "MotionData",
   "MotionFileName": "D:\\YMIR WORK\\pc\\warrior\\skill\\daejin.GR2",
   "MotionDuration": 2,
-  "Accumulation": [],
+  "Accumulation": [
+    0,
+    0,
+    0
+  ],
   "AttackingData": {
     "AttackingType": 2,
     "HittingType": 1,

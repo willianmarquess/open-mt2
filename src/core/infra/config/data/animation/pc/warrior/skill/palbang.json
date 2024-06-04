@@ -2,7 +2,11 @@
   "ScriptType": "MotionData",
   "MotionFileName": "D:\\Ymir Work\\pc\\warrior\\skill\\palbang.GR2",
   "MotionDuration": 2,
-  "Accumulation": [],
+  "Accumulation": [
+    0,
+    -245.93,
+    0
+  ],
   "AttackingData": {
     "AttackingType": 1,
     "HittingType": 2,

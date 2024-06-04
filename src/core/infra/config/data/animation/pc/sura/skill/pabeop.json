@@ -2,7 +2,11 @@
   "ScriptType": "MotionData",
   "MotionFileName": "D:\\Ymir Work\\pc\\sura\\skill\\pabeop.GR2",
   "MotionDuration": 2,
-  "Accumulation": [],
+  "Accumulation": [
+    0,
+    0,
+    0
+  ],
   "CancelEnableSkill": 0,
   "MotionEventData": {
     "MotionEventDataCount": 2

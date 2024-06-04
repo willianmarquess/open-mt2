@@ -2,7 +2,11 @@
   "ScriptType": "MotionData",
   "MotionFileName": "D:\\Ymir Work\\pc\\assassin\\skill\\amseup.GR2",
   "MotionDuration": 1.166667,
-  "Accumulation": [],
+  "Accumulation": [
+    0,
+    0,
+    0
+  ],
   "AttackingData": {
     "AttackType": 1,
     "HittingType": 2,

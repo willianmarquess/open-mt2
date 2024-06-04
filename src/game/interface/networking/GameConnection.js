@@ -1,16 +1,19 @@
 import CharacterInitiatedEvent from '../../../core/domain/entities/player/events/CharacterInitiatedEvent.js';
 import CharacterSpawnedEvent from '../../../core/domain/entities/player/events/CharacterSpawnedEvent.js';
-import OtherCharacterUpdatedEvent from '../../../core/domain/entities/player/events/OtherCharacterUpdatedOtherCharacterUpdatedEvent.js';
+import OtherCharacterMovedEvent from '../../../core/domain/entities/player/events/OtherCharacterMovedEvent.js';
+import OtherCharacterUpdatedEvent from '../../../core/domain/entities/player/events/OtherCharacterUpdatedEvent.js';
 import ConnectionStateEnum from '../../../core/enum/ConnectionStateEnum.js';
+import MovementTypeEnum from '../../../core/enum/MovementTypeEnum.js';
 import Connection from '../../../core/interface/networking/Connection.js';
 import CharacterDetailsPacket from '../../../core/interface/networking/packets/packet/out/CharacterDetailsPacket.js';
 import CharacterInfoPacket from '../../../core/interface/networking/packets/packet/out/CharacterInfoPacket.js';
+import CharacterMoveOutPacket from '../../../core/interface/networking/packets/packet/out/CharacterMoveOutPacket.js';
 import CharacterPointsPacket from '../../../core/interface/networking/packets/packet/out/CharacterPointsPacket.js';
 import CharacterSpawnPacket from '../../../core/interface/networking/packets/packet/out/CharacterSpawnPacket.js';
 import CharacterUpdatePacket from '../../../core/interface/networking/packets/packet/out/CharacterUpdatePacket.js';
 import Queue from '../../../core/util/Queue.js';
 
-const OUTGOING_MESSAGES_PER_CON_QUEUE_SIZE = 50;
+const OUTGOING_MESSAGES_PER_CON_QUEUE_SIZE = 100;
 
 // const hexString = (buffer) =>
 //     buffer.reduce((acc, byte, index) => {
@@ -38,10 +41,28 @@ export default class GameConnection extends Connection {
         this.#player.subscribe(CharacterSpawnedEvent.type, this.#onCharacterSpawned.bind(this));
         this.#player.subscribe(CharacterInitiatedEvent.type, this.#onCharacterInitiated.bind(this));
         this.#player.subscribe(OtherCharacterUpdatedEvent.type, this.#onOtherCharacterUpdated.bind(this));
+        this.#player.subscribe(OtherCharacterMovedEvent.type, this.#onOtherCharacterMoved.bind(this));
     }
 
     get player() {
         return this.#player;
+    }
+
+    #onOtherCharacterMoved(otherCharacterMovedEvent) {
+        const { otherEntity, params } = otherCharacterMovedEvent;
+
+        this.send(
+            new CharacterMoveOutPacket({
+                vid: otherEntity.virtualId,
+                arg: params.arg,
+                movementType: params.movementType,
+                time: params.time,
+                rotation: params.rotation,
+                positionX: params.positionX,
+                positionY: params.positionY,
+                duration: params.movementType === MovementTypeEnum.MOVE ? otherEntity.movementDuration : 0,
+            }),
+        );
     }
 
     #onOtherCharacterUpdated(otherCharacterUpdatedEvent) {

@@ -2,7 +2,11 @@
   "ScriptType": "MotionData",
   "MotionFileName": "d:/ymir work/pc/warrior/twohand_sword/combo_03.gr2",
   "MotionDuration": 1.333333,
-  "Accumulation": [],
+  "Accumulation": [
+    0,
+    -155.03,
+    0
+  ],
   "ComboInputData": {
     "PreInputTime": 0.283761,
     "DirectInputTime": 0.878632,

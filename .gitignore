@@ -3,3 +3,4 @@ node_modules
 logs
 atlasinfo.txt
 *.msa
+motionData

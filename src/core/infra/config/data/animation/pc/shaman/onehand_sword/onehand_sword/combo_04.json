@@ -2,7 +2,11 @@
   "ScriptType": "MotionData",
   "MotionFileName": "d:/ymir work/pc/warrior/onehand_sword/combo_04.gr2",
   "MotionDuration": 1.266667,
-  "Accumulation": [],
+  "Accumulation": [
+    -12.89,
+    -105.52,
+    0
+  ],
   "CancelEnableSkill": 0,
   "ComboInputData": {
     "PreInputTime": 1.057692,

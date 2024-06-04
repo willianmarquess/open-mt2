@@ -1,5 +1,6 @@
 import QuadTree from '../util/QuadTree.js';
 import Queue from '../util/Queue.js';
+import PlayerEventsEnum from './entities/player/events/PlayerEventsEnum.js';
 
 const SIZE_QUEUE = 1000;
 
@@ -44,9 +45,20 @@ export default class Area {
         this.#entitiesToSpawn.enqueue(entity);
     }
 
+    #onCharacterMove(characterMovedEvent) {
+        const { entity, params } = characterMovedEvent;
+        this.#quadTree.updatePosition(entity);
+        const entities = this.#quadTree.queryAround(entity.positionX, entity.positionY, 10000);
+        for (const otherEntity of entities) {
+            if (otherEntity.name === entity.name) continue;
+            otherEntity.updateOtherEntity(entity, params);
+        }
+    }
+
     tick() {
         for (const entity of this.#entitiesToSpawn.dequeueIterator()) {
             //add entity
+            entity.subscribe(PlayerEventsEnum.CHARACTER_MOVED, this.#onCharacterMove.bind(this));
             this.#quadTree.insert(entity);
 
             const entities = this.#quadTree.queryAround(entity.positionX, entity.positionY, 10000);

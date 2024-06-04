@@ -2,7 +2,11 @@
   "ScriptType": "MotionData",
   "MotionFileName": "D:\\Ymir Work\\pc\\assassin\\skill\\cheonryong.GR2",
   "MotionDuration": 1,
-  "Accumulation": [],
+  "Accumulation": [
+    0,
+    -134.12,
+    0
+  ],
   "CancelEnableSkill": 0,
   "AttackingData": {
     "AttackType": 1,

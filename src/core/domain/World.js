@@ -2,7 +2,7 @@ import Grid from '../util/Grid.js';
 import Area from './Area.js';
 import Player from './entities/player/Player.js';
 
-const TICKS_PER_SECONDS = 10;
+const TICKS_PER_SECONDS = 15;
 const AREA_UNIT = 25600;
 
 function calculateTickDelay(delta = 0) {

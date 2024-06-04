@@ -2,5 +2,9 @@
   "ScriptType": "MotionData",
   "MotionFileName": "d:/ymir work/pc/shaman/general/walk.gr2",
   "MotionDuration": 1,
-  "Accumulation": []
+  "Accumulation": [
+    0,
+    -155.74,
+    0
+  ]
 }

@@ -2,7 +2,11 @@
   "ScriptType": "MotionData",
   "MotionFileName": "d:/ymir work/pc/shaman/bell/combo_03.gr2",
   "MotionDuration": 1,
-  "Accumulation": [],
+  "Accumulation": [
+    0,
+    -103.55,
+    0
+  ],
   "ComboInputData": {
     "PreInputTime": 0.066667,
     "DirectInputTime": 0.415385,

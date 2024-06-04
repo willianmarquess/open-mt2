@@ -14,6 +14,7 @@ import PlayerFactory from '../core/domain/factories/PlayerFactory.js';
 import SelectCharacterService from './app/service/SelectCharacterService.js';
 import AuthenticateService from './domain/service/AuthenticateService.js';
 import EnterGameService from './app/service/EnterGameService.js';
+import AnimationManager from '../core/domain/manager/AnimationManager.js';
 
 const container = createContainer();
 
@@ -34,6 +35,7 @@ container.register({
     selectCharacterService: asClass(SelectCharacterService).scoped(),
     playerFactory: asClass(PlayerFactory).scoped(),
     enterGameService: asClass(EnterGameService).scoped(),
+    animationManager: asClass(AnimationManager).singleton(),
 });
 
 export { container };

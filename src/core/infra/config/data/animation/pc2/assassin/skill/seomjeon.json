@@ -2,7 +2,11 @@
   "ScriptType": "MotionData",
   "MotionFileName": "d:/ymir work/pc/assassin/skill/seomjeon.gr2",
   "MotionDuration": 1.5,
-  "Accumulation": [],
+  "Accumulation": [
+    0,
+    -285.11,
+    0
+  ],
   "MotionEventData": {
     "MotionEventDataCount": 4
   },

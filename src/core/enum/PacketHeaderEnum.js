@@ -22,4 +22,6 @@ export default {
     CHANNEL: 0x79,
     CHARACTER_SPAWN: 0x01,
     CHARACTER_INFO: 0x88,
+    CHARACTER_MOVE: 0x07,
+    CHARACTER_MOVE_OUT: 0x03,
 };

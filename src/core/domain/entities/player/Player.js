@@ -5,7 +5,14 @@ import PlayerDTO from '../../dto/PlayerDTO.js';
 import Entity from '../Entity.js';
 import CharacterSpawnedEvent from './events/CharacterSpawnedEvent.js';
 import CharacterInitiatedEvent from './events/CharacterInitiatedEvent.js';
-import OtherCharacterUpdatedEvent from './events/OtherCharacterUpdatedOtherCharacterUpdatedEvent.js';
+import OtherCharacterUpdatedEvent from './events/OtherCharacterUpdatedEvent.js';
+import AnimationTypeEnum from '../../../enum/AnimationTypeEnum.js';
+import AnimationSubTypeEnum from '../../../enum/AnimationSubTypeEnum.js';
+import MathUtil from '../../util/MathUtil.js';
+import EntityStateEnum from '../../../enum/EntityStateEnum.js';
+import AnimationUtil from '../../util/AnimationUtil.js';
+import CharacterMovedEvent from './events/CharacterMovedEvent.js';
+import OtherCharacterMovedEvent from './events/OtherCharacterMovedEvent.js';
 
 export default class Player extends Entity {
     #accountId;
@@ -50,45 +57,59 @@ export default class Player extends Entity {
     #attackSpeed;
     #movementSpeed;
 
+    //animation management
+    #targetPositionX = 0;
+    #targetPositionY = 0;
+    #startPositionX = 0;
+    #startPositionY = 0;
+    #movementDuration = 0;
+    #animationManager;
+    #state = EntityStateEnum.IDLE;
+    #movementStart = 0;
+    #rotation = 0;
+
     #emitter = new EventEmitter();
 
-    constructor({
-        id,
-        accountId,
-        createdAt,
-        updatedAt,
-        empire,
-        playerClass = 0,
-        skillGroup = 0,
-        playTime = 0,
-        level = 1,
-        experience = 0,
-        gold = 0,
-        st = 0,
-        ht = 0,
-        dx = 0,
-        iq = 0,
-        positionX = 0,
-        positionY = 0,
-        health = 0,
-        mana = 0,
-        stamina = 0,
-        bodyPart = 0,
-        hairPart = 0,
-        name,
-        givenStatusPoints = 0,
-        availableStatusPoints = 0,
-        slot = 0,
-        virtualId = 0,
-        hpPerLvl = 0,
-        hpPerHtPoint = 0,
-        mpPerLvl = 0,
-        mpPerIqPoint = 0,
-        baseAttackSpeed = 0,
-        baseMovementSpeed = 0,
-        baseHealth = 0,
-        baseMana = 0,
-    }) {
+    constructor(
+        {
+            id,
+            accountId,
+            createdAt,
+            updatedAt,
+            empire,
+            playerClass = 0,
+            skillGroup = 0,
+            playTime = 0,
+            level = 1,
+            experience = 0,
+            gold = 0,
+            st = 0,
+            ht = 0,
+            dx = 0,
+            iq = 0,
+            positionX = 0,
+            positionY = 0,
+            health = 0,
+            mana = 0,
+            stamina = 0,
+            bodyPart = 0,
+            hairPart = 0,
+            name,
+            givenStatusPoints = 0,
+            availableStatusPoints = 0,
+            slot = 0,
+            virtualId = 0,
+            hpPerLvl = 0,
+            hpPerHtPoint = 0,
+            mpPerLvl = 0,
+            mpPerIqPoint = 0,
+            baseAttackSpeed = 0,
+            baseMovementSpeed = 0,
+            baseHealth = 0,
+            baseMana = 0,
+        },
+        { animationManager },
+    ) {
         super({
             id,
             createdAt,
@@ -128,6 +149,8 @@ export default class Player extends Entity {
         this.#movementSpeed = baseMovementSpeed;
         this.#baseMana = baseMana;
         this.#baseHealth = baseHealth;
+
+        this.#animationManager = animationManager;
 
         this.#initPoints();
     }
@@ -169,6 +192,10 @@ export default class Player extends Entity {
 
     getPoints() {
         return this.#points;
+    }
+
+    get rotation() {
+        return this.#rotation;
     }
 
     get movementSpeed() {
@@ -266,44 +293,12 @@ export default class Player extends Entity {
         return this.#slot;
     }
 
-    static create({
-        id,
-        accountId,
-        createdAt,
-        updatedAt,
-        empire,
-        playerClass,
-        skillGroup,
-        playTime,
-        level,
-        experience,
-        gold,
-        st,
-        ht,
-        dx,
-        iq,
-        positionX,
-        positionY,
-        health,
-        mana,
-        stamina,
-        bodyPart,
-        hairPart,
-        name,
-        givenStatusPoints,
-        availableStatusPoints,
-        slot,
-        virtualId,
-        hpPerLvl,
-        hpPerHtPoint,
-        mpPerLvl,
-        mpPerIqPoint,
-        baseAttackSpeed,
-        baseMovementSpeed,
-        baseHealth,
-        baseMana,
-    }) {
-        return new Player({
+    get movementDuration() {
+        return this.#movementDuration;
+    }
+
+    static create(
+        {
             id,
             accountId,
             createdAt,
@@ -339,7 +334,49 @@ export default class Player extends Entity {
             baseMovementSpeed,
             baseHealth,
             baseMana,
-        });
+        },
+        { animationManager },
+    ) {
+        return new Player(
+            {
+                id,
+                accountId,
+                createdAt,
+                updatedAt,
+                empire,
+                playerClass,
+                skillGroup,
+                playTime,
+                level,
+                experience,
+                gold,
+                st,
+                ht,
+                dx,
+                iq,
+                positionX,
+                positionY,
+                health,
+                mana,
+                stamina,
+                bodyPart,
+                hairPart,
+                name,
+                givenStatusPoints,
+                availableStatusPoints,
+                slot,
+                virtualId,
+                hpPerLvl,
+                hpPerHtPoint,
+                mpPerLvl,
+                mpPerIqPoint,
+                baseAttackSpeed,
+                baseMovementSpeed,
+                baseHealth,
+                baseMana,
+            },
+            { animationManager },
+        );
     }
 
     toDatabase() {
@@ -374,7 +411,21 @@ export default class Player extends Entity {
     }
 
     tick() {
-        //todo
+        if (this.#state == EntityStateEnum.MOVING) {
+            const elapsed = performance.now() - this.#movementStart;
+            let rate = this.#movementDuration == 0 ? 1 : elapsed / this.#movementDuration;
+            if (rate > 1) rate = 1;
+
+            const x = (this.#targetPositionX - this.#startPositionX) * rate + this.#startPositionX;
+            const y = (this.#targetPositionY - this.#startPositionY) * rate + this.#startPositionY;
+
+            this.#positionX = x;
+            this.#positionY = y;
+
+            if (rate >= 1) {
+                this.#state = EntityStateEnum.IDLE;
+            }
+        }
     }
 
     subscribe(eventName, calback) {
@@ -395,5 +446,59 @@ export default class Player extends Entity {
 
     showOtherEntity(otherEntity) {
         this.#emitter.emit(OtherCharacterUpdatedEvent.type, new OtherCharacterUpdatedEvent({ otherEntity }));
+    }
+
+    goto(x, y, args) {
+        if (x === this.#positionX && y === this.#positionY) return;
+        if (x === this.#targetPositionX && y === this.#targetPositionY) return;
+
+        const animation = this.#animationManager.getAnimation(
+            this.#playerClass,
+            AnimationTypeEnum.RUN,
+            AnimationSubTypeEnum.GENERAL,
+        );
+
+        this.#state = EntityStateEnum.MOVING;
+        this.#targetPositionX = x;
+        this.#targetPositionY = y;
+        this.#startPositionX = this.positionX;
+        this.#startPositionY = this.positionY;
+        this.#movementStart = performance.now();
+
+        const distance = MathUtil.calcDistance(
+            this.#startPositionX,
+            this.#startPositionY,
+            this.#targetPositionX,
+            this.#targetPositionY,
+        );
+
+        if (animation) {
+            this.#movementDuration = AnimationUtil.calcAnimationDuration(animation, this.#movementSpeed, distance);
+        }
+
+        this.#rotation = args.rotation * 5;
+        this.#emitter.emit(CharacterMovedEvent.type, new CharacterMovedEvent({ params: args, entity: this }));
+    }
+
+    updateOtherEntity(otherEntity, args) {
+        this.#emitter.emit(OtherCharacterMovedEvent.type, new OtherCharacterMovedEvent({ otherEntity, params: args }));
+    }
+
+    move(x, y) {
+        if (x === this.#positionX && y === this.#positionY) return;
+        this.#positionX = x;
+        this.#positionY = y;
+        //send moveEvent
+    }
+
+    wait(x, y, args) {
+        this.#positionX = x;
+        this.#positionY = y;
+        this.#emitter.emit(CharacterMovedEvent.type, new CharacterMovedEvent({ params: args, entity: this }));
+    }
+
+    stop() {
+        this.#state = EntityStateEnum.IDLE;
+        this.#movementDuration = 0;
     }
 }
