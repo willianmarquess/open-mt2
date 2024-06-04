@@ -33,9 +33,6 @@ export default class QuadTree {
         }
 
         if (this.entities.length < this.capacity && !this.subdivided) {
-            // entity.lastPositionX = entity.positionX;
-            // entity.lastPositionY = entity.positionY;
-            // entity.lastQuadTree = this;
             this.entities.push(entity);
             return true;
         }
@@ -139,11 +136,6 @@ export default class QuadTree {
     }
 
     updatePosition(entity) {
-        // if (entity.lastQuadTree === null) {
-        //     this.insert(entity);
-        //     return;
-        // }
-        // const qt = entity.lastQuadTree;
         if (!this.bounds.contains(entity.positionX, entity.positionY)) {
             this.remove(entity);
             this.insert(entity);
