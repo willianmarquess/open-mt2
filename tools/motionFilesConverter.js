@@ -4,8 +4,12 @@ import readline from 'readline';
 
 function clear(obj) {
     if (Array.isArray(obj)) {
-        return obj
+        if(Array.isArray(obj[0])) {
+            return obj
             .filter(item => item !== null && item !== undefined && Array.isArray(item) && !isNaN(item[0]))
+        }
+        return obj
+            .filter(item => item !== null && item !== undefined)
     } else if (typeof obj === 'object' && obj !== null) {
         for (const key in obj) {
             if (obj[key] === null || obj[key] === undefined || key === '' || key === '{') {
@@ -67,7 +71,6 @@ async function processFile(inputFilePath, outputFilePath) {
             } else {
                 const parsed = parseLine(trimmedLine);
                 if (parsed) {
-                    console.log(parsed.value);
                     currentGroup.data[parsed.key] = isNaN(parsed.value) ? parsed.value.replace(/"/g, '') : parseFloat(parsed.value);
                 }
             }
@@ -78,7 +81,6 @@ async function processFile(inputFilePath, outputFilePath) {
             }
         }
     }
-
     clear(msaData);
     for (const group in msaData) {
         if (typeof msaData[group] === 'object') {
@@ -124,7 +126,7 @@ async function processDirectory(inputDirPath, outputDirPath) {
     }
 }
 
-const inputDir = '../teste';
+const inputDir = '../motionData';
 const outputDir = '../src/core/infra/config/data/animation';
 
 (async () => {
