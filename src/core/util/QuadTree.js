@@ -123,14 +123,7 @@ export default class QuadTree {
         this.subdivided = true;
 
         for (const entity of this.entities) {
-            if (
-                this._nw.insert(entity) ||
-                this._ne.insert(entity) ||
-                this._sw.insert(entity) ||
-                this._se.insert(entity)
-            ) {
-                // Move entities to the new subdivisions
-            }
+            this._nw.insert(entity) || this._ne.insert(entity) || this._sw.insert(entity) || this._se.insert(entity);
         }
         this.entities = [];
     }

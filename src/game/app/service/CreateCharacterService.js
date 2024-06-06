@@ -66,7 +66,7 @@ export default class CreateCharacterService {
             slot,
         });
 
-        const playerId = await this.#playerRepository.create(player);
+        const playerId = await this.#playerRepository.create(player.toDatabase());
         player.id = playerId;
 
         return Result.ok(player);
