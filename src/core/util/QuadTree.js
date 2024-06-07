@@ -54,7 +54,6 @@ export default class QuadTree {
         const index = this.entities.indexOf(entity);
         if (index > -1) {
             this.entities.splice(index, 1);
-            entity.lastQuadTree = null;
             return true;
         }
 
