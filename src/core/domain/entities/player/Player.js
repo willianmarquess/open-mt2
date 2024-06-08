@@ -44,19 +44,14 @@ export default class Player extends Entity {
     #points = {};
 
     #health;
-    #maxHealth;
     #baseHealth;
     #hpPerLvl;
     #hpPerHtPoint;
 
     #mana;
-    #maxMana;
     #mpPerLvl;
     #mpPerIqPoint;
     #baseMana;
-
-    #attackSpeed;
-    #movementSpeed;
 
     //animation management
     #targetPositionX = 0;
@@ -64,12 +59,40 @@ export default class Player extends Entity {
     #startPositionX = 0;
     #startPositionY = 0;
     #movementDuration = 0;
-    #animationManager;
     #state = EntityStateEnum.IDLE;
     #movementStart = 0;
     #rotation = 0;
+    #animationManager;
+    #experienceManager;
+    #config;
 
     #emitter = new EventEmitter();
+
+    //in game points
+    #maxHealth;
+    #maxMana;
+    #attackSpeed;
+    #movementSpeed;
+    #neededExperience;
+    #defenseGrade;
+    #attackGrade;
+    #defense;
+    #statusPoints;
+    #subSkill;
+    #skill;
+    #minAttackDamage;
+    #maxAttackDamage;
+    #criticalPercentage;
+    #penetratePercentage;
+    #itemDropBonus;
+    #attackBonus;
+    #defenseBonus;
+    #mallItemBonus;
+    #magicAttackBonus;
+    #resistCritical;
+    #resistPenetrate;
+    #minWeaponDamage;
+    #maxWeaponDamage;
 
     constructor(
         {
@@ -110,7 +133,7 @@ export default class Player extends Entity {
             baseMana = 0,
             appearance = 0,
         },
-        { animationManager },
+        { animationManager, experienceManager, config },
     ) {
         super({
             id,
@@ -154,6 +177,8 @@ export default class Player extends Entity {
         this.#baseHealth = baseHealth;
 
         this.#animationManager = animationManager;
+        this.#experienceManager = experienceManager;
+        this.#config = config;
 
         this.#initPoints();
     }
@@ -174,6 +199,90 @@ export default class Player extends Entity {
         this.#points[PointsEnum.MP] = () => this.#mana;
         this.#points[PointsEnum.ATTACK_SPEED] = () => this.#attackSpeed;
         this.#points[PointsEnum.MOVE_SPEED] = () => this.#movementSpeed;
+    }
+
+    #calcStatusPoints() {
+        const baseStatusPoints = (this.#level - 1) * this.#config.POINTS_PER_LEVEL;
+
+        const expNeeded = this.#experienceManager.getNeededExperience(this.#level);
+        const experienceRatio = this.#experience / expNeeded;
+
+        const totalStatusPoints = Math.floor(baseStatusPoints + (experienceRatio * 4));
+
+        const excessPoints = this.#givenStatusPoints - totalStatusPoints;
+        this.#availableStatusPoints -= Math.min(excessPoints, this.#availableStatusPoints);
+
+        this.#givenStatusPoints -= excessPoints;
+        this.#availableStatusPoints += totalStatusPoints - this.#givenStatusPoints;
+        this.#givenStatusPoints = totalStatusPoints;
+    }
+
+    addExperience(value) {
+        if (value < 1 || this.#level >= this.#config.MAX_LEVEL) return;
+
+        const expNeeded = this.#experienceManager.getNeededExperience(this.#level);
+
+        if (this.#experience + value >= expNeeded) {
+            const diff = (this.#experience + value) - expNeeded;
+            this.addLevel(1);
+            this.#calcStatusPoints();
+            this.#experience = diff;
+            this.addExperience(0);
+            return;
+        }
+
+        const expPart = expNeeded / 4;
+        const before = this.#experience;
+
+        this.#experience += value;
+
+        const beforePart = before / expPart;
+        const afterPart = this.#experience / expPart;
+        const expSteps = afterPart - beforePart;
+
+        if (expSteps > 0) {
+            this.#health = this.#maxHealth;
+            this.#mana = this.#maxMana;
+            this.giveStatusPoints();
+        }
+    }
+
+    addLevel(value) {
+        if (this.#level + value > this.#config.MAX_LEVEL) return;
+        if (value < 1) return;
+
+        //add skill point
+        this.#level += value;
+        this.#health = this.#maxHealth;
+        this.#mana = this.#maxMana;
+        //notify other players with char additional packet
+
+        //add status points
+        //send player points;
+    }
+
+    addMovementSpeed(value) {
+        this.#movementSpeed += value > 0 ? value : 0;
+    }
+
+    addAttackSpeed(value) {
+        this.#attackSpeed += value > 0 ? value : 0;
+    }
+
+    addMana(value) {
+        this.#mana += value > 0 ? value : 0;
+    }
+
+    addMaxMana(value) {
+        this.#maxMana += value > 0 ? value : 0;
+    }
+
+    addHealth(value) {
+        this.#health += value > 0 ? value : 0;
+    }
+
+    addMaxHealth(value) {
+        this.#maxHealth += value > 0 ? value : 0;
     }
 
     #initMaxHealth() {

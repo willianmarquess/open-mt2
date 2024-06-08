@@ -14,4 +14,6 @@ export default () => ({
     empire,
     jobs,
     atlas,
+    MAX_LEVEL: 99,
+    POINTS_PER_LEVEL: 3,
 });
