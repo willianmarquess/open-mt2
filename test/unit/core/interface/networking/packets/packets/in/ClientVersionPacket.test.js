@@ -24,9 +24,10 @@ describe('ClientVersionPacket', function () {
     });
 
     it('should unpack data correctly', function () {
-        const buffer = Buffer.alloc(67);
-        buffer.write('testClient\0', 0, 'ascii'); // clientName
-        buffer.write('2023-06-05 12:34:56\0', 33, 'ascii'); // timeStamp
+        const buffer = Buffer.alloc(68);
+        buffer.writeInt8(0, 0); // header
+        buffer.write('testClient\0', 1, 'ascii'); // clientName
+        buffer.write('2023-06-05 12:34:56\0', 34, 'ascii'); // timeStamp
 
         const unpackedPacket = new ClientVersionPacket();
         unpackedPacket.unpack(buffer);

@@ -207,7 +207,7 @@ export default class Player extends Entity {
         const expNeeded = this.#experienceManager.getNeededExperience(this.#level);
         const experienceRatio = this.#experience / expNeeded;
 
-        const totalStatusPoints = Math.floor(baseStatusPoints + (experienceRatio * 4));
+        const totalStatusPoints = Math.floor(baseStatusPoints + experienceRatio * 4);
 
         const excessPoints = this.#givenStatusPoints - totalStatusPoints;
         this.#availableStatusPoints -= Math.min(excessPoints, this.#availableStatusPoints);
@@ -223,7 +223,7 @@ export default class Player extends Entity {
         const expNeeded = this.#experienceManager.getNeededExperience(this.#level);
 
         if (this.#experience + value >= expNeeded) {
-            const diff = (this.#experience + value) - expNeeded;
+            const diff = this.#experience + value - expNeeded;
             this.addLevel(1);
             this.#calcStatusPoints();
             this.#experience = diff;

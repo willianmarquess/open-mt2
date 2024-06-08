@@ -26,13 +26,14 @@ describe('AuthTokenPacket', function () {
     });
 
     it('should unpack data correctly', function () {
-        const buffer = Buffer.alloc(50);
-        buffer.write('testuser\0', 0, 'ascii');
-        buffer.writeUInt32LE(1234567890, 31);
-        buffer.writeUInt32LE(1, 35);
-        buffer.writeUInt32LE(2, 39);
-        buffer.writeUInt32LE(3, 43);
-        buffer.writeUInt32LE(4, 47);
+        const buffer = Buffer.alloc(52);
+        buffer.writeUint8(0, 0);
+        buffer.write('testuser\0', 1, 'ascii');
+        buffer.writeUInt32LE(1234567890, 32);
+        buffer.writeUInt32LE(1, 36);
+        buffer.writeUInt32LE(2, 40);
+        buffer.writeUInt32LE(3, 44);
+        buffer.writeUInt32LE(4, 48);
 
         const unpackedPacket = new AuthTokenPacket();
         unpackedPacket.unpack(buffer);

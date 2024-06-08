@@ -28,11 +28,12 @@ describe('CreateCharacterPacket', function () {
     });
 
     it('should unpack data correctly', function () {
-        const buffer = Buffer.alloc(29);
-        buffer.writeUInt8(1, 0); // slot
-        buffer.write('testPlayer\0', 1, 'ascii'); // playerName
-        buffer.writeUInt16LE(123, 26); // playerClass
-        buffer.writeUInt8(5, 28); // appearance
+        const buffer = Buffer.alloc(31);
+        buffer.writeUInt8(0, 0); // header
+        buffer.writeUInt8(1, 1); // slot
+        buffer.write('testPlayer\0', 2, 'ascii'); // playerName
+        buffer.writeUInt16LE(123, 27); // playerClass
+        buffer.writeUInt8(5, 29); // appearance
 
         const unpackedPacket = new CreateCharacterPacket();
         unpackedPacket.unpack(buffer);

@@ -33,12 +33,13 @@ describe('CharacterMovePacket', function () {
 
     it('should unpack data correctly', function () {
         const buffer = Buffer.alloc(17);
-        buffer.writeUInt8(1, 0); // movementType
-        buffer.writeUInt8(2, 1); // arg
-        buffer.writeUInt8(3, 2); // rotation
-        buffer.writeUInt32LE(12345, 3); // positionX
-        buffer.writeUInt32LE(67890, 7); // positionY
-        buffer.writeUInt32LE(54321, 11); // time
+        buffer.writeUInt8(0, 0); // header
+        buffer.writeUInt8(1, 1); // movementType
+        buffer.writeUInt8(2, 2); // arg
+        buffer.writeUInt8(3, 3); // rotation
+        buffer.writeUInt32LE(12345, 4); // positionX
+        buffer.writeUInt32LE(67890, 8); // positionY
+        buffer.writeUInt32LE(54321, 12); // time
 
         const unpackedPacket = new CharacterMovePacket();
         unpackedPacket.unpack(buffer);

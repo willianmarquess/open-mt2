@@ -16,7 +16,7 @@ describe('LoginRequestPacket', function () {
     it('should initialize with correct header, name, and size', function () {
         expect(loginRequestPacket.header).to.equal(PacketHeaderEnum.LOGIN_REQUEST);
         expect(loginRequestPacket.name).to.equal('LoginRequestPacket');
-        expect(loginRequestPacket.size).to.equal(13);
+        expect(loginRequestPacket.size).to.equal(66);
     });
 
     it('should initialize properties correctly', function () {
@@ -26,10 +26,11 @@ describe('LoginRequestPacket', function () {
     });
 
     it('should unpack data correctly', function () {
-        const buffer = Buffer.alloc(51);
-        buffer.write('testUser\0', 0, 'ascii'); // username
-        buffer.write('testPass\0', 31, 'ascii'); // password
-        buffer.writeUInt32LE(123456, 47); // key
+        const buffer = Buffer.alloc(60);
+        buffer.writeUint8(0, 0); // header
+        buffer.write('testUser\0', 1, 'ascii'); // username
+        buffer.write('testPass\0', 32, 'ascii'); // password
+        buffer.writeUInt32LE(123456, 48); // key
 
         const unpackedPacket = new LoginRequestPacket();
         unpackedPacket.unpack(buffer);

@@ -21,7 +21,7 @@ describe('SelectCharacterPacket', function () {
 
     it('should unpack data correctly', function () {
         const buffer = Buffer.alloc(2);
-        buffer.writeUInt8(5, 0); // slot
+        buffer.writeUInt8(5, 1); // slot
 
         const unpackedPacket = new SelectCharacterPacket();
         unpackedPacket.unpack(buffer);

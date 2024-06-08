@@ -38,7 +38,8 @@ describe('PacketBidirectional', function () {
             this.bufferWriter.writeUint8(0xff);
         }
 
-        unpack() {
+        unpack(buffer) {
+            this.bufferReader.setBuffer(buffer);
             return this.bufferReader.readUInt8();
         }
     }
@@ -63,9 +64,8 @@ describe('PacketBidirectional', function () {
             name: 'TestPacketBidirectional',
         });
         const buffer = Buffer.from([0x00, 0xff]);
-        testPacket.bufferReader.setBuffer(buffer, false);
-        expect(() => testPacket.unpack()).to.not.throw();
-        const value = testPacket.unpack();
+        expect(() => testPacket.unpack(buffer)).to.not.throw();
+        const value = testPacket.unpack(buffer);
         expect(value).to.equal(0xff);
     });
 });

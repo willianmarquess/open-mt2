@@ -20,7 +20,7 @@ export default class BufferReader {
     }
 
     readUInt8() {
-        const value = this.#buffer.readInt8(this.#lastPos);
+        const value = this.#buffer.readUInt8(this.#lastPos);
         this.#lastPos += 1;
         return value;
     }
