@@ -31,7 +31,7 @@ export default class BufferWriter {
     }
 
     writeUint64LE(value) {
-        this.#buffer.writeBigUInt64LE(value, this.#lastPos);
+        this.#buffer.writeBigUInt64LE(BigInt(value), this.#lastPos);
         this.#lastPos += 8;
         return this;
     }

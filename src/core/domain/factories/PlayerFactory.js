@@ -5,10 +5,12 @@ import JobUtil from '../util/JobUtil.js';
 export default class PlayerFactory {
     #config;
     #animationManager;
+    #experienceManager;
 
-    constructor({ config, animationManager }) {
+    constructor({ config, animationManager, experienceManager }) {
         this.#config = config;
         this.#animationManager = animationManager;
+        this.#experienceManager = experienceManager;
     }
 
     create({
@@ -85,6 +87,8 @@ export default class PlayerFactory {
             },
             {
                 animationManager: this.#animationManager,
+                config: this.#config,
+                experienceManager: this.#experienceManager,
             },
         );
     }

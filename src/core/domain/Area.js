@@ -55,10 +55,20 @@ export default class Area {
         }
     }
 
+    #onCharacterLevelUp(characterLevelUpEvent) {
+        const { entity } = characterLevelUpEvent;
+        const entities = this.#quadTree.queryAround(entity.positionX, entity.positionY, 10000);
+        for (const otherEntity of entities) {
+            if (otherEntity.name === entity.name) continue;
+            otherEntity.otherEntityLevelUp(entity);
+        }
+    }
+
     tick() {
         for (const entity of this.#entitiesToSpawn.dequeueIterator()) {
             //add entity
             entity.subscribe(PlayerEventsEnum.CHARACTER_MOVED, this.#onCharacterMove.bind(this));
+            entity.subscribe(PlayerEventsEnum.CHARACTER_LEVEL_UP, this.#onCharacterLevelUp.bind(this));
             this.#quadTree.insert(entity);
 
             const entities = this.#quadTree.queryAround(entity.positionX, entity.positionY, 10000);

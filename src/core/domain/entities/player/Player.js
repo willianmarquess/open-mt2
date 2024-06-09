@@ -12,6 +12,9 @@ import EntityStateEnum from '../../../enum/EntityStateEnum.js';
 import AnimationUtil from '../../util/AnimationUtil.js';
 import CharacterMovedEvent from './events/CharacterMovedEvent.js';
 import OtherCharacterMovedEvent from './events/OtherCharacterMovedEvent.js';
+import CharacterPointsUpdatedEvent from './events/CharacterPointsUpdatedEvent.js';
+import CharacterLevelUpEvent from './events/CharacterLevelUpEvent.js';
+import OtherCharacterLevelUpEvent from './events/OtherCharacterLevelUpEvent.js';
 
 export default class Player extends Entity {
     #accountId;
@@ -184,8 +187,8 @@ export default class Player extends Entity {
     }
 
     #initPoints() {
-        this.#initMaxHealth();
-        this.#initMaxMana();
+        this.#calcMaxHealth();
+        this.#calcMaxMana();
 
         this.#points[PointsEnum.EXPERIENCE] = () => this.#experience;
         this.#points[PointsEnum.HT] = () => this.#ht;
@@ -199,6 +202,8 @@ export default class Player extends Entity {
         this.#points[PointsEnum.MP] = () => this.#mana;
         this.#points[PointsEnum.ATTACK_SPEED] = () => this.#attackSpeed;
         this.#points[PointsEnum.MOVE_SPEED] = () => this.#movementSpeed;
+        this.#points[PointsEnum.NEEDED_EXPERIENCE] = () => this.#experienceManager.getNeededExperience(this.#level);
+        this.#points[PointsEnum.STATUS_POINTS] = () => this.#availableStatusPoints;
     }
 
     #calcStatusPoints() {
@@ -224,16 +229,15 @@ export default class Player extends Entity {
 
         if (this.#experience + value >= expNeeded) {
             const diff = this.#experience + value - expNeeded;
+            this.#experience = diff;
             this.addLevel(1);
             this.#calcStatusPoints();
-            this.#experience = diff;
             this.addExperience(0);
             return;
         }
 
         const expPart = expNeeded / 4;
         const before = this.#experience;
-
         this.#experience += value;
 
         const beforePart = before / expPart;
@@ -243,7 +247,8 @@ export default class Player extends Entity {
         if (expSteps > 0) {
             this.#health = this.#maxHealth;
             this.#mana = this.#maxMana;
-            this.giveStatusPoints();
+            this.#calcStatusPoints();
+            this.#sendPoints();
         }
     }
 
@@ -253,12 +258,11 @@ export default class Player extends Entity {
 
         //add skill point
         this.#level += value;
-        this.#health = this.#maxHealth;
-        this.#mana = this.#maxMana;
-        //notify other players with char additional packet
-
-        //add status points
-        //send player points;
+        this.#calcMaxHealth();
+        this.#calcMaxMana();
+        this.#calcStatusPoints();
+        this.#sendPoints();
+        this.#emitter.emit(CharacterLevelUpEvent.type, new CharacterLevelUpEvent({ entity: this }));
     }
 
     addMovementSpeed(value) {
@@ -285,12 +289,12 @@ export default class Player extends Entity {
         this.#maxHealth += value > 0 ? value : 0;
     }
 
-    #initMaxHealth() {
+    #calcMaxHealth() {
         this.#maxHealth = this.#baseHealth + this.#ht * this.#hpPerHtPoint + this.#level * this.#hpPerLvl;
         this.#health = this.#maxHealth;
     }
 
-    #initMaxMana() {
+    #calcMaxMana() {
         this.#maxMana = this.#baseMana + this.#iq * this.#mpPerIqPoint + this.#level * this.#mpPerLvl;
         this.#mana = this.#maxMana;
     }
@@ -304,6 +308,217 @@ export default class Player extends Entity {
 
     getPoints() {
         return this.#points;
+    }
+
+    static create(
+        {
+            id,
+            accountId,
+            createdAt,
+            updatedAt,
+            empire,
+            playerClass,
+            skillGroup,
+            playTime,
+            level,
+            experience,
+            gold,
+            st,
+            ht,
+            dx,
+            iq,
+            positionX,
+            positionY,
+            health,
+            mana,
+            stamina,
+            bodyPart,
+            hairPart,
+            name,
+            givenStatusPoints,
+            availableStatusPoints,
+            slot,
+            virtualId,
+            hpPerLvl,
+            hpPerHtPoint,
+            mpPerLvl,
+            mpPerIqPoint,
+            baseAttackSpeed,
+            baseMovementSpeed,
+            baseHealth,
+            baseMana,
+            appearance,
+        },
+        { animationManager, config, experienceManager },
+    ) {
+        return new Player(
+            {
+                id,
+                accountId,
+                createdAt,
+                updatedAt,
+                empire,
+                playerClass,
+                skillGroup,
+                playTime,
+                level,
+                experience,
+                gold,
+                st,
+                ht,
+                dx,
+                iq,
+                positionX,
+                positionY,
+                health,
+                mana,
+                stamina,
+                bodyPart,
+                hairPart,
+                name,
+                givenStatusPoints,
+                availableStatusPoints,
+                slot,
+                virtualId,
+                hpPerLvl,
+                hpPerHtPoint,
+                mpPerLvl,
+                mpPerIqPoint,
+                baseAttackSpeed,
+                baseMovementSpeed,
+                baseHealth,
+                baseMana,
+                appearance,
+            },
+            { animationManager, config, experienceManager },
+        );
+    }
+
+    toDatabase() {
+        return new PlayerDTO({
+            id: this.id,
+            updatedAt: this.updatedAt,
+            createdAt: this.createdAt,
+            accountId: this.#accountId,
+            empire: this.#empire,
+            playerClass: this.#playerClass,
+            skillGroup: this.#skillGroup,
+            playTime: this.calcPlaytime(),
+            level: this.#level,
+            experience: this.#experience,
+            gold: this.#gold,
+            st: this.#st,
+            ht: this.#ht,
+            dx: this.#dx,
+            iq: this.#iq,
+            positionX: this.#positionX,
+            positionY: this.#positionY,
+            health: this.#health,
+            mana: this.#mana,
+            stamina: this.#stamina,
+            bodyPart: this.#bodyPart,
+            hairPart: this.#hairPart,
+            name: this.#name,
+            givenStatusPoints: this.#givenStatusPoints,
+            availableStatusPoints: this.#availableStatusPoints,
+            slot: this.#slot,
+        });
+    }
+
+    tick() {
+        if (this.#state == EntityStateEnum.MOVING) {
+            const elapsed = performance.now() - this.#movementStart;
+            let rate = this.#movementDuration == 0 ? 1 : elapsed / this.#movementDuration;
+            if (rate > 1) rate = 1;
+
+            const x = (this.#targetPositionX - this.#startPositionX) * rate + this.#startPositionX;
+            const y = (this.#targetPositionY - this.#startPositionY) * rate + this.#startPositionY;
+
+            this.#positionX = x;
+            this.#positionY = y;
+
+            if (rate >= 1) {
+                this.#state = EntityStateEnum.IDLE;
+            }
+        }
+    }
+
+    subscribe(eventName, callback) {
+        this.#emitter.on(eventName, callback);
+    }
+
+    unsubscribe(eventName) {
+        this.#emitter.off(eventName);
+    }
+
+    spawn() {
+        this.#emitter.emit(CharacterSpawnedEvent.type, new CharacterSpawnedEvent());
+    }
+
+    showOtherEntity(otherEntity) {
+        this.#emitter.emit(OtherCharacterUpdatedEvent.type, new OtherCharacterUpdatedEvent({ otherEntity }));
+    }
+
+    otherEntityLevelUp(otherEntity) {
+        this.#emitter.emit(OtherCharacterLevelUpEvent.type, new OtherCharacterLevelUpEvent({ otherEntity }));
+    }
+
+    #sendPoints() {
+        this.#emitter.emit(CharacterPointsUpdatedEvent.type, new CharacterPointsUpdatedEvent());
+    }
+
+    goto(x, y, args) {
+        if (x === this.#positionX && y === this.#positionY) return;
+        if (x === this.#targetPositionX && y === this.#targetPositionY) return;
+
+        const animation = this.#animationManager.getAnimation(
+            this.#playerClass,
+            AnimationTypeEnum.RUN,
+            AnimationSubTypeEnum.GENERAL,
+        );
+
+        this.#state = EntityStateEnum.MOVING;
+        this.#targetPositionX = x;
+        this.#targetPositionY = y;
+        this.#startPositionX = this.positionX;
+        this.#startPositionY = this.positionY;
+        this.#movementStart = performance.now();
+
+        const distance = MathUtil.calcDistance(
+            this.#startPositionX,
+            this.#startPositionY,
+            this.#targetPositionX,
+            this.#targetPositionY,
+        );
+
+        if (animation) {
+            this.#movementDuration = AnimationUtil.calcAnimationDuration(animation, this.#movementSpeed, distance);
+        }
+
+        this.#rotation = args.rotation * 5;
+        this.#emitter.emit(CharacterMovedEvent.type, new CharacterMovedEvent({ params: args, entity: this }));
+    }
+
+    updateOtherEntity(otherEntity, args) {
+        this.#emitter.emit(OtherCharacterMovedEvent.type, new OtherCharacterMovedEvent({ otherEntity, params: args }));
+    }
+
+    move(x, y) {
+        if (x === this.#positionX && y === this.#positionY) return;
+        this.#positionX = x;
+        this.#positionY = y;
+        //send moveEvent
+    }
+
+    wait(x, y, args) {
+        this.#positionX = x;
+        this.#positionY = y;
+        this.#emitter.emit(CharacterMovedEvent.type, new CharacterMovedEvent({ params: args, entity: this }));
+    }
+
+    stop() {
+        this.#state = EntityStateEnum.IDLE;
+        this.#movementDuration = 0;
     }
 
     get appearance() {
@@ -411,208 +626,5 @@ export default class Player extends Entity {
 
     get movementDuration() {
         return this.#movementDuration;
-    }
-
-    static create(
-        {
-            id,
-            accountId,
-            createdAt,
-            updatedAt,
-            empire,
-            playerClass,
-            skillGroup,
-            playTime,
-            level,
-            experience,
-            gold,
-            st,
-            ht,
-            dx,
-            iq,
-            positionX,
-            positionY,
-            health,
-            mana,
-            stamina,
-            bodyPart,
-            hairPart,
-            name,
-            givenStatusPoints,
-            availableStatusPoints,
-            slot,
-            virtualId,
-            hpPerLvl,
-            hpPerHtPoint,
-            mpPerLvl,
-            mpPerIqPoint,
-            baseAttackSpeed,
-            baseMovementSpeed,
-            baseHealth,
-            baseMana,
-            appearance,
-        },
-        { animationManager },
-    ) {
-        return new Player(
-            {
-                id,
-                accountId,
-                createdAt,
-                updatedAt,
-                empire,
-                playerClass,
-                skillGroup,
-                playTime,
-                level,
-                experience,
-                gold,
-                st,
-                ht,
-                dx,
-                iq,
-                positionX,
-                positionY,
-                health,
-                mana,
-                stamina,
-                bodyPart,
-                hairPart,
-                name,
-                givenStatusPoints,
-                availableStatusPoints,
-                slot,
-                virtualId,
-                hpPerLvl,
-                hpPerHtPoint,
-                mpPerLvl,
-                mpPerIqPoint,
-                baseAttackSpeed,
-                baseMovementSpeed,
-                baseHealth,
-                baseMana,
-                appearance,
-            },
-            { animationManager },
-        );
-    }
-
-    toDatabase() {
-        return new PlayerDTO({
-            id: this.id,
-            updatedAt: this.updatedAt,
-            createdAt: this.createdAt,
-            accountId: this.#accountId,
-            empire: this.#empire,
-            playerClass: this.#playerClass,
-            skillGroup: this.#skillGroup,
-            playTime: this.calcPlaytime(),
-            level: this.#level,
-            experience: this.#experience,
-            gold: this.#gold,
-            st: this.#st,
-            ht: this.#ht,
-            dx: this.#dx,
-            iq: this.#iq,
-            positionX: this.#positionX,
-            positionY: this.#positionY,
-            health: this.#health,
-            mana: this.#mana,
-            stamina: this.#stamina,
-            bodyPart: this.#bodyPart,
-            hairPart: this.#hairPart,
-            name: this.#name,
-            givenStatusPoints: this.#givenStatusPoints,
-            availableStatusPoints: this.#availableStatusPoints,
-            slot: this.#slot,
-        });
-    }
-
-    tick() {
-        if (this.#state == EntityStateEnum.MOVING) {
-            const elapsed = performance.now() - this.#movementStart;
-            let rate = this.#movementDuration == 0 ? 1 : elapsed / this.#movementDuration;
-            if (rate > 1) rate = 1;
-
-            const x = (this.#targetPositionX - this.#startPositionX) * rate + this.#startPositionX;
-            const y = (this.#targetPositionY - this.#startPositionY) * rate + this.#startPositionY;
-
-            this.#positionX = x;
-            this.#positionY = y;
-
-            if (rate >= 1) {
-                this.#state = EntityStateEnum.IDLE;
-            }
-        }
-    }
-
-    subscribe(eventName, callback) {
-        this.#emitter.on(eventName, callback);
-    }
-
-    unsubscribe(eventName) {
-        this.#emitter.off(eventName);
-    }
-
-    spawn() {
-        this.#emitter.emit(CharacterSpawnedEvent.type, new CharacterSpawnedEvent());
-    }
-
-    showOtherEntity(otherEntity) {
-        this.#emitter.emit(OtherCharacterUpdatedEvent.type, new OtherCharacterUpdatedEvent({ otherEntity }));
-    }
-
-    goto(x, y, args) {
-        if (x === this.#positionX && y === this.#positionY) return;
-        if (x === this.#targetPositionX && y === this.#targetPositionY) return;
-
-        const animation = this.#animationManager.getAnimation(
-            this.#playerClass,
-            AnimationTypeEnum.RUN,
-            AnimationSubTypeEnum.GENERAL,
-        );
-
-        this.#state = EntityStateEnum.MOVING;
-        this.#targetPositionX = x;
-        this.#targetPositionY = y;
-        this.#startPositionX = this.positionX;
-        this.#startPositionY = this.positionY;
-        this.#movementStart = performance.now();
-
-        const distance = MathUtil.calcDistance(
-            this.#startPositionX,
-            this.#startPositionY,
-            this.#targetPositionX,
-            this.#targetPositionY,
-        );
-
-        if (animation) {
-            this.#movementDuration = AnimationUtil.calcAnimationDuration(animation, this.#movementSpeed, distance);
-        }
-
-        this.#rotation = args.rotation * 5;
-        this.#emitter.emit(CharacterMovedEvent.type, new CharacterMovedEvent({ params: args, entity: this }));
-    }
-
-    updateOtherEntity(otherEntity, args) {
-        this.#emitter.emit(OtherCharacterMovedEvent.type, new OtherCharacterMovedEvent({ otherEntity, params: args }));
-    }
-
-    move(x, y) {
-        if (x === this.#positionX && y === this.#positionY) return;
-        this.#positionX = x;
-        this.#positionY = y;
-        //send moveEvent
-    }
-
-    wait(x, y, args) {
-        this.#positionX = x;
-        this.#positionY = y;
-        this.#emitter.emit(CharacterMovedEvent.type, new CharacterMovedEvent({ params: args, entity: this }));
-    }
-
-    stop() {
-        this.#state = EntityStateEnum.IDLE;
-        this.#movementDuration = 0;
     }
 }

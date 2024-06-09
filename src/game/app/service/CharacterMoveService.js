@@ -10,6 +10,7 @@ export default class CharacterMoveService {
     async execute({ player, movementType, positionX, positionY, arg, rotation, time }) {
         switch (movementType) {
             case MovementTypeEnum.MOVE:
+                player.addExperience(500);
                 player.goto(positionX, positionY, { arg, rotation, time, movementType, positionX, positionY });
                 break;
             case MovementTypeEnum.WAIT:

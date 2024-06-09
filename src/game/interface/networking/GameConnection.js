@@ -1,11 +1,12 @@
-import CharacterSpawnedEvent from '../../../core/domain/entities/player/events/CharacterSpawnedEvent.js';
-import OtherCharacterMovedEvent from '../../../core/domain/entities/player/events/OtherCharacterMovedEvent.js';
-import OtherCharacterUpdatedEvent from '../../../core/domain/entities/player/events/OtherCharacterUpdatedEvent.js';
+import PlayerEventsEnum from '../../../core/domain/entities/player/events/PlayerEventsEnum.js';
 import ConnectionStateEnum from '../../../core/enum/ConnectionStateEnum.js';
 import MovementTypeEnum from '../../../core/enum/MovementTypeEnum.js';
+import PointsEnum from '../../../core/enum/PointsEnum.js';
 import Connection from '../../../core/interface/networking/Connection.js';
 import CharacterInfoPacket from '../../../core/interface/networking/packets/packet/out/CharacterInfoPacket.js';
 import CharacterMoveOutPacket from '../../../core/interface/networking/packets/packet/out/CharacterMoveOutPacket.js';
+import CharacterPointChangePacket from '../../../core/interface/networking/packets/packet/out/CharacterPointChangePacket.js';
+import CharacterPointsPacket from '../../../core/interface/networking/packets/packet/out/CharacterPointsPacket.js';
 import CharacterSpawnPacket from '../../../core/interface/networking/packets/packet/out/CharacterSpawnPacket.js';
 import Queue from '../../../core/util/Queue.js';
 
@@ -34,13 +35,49 @@ export default class GameConnection extends Connection {
 
     set player(newPlayer) {
         this.#player = newPlayer;
-        this.#player.subscribe(CharacterSpawnedEvent.type, this.#onCharacterSpawned.bind(this));
-        this.#player.subscribe(OtherCharacterUpdatedEvent.type, this.#onOtherCharacterUpdated.bind(this));
-        this.#player.subscribe(OtherCharacterMovedEvent.type, this.#onOtherCharacterMoved.bind(this));
+        this.#player.subscribe(PlayerEventsEnum.OTHER_CHARACTER_UPDATED, this.#onOtherCharacterUpdated.bind(this));
+        this.#player.subscribe(PlayerEventsEnum.OTHER_CHARACTER_MOVED, this.#onOtherCharacterMoved.bind(this));
+        this.#player.subscribe(PlayerEventsEnum.OTHER_CHARACTER_LEVEL_UP, this.#onOtherCharacterLevelUp.bind(this));
+        this.#player.subscribe(PlayerEventsEnum.CHARACTER_SPAWNED, this.#onCharacterSpawned.bind(this));
+        this.#player.subscribe(PlayerEventsEnum.CHARACTER_POINTS_UPDATED, this.#onCharacterPointsUpdated.bind(this));
     }
 
     get player() {
         return this.#player;
+    }
+
+    #onOtherCharacterLevelUp(otherCharacterLevelUpEvent) {
+        const { otherEntity } = otherCharacterLevelUpEvent;
+
+        // this.send(
+        //     new CharacterInfoPacket({
+        //         vid: otherEntity.virtualId,
+        //         empireId: otherEntity.empire,
+        //         guildId: 0, //todo
+        //         level: otherEntity.level,
+        //         mountId: 0, //todo
+        //         pkMode: 0, //todo
+        //         playerName: otherEntity.name,
+        //         rankPoints: 0, //todo
+        //     }),
+        // );
+
+        this.send(
+            new CharacterPointChangePacket({
+                vid: otherEntity.virtualId,
+                type: PointsEnum.LEVEL,
+                amount: 0,
+                value: otherEntity.level,
+            }),
+        );
+    }
+
+    #onCharacterPointsUpdated() {
+        const characterPointsPacket = new CharacterPointsPacket();
+        for (const point in this.#player.getPoints()) {
+            characterPointsPacket.addPoint(point, this.#player.getPoint(point));
+        }
+        this.send(characterPointsPacket);
     }
 
     #onOtherCharacterMoved(otherCharacterMovedEvent) {
