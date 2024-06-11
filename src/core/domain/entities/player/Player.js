@@ -1,15 +1,9 @@
-import { EventEmitter } from 'node:events';
 import EntityTypeEnum from '../../../enum/EntityTypeEnum.js';
 import PointsEnum from '../../../enum/PointsEnum.js';
 import PlayerDTO from '../../dto/PlayerDTO.js';
 import Entity from '../Entity.js';
 import CharacterSpawnedEvent from './events/CharacterSpawnedEvent.js';
 import OtherCharacterUpdatedEvent from './events/OtherCharacterUpdatedEvent.js';
-import AnimationTypeEnum from '../../../enum/AnimationTypeEnum.js';
-import AnimationSubTypeEnum from '../../../enum/AnimationSubTypeEnum.js';
-import MathUtil from '../../util/MathUtil.js';
-import EntityStateEnum from '../../../enum/EntityStateEnum.js';
-import AnimationUtil from '../../util/AnimationUtil.js';
 import CharacterMovedEvent from './events/CharacterMovedEvent.js';
 import OtherCharacterMovedEvent from './events/OtherCharacterMovedEvent.js';
 import CharacterPointsUpdatedEvent from './events/CharacterPointsUpdatedEvent.js';
@@ -29,8 +23,6 @@ export default class Player extends Entity {
     #ht;
     #dx;
     #iq;
-    #positionX;
-    #positionY;
     #stamina;
     #bodyPart;
     #hairPart;
@@ -40,69 +32,52 @@ export default class Player extends Entity {
     #slot;
 
     #appearance;
-
-    #entityType = EntityTypeEnum.PLAYER;
-    #virtualId;
-
     #points = {};
 
     #health;
     #baseHealth;
     #hpPerLvl;
     #hpPerHtPoint;
-
     #mana;
     #mpPerLvl;
     #mpPerIqPoint;
     #baseMana;
 
-    //animation management
-    #targetPositionX = 0;
-    #targetPositionY = 0;
-    #startPositionX = 0;
-    #startPositionY = 0;
-    #movementDuration = 0;
-    #state = EntityStateEnum.IDLE;
-    #movementStart = 0;
-    #rotation = 0;
-    #animationManager;
     #experienceManager;
     #config;
-
-    #emitter = new EventEmitter();
 
     //in game points
     #maxHealth;
     #maxMana;
     #attackSpeed;
     #movementSpeed;
-    #neededExperience;
-    #defenseGrade;
-    #attackGrade;
-    #defense;
-    #statusPoints;
-    #subSkill;
-    #skill;
-    #minAttackDamage;
-    #maxAttackDamage;
-    #criticalPercentage;
-    #penetratePercentage;
-    #itemDropBonus;
-    #attackBonus;
-    #defenseBonus;
-    #mallItemBonus;
-    #magicAttackBonus;
-    #resistCritical;
-    #resistPenetrate;
-    #minWeaponDamage;
-    #maxWeaponDamage;
+    // #neededExperience;
+    // #defenseGrade;
+    // #attackGrade;
+    // #defense;
+    // #statusPoints;
+    // #subSkill;
+    // #skill;
+    // #minAttackDamage;
+    // #maxAttackDamage;
+    // #criticalPercentage;
+    // #penetratePercentage;
+    // #itemDropBonus;
+    // #attackBonus;
+    // #defenseBonus;
+    // #mallItemBonus;
+    // #magicAttackBonus;
+    // #resistCritical;
+    // #resistPenetrate;
+    // #minWeaponDamage;
+    // #maxWeaponDamage;
+
+    #lastPlayTime;
 
     constructor(
         {
             id,
             accountId,
-            createdAt,
-            updatedAt,
             empire,
             playerClass = 0,
             skillGroup = 0,
@@ -138,11 +113,20 @@ export default class Player extends Entity {
         },
         { animationManager, experienceManager, config },
     ) {
-        super({
-            id,
-            createdAt,
-            updatedAt,
-        });
+        super(
+            {
+                id,
+                classId: playerClass,
+                virtualId,
+                positionX,
+                positionY,
+                entityType: EntityTypeEnum.PLAYER,
+            },
+            {
+                animationManager,
+            },
+        );
+
         this.#accountId = accountId;
         this.#empire = empire;
         this.#playerClass = playerClass;
@@ -155,8 +139,6 @@ export default class Player extends Entity {
         this.#ht = ht;
         this.#dx = dx;
         this.#iq = iq;
-        this.#positionX = positionX;
-        this.#positionY = positionY;
         this.#health = health;
         this.#mana = mana;
         this.#stamina = stamina;
@@ -169,7 +151,6 @@ export default class Player extends Entity {
         this.#appearance = appearance;
 
         //in game values
-        this.#virtualId = virtualId;
         this.#hpPerLvl = hpPerLvl;
         this.#hpPerHtPoint = hpPerHtPoint;
         this.#mpPerLvl = mpPerLvl;
@@ -178,8 +159,6 @@ export default class Player extends Entity {
         this.#movementSpeed = baseMovementSpeed;
         this.#baseMana = baseMana;
         this.#baseHealth = baseHealth;
-
-        this.#animationManager = animationManager;
         this.#experienceManager = experienceManager;
         this.#config = config;
 
@@ -262,7 +241,8 @@ export default class Player extends Entity {
         this.#calcMaxMana();
         this.#calcStatusPoints();
         this.#sendPoints();
-        this.#emitter.emit(CharacterLevelUpEvent.type, new CharacterLevelUpEvent({ entity: this }));
+
+        this.publish(CharacterLevelUpEvent.type, new CharacterLevelUpEvent({ entity: this }));
     }
 
     addMovementSpeed(value) {
@@ -310,12 +290,74 @@ export default class Player extends Entity {
         return this.#points;
     }
 
+    spawn() {
+        this.#lastPlayTime = performance.now();
+        this.publish(CharacterSpawnedEvent.type, new CharacterSpawnedEvent());
+    }
+
+    showOtherEntity(otherEntity) {
+        this.publish(OtherCharacterUpdatedEvent.type, new OtherCharacterUpdatedEvent({ otherEntity }));
+    }
+
+    otherEntityLevelUp({ virtualId, level }) {
+        this.publish(OtherCharacterLevelUpEvent.type, new OtherCharacterLevelUpEvent({ virtualId, level }));
+    }
+
+    #sendPoints() {
+        this.publish(CharacterPointsUpdatedEvent.type, new CharacterPointsUpdatedEvent());
+    }
+
+    updateOtherEntity({ virtualId, arg, movementType, time, rotation, positionX, positionY, duration }) {
+        this.publish(
+            OtherCharacterMovedEvent.type,
+            new OtherCharacterMovedEvent({
+                virtualId,
+                arg,
+                movementType,
+                time,
+                rotation,
+                positionX,
+                positionY,
+                duration,
+            }),
+        );
+    }
+
+    wait({ positionX, positionY, arg, rotation, time, movementType }) {
+        super.wait(positionX, positionY);
+        this.publish(
+            CharacterMovedEvent.type,
+            new CharacterMovedEvent({
+                params: { positionX, positionY, arg, rotation, time, movementType, duration: this.movementDuration },
+                entity: this,
+            }),
+        );
+    }
+
+    goto({ positionX, positionY, arg, rotation, time, movementType }) {
+        super.goto(positionX, positionY, rotation);
+        this.publish(
+            CharacterMovedEvent.type,
+            new CharacterMovedEvent({
+                params: { positionX, positionY, arg, rotation, time, movementType },
+                entity: this,
+            }),
+        );
+    }
+
+    move(x, y) {
+        super.move(x, y);
+        //send moveEvent
+    }
+
+    #calcPlayTime() {
+        return this.#playTime + Math.round((performance.now() - this.#lastPlayTime) / (1000 * 60));
+    }
+
     static create(
         {
             id,
             accountId,
-            createdAt,
-            updatedAt,
             empire,
             playerClass,
             skillGroup,
@@ -355,8 +397,6 @@ export default class Player extends Entity {
             {
                 id,
                 accountId,
-                createdAt,
-                updatedAt,
                 empire,
                 playerClass,
                 skillGroup,
@@ -397,13 +437,11 @@ export default class Player extends Entity {
     toDatabase() {
         return new PlayerDTO({
             id: this.id,
-            updatedAt: this.updatedAt,
-            createdAt: this.createdAt,
             accountId: this.#accountId,
             empire: this.#empire,
             playerClass: this.#playerClass,
             skillGroup: this.#skillGroup,
-            playTime: this.calcPlaytime(),
+            playTime: this.#calcPlayTime(),
             level: this.#level,
             experience: this.#experience,
             gold: this.#gold,
@@ -411,8 +449,8 @@ export default class Player extends Entity {
             ht: this.#ht,
             dx: this.#dx,
             iq: this.#iq,
-            positionX: this.#positionX,
-            positionY: this.#positionY,
+            positionX: this.positionX,
+            positionY: this.positionY,
             health: this.#health,
             mana: this.#mana,
             stamina: this.#stamina,
@@ -425,134 +463,15 @@ export default class Player extends Entity {
         });
     }
 
-    tick() {
-        if (this.#state == EntityStateEnum.MOVING) {
-            const elapsed = performance.now() - this.#movementStart;
-            let rate = this.#movementDuration == 0 ? 1 : elapsed / this.#movementDuration;
-            if (rate > 1) rate = 1;
-
-            const x = (this.#targetPositionX - this.#startPositionX) * rate + this.#startPositionX;
-            const y = (this.#targetPositionY - this.#startPositionY) * rate + this.#startPositionY;
-
-            this.#positionX = x;
-            this.#positionY = y;
-
-            if (rate >= 1) {
-                this.#state = EntityStateEnum.IDLE;
-            }
-        }
-    }
-
-    subscribe(eventName, callback) {
-        this.#emitter.on(eventName, callback);
-    }
-
-    unsubscribe(eventName) {
-        this.#emitter.off(eventName);
-    }
-
-    spawn() {
-        this.#emitter.emit(CharacterSpawnedEvent.type, new CharacterSpawnedEvent());
-    }
-
-    showOtherEntity(otherEntity) {
-        this.#emitter.emit(OtherCharacterUpdatedEvent.type, new OtherCharacterUpdatedEvent({ otherEntity }));
-    }
-
-    otherEntityLevelUp(otherEntity) {
-        this.#emitter.emit(OtherCharacterLevelUpEvent.type, new OtherCharacterLevelUpEvent({ otherEntity }));
-    }
-
-    #sendPoints() {
-        this.#emitter.emit(CharacterPointsUpdatedEvent.type, new CharacterPointsUpdatedEvent());
-    }
-
-    goto(x, y, args) {
-        if (x === this.#positionX && y === this.#positionY) return;
-        if (x === this.#targetPositionX && y === this.#targetPositionY) return;
-
-        const animation = this.#animationManager.getAnimation(
-            this.#playerClass,
-            AnimationTypeEnum.RUN,
-            AnimationSubTypeEnum.GENERAL,
-        );
-
-        this.#state = EntityStateEnum.MOVING;
-        this.#targetPositionX = x;
-        this.#targetPositionY = y;
-        this.#startPositionX = this.positionX;
-        this.#startPositionY = this.positionY;
-        this.#movementStart = performance.now();
-
-        const distance = MathUtil.calcDistance(
-            this.#startPositionX,
-            this.#startPositionY,
-            this.#targetPositionX,
-            this.#targetPositionY,
-        );
-
-        if (animation) {
-            this.#movementDuration = AnimationUtil.calcAnimationDuration(animation, this.#movementSpeed, distance);
-        }
-
-        this.#rotation = args.rotation * 5;
-        this.#emitter.emit(CharacterMovedEvent.type, new CharacterMovedEvent({ params: args, entity: this }));
-    }
-
-    updateOtherEntity(otherEntity, args) {
-        this.#emitter.emit(OtherCharacterMovedEvent.type, new OtherCharacterMovedEvent({ otherEntity, params: args }));
-    }
-
-    move(x, y) {
-        if (x === this.#positionX && y === this.#positionY) return;
-        this.#positionX = x;
-        this.#positionY = y;
-        //send moveEvent
-    }
-
-    wait(x, y, args) {
-        this.#positionX = x;
-        this.#positionY = y;
-        this.#emitter.emit(CharacterMovedEvent.type, new CharacterMovedEvent({ params: args, entity: this }));
-    }
-
-    stop() {
-        this.#state = EntityStateEnum.IDLE;
-        this.#movementDuration = 0;
-    }
-
     get appearance() {
         return this.#appearance;
     }
-
-    get rotation() {
-        return this.#rotation;
-    }
-
-    get movementSpeed() {
-        return this.#movementSpeed;
-    }
-
-    get attackSpeed() {
-        return this.#attackSpeed;
-    }
-
     get maxHealth() {
         return this.#maxHealth;
     }
-
     get maxMana() {
         return this.#maxMana;
     }
-
-    get virtualId() {
-        return this.#virtualId;
-    }
-
-    get entityType() {
-        return this.#entityType;
-    }
-
     get accountId() {
         return this.#accountId;
     }
@@ -589,12 +508,6 @@ export default class Player extends Entity {
     get iq() {
         return this.#iq;
     }
-    get positionX() {
-        return this.#positionX;
-    }
-    get positionY() {
-        return this.#positionY;
-    }
     get health() {
         return this.#health;
     }
@@ -619,12 +532,7 @@ export default class Player extends Entity {
     get availableStatusPoints() {
         return this.#availableStatusPoints;
     }
-
     get slot() {
         return this.#slot;
-    }
-
-    get movementDuration() {
-        return this.#movementDuration;
     }
 }

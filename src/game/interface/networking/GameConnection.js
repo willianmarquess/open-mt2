@@ -47,27 +47,14 @@ export default class GameConnection extends Connection {
     }
 
     #onOtherCharacterLevelUp(otherCharacterLevelUpEvent) {
-        const { otherEntity } = otherCharacterLevelUpEvent;
-
-        // this.send(
-        //     new CharacterInfoPacket({
-        //         vid: otherEntity.virtualId,
-        //         empireId: otherEntity.empire,
-        //         guildId: 0, //todo
-        //         level: otherEntity.level,
-        //         mountId: 0, //todo
-        //         pkMode: 0, //todo
-        //         playerName: otherEntity.name,
-        //         rankPoints: 0, //todo
-        //     }),
-        // );
+        const { virtualId, level } = otherCharacterLevelUpEvent;
 
         this.send(
             new CharacterPointChangePacket({
-                vid: otherEntity.virtualId,
+                vid: virtualId,
                 type: PointsEnum.LEVEL,
                 amount: 0,
-                value: otherEntity.level,
+                value: level,
             }),
         );
     }
@@ -81,18 +68,19 @@ export default class GameConnection extends Connection {
     }
 
     #onOtherCharacterMoved(otherCharacterMovedEvent) {
-        const { otherEntity, params } = otherCharacterMovedEvent;
+        const { virtualId, arg, duration, movementType, time, rotation, positionX, positionY } =
+            otherCharacterMovedEvent;
 
         this.send(
             new CharacterMoveOutPacket({
-                vid: otherEntity.virtualId,
-                arg: params.arg,
-                movementType: params.movementType,
-                time: params.time,
-                rotation: params.rotation,
-                positionX: params.positionX,
-                positionY: params.positionY,
-                duration: params.movementType === MovementTypeEnum.MOVE ? otherEntity.movementDuration : 0,
+                vid: virtualId,
+                arg,
+                movementType,
+                time,
+                rotation,
+                positionX,
+                positionY,
+                duration: movementType === MovementTypeEnum.MOVE ? duration : 0,
             }),
         );
     }

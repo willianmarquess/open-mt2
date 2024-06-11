@@ -2,20 +2,57 @@ import PlayerEventsEnum from './PlayerEventsEnum.js';
 
 export default class OtherCharacterMovedEvent {
     static #type = PlayerEventsEnum.OTHER_CHARACTER_MOVED;
-    #otherEntity;
-    #params;
 
-    constructor({ otherEntity, params }) {
-        this.#otherEntity = otherEntity;
-        this.#params = params;
+    #virtualId;
+    #arg;
+    #movementType;
+    #time;
+    #rotation;
+    #positionX;
+    #positionY;
+    #duration;
+
+    constructor({ virtualId, arg, movementType, time, rotation, positionX, positionY, duration }) {
+        this.#virtualId = virtualId;
+        this.#arg = arg;
+        this.#movementType = movementType;
+        this.#time = time;
+        this.#rotation = rotation;
+        this.#positionX = positionX;
+        this.#positionY = positionY;
+        this.#duration = duration;
     }
 
-    get otherEntity() {
-        return this.#otherEntity;
+    get virtualId() {
+        return this.#virtualId;
     }
 
-    get params() {
-        return this.#params;
+    get arg() {
+        return this.#arg;
+    }
+
+    get movementType() {
+        return this.#movementType;
+    }
+
+    get time() {
+        return this.#time;
+    }
+
+    get rotation() {
+        return this.#rotation;
+    }
+
+    get positionX() {
+        return this.#positionX;
+    }
+
+    get positionY() {
+        return this.#positionY;
+    }
+
+    get duration() {
+        return this.#duration;
     }
 
     static get type() {

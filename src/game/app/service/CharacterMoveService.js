@@ -11,10 +11,10 @@ export default class CharacterMoveService {
         switch (movementType) {
             case MovementTypeEnum.MOVE:
                 player.addExperience(500);
-                player.goto(positionX, positionY, { arg, rotation, time, movementType, positionX, positionY });
+                player.goto({ positionX, positionY, arg, rotation, time, movementType });
                 break;
             case MovementTypeEnum.WAIT:
-                player.wait(positionX, positionY, { arg, rotation, time, movementType, positionX, positionY });
+                player.wait({ positionX, positionY, arg, rotation, time, movementType });
                 break;
             default:
                 this.#logger.info(`[CharacterMoveService] Movement type: ${movementType} not implemented`);

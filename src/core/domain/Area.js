@@ -3,6 +3,7 @@ import Queue from '../util/Queue.js';
 import PlayerEventsEnum from './entities/player/events/PlayerEventsEnum.js';
 
 const SIZE_QUEUE = 1000;
+const CHAR_VIEW_SIZE = 10000;
 
 export default class Area {
     #name;
@@ -46,32 +47,43 @@ export default class Area {
     }
 
     #onCharacterMove(characterMovedEvent) {
-        const { entity, params } = characterMovedEvent;
+        const {
+            entity,
+            params: { positionX, positionY, arg, rotation, time, movementType, duration },
+        } = characterMovedEvent;
         this.#quadTree.updatePosition(entity);
-        const entities = this.#quadTree.queryAround(entity.positionX, entity.positionY, 10000);
+        const entities = this.#quadTree.queryAround(entity.positionX, entity.positionY, CHAR_VIEW_SIZE);
         for (const otherEntity of entities) {
             if (otherEntity.name === entity.name) continue;
-            otherEntity.updateOtherEntity(entity, params);
+            otherEntity.updateOtherEntity({
+                virtualId: entity.virtualId,
+                arg,
+                movementType,
+                time,
+                rotation,
+                positionX,
+                positionY,
+                duration,
+            });
         }
     }
 
     #onCharacterLevelUp(characterLevelUpEvent) {
         const { entity } = characterLevelUpEvent;
-        const entities = this.#quadTree.queryAround(entity.positionX, entity.positionY, 10000);
+        const entities = this.#quadTree.queryAround(entity.positionX, entity.positionY, CHAR_VIEW_SIZE);
         for (const otherEntity of entities) {
             if (otherEntity.name === entity.name) continue;
-            otherEntity.otherEntityLevelUp(entity);
+            otherEntity.otherEntityLevelUp({ virtualId: entity.virtualId, level: entity.level });
         }
     }
 
     tick() {
         for (const entity of this.#entitiesToSpawn.dequeueIterator()) {
-            //add entity
             entity.subscribe(PlayerEventsEnum.CHARACTER_MOVED, this.#onCharacterMove.bind(this));
             entity.subscribe(PlayerEventsEnum.CHARACTER_LEVEL_UP, this.#onCharacterLevelUp.bind(this));
             this.#quadTree.insert(entity);
 
-            const entities = this.#quadTree.queryAround(entity.positionX, entity.positionY, 10000);
+            const entities = this.#quadTree.queryAround(entity.positionX, entity.positionY, CHAR_VIEW_SIZE);
             for (const otherEntity of entities) {
                 if (otherEntity.name === entity.name) continue;
                 otherEntity.showOtherEntity(entity);
@@ -82,7 +94,6 @@ export default class Area {
         }
 
         for (const entity of this.#entitiesToDespawn.dequeueIterator()) {
-            //remove entity
             this.#entities.delete(entity.virtualId);
         }
 

@@ -2,14 +2,21 @@ import PlayerEventsEnum from './PlayerEventsEnum.js';
 
 export default class OtherCharacterLevelUpEvent {
     static #type = PlayerEventsEnum.OTHER_CHARACTER_LEVEL_UP;
-    #otherEntity;
 
-    constructor({ otherEntity }) {
-        this.#otherEntity = otherEntity;
+    #virtualId;
+    #level;
+
+    constructor({ virtualId, level }) {
+        this.#virtualId = virtualId;
+        this.#level = level;
     }
 
-    get otherEntity() {
-        return this.#otherEntity;
+    get virtualId() {
+        return this.#virtualId;
+    }
+
+    get level() {
+        return this.#level;
     }
 
     static get type() {
