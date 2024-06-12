@@ -1,6 +1,6 @@
-import Entity from './Entity.js';
+import StateEntity from '../StateEntity.js';
 
-export default class Account extends Entity {
+export default class Account extends StateEntity {
     #username;
     #password;
     #email;

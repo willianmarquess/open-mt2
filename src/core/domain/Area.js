@@ -1,9 +1,11 @@
 import QuadTree from '../util/QuadTree.js';
 import Queue from '../util/Queue.js';
-import PlayerEventsEnum from './entities/player/events/PlayerEventsEnum.js';
+import Player from './entities/game/player/Player.js';
+import PlayerEventsEnum from './entities/game/player/events/PlayerEventsEnum.js';
 
 const SIZE_QUEUE = 1000;
 const CHAR_VIEW_SIZE = 10000;
+const SAVE_PLAYERS_INTERVAL = 30000;
 
 export default class Area {
     #name;
@@ -17,13 +19,21 @@ export default class Area {
     #entitiesToDespawn = new Queue(SIZE_QUEUE);
     #quadTree;
 
-    constructor({ name, positionX, positionY, width, height }) {
+    #saveCharacterService;
+    #logger;
+
+    constructor({ name, positionX, positionY, width, height }, { saveCharacterService, logger }) {
         this.#name = name;
         this.#positionX = positionX;
         this.#positionY = positionY;
         this.#width = width;
         this.#height = height;
         this.#quadTree = new QuadTree(positionX, positionY, width * 25600, height * 25600, 20);
+
+        this.#saveCharacterService = saveCharacterService;
+        this.#logger = logger;
+
+        setInterval(this.#savePlayers.bind(this), SAVE_PLAYERS_INTERVAL);
     }
 
     get positionX() {
@@ -40,6 +50,23 @@ export default class Area {
     }
     get name() {
         return this.#name;
+    }
+
+    async #savePlayers() {
+        if (this.#entities.size < 1) return;
+
+        const promises = [];
+
+        for (const entity of this.#entities.values()) {
+            if (entity instanceof Player) {
+                this.#logger.debug(`[AREA] Saving player: ${entity.id}, ${entity.name}`);
+                promises.push(this.#saveCharacterService.execute(entity));
+            }
+        }
+
+        return Promise.all(promises).catch((error) =>
+            this.#logger.error('[AREA] Error when try to save player: ', error),
+        );
     }
 
     spawn(entity) {
@@ -86,8 +113,10 @@ export default class Area {
             const entities = this.#quadTree.queryAround(entity.positionX, entity.positionY, CHAR_VIEW_SIZE);
             for (const otherEntity of entities) {
                 if (otherEntity.name === entity.name) continue;
-                otherEntity.showOtherEntity(entity);
-                entity.showOtherEntity(otherEntity);
+                if (otherEntity instanceof Player) {
+                    otherEntity.showOtherEntity(entity);
+                    entity.showOtherEntity(otherEntity);
+                }
             }
 
             this.#entities.set(entity.virtualId, entity);

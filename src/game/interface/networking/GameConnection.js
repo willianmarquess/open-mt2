@@ -1,6 +1,5 @@
-import PlayerEventsEnum from '../../../core/domain/entities/player/events/PlayerEventsEnum.js';
+import PlayerEventsEnum from '../../../core/domain/entities/game/player/events/PlayerEventsEnum.js';
 import ConnectionStateEnum from '../../../core/enum/ConnectionStateEnum.js';
-import MovementTypeEnum from '../../../core/enum/MovementTypeEnum.js';
 import PointsEnum from '../../../core/enum/PointsEnum.js';
 import Connection from '../../../core/interface/networking/Connection.js';
 import CharacterInfoPacket from '../../../core/interface/networking/packets/packet/out/CharacterInfoPacket.js';
@@ -80,7 +79,7 @@ export default class GameConnection extends Connection {
                 rotation,
                 positionX,
                 positionY,
-                duration: movementType === MovementTypeEnum.MOVE ? duration : 0,
+                duration,
             }),
         );
     }

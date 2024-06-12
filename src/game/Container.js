@@ -17,6 +17,7 @@ import EnterGameService from './app/service/EnterGameService.js';
 import AnimationManager from '../core/domain/manager/AnimationManager.js';
 import CharacterMoveService from './app/service/CharacterMoveService.js';
 import ExperienceManager from '../core/domain/manager/ExperienceManager.js';
+import SaveCharacterService from '../core/domain/service/SaveCharacterService.js';
 
 const container = createContainer();
 
@@ -40,6 +41,7 @@ container.register({
     characterMoveService: asClass(CharacterMoveService).scoped(),
     animationManager: asClass(AnimationManager).singleton(),
     experienceManager: asClass(ExperienceManager).singleton(),
+    saveCharacterService: asClass(SaveCharacterService).scoped(),
 });
 
 export { container };

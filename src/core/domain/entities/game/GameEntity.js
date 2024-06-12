@@ -1,15 +1,17 @@
 import { EventEmitter } from 'node:events';
-import AnimationUtil from '../util/AnimationUtil.js';
-import EntityStateEnum from '../../enum/EntityStateEnum.js';
-import AnimationTypeEnum from '../../enum/AnimationTypeEnum.js';
-import AnimationSubTypeEnum from '../../enum/AnimationSubTypeEnum.js';
-import MathUtil from '../util/MathUtil.js';
+import AnimationUtil from '../../util/AnimationUtil.js';
+import EntityStateEnum from '../../../enum/EntityStateEnum.js';
+import AnimationTypeEnum from '../../../enum/AnimationTypeEnum.js';
+import AnimationSubTypeEnum from '../../../enum/AnimationSubTypeEnum.js';
+import MathUtil from '../../util/MathUtil.js';
 
-export default class Entity {
+export default class GameEntity {
     #id;
     #virtualId;
     #entityType;
+    #classId = 0;
 
+    //movement and animation
     #positionX = 0;
     #positionY = 0;
     #rotation = 0;
@@ -22,18 +24,22 @@ export default class Entity {
     #movementDuration = 0;
     #movementSpeed = 0;
     #attackSpeed = 0;
-    #classId = 0;
 
     #animationManager;
     #emitter = new EventEmitter();
 
-    constructor({ id, classId, virtualId, entityType, positionX, positionY }, { animationManager }) {
+    constructor(
+        { id, classId, virtualId, entityType, positionX, positionY, movementSpeed, attackSpeed },
+        { animationManager },
+    ) {
         this.#id = id;
         this.#classId = classId;
         this.#virtualId = virtualId;
         this.#entityType = entityType;
         this.#positionX = positionX;
         this.#positionY = positionY;
+        this.#movementSpeed = movementSpeed;
+        this.#attackSpeed = attackSpeed;
 
         this.#animationManager = animationManager;
     }

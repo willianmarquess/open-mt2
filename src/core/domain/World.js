@@ -1,6 +1,6 @@
 import Grid from '../util/Grid.js';
 import Area from './Area.js';
-import Player from './entities/player/Player.js';
+import Player from './entities/game/player/Player.js';
 
 const TICKS_PER_SECONDS = 15;
 const AREA_UNIT = 25600;
@@ -17,6 +17,7 @@ export default class World {
     #server;
     #logger;
     #config;
+    #saveCharacterService;
 
     #virtualId = 0;
 
@@ -27,10 +28,11 @@ export default class World {
     #height = 0;
     #grid;
 
-    constructor({ server, logger, config }) {
+    constructor({ server, logger, config, saveCharacterService }) {
         this.#server = server;
         this.#logger = logger;
         this.#config = config;
+        this.#saveCharacterService = saveCharacterService;
     }
 
     generateVirtualId() {
@@ -54,13 +56,19 @@ export default class World {
             );
             maxDimensions.maxWidth = Math.max(maxDimensions.maxWidth, posX + width * AREA_UNIT);
             maxDimensions.maxHeight = Math.max(maxDimensions.maxHeight, posY + height * AREA_UNIT);
-            const area = new Area({
-                name: mapName,
-                positionX: posX,
-                positionY: posY,
-                width,
-                height,
-            });
+            const area = new Area(
+                {
+                    name: mapName,
+                    positionX: posX,
+                    positionY: posY,
+                    width,
+                    height,
+                },
+                {
+                    saveCharacterService: this.#saveCharacterService,
+                    logger: this.#logger,
+                },
+            );
             this.#areas.set(mapName, area);
         });
 

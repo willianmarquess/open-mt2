@@ -1,7 +1,6 @@
-import EntityTypeEnum from '../../../enum/EntityTypeEnum.js';
-import PointsEnum from '../../../enum/PointsEnum.js';
-import PlayerDTO from '../../dto/PlayerDTO.js';
-import Entity from '../Entity.js';
+import EntityTypeEnum from '../../../../enum/EntityTypeEnum.js';
+import PointsEnum from '../../../../enum/PointsEnum.js';
+import PlayerDTO from '../../../dto/PlayerDTO.js';
 import CharacterSpawnedEvent from './events/CharacterSpawnedEvent.js';
 import OtherCharacterUpdatedEvent from './events/OtherCharacterUpdatedEvent.js';
 import CharacterMovedEvent from './events/CharacterMovedEvent.js';
@@ -9,8 +8,9 @@ import OtherCharacterMovedEvent from './events/OtherCharacterMovedEvent.js';
 import CharacterPointsUpdatedEvent from './events/CharacterPointsUpdatedEvent.js';
 import CharacterLevelUpEvent from './events/CharacterLevelUpEvent.js';
 import OtherCharacterLevelUpEvent from './events/OtherCharacterLevelUpEvent.js';
+import GameEntity from '../GameEntity.js';
 
-export default class Player extends Entity {
+export default class Player extends GameEntity {
     #accountId;
     #empire;
     #playerClass;
@@ -121,6 +121,8 @@ export default class Player extends Entity {
                 positionX,
                 positionY,
                 entityType: EntityTypeEnum.PLAYER,
+                attackSpeed: baseAttackSpeed,
+                movementSpeed: baseMovementSpeed,
             },
             {
                 animationManager,
@@ -155,8 +157,6 @@ export default class Player extends Entity {
         this.#hpPerHtPoint = hpPerHtPoint;
         this.#mpPerLvl = mpPerLvl;
         this.#mpPerIqPoint = mpPerIqPoint;
-        this.#attackSpeed = baseAttackSpeed;
-        this.#movementSpeed = baseMovementSpeed;
         this.#baseMana = baseMana;
         this.#baseHealth = baseHealth;
         this.#experienceManager = experienceManager;
@@ -166,8 +166,8 @@ export default class Player extends Entity {
     }
 
     #initPoints() {
-        this.#calcMaxHealth();
-        this.#calcMaxMana();
+        this.#updateHealth();
+        this.#updateMana();
 
         this.#points[PointsEnum.EXPERIENCE] = () => this.#experience;
         this.#points[PointsEnum.HT] = () => this.#ht;
@@ -185,7 +185,7 @@ export default class Player extends Entity {
         this.#points[PointsEnum.STATUS_POINTS] = () => this.#availableStatusPoints;
     }
 
-    #calcStatusPoints() {
+    #updateStatusPoints() {
         const baseStatusPoints = (this.#level - 1) * this.#config.POINTS_PER_LEVEL;
 
         const expNeeded = this.#experienceManager.getNeededExperience(this.#level);
@@ -210,7 +210,7 @@ export default class Player extends Entity {
             const diff = this.#experience + value - expNeeded;
             this.#experience = diff;
             this.addLevel(1);
-            this.#calcStatusPoints();
+            this.#updateStatusPoints();
             this.addExperience(0);
             return;
         }
@@ -226,7 +226,7 @@ export default class Player extends Entity {
         if (expSteps > 0) {
             this.#health = this.#maxHealth;
             this.#mana = this.#maxMana;
-            this.#calcStatusPoints();
+            this.#updateStatusPoints();
             this.#sendPoints();
         }
     }
@@ -237,9 +237,9 @@ export default class Player extends Entity {
 
         //add skill point
         this.#level += value;
-        this.#calcMaxHealth();
-        this.#calcMaxMana();
-        this.#calcStatusPoints();
+        this.#updateHealth();
+        this.#updateMana();
+        this.#updateStatusPoints();
         this.#sendPoints();
 
         this.publish(CharacterLevelUpEvent.type, new CharacterLevelUpEvent({ entity: this }));
@@ -269,12 +269,12 @@ export default class Player extends Entity {
         this.#maxHealth += value > 0 ? value : 0;
     }
 
-    #calcMaxHealth() {
+    #updateHealth() {
         this.#maxHealth = this.#baseHealth + this.#ht * this.#hpPerHtPoint + this.#level * this.#hpPerLvl;
         this.#health = this.#maxHealth;
     }
 
-    #calcMaxMana() {
+    #updateMana() {
         this.#maxMana = this.#baseMana + this.#iq * this.#mpPerIqPoint + this.#level * this.#mpPerLvl;
         this.#mana = this.#maxMana;
     }
@@ -328,7 +328,7 @@ export default class Player extends Entity {
         this.publish(
             CharacterMovedEvent.type,
             new CharacterMovedEvent({
-                params: { positionX, positionY, arg, rotation, time, movementType, duration: this.movementDuration },
+                params: { positionX, positionY, arg, rotation, time, movementType, duration: 0 },
                 entity: this,
             }),
         );
@@ -339,7 +339,7 @@ export default class Player extends Entity {
         this.publish(
             CharacterMovedEvent.type,
             new CharacterMovedEvent({
-                params: { positionX, positionY, arg, rotation, time, movementType },
+                params: { positionX, positionY, arg, rotation, time, movementType, duration: this.movementDuration },
                 entity: this,
             }),
         );
