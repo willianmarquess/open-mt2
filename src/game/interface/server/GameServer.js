@@ -6,6 +6,12 @@ const INCOMING_MESSAGES_QUEUE_SIZE = 1000;
 
 export default class GameServer extends Server {
     #incomingMessages = new Queue(INCOMING_MESSAGES_QUEUE_SIZE);
+    #leaveGameService;
+
+    constructor(container) {
+        super(container);
+        this.#leaveGameService = container.leaveGameService;
+    }
 
     async onData(connection, data) {
         this.container.containerInstance.createScope();
@@ -47,6 +53,12 @@ export default class GameServer extends Server {
             socket,
             logger: this.logger,
             packets: this.packets,
+            leaveGameService: this.#leaveGameService,
         });
+    }
+
+    async onClose(connection) {
+        super.onClose(connection);
+        await connection.onClose();
     }
 }

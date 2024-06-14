@@ -9,6 +9,7 @@ import CharacterPointsUpdatedEvent from './events/CharacterPointsUpdatedEvent.js
 import CharacterLevelUpEvent from './events/CharacterLevelUpEvent.js';
 import OtherCharacterLevelUpEvent from './events/OtherCharacterLevelUpEvent.js';
 import GameEntity from '../GameEntity.js';
+import OtherEntityLeftGameEvent from './events/OtherEntityLeftGameEvent.js';
 
 export default class Player extends GameEntity {
     #accountId;
@@ -297,6 +298,10 @@ export default class Player extends GameEntity {
 
     showOtherEntity(otherEntity) {
         this.publish(OtherCharacterUpdatedEvent.type, new OtherCharacterUpdatedEvent({ otherEntity }));
+    }
+
+    hideOtherEntity(otherEntity) {
+        this.publish(OtherEntityLeftGameEvent.type, new OtherEntityLeftGameEvent({ otherEntity }));
     }
 
     otherEntityLevelUp({ virtualId, level }) {

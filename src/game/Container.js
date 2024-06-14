@@ -18,6 +18,7 @@ import AnimationManager from '../core/domain/manager/AnimationManager.js';
 import CharacterMoveService from './app/service/CharacterMoveService.js';
 import ExperienceManager from '../core/domain/manager/ExperienceManager.js';
 import SaveCharacterService from '../core/domain/service/SaveCharacterService.js';
+import LeaveGameService from './app/service/LeaveGameService.js';
 
 const container = createContainer();
 
@@ -42,6 +43,7 @@ container.register({
     animationManager: asClass(AnimationManager).singleton(),
     experienceManager: asClass(ExperienceManager).singleton(),
     saveCharacterService: asClass(SaveCharacterService).scoped(),
+    leaveGameService: asClass(LeaveGameService).scoped(),
 });
 
 export { container };

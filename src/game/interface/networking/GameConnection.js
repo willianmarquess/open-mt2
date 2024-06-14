@@ -7,6 +7,7 @@ import CharacterMoveOutPacket from '../../../core/interface/networking/packets/p
 import CharacterPointChangePacket from '../../../core/interface/networking/packets/packet/out/CharacterPointChangePacket.js';
 import CharacterPointsPacket from '../../../core/interface/networking/packets/packet/out/CharacterPointsPacket.js';
 import CharacterSpawnPacket from '../../../core/interface/networking/packets/packet/out/CharacterSpawnPacket.js';
+import RemoveCharacterPacket from '../../../core/interface/networking/packets/packet/out/RemoveCharacterPacket.js';
 import Queue from '../../../core/util/Queue.js';
 
 const OUTGOING_MESSAGES_PER_CON_QUEUE_SIZE = 100;
@@ -23,6 +24,12 @@ export default class GameConnection extends Connection {
     #accountId;
     #outgoingMessages = new Queue(OUTGOING_MESSAGES_PER_CON_QUEUE_SIZE);
     #player;
+    #leaveGameService;
+
+    constructor({ logger, socket, leaveGameService }) {
+        super({ logger, socket });
+        this.#leaveGameService = leaveGameService;
+    }
 
     set accountId(value) {
         this.#accountId = value;
@@ -37,6 +44,7 @@ export default class GameConnection extends Connection {
         this.#player.subscribe(PlayerEventsEnum.OTHER_CHARACTER_UPDATED, this.#onOtherCharacterUpdated.bind(this));
         this.#player.subscribe(PlayerEventsEnum.OTHER_CHARACTER_MOVED, this.#onOtherCharacterMoved.bind(this));
         this.#player.subscribe(PlayerEventsEnum.OTHER_CHARACTER_LEVEL_UP, this.#onOtherCharacterLevelUp.bind(this));
+        this.#player.subscribe(PlayerEventsEnum.OTHER_CHARACTER_LEFT_GAME, this.#onOtherCharacterLeftGame.bind(this));
         this.#player.subscribe(PlayerEventsEnum.CHARACTER_SPAWNED, this.#onCharacterSpawned.bind(this));
         this.#player.subscribe(PlayerEventsEnum.CHARACTER_POINTS_UPDATED, this.#onCharacterPointsUpdated.bind(this));
     }
@@ -80,6 +88,16 @@ export default class GameConnection extends Connection {
                 positionX,
                 positionY,
                 duration,
+            }),
+        );
+    }
+
+    #onOtherCharacterLeftGame(otherCharacterLeftGameEvent) {
+        const { otherEntity } = otherCharacterLeftGameEvent;
+
+        this.send(
+            new RemoveCharacterPacket({
+                vid: otherEntity.virtualId,
             }),
         );
     }
@@ -153,6 +171,12 @@ export default class GameConnection extends Connection {
     async sendPendingMessages() {
         for (const message of this.#outgoingMessages.dequeueIterator()) {
             this.socket.write(message);
+        }
+    }
+
+    async onClose() {
+        if (this.#player) {
+            return this.#leaveGameService.execute(this.#player);
         }
     }
 }

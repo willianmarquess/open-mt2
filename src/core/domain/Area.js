@@ -73,6 +73,10 @@ export default class Area {
         this.#entitiesToSpawn.enqueue(entity);
     }
 
+    despawn(entity) {
+        this.#entitiesToDespawn.enqueue(entity);
+    }
+
     #onCharacterMove(characterMovedEvent) {
         const {
             entity,
@@ -123,7 +127,15 @@ export default class Area {
         }
 
         for (const entity of this.#entitiesToDespawn.dequeueIterator()) {
+            const entities = this.#quadTree.queryAround(entity.positionX, entity.positionY, CHAR_VIEW_SIZE);
+            for (const otherEntity of entities) {
+                if (otherEntity.name === entity.name) continue;
+                if (otherEntity instanceof Player) {
+                    otherEntity.hideOtherEntity(entity);
+                }
+            }
             this.#entities.delete(entity.virtualId);
+            this.#quadTree.remove(entity);
         }
 
         this.#entities.forEach((e) => e.tick());

@@ -28,8 +28,7 @@ export default class World {
     #height = 0;
     #grid;
 
-    constructor({ server, logger, config, saveCharacterService }) {
-        this.#server = server;
+    constructor({ logger, config, saveCharacterService }) {
         this.#logger = logger;
         this.#config = config;
         this.#saveCharacterService = saveCharacterService;
@@ -91,7 +90,8 @@ export default class World {
         }
     }
 
-    async init() {
+    async init(server) {
+        this.#server = server;
         this.#load();
         this.#tick();
     }
@@ -115,6 +115,21 @@ export default class World {
         }
 
         area.spawn(entity);
+    }
+
+    despawn(entity) {
+        const area = this.getArea(entity.positionX, entity.positionY);
+
+        if (!area) {
+            this.#logger.info(`[WORLD] Invalid location x: ${entity.positionX}, y: ${entity.positionY}`);
+            return;
+        }
+
+        if (entity instanceof Player) {
+            this.#players.delete(entity.virtualId);
+        }
+
+        area.despawn(entity);
     }
 
     async #tick() {

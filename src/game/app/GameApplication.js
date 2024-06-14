@@ -16,7 +16,7 @@ export default class GameApplication extends Application {
         await this.cacheProvider.init();
         await this.server.setup().start();
         await this.#animationManager.load();
-        await this.#world.init();
+        await this.#world.init(this.server);
         this.logger.info('[APP] Game application started 🎮🚀');
     }
 

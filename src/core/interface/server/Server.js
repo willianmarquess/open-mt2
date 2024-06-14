@@ -52,7 +52,7 @@ export default class Server {
         socket.on('error', (err) => this.#logger.error(err));
     }
 
-    onClose(connection) {
+    async onClose(connection) {
         this.#logger.debug(`[IN][CLOSE SOCKET EVENT] Closing connection: ID: ${connection.id}`);
         this.#connections.delete(connection.id);
     }
