@@ -4,3 +4,5 @@ logs
 atlasinfo.txt
 *.msa
 motionData
+coverage
+.nyc_output

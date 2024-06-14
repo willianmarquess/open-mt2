@@ -1,9 +1,9 @@
 import { expect } from 'chai';
 import sinon from 'sinon';
 import PlayerFactory from '../../../../../src/core/domain/factories/PlayerFactory.js';
-import Player from '../../../../../src/core/domain/entities/player/Player.js';
 import JobUtil from '../../../../../src/core/domain/util/JobUtil.js';
 import EmpireUtil from '../../../../../src/core/domain/util/EmpireUtil.js';
+import Player from '../../../../../src/core/domain/entities/game/player/Player.js';
 
 describe('PlayerFactory', () => {
     let config;
@@ -52,8 +52,6 @@ describe('PlayerFactory', () => {
             slot: 1,
             virtualId: 'virtualId',
             id: 'id',
-            updatedAt: new Date(),
-            createdAt: new Date(),
             empire: 1,
             skillGroup: 'skillGroup',
             playTime: 1000,
@@ -101,8 +99,6 @@ describe('PlayerFactory', () => {
         expect(player.givenStatusPoints).to.be.equal(0);
         expect(player.availableStatusPoints).to.be.equal(0);
         expect(player.id).to.be.equal('id');
-        expect(player.updatedAt).to.be.equal(params.updatedAt);
-        expect(player.createdAt).to.be.equal(params.createdAt);
         expect(player.skillGroup).to.be.equal('skillGroup');
         expect(player.playTime).to.be.equal(1000);
         expect(player.level).to.be.equal(1);
@@ -118,8 +114,6 @@ describe('PlayerFactory', () => {
             slot: 1,
             virtualId: 'virtualId',
             id: 'id',
-            updatedAt: new Date(),
-            createdAt: new Date(),
             empire: 1,
             skillGroup: 'skillGroup',
             playTime: 1000,
@@ -157,8 +151,6 @@ describe('PlayerFactory', () => {
             givenStatusPoints: 0,
             availableStatusPoints: 0,
             id: 'id',
-            updatedAt: params.updatedAt,
-            createdAt: params.createdAt,
             skillGroup: 'skillGroup',
             playTime: 1000,
             level: 1,
