@@ -1,7 +1,7 @@
 import ErrorTypesEnum from '../../../../enum/ErrorTypesEnum.js';
 import LoginStatusEnum from '../../../../enum/LoginStatusEnum.js';
 import LoginFailedPacket from '../packet/out/LoginFailedPacket.js';
-import LoginSuccessPacket from '../packet/out/LoginSuccess.js';
+import LoginSuccessPacket from '../packet/out/LoginSuccessPacket.js';
 
 const LOGIN_SUCCESS_RESULT = 1;
 
