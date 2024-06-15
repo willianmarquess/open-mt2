@@ -10,6 +10,8 @@ import CharacterLevelUpEvent from './events/CharacterLevelUpEvent.js';
 import OtherCharacterLevelUpEvent from './events/OtherCharacterLevelUpEvent.js';
 import GameEntity from '../GameEntity.js';
 import OtherEntityLeftGameEvent from './events/OtherEntityLeftGameEvent.js';
+import ChatEvent from './events/ChatEvent.js';
+import ChatMessageTypeEnum from '../../../../enum/ChatMessageTypeEnum.js';
 
 export default class Player extends GameEntity {
     #accountId;
@@ -294,6 +296,10 @@ export default class Player extends GameEntity {
     spawn() {
         this.#lastPlayTime = performance.now();
         this.publish(CharacterSpawnedEvent.type, new CharacterSpawnedEvent());
+        this.say({
+            messageType: ChatMessageTypeEnum.INFO,
+            message: 'Welcome to Metin2 JS - An Open Source Project',
+        });
     }
 
     showOtherEntity(otherEntity) {
@@ -306,6 +312,16 @@ export default class Player extends GameEntity {
 
     otherEntityLevelUp({ virtualId, level }) {
         this.publish(OtherCharacterLevelUpEvent.type, new OtherCharacterLevelUpEvent({ virtualId, level }));
+    }
+
+    say({ message, messageType }) {
+        this.publish(
+            ChatEvent.type,
+            new ChatEvent({
+                message,
+                messageType,
+            }),
+        );
     }
 
     #sendPoints() {

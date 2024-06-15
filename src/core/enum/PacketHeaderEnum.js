@@ -26,4 +26,5 @@ export default {
     CHARACTER_MOVE_OUT: 0x03,
     CHARACTER_POINT_CHANGE: 0x11,
     CHARACTER_REMOVE: 0x02,
+    CHAT_OUT: 0x04,
 };
