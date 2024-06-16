@@ -1,5 +1,5 @@
 import StatCommand from './command/stat/StatCommand.js';
-import StatCommandHandler from './handlers/StatCommandHandler.js';
+import StatCommandHandler from './command/stat/StatCommandHandler.js';
 
 export default () =>
     new Map([

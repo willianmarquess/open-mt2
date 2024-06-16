@@ -7,11 +7,11 @@ export default class StatCommandValidator extends CommandValidator {
 
     build() {
         this.createRule(this.command.args, 'args').isRequired().isArray().build();
-        this.createRule(this.command.args[0], 'stat').isString().isInEnum(['ht', 'st', 'dx', 'iq']).build();
-        this.createRule(this.command.args[1], 'value')
-            .isRequiredIf(() => !!this.command.args[0])
-            .isNumber()
-            .isGreaterThan(0)
+        this.createRule(this.command.args[0], 'stat')
+            .isOptional()
+            .isString()
+            .isInEnum(['ht', 'st', 'dx', 'iq'])
             .build();
+        this.createRule(this.command.args[1], 'value').isOptional().isNumber().isGreaterThan(0).build();
     }
 }

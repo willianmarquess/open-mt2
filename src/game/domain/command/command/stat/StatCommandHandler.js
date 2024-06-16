@@ -1,4 +1,4 @@
-import ChatMessageTypeEnum from '../../../../core/enum/ChatMessageTypeEnum.js';
+import ChatMessageTypeEnum from '../../../../../core/enum/ChatMessageTypeEnum.js';
 
 export default class StatCommandHandler {
     #logger;

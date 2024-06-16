@@ -1,5 +1,5 @@
 import Command from './Command.js';
-import FluentValidator from './FluentValidator.js';
+import FluentValidator from '../../../core/infra/validation/FluentValidator.js';
 
 export default class CommandValidator extends FluentValidator {
     #command;
