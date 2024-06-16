@@ -1,6 +1,6 @@
 import ChatMessageTypeEnum from '../../../../../core/enum/ChatMessageTypeEnum.js';
 
-export default class LogoutCommandHandler {
+export default class QuitCommandHandler {
     #logger;
 
     constructor({ logger }) {
@@ -8,11 +8,14 @@ export default class LogoutCommandHandler {
     }
 
     async execute(player) {
-        this.#logger.info(`[LogoutCommandHandler] Logout account. id: ${player.id}`);
+        this.#logger.info(`[QuitCommandHandler] Quit client. id: ${player.id}`);
         player.say({
-            message: `Logging out`,
+            message: `Quitting game`,
             messageType: ChatMessageTypeEnum.INFO,
         });
-        player.logout();
+        player.say({
+            message: 'quit',
+            messageType: ChatMessageTypeEnum.COMMAND,
+        });
     }
 }
