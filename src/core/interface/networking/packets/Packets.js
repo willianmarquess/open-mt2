@@ -19,6 +19,8 @@ import EnterGamePacket from './packet/in/EnterGamePacket.js';
 import EnterGamePacketHandler from './handlers/EnterGamePacketHandler.js';
 import CharacterMovePacket from './packet/in/CharacterMovePacket.js';
 import CharacterMovePacketHandler from './handlers/CharacterMovePacketHandler.js';
+import ChatInPacket from './packet/in/ChatInPacket.js';
+import ChatInPacketHandler from './handlers/ChatInPacketHandler.js';
 
 export default () =>
     new Map([
@@ -90,6 +92,13 @@ export default () =>
             {
                 createPacket: () => new CharacterMovePacket(),
                 createHandler: (params) => new CharacterMovePacketHandler(params),
+            },
+        ],
+        [
+            PacketHeaderEnum.CHAT_IN,
+            {
+                createPacket: () => new ChatInPacket(),
+                createHandler: (params) => new ChatInPacketHandler(params),
             },
         ],
     ]);

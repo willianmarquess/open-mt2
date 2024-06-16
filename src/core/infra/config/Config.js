@@ -1,6 +1,7 @@
 import empire from './data/empire.json' with { type: 'json' };
 import jobs from './data/jobs.json' with { type: 'json' };
 import atlas from './data/atlasinfo.json' with { type: 'json' };
+import commands from './data/commands.json' with { type: 'json' };
 
 export default () => ({
     DB_HOST: process.env.DB_HOST,
@@ -14,6 +15,7 @@ export default () => ({
     empire,
     jobs,
     atlas,
+    commands,
     MAX_LEVEL: 99,
     POINTS_PER_LEVEL: 3,
 });
