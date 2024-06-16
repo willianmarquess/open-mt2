@@ -25,11 +25,11 @@ export default class GameConnection extends Connection {
     #accountId;
     #outgoingMessages = new Queue(OUTGOING_MESSAGES_PER_CON_QUEUE_SIZE);
     #player;
-    #leaveGameService;
+    #logoutService;
 
-    constructor({ logger, socket, leaveGameService }) {
+    constructor({ logger, socket, logoutService }) {
         super({ logger, socket });
-        this.#leaveGameService = leaveGameService;
+        this.#logoutService = logoutService;
     }
 
     set accountId(value) {
@@ -206,7 +206,7 @@ export default class GameConnection extends Connection {
 
     async onClose() {
         if (this.#player) {
-            return this.#leaveGameService.execute(this.#player);
+            return this.#logoutService.execute(this.#player);
         }
     }
 }

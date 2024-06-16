@@ -2,13 +2,11 @@ import ChatMessageTypeEnum from '../../../../../core/enum/ChatMessageTypeEnum.js
 
 export default class LogoutCommandHandler {
     #logger;
-    #world;
-    #saveCharacterService;
+    #leaveGameService;
 
-    constructor({ logger, world, saveCharacterService }) {
+    constructor({ logger, leaveGameService }) {
         this.#logger = logger;
-        this.#world = world;
-        this.#saveCharacterService = saveCharacterService;
+        this.#leaveGameService = leaveGameService;
     }
 
     async execute(player) {
@@ -17,9 +15,7 @@ export default class LogoutCommandHandler {
             message: `Logging out`,
             messageType: ChatMessageTypeEnum.INFO,
         });
-
-        this.#world.despawn(player);
-        await this.#saveCharacterService.execute(player);
+        await this.#leaveGameService.execute(player);
         player.logout();
     }
 }

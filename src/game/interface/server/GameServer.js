@@ -6,11 +6,11 @@ const INCOMING_MESSAGES_QUEUE_SIZE = 1000;
 
 export default class GameServer extends Server {
     #incomingMessages = new Queue(INCOMING_MESSAGES_QUEUE_SIZE);
-    #leaveGameService;
+    #logoutService;
 
     constructor(container) {
         super(container);
-        this.#leaveGameService = container.leaveGameService;
+        this.#logoutService = container.logoutService;
     }
 
     async onData(connection, data) {
@@ -53,7 +53,7 @@ export default class GameServer extends Server {
             socket,
             logger: this.logger,
             packets: this.packets,
-            leaveGameService: this.#leaveGameService,
+            logoutService: this.#logoutService,
         });
     }
 

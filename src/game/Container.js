@@ -17,10 +17,11 @@ import EnterGameService from './app/service/EnterGameService.js';
 import AnimationManager from '../core/domain/manager/AnimationManager.js';
 import CharacterMoveService from './app/service/CharacterMoveService.js';
 import ExperienceManager from '../core/domain/manager/ExperienceManager.js';
-import SaveCharacterService from '../core/domain/service/SaveCharacterService.js';
-import LeaveGameService from './app/service/LeaveGameService.js';
+import SaveCharacterService from './domain/service/SaveCharacterService.js';
+import LeaveGameService from './domain/service/LeaveGameService.js';
 import Commands from './domain/command/Commands.js';
 import CommandManager from './app/command/CommandManager.js';
+import LogoutService from './app/service/LogoutService.js';
 
 const container = createContainer();
 
@@ -48,6 +49,7 @@ container.register({
     leaveGameService: asClass(LeaveGameService).scoped(),
     commands: asFunction(Commands).singleton(),
     commandManager: asClass(CommandManager).singleton(),
+    logoutService: asClass(LogoutService).scoped(),
 });
 
 export { container };
