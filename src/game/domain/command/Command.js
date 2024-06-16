@@ -4,9 +4,11 @@ export default class Command {
     #args;
     #validator;
 
-    constructor({ args, validator }) {
+    constructor({ args, validator } = {}) {
         this.#args = args;
-        this.#validator = this.#createValidator(validator);
+        if (validator) {
+            this.#validator = this.#createValidator(validator);
+        }
     }
 
     get args() {
@@ -20,7 +22,7 @@ export default class Command {
         throw new Error('this method must be overwritten');
     }
     static get example() {
-        throw new Error('this method must be overwritten');
+        return '';
     }
 
     get isValid() {

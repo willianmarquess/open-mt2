@@ -49,10 +49,15 @@ export default class GameConnection extends Connection {
         this.#player.subscribe(PlayerEventsEnum.CHARACTER_SPAWNED, this.#onCharacterSpawned.bind(this));
         this.#player.subscribe(PlayerEventsEnum.CHARACTER_POINTS_UPDATED, this.#onCharacterPointsUpdated.bind(this));
         this.#player.subscribe(PlayerEventsEnum.CHAT, this.#onChat.bind(this));
+        this.#player.subscribe(PlayerEventsEnum.LOGOUT, this.#onLogout.bind(this));
     }
 
     get player() {
         return this.#player;
+    }
+
+    #onLogout() {
+        this.close();
     }
 
     #onChat(chatEvent) {

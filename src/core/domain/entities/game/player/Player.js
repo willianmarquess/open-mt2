@@ -12,6 +12,7 @@ import GameEntity from '../GameEntity.js';
 import OtherCharacterLeftGameEvent from './events/OtherCharacterLeftGameEvent.js';
 import ChatEvent from './events/ChatEvent.js';
 import ChatMessageTypeEnum from '../../../../enum/ChatMessageTypeEnum.js';
+import LogoutEvent from './events/LogoutEvent.js';
 
 export default class Player extends GameEntity {
     #accountId;
@@ -337,6 +338,10 @@ export default class Player extends GameEntity {
 
     otherEntityLevelUp({ virtualId, level }) {
         this.publish(OtherCharacterLevelUpEvent.type, new OtherCharacterLevelUpEvent({ virtualId, level }));
+    }
+
+    logout() {
+        this.publish(LogoutEvent.type, new LogoutEvent());
     }
 
     say({ message, messageType }) {

@@ -8,4 +8,5 @@ export default {
     OTHER_CHARACTER_LEVEL_UP: Symbol.for('OTHER_CHARACTER_LEVEL_UP'),
     OTHER_CHARACTER_LEFT_GAME: Symbol.for('OTHER_CHARACTER_LEFT_GAME'),
     CHAT: Symbol.for('CHAT'),
+    LOGOUT: Symbol.for('LOGOUT'),
 };
