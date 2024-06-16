@@ -107,40 +107,51 @@ export default class GameConnection extends Connection {
     }
 
     #onOtherCharacterLeftGame(otherCharacterLeftGameEvent) {
-        const { otherEntity } = otherCharacterLeftGameEvent;
+        const { virtualId } = otherCharacterLeftGameEvent;
 
         this.send(
             new RemoveCharacterPacket({
-                vid: otherEntity.virtualId,
+                vid: virtualId,
             }),
         );
     }
 
     #onOtherCharacterUpdated(otherCharacterUpdatedEvent) {
-        const { otherEntity } = otherCharacterUpdatedEvent;
+        const {
+            virtualId,
+            playerClass,
+            entityType,
+            attackSpeed,
+            movementSpeed,
+            positionX,
+            positionY,
+            empireId,
+            level,
+            name,
+        } = otherCharacterUpdatedEvent;
 
         this.send(
             new CharacterSpawnPacket({
-                vid: otherEntity.virtualId,
-                playerClass: otherEntity.playerClass,
-                entityType: otherEntity.entityType,
-                attackSpeed: otherEntity.attackSpeed,
-                moveSpeed: otherEntity.movementSpeed,
-                positionX: otherEntity.positionX,
-                positionY: otherEntity.positionY,
+                vid: virtualId,
+                playerClass,
+                entityType,
+                attackSpeed,
+                movementSpeed,
+                positionX,
+                positionY,
                 positionZ: 0,
             }),
         );
 
         this.send(
             new CharacterInfoPacket({
-                vid: otherEntity.virtualId,
-                empireId: otherEntity.empire,
+                vid: virtualId,
+                empireId,
+                level,
+                playerName: name,
                 guildId: 0, //todo
-                level: otherEntity.level,
                 mountId: 0, //todo
                 pkMode: 0, //todo
-                playerName: otherEntity.name,
                 rankPoints: 0, //todo
             }),
         );
@@ -153,7 +164,7 @@ export default class GameConnection extends Connection {
                 playerClass: this.#player.playerClass,
                 entityType: this.#player.entityType,
                 attackSpeed: this.#player.attackSpeed,
-                moveSpeed: this.#player.movementSpeed,
+                movementSpeed: this.#player.movementSpeed,
                 positionX: this.#player.positionX,
                 positionY: this.#player.positionY,
                 positionZ: 0,
@@ -163,11 +174,11 @@ export default class GameConnection extends Connection {
             new CharacterInfoPacket({
                 vid: this.#player.virtualId,
                 empireId: this.#player.empire,
-                guildId: 0, //todo
                 level: this.#player.level,
+                playerName: this.#player.name,
+                guildId: 0, //todo
                 mountId: 0, //todo
                 pkMode: 0, //todo
-                playerName: this.#player.name,
                 rankPoints: 0, //todo
             }),
         );

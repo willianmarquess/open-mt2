@@ -9,7 +9,7 @@ import CharacterPointsUpdatedEvent from './events/CharacterPointsUpdatedEvent.js
 import CharacterLevelUpEvent from './events/CharacterLevelUpEvent.js';
 import OtherCharacterLevelUpEvent from './events/OtherCharacterLevelUpEvent.js';
 import GameEntity from '../GameEntity.js';
-import OtherEntityLeftGameEvent from './events/OtherEntityLeftGameEvent.js';
+import OtherCharacterLeftGameEvent from './events/OtherCharacterLeftGameEvent.js';
 import ChatEvent from './events/ChatEvent.js';
 import ChatMessageTypeEnum from '../../../../enum/ChatMessageTypeEnum.js';
 
@@ -302,12 +302,37 @@ export default class Player extends GameEntity {
         });
     }
 
-    showOtherEntity(otherEntity) {
-        this.publish(OtherCharacterUpdatedEvent.type, new OtherCharacterUpdatedEvent({ otherEntity }));
+    showOtherEntity({
+        virtualId,
+        playerClass,
+        entityType,
+        attackSpeed,
+        movementSpeed,
+        positionX,
+        positionY,
+        empireId,
+        level,
+        name,
+    }) {
+        this.publish(
+            OtherCharacterUpdatedEvent.type,
+            new OtherCharacterUpdatedEvent({
+                virtualId,
+                playerClass,
+                entityType,
+                attackSpeed,
+                movementSpeed,
+                positionX,
+                positionY,
+                empireId,
+                level,
+                name,
+            }),
+        );
     }
 
-    hideOtherEntity(otherEntity) {
-        this.publish(OtherEntityLeftGameEvent.type, new OtherEntityLeftGameEvent({ otherEntity }));
+    hideOtherEntity({ virtualId }) {
+        this.publish(OtherCharacterLeftGameEvent.type, new OtherCharacterLeftGameEvent({ virtualId }));
     }
 
     otherEntityLevelUp({ virtualId, level }) {

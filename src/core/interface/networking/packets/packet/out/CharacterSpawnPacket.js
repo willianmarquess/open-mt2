@@ -9,7 +9,7 @@ export default class CharacterSpawnPacket extends PacketOut {
     #positionZ;
     #entityType;
     #playerClass;
-    #moveSpeed;
+    #movementSpeed;
     #attackSpeed;
     #state = 0;
     #affects = new Array(2).fill(0);
@@ -22,7 +22,7 @@ export default class CharacterSpawnPacket extends PacketOut {
         positionZ,
         entityType,
         playerClass,
-        moveSpeed,
+        movementSpeed,
         attackSpeed,
         state,
         affects,
@@ -39,7 +39,7 @@ export default class CharacterSpawnPacket extends PacketOut {
         this.#positionZ = positionZ;
         this.#entityType = entityType;
         this.#playerClass = playerClass;
-        this.#moveSpeed = moveSpeed;
+        this.#movementSpeed = movementSpeed;
         this.#attackSpeed = attackSpeed;
         this.#state = state ?? this.#state;
         this.#affects = affects ?? this.#affects;
@@ -53,7 +53,7 @@ export default class CharacterSpawnPacket extends PacketOut {
         this.bufferWriter.writeUint32LE(this.#positionZ);
         this.bufferWriter.writeUint8(this.#entityType);
         this.bufferWriter.writeUint16LE(this.#playerClass);
-        this.bufferWriter.writeUint8(this.#moveSpeed);
+        this.bufferWriter.writeUint8(this.#movementSpeed);
         this.bufferWriter.writeUint8(this.#attackSpeed);
         this.bufferWriter.writeUint8(this.#state);
         this.#affects.forEach((affect) => this.bufferWriter.writeUint32LE(affect));

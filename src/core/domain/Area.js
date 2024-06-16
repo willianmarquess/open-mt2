@@ -118,8 +118,30 @@ export default class Area {
             for (const otherEntity of entities) {
                 if (otherEntity.name === entity.name) continue;
                 if (otherEntity instanceof Player) {
-                    otherEntity.showOtherEntity(entity);
-                    entity.showOtherEntity(otherEntity);
+                    otherEntity.showOtherEntity({
+                        virtualId: entity.virtualId,
+                        playerClass: entity.playerClass,
+                        entityType: entity.entityType,
+                        attackSpeed: entity.attackSpeed,
+                        movementSpeed: entity.movementSpeed,
+                        positionX: entity.positionX,
+                        positionY: entity.positionY,
+                        empireId: entity.empireId,
+                        level: entity.level,
+                        name: entity.name,
+                    });
+                    entity.showOtherEntity({
+                        virtualId: otherEntity.virtualId,
+                        playerClass: otherEntity.playerClass,
+                        entityType: otherEntity.entityType,
+                        attackSpeed: otherEntity.attackSpeed,
+                        movementSpeed: otherEntity.movementSpeed,
+                        positionX: otherEntity.positionX,
+                        positionY: otherEntity.positionY,
+                        empireId: otherEntity.empireId,
+                        level: otherEntity.level,
+                        name: otherEntity.name,
+                    });
                 }
             }
 
@@ -131,7 +153,7 @@ export default class Area {
             for (const otherEntity of entities) {
                 if (otherEntity.name === entity.name) continue;
                 if (otherEntity instanceof Player) {
-                    otherEntity.hideOtherEntity(entity);
+                    otherEntity.hideOtherEntity({ virtualId: entity.virtualId });
                 }
             }
             this.#entities.delete(entity.virtualId);
