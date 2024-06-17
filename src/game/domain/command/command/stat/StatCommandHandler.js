@@ -1,5 +1,3 @@
-import ChatMessageTypeEnum from '../../../../../core/enum/ChatMessageTypeEnum.js';
-
 export default class StatCommandHandler {
     #logger;
 
@@ -8,15 +6,16 @@ export default class StatCommandHandler {
     }
 
     execute(player, statCommand) {
-        if (!statCommand.isValid) {
-            this.#logger.error(statCommand.errors);
-            player.say({
-                message: `Invalid command format`,
-                messageType: ChatMessageTypeEnum.INFO,
-            });
+        if (!statCommand.isValid()) {
+            const errors = statCommand.errors();
+            this.#logger.error(errors);
+            player.sendCommandErrors(errors);
+            return;
         }
 
-        //const { args } = statCommand;
-        //todo
+        const {
+            args: [stat, value],
+        } = statCommand;
+        player.addStat(stat, value);
     }
 }

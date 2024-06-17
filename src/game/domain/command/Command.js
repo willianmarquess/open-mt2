@@ -25,11 +25,11 @@ export default class Command {
         return '';
     }
 
-    get isValid() {
+    isValid() {
         return this.#validator.isValid();
     }
 
-    get errors() {
+    errors() {
         return this.#validator.getErrors();
     }
 

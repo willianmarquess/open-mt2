@@ -205,6 +205,34 @@ export default class Player extends GameEntity {
         this.#givenStatusPoints = totalStatusPoints;
     }
 
+    addStat(stat, value = 1) {
+        const validatedValue = Number(value) > 0 ? Number(value) : 0;
+
+        if (validatedValue > this.#availableStatusPoints) {
+            return;
+        }
+
+        switch (stat) {
+            case 'st':
+                this.#st += validatedValue;
+                break;
+            case 'ht':
+                this.#ht += validatedValue;
+                break;
+            case 'dx':
+                this.#dx += validatedValue;
+                break;
+            case 'iq':
+                this.#iq += validatedValue;
+                break;
+        }
+        this.#givenStatusPoints += validatedValue;
+        this.#availableStatusPoints -= validatedValue;
+        this.#updateHealth();
+        this.#updateMana();
+        this.#sendPoints();
+    }
+
     addExperience(value) {
         if (value < 1 || this.#level >= this.#config.MAX_LEVEL) return;
 
@@ -352,6 +380,17 @@ export default class Player extends GameEntity {
                 messageType,
             }),
         );
+    }
+
+    sendCommandErrors(errors) {
+        errors.forEach(({ errors }) => {
+            errors.forEach(({ error }) => {
+                this.say({
+                    message: error,
+                    messageType: ChatMessageTypeEnum.INFO,
+                });
+            });
+        });
     }
 
     #sendPoints() {

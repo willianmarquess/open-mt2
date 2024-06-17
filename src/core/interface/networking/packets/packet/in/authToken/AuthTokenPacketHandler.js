@@ -53,8 +53,8 @@ export default class AuthTokenPacketHandler {
                 );
 
                 const characterInfoPacket = new CharactersInfoPacket();
-                players.forEach((player, index) => {
-                    characterInfoPacket.addCharacter(index, {
+                players.forEach((player) => {
+                    characterInfoPacket.addCharacter(player.slot, {
                         name: player.name,
                         playerClass: player.playerClass,
                         bodyPart: player.bodyPart,
