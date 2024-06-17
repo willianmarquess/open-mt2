@@ -1,4 +1,4 @@
-import PacketHeaderEnum from '../../../../../enum/PacketHeaderEnum.js';
+import PacketHeaderEnum from '../../../../../../enum/PacketHeaderEnum.js';
 import PacketBidirectional from '../PacketBidirectional.js';
 import HandshakePacketValidator from './HandshakePacketValidator.js';
 

@@ -1,4 +1,4 @@
-import ErrorTypesEnum from '../../../../../../enum/ErrorTypesEnum';
+import ErrorTypesEnum from '../../../../../../enum/ErrorTypesEnum.js';
 
 export default class EmpirePacketHandler {
     #selectEmpireService;

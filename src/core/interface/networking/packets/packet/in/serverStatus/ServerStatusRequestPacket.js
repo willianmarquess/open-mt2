@@ -1,5 +1,5 @@
-import PacketHeaderEnum from '../../../../../enum/PacketHeaderEnum.js';
-import PacketIn from './PacketIn.js';
+import PacketHeaderEnum from '../../../../../../enum/PacketHeaderEnum.js';
+import PacketIn from '../PacketIn.js';
 
 export default class ServerStatusRequestPacket extends PacketIn {
     constructor() {

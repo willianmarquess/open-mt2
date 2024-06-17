@@ -1,4 +1,4 @@
-import ChatMessageTypeEnum from '../../../../enum/ChatMessageTypeEnum.js';
+import ChatMessageTypeEnum from '../../../../../../enum/ChatMessageTypeEnum.js';
 
 export default class ChatInPacketHandler {
     #logger;

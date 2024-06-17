@@ -1,4 +1,4 @@
-import ServerStatusPacket from '../packet/out/ServerStatusPacket.js';
+import ServerStatusPacket from '../../out/ServerStatusPacket.js';
 
 export default class ServerStatusRequestPacketHandler {
     #config;

@@ -1,4 +1,4 @@
-import HandshakePacket from "./HandshakePacket";
+import HandshakePacket from './HandshakePacket.js';
 
 export default class HandshakePacketHandler {
     #logger;

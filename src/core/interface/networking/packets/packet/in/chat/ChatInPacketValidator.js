@@ -10,7 +10,7 @@ export default class ChatInPacketValidator extends PacketValidator {
         this.createRule(this.packet.messageType, 'messageType')
             .isRequired()
             .isNumber()
-            .isInEnum(...ChatMessageTypeEnum)
+            .isInEnum(Object.values(ChatMessageTypeEnum))
             .build();
         this.createRule(this.packet.message, 'message').isRequired().isString().build();
     }

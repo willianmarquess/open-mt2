@@ -42,7 +42,7 @@ export default class CreateCharacterPacketHandler {
             return;
         }
         const { playerName, playerClass, appearance, slot } = packet;
-        const result = await this.#createCharacterService.execute(connection, {
+        const result = await this.#createCharacterService.execute({
             playerName,
             playerClass,
             appearance,

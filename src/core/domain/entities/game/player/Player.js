@@ -76,7 +76,7 @@ export default class Player extends GameEntity {
     // #minWeaponDamage;
     // #maxWeaponDamage;
 
-    #lastPlayTime;
+    #lastPlayTime = performance.now();
 
     constructor(
         {

@@ -1,5 +1,6 @@
 import PacketHeaderEnum from '../../../../../../enum/PacketHeaderEnum.js';
 import PacketIn from '../PacketIn.js';
+import SelectCharacterPacketValidator from './SelectCharacterPacketValidator.js';
 
 export default class SelectCharacterPacket extends PacketIn {
     #slot;
@@ -9,6 +10,7 @@ export default class SelectCharacterPacket extends PacketIn {
             header: PacketHeaderEnum.SELECT_CHARACTER,
             name: 'SelectCharacterPacket',
             size: 2,
+            validator: SelectCharacterPacketValidator,
         });
         this.#slot = slot;
     }

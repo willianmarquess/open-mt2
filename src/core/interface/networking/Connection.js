@@ -1,7 +1,7 @@
 import { randomBytes, randomUUID } from 'crypto';
 import ConnectionStatePacket from './packets/packet/out/ConnectionStatePacket.js';
-import HandshakePacket from './packets/packet/bidirectional/HandshakePacket.js';
 import ConnectionStateEnum from '../../enum/ConnectionStateEnum.js';
+import HandshakePacket from './packets/packet/bidirectional/handshake/HandshakePacket.js';
 
 export default class Connection {
     #id;
