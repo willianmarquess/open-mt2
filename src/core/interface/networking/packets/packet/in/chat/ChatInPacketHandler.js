@@ -10,11 +10,18 @@ export default class ChatInPacketHandler {
     }
 
     async execute(connection, packet) {
+        if (!packet.isValid()) {
+            this.#logger.error(`[ChatInPacketHandler] Packet invalid`);
+            this.#logger.error(packet.errors());
+            connection.close();
+            return;
+        }
+
         const { player } = connection;
 
         if (!player) {
             this.#logger.info(
-                `[CharacterMovePacketHandler] The connection does not have an player select, this cannot happen`,
+                `[ChatInPacketHandler] The connection does not have an player select, this cannot happen`,
             );
             connection.close();
             return;
@@ -35,7 +42,7 @@ export default class ChatInPacketHandler {
             case ChatMessageTypeEnum.SHOUT:
                 this.#logger.debug(`[ChatInPacketHandler] SHOUT CHAT: ${message}`);
                 //validate 15 sec countdown between shout
-                //validade level min for shout
+                //validate level min for shout
                 break;
             case ChatMessageTypeEnum.COMMAND:
                 this.#logger.debug(`[ChatInPacketHandler] COMMAND CHAT: ${message}`);

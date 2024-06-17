@@ -1,4 +1,4 @@
-import HandshakePacket from '../packet/bidirectional/HandshakePacket.js';
+import HandshakePacket from "./HandshakePacket";
 
 export default class HandshakePacketHandler {
     #logger;
@@ -8,6 +8,13 @@ export default class HandshakePacketHandler {
     }
 
     async execute(connection, packet) {
+        if (!packet.isValid()) {
+            this.#logger.error(`[AuthTokenPacketHandler] Packet invalid`);
+            this.#logger.error(packet.errors());
+            connection.close();
+            return;
+        }
+
         if (packet.id !== connection.lastHandshake.id) {
             this.#logger.info(`[HANDSHAKE] A different package was received than the one sent..`);
             this.#logger.info(`[HANDSHAKE] Send close connection..`);

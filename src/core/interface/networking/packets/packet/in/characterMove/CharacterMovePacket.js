@@ -1,5 +1,6 @@
-import PacketHeaderEnum from '../../../../../enum/PacketHeaderEnum.js';
-import PacketIn from './PacketIn.js';
+import PacketHeaderEnum from '../../../../../../enum/PacketHeaderEnum.js';
+import PacketIn from '../PacketIn.js';
+import CharacterMovePacketValidator from './CharacterMovePacketValidator.js';
 
 export default class CharacterMovePacket extends PacketIn {
     #movementType;
@@ -14,6 +15,7 @@ export default class CharacterMovePacket extends PacketIn {
             header: PacketHeaderEnum.CHARACTER_MOVE,
             name: 'CharacterMovePacket',
             size: 17,
+            validator: CharacterMovePacketValidator,
         });
         this.#movementType = movementType;
         this.#arg = arg;
@@ -50,7 +52,7 @@ export default class CharacterMovePacket extends PacketIn {
         this.#positionX = this.bufferReader.readUInt32LE();
         this.#positionY = this.bufferReader.readUInt32LE();
         this.#time = this.bufferReader.readUInt32LE();
-
+        this.validate();
         return this;
     }
 }

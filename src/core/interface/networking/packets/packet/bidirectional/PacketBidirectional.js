@@ -6,8 +6,8 @@ export default class PacketBidirectional extends Packet {
     #bufferWriter;
     #bufferReader;
 
-    constructor({ header, subHeader, size, name }) {
-        super({ header, subHeader, size, name });
+    constructor({ header, subHeader, size, name, validator }) {
+        super({ header, subHeader, size, name, validator });
         this.#bufferWriter = new BufferWriter(this.header, this.size);
         this.#bufferReader = new BufferReader();
     }

@@ -1,5 +1,6 @@
 import PacketHeaderEnum from '../../../../../enum/PacketHeaderEnum.js';
-import PacketBidirectional from './PacketBidirectional.js';
+import PacketBidirectional from '../PacketBidirectional.js';
+import HandshakePacketValidator from './HandshakePacketValidator.js';
 
 export default class HandshakePacket extends PacketBidirectional {
     #id;
@@ -11,6 +12,7 @@ export default class HandshakePacket extends PacketBidirectional {
             header: PacketHeaderEnum.HANDSHAKE,
             name: 'HandshakePacket',
             size: 13,
+            validator: HandshakePacketValidator,
         });
         this.#id = id;
         this.#time = time;
@@ -39,6 +41,7 @@ export default class HandshakePacket extends PacketBidirectional {
         this.#id = this.bufferReader.readUInt32LE();
         this.#time = this.bufferReader.readUInt32LE();
         this.#delta = this.bufferReader.readUInt32LE();
+        this.validate();
         return this;
     }
 }

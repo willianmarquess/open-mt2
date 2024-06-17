@@ -19,6 +19,6 @@ export default class CommandValidator extends FluentValidator {
     }
 
     build() {
-        throw new Error('Build method must be overriten');
+        throw new Error('Build method must be overridden');
     }
 }

@@ -8,6 +8,13 @@ export default class CharacterMovePacketHandler {
     }
 
     async execute(connection, packet) {
+        if (!packet.isValid()) {
+            this.#logger.error(`[CharacterMovePacketHandler] Packet invalid`);
+            this.#logger.error(packet.errors());
+            connection.close();
+            return;
+        }
+
         const { player } = connection;
 
         if (!player) {

@@ -1,4 +1,4 @@
-import ErrorTypesEnum from '../../../../enum/ErrorTypesEnum.js';
+import ErrorTypesEnum from '../../../../../../enum/ErrorTypesEnum';
 
 export default class EmpirePacketHandler {
     #selectEmpireService;
@@ -10,6 +10,13 @@ export default class EmpirePacketHandler {
     }
 
     async execute(connection, packet) {
+        if (!packet.isValid()) {
+            this.#logger.error(`[AuthTokenPacketHandler] Packet invalid`);
+            this.#logger.error(packet.errors());
+            connection.close();
+            return;
+        }
+
         const { accountId } = connection;
         if (!accountId) {
             this.#logger.info(`[EmpirePacketHandler] The connection does not have an accountId, this cannot happen`);

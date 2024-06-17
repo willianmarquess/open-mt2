@@ -1,5 +1,6 @@
-import PacketHeaderEnum from '../../../../../enum/PacketHeaderEnum.js';
-import PacketBidirectional from './PacketBidirectional.js';
+import PacketHeaderEnum from '../../../../../../enum/PacketHeaderEnum.js';
+import PacketBidirectional from '../PacketBidirectional.js';
+import EmpirePacketValidator from './EmpirePacketValidator.js';
 
 export default class EmpirePacket extends PacketBidirectional {
     #empireId;
@@ -9,6 +10,7 @@ export default class EmpirePacket extends PacketBidirectional {
             header: PacketHeaderEnum.EMPIRE,
             name: 'EmpirePacket',
             size: 3,
+            validator: EmpirePacketValidator,
         });
         this.#empireId = empireId;
     }
@@ -25,6 +27,7 @@ export default class EmpirePacket extends PacketBidirectional {
     unpack(buffer) {
         this.bufferReader.setBuffer(buffer);
         this.#empireId = this.bufferReader.readUInt8();
+        this.validate();
         return this;
     }
 }

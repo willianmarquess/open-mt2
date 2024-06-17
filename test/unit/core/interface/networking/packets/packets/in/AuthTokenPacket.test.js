@@ -9,7 +9,7 @@ describe('AuthTokenPacket', function () {
         authTokenPacket = new AuthTokenPacket({
             username: 'testuser',
             key: 1234567890,
-            Xteakeys: [1, 2, 3, 4],
+            xteaKeys: [1, 2, 3, 4],
         });
     });
 
@@ -22,7 +22,7 @@ describe('AuthTokenPacket', function () {
     it('should initialize properties correctly', function () {
         expect(authTokenPacket.username).to.equal('testuser');
         expect(authTokenPacket.key).to.equal(1234567890);
-        expect(authTokenPacket.Xteakeys).to.deep.equal([1, 2, 3, 4]);
+        expect(authTokenPacket.xteaKeys).to.deep.equal([1, 2, 3, 4]);
     });
 
     it('should unpack data correctly', function () {
@@ -40,6 +40,6 @@ describe('AuthTokenPacket', function () {
 
         expect(unpackedPacket.username).to.equal('testuser');
         expect(unpackedPacket.key).to.equal(1234567890);
-        expect(unpackedPacket.Xteakeys).to.deep.equal([1, 2, 3, 4]);
+        expect(unpackedPacket.xteaKeys).to.deep.equal([1, 2, 3, 4]);
     });
 });

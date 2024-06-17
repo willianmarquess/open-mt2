@@ -1,5 +1,6 @@
-import PacketHeaderEnum from '../../../../../enum/PacketHeaderEnum.js';
-import PacketIn from './PacketIn.js';
+import PacketHeaderEnum from '../../../../../../enum/PacketHeaderEnum.js';
+import PacketIn from '../PacketIn.js';
+import ChatInPacketValidator from './ChatInPacketValidator.js';
 
 export default class ChatInPacket extends PacketIn {
     #messageType;
@@ -10,6 +11,7 @@ export default class ChatInPacket extends PacketIn {
             header: PacketHeaderEnum.CHAT_IN,
             name: 'ChatInPacket',
             size: 5 + message?.length + 1,
+            validator: ChatInPacketValidator,
         });
 
         this.#message = message;
@@ -28,7 +30,7 @@ export default class ChatInPacket extends PacketIn {
         this.bufferReader.readUInt16LE();
         this.#messageType = this.bufferReader.readUInt8();
         this.#message = this.bufferReader.readString();
-
+        this.validate();
         return this;
     }
 }

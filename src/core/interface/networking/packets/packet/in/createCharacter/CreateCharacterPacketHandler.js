@@ -1,8 +1,8 @@
-import CreateCharacterFailureReasonEnum from '../../../../enum/CreateCharacterFailureReasonEnum.js';
-import ErrorTypesEnum from '../../../../enum/ErrorTypesEnum.js';
-import Ip from '../../../../util/Ip.js';
-import CreateCharacterFailurePacket from '../packet/out/CreateCharacterFailurePacket.js';
-import CreateCharacterSuccessPacket from '../packet/out/CreateCharacterSuccessPacket.js';
+import CreateCharacterFailureReasonEnum from '../../../../../../enum/CreateCharacterFailureReasonEnum.js';
+import ErrorTypesEnum from '../../../../../../enum/ErrorTypesEnum.js';
+import Ip from '../../../../../../util/Ip.js';
+import CreateCharacterFailurePacket from '../../out/CreateCharacterFailurePacket.js';
+import CreateCharacterSuccessPacket from '../../out/CreateCharacterSuccessPacket.js';
 /**
  * @typedef {Object} container
  * @property {CreateCharacterService} createCharacterService - The use case instance for creating characters.
@@ -26,6 +26,13 @@ export default class CreateCharacterPacketHandler {
     }
 
     async execute(connection, packet) {
+        if (!packet.isValid()) {
+            this.#logger.error(`[CreateCharacterPacketHandler] Packet invalid`);
+            this.#logger.error(packet.errors());
+            connection.close();
+            return;
+        }
+
         const { accountId } = connection;
         if (!accountId) {
             this.#logger.info(

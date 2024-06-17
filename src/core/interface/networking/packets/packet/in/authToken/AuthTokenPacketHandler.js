@@ -1,20 +1,29 @@
-import ConnectionStateEnum from '../../../../enum/ConnectionStateEnum.js';
-import Ip from '../../../../util/Ip.js';
-import EmpirePacket from '../packet/bidirectional/EmpirePacket.js';
-import CharactersInfoPacket from '../packet/out/CharactersInfoPacket.js';
+import ConnectionStateEnum from '../../../../../../enum/ConnectionStateEnum.js';
+import Ip from '../../../../../../util/Ip.js';
+import EmpirePacket from '../../bidirectional/empire/EmpirePacket.js';
+import CharactersInfoPacket from '../../out/CharactersInfoPacket.js';
 
 export default class AuthTokenPacketHandler {
     #loadCharactersService;
     #authenticateService;
     #config;
+    #logger;
 
-    constructor({ loadCharactersService, authenticateService, config }) {
+    constructor({ loadCharactersService, authenticateService, config, logger }) {
         this.#loadCharactersService = loadCharactersService;
         this.#authenticateService = authenticateService;
         this.#config = config;
+        this.#logger = logger;
     }
 
     async execute(connection, packet) {
+        if (!packet.isValid()) {
+            this.#logger.error(`[AuthTokenPacketHandler] Packet invalid`);
+            this.#logger.error(packet.errors());
+            connection.close();
+            return;
+        }
+
         const { key, username } = packet;
         const authResult = await this.#authenticateService.execute({
             key,

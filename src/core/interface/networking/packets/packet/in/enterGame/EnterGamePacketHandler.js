@@ -1,6 +1,6 @@
-import ConnectionStateEnum from '../../../../enum/ConnectionStateEnum.js';
-import ChannelPacket from '../packet/out/ChannelPacket.js';
-import GameTimePacket from '../packet/out/GameTimePacket.js';
+import ConnectionStateEnum from '../../../../../../enum/ConnectionStateEnum';
+import ChannelPacket from '../../out/ChannelPacket';
+import GameTimePacket from '../../out/GameTimePacket';
 
 export default class EnterGamePacketHandler {
     #enterGameService;

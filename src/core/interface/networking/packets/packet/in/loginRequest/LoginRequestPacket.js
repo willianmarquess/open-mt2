@@ -1,5 +1,6 @@
-import PacketHeaderEnum from '../../../../../enum/PacketHeaderEnum.js';
-import PacketIn from './PacketIn.js';
+import PacketHeaderEnum from '../../../../../../enum/PacketHeaderEnum.js';
+import PacketIn from '../PacketIn.js';
+import LoginRequestPacketValidator from './LoginRequestPacketValidator.js';
 
 export default class LoginRequestPacket extends PacketIn {
     #username;
@@ -11,6 +12,7 @@ export default class LoginRequestPacket extends PacketIn {
             header: PacketHeaderEnum.LOGIN_REQUEST,
             name: 'LoginRequestPacket',
             size: 66,
+            validator: LoginRequestPacketValidator,
         });
         this.#username = username;
         this.#password = password;
@@ -34,6 +36,7 @@ export default class LoginRequestPacket extends PacketIn {
         this.#username = this.bufferReader.readString(31);
         this.#password = this.bufferReader.readString(16);
         this.#key = this.bufferReader.readUInt32LE();
+        this.validate();
         return this;
     }
 }

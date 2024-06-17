@@ -1,5 +1,5 @@
-import PacketHeaderEnum from '../../../../../enum/PacketHeaderEnum.js';
-import PacketIn from './PacketIn.js';
+import PacketHeaderEnum from '../../../../../../enum/PacketHeaderEnum.js';
+import PacketIn from '../PacketIn.js';
 
 export default class SelectCharacterPacket extends PacketIn {
     #slot;
@@ -20,6 +20,7 @@ export default class SelectCharacterPacket extends PacketIn {
     unpack(buffer) {
         this.bufferReader.setBuffer(buffer);
         this.#slot = this.bufferReader.readUInt8();
+        this.validate();
         return this;
     }
 }

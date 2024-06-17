@@ -1,20 +1,22 @@
-import PacketHeaderEnum from '../../../../../enum/PacketHeaderEnum.js';
-import PacketIn from './PacketIn.js';
+import PacketHeaderEnum from '../../../../../../enum/PacketHeaderEnum.js';
+import PacketIn from '../PacketIn.js';
+import AuthTokenPacketValidator from './AuthTokenPacketValidator.js';
 
 export default class AuthTokenPacket extends PacketIn {
     #username;
     #key;
-    #Xteakeys;
+    #xteaKeys;
 
-    constructor({ username, key, Xteakeys } = {}) {
+    constructor({ username, key, xteaKeys } = {}) {
         super({
             header: PacketHeaderEnum.TOKEN,
             name: 'AuthTokenPacket',
             size: 50,
+            validator: AuthTokenPacketValidator,
         });
         this.#username = username;
         this.#key = key;
-        this.#Xteakeys = Xteakeys;
+        this.#xteaKeys = xteaKeys;
     }
 
     get username() {
@@ -25,20 +27,21 @@ export default class AuthTokenPacket extends PacketIn {
         return this.#key;
     }
 
-    get Xteakeys() {
-        return this.#Xteakeys;
+    get xteaKeys() {
+        return this.#xteaKeys;
     }
 
     unpack(buffer) {
         this.bufferReader.setBuffer(buffer);
         this.#username = this.bufferReader.readString(31);
         this.#key = this.bufferReader.readUInt32LE();
-        this.#Xteakeys = [
+        this.#xteaKeys = [
             this.bufferReader.readUInt32LE(),
             this.bufferReader.readUInt32LE(),
             this.bufferReader.readUInt32LE(),
             this.bufferReader.readUInt32LE(),
         ];
+        this.validate();
         return this;
     }
 }

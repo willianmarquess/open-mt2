@@ -1,7 +1,7 @@
-import ErrorTypesEnum from '../../../../enum/ErrorTypesEnum.js';
-import LoginStatusEnum from '../../../../enum/LoginStatusEnum.js';
-import LoginFailedPacket from '../packet/out/LoginFailedPacket.js';
-import LoginSuccessPacket from '../packet/out/LoginSuccessPacket.js';
+import ErrorTypesEnum from '../../../../../../enum/ErrorTypesEnum.js';
+import LoginStatusEnum from '../../../../../../enum/LoginStatusEnum.js';
+import LoginFailedPacket from '../../out/LoginFailedPacket.js';
+import LoginSuccessPacket from '../../out/LoginSuccessPacket.js';
 
 const LOGIN_SUCCESS_RESULT = 1;
 
@@ -15,6 +15,13 @@ export default class LoginRequestPacketHandler {
     }
 
     async execute(connection, packet) {
+        if (!packet.isValid()) {
+            this.#logger.error(`[LoginRequestPacketHandler] Packet invalid`);
+            this.#logger.error(packet.errors());
+            connection.close();
+            return;
+        }
+
         const { username, password } = packet;
 
         const result = await this.#loginService.execute({

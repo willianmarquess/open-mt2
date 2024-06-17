@@ -1,7 +1,7 @@
-import ConnectionStateEnum from '../../../../enum/ConnectionStateEnum.js';
-import CharacterDetailsPacket from '../packet/out/CharacterDetailsPacket.js';
-import CharacterPointsPacket from '../packet/out/CharacterPointsPacket.js';
-import CharacterUpdatePacket from '../packet/out/CharacterUpdatePacket.js';
+import ConnectionStateEnum from '../../../../../../enum/ConnectionStateEnum.js';
+import CharacterDetailsPacket from '../../out/CharacterDetailsPacket.js';
+import CharacterPointsPacket from '../../out/CharacterPointsPacket.js';
+import CharacterUpdatePacket from '../../out/CharacterUpdatePacket.js';
 
 export default class SelectCharacterPacketHandler {
     #selectCharacterService;
@@ -13,6 +13,13 @@ export default class SelectCharacterPacketHandler {
     }
 
     async execute(connection, packet) {
+        if (!packet.isValid()) {
+            this.#logger.error(`[SelectCharacterPacketHandler] Packet invalid`);
+            this.#logger.error(packet.errors());
+            connection.close();
+            return;
+        }
+
         const { accountId } = connection;
         if (!accountId) {
             this.#logger.info(
