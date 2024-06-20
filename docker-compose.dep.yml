@@ -1,0 +1,21 @@
+version: "3.8"
+services:
+  cache:
+    image: redis:latest
+    restart: unless-stopped
+    container_name: cache
+    env_file:
+      - ./.env
+    ports:
+      - $CACHE_PORT:$CACHE_PORT
+
+  database:
+    image: mysql:5.7
+    container_name: database
+    restart: always
+    env_file:
+      - ./.env
+    environment:
+      MYSQL_ROOT_PASSWORD: $DB_ROOT_PASSWORD
+    ports:
+      - $DB_PORT:$DB_PORT

@@ -15,7 +15,9 @@
     "prepare": "husky",
     "lint:fix": "eslint --fix {src,test}/**/*.js",
     "test:unit": "mocha --config test/.mocharc.unit.json --exit",
-    "test:coverage": "cross-env 'NODE_OPTIONS=--experimental-loader @istanbuljs/esm-loader-hook' nyc mocha --config test/.mocharc.unit.json"
+    "test:coverage": "cross-env 'NODE_OPTIONS=--experimental-loader @istanbuljs/esm-loader-hook' nyc mocha --config test/.mocharc.unit.json",
+    "docker:all": "docker-compose -f docker-compose.yml up -d",
+    "docker:dep": "docker-compose -f docker-compose.dep.yml up -d"
   },
   "author": "Willian Marques (willian.goncalves4@gmail.com)",
   "license": "ISC",
