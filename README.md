@@ -14,7 +14,7 @@ Metin2 are copyrighted by [Webzen](http://webzen.com/ "Webzen").
 
 | Feature          | Todo | Doing | Done |
 |------------------|------|-------|------|
-| Handshake |      |       | X    |
+| Handshake |      |       | ✅    |
 | Server Status |      |       | ✅    |
 | Login |      |       | ✅    |
 | Logout    |      |       | ✅    |
