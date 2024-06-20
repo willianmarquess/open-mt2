@@ -104,3 +104,9 @@ The image bellow show how the client interacts with auth server.
 The image bellow show how the client interacts with game server.
 ![](https://github.com/willianmarquess/mt2-server-javascript/blob/master/docs/images/mt2-game-server.drawio.png)
 
+## References
+
+- [Mt2 emulator in C# (Quantum-core-X)](https://github.com/MeikelLP/quantum-core-x)
+- [RuneScape emulator in JS (RUNE JS)](https://github.com/runejs/server)
+- [Mt2 emulator in C++](https://github.com/cCorax2/Source_code)
+
