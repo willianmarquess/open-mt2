@@ -112,5 +112,4 @@ This project is licensed under the GNU GENERAL PUBLIC LICENSE - see the [LICENSE
 
 - [Mt2 emulator in C# (Quantum-core-X)](https://github.com/MeikelLP/quantum-core-x)
 - [RuneScape emulator in JS (RUNE JS)](https://github.com/runejs/server)
-- [Mt2 emulator in C++](https://github.com/cCorax2/Source_code)
 
