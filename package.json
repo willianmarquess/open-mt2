@@ -6,6 +6,8 @@
   "type": "module",
   "scripts": {
     "dev:auth": "node --env-file=.env --watch --experimental-json-modules src/auth/main.js",
+    "auth": "node --experimental-json-modules src/auth/main.js",
+    "game": "node --experimental-json-modules src/game/main.js",
     "dev:game": "node --env-file=.env --watch --experimental-json-modules src/game/main.js",
     "dev:auth:migrate": "cross-env MIGRATE=true node --env-file=.env --watch --experimental-json-modules src/auth/main.js",
     "dev:game:migrate": "cross-env MIGRATE=true node --env-file=.env --watch --experimental-json-modules src/game/main.js",

@@ -1,36 +1,62 @@
 version: "3.8"
 services:
-  # inventory-ms:
-  #     image: node:latest
-  #     container_name: inventory-ms
-  #     env_file:
-  #     - ./.env
-  #     restart: always
-  #     ports:
-  #       - $APP_PORT:$APP_PORT
-  #       - 9229:9229
-  #     environment:
-  #       - APP_PORT=$APP_PORT
-  #       - WRITEDB_PORT=$WRITEDB_PORT
-  #       - WRITEDB_USER=$WRITEDB_USER
-  #       - WRITEDB_ROOT_PASSWORD=$WRITEDB_ROOT_PASSWORD
-  #       - WRITEDB_DATABASE_NAME=$WRITEDB_DATABASE_NAME
-  #       - WRITEDB_HOST=write-db
-  #       - READDB_HOST=read-db
-  #       - READDB_ROOT_USER=$READDB_ROOT_USER
-  #       - READDB_ROOT_PASSWORD=$READDB_ROOT_PASSWORD
-  #       - READDB_DATABASE_NAME=$READDB_DATABASE_NAME
-  #       - READDB_PORT=$READDB_PORT
-  #     volumes:
-  #       - .:/usr/app
-  #     depends_on: 
-  #       - write-db
-  #     working_dir: /usr/app
-  #     command: bash -c "npm install && npm run start:dev"
+  auth-server:
+      image: node:latest
+      container_name: auth-server
+      env_file:
+      - ./.env
+      restart: always
+      ports:
+        - $AUTH_SERVER_PORT:$AUTH_SERVER_PORT
+      environment:
+        - AUTH_SERVER_PORT=$AUTH_SERVER_PORT
+        - AUTH_SERVER_ADDRESS=$AUTH_SERVER_ADDRESS
+        - LOG_LEVEL=$LOG_LEVEL
+        - DB_PORT=$DB_PORT
+        - DB_ROOT_PASSWORD=$DB_ROOT_PASSWORD
+        - AUTH_DB_DATABASE_NAME=$AUTH_DB_DATABASE_NAME
+        - DB_USER=$DB_USER
+        - CACHE_PORT=$CACHE_PORT
+        - DB_HOST=database
+        - CACHE_HOST=cache
+      volumes:
+        - .:/usr/app
+      depends_on: 
+        - cache
+        - database
+      working_dir: /usr/app
+      command: bash -c "npm install && npm run auth"
+  game-server:
+      image: node:latest
+      container_name: game-server
+      env_file:
+      - ./.env
+      restart: always
+      ports:
+        - $GAME_SERVER_PORT:$GAME_SERVER_PORT
+      environment:
+        - GAME_SERVER_PORT=$GAME_SERVER_PORT
+        - GAME_SERVER_ADDRESS=$GAME_SERVER_ADDRESS
+        - LOG_LEVEL=$LOG_LEVEL
+        - DB_PORT=$DB_PORT
+        - DB_ROOT_PASSWORD=$DB_ROOT_PASSWORD
+        - GAME_DB_DATABASE_NAME=$GAME_DB_DATABASE_NAME
+        - DB_USER=$DB_USER
+        - CACHE_PORT=$CACHE_PORT
+        - DB_HOST=database
+        - CACHE_HOST=cache
+      volumes:
+        - .:/usr/app
+      depends_on: 
+        - cache
+        - database
+      working_dir: /usr/app
+      command: bash -c "npm install && npm run game"
 
   cache:
     image: redis:latest
     restart: unless-stopped
+    container_name: cache
     env_file:
       - ./.env
     ports:
@@ -43,7 +69,6 @@ services:
     env_file:
       - ./.env
     environment:
-      MYSQL_DATABASE: $DB_DATABASE_NAME
       MYSQL_ROOT_PASSWORD: $DB_ROOT_PASSWORD
     ports:
       - $DB_PORT:$DB_PORT
