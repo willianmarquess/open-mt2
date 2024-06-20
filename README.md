@@ -18,6 +18,8 @@ Metin2 are copyrighted by [Webzen](http://webzen.com/ "Webzen").
 | Server Status |      |       | ✅    |
 | Login |      |       | ✅    |
 | Logout    |      |       | ✅    |
+| Return to Select    | X    |       |      |
+| Delete Character    | X    |       |      |
 | Protocol Encryption   | X    |       |      |
 | Create character  |      |       | ✅    |
 | Enter Game    |      |       | ✅   |
@@ -52,6 +54,7 @@ Metin2 are copyrighted by [Webzen](http://webzen.com/ "Webzen").
 | Affect System   | X    |       |      |
 | Quest System   | X    |       |      |
 | Skills System   | X    |       |      |
+| Chat System   | X    |       |      |
 | Level System   |      |       | ✅    |
 | Graceful shutdown   |      |       | ✅    |
 | Grafana Monitoring   | X   |       |      |
