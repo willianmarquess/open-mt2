@@ -104,6 +104,10 @@ The image bellow show how the client interacts with auth server.
 The image bellow show how the client interacts with game server.
 ![](https://github.com/willianmarquess/mt2-server-javascript/blob/master/docs/images/mt2-game-server.drawio.png)
 
+## License
+
+This project is licensed under the GNU GENERAL PUBLIC LICENSE - see the [LICENSE](LICENSE) file for details.
+
 ## References
 
 - [Mt2 emulator in C# (Quantum-core-X)](https://github.com/MeikelLP/quantum-core-x)
