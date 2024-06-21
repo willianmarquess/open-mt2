@@ -1,4 +1,4 @@
-import MySqlConnetion from './connection/MySqlConnection.js';
+import MySqlConnection from './connection/MySqlConnection.js';
 import loadScript from './scripts/loadScript.js';
 
 export default class DatabaseManager {
@@ -16,7 +16,7 @@ export default class DatabaseManager {
             return this.#connection;
         }
 
-        this.#connection = MySqlConnetion.getConnection({
+        this.#connection = MySqlConnection.getConnection({
             dbHost: this.#config.DB_HOST,
             dbName: this.#config.DB_DATABASE_NAME,
             dbPass: this.#config.DB_ROOT_PASSWORD,
@@ -29,12 +29,12 @@ export default class DatabaseManager {
 
     async #executeScripts() {
         if (!this.#config.MIGRATE) return;
-        const script = await loadScript();
+        const scripts = await loadScript();
         this.#logger.info(`[DBMANAGER] Executing database scripts...`);
 
-        for await (const s of script) {
-            this.#logger.debug(`[DBMANAGER] Executing command: ${s}`);
-            await this.connection.execute(s);
+        for await (const script of scripts) {
+            this.#logger.debug(`[DBMANAGER] Executing command: ${script}`);
+            await this.connection.execute(script);
         }
     }
 
@@ -45,6 +45,6 @@ export default class DatabaseManager {
     }
 
     close() {
-        return this.#connection.end();
+        return this.#connection?.end();
     }
 }
