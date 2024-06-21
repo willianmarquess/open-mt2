@@ -42,6 +42,10 @@ export default class World {
         return this.#players;
     }
 
+    getPlayerByName(name) {
+        return this.#players.get(name);
+    }
+
     #load() {
         if (!this.#config.atlas) {
             this.#logger.warn('[WORLD] No maps to load. Atlas configuration is missing.');
@@ -111,7 +115,7 @@ export default class World {
         }
 
         if (entity instanceof Player) {
-            this.#players.set(entity.virtualId, entity);
+            this.#players.set(entity.name, entity);
         }
 
         area.spawn(entity);
@@ -126,7 +130,7 @@ export default class World {
         }
 
         if (entity instanceof Player) {
-            this.#players.delete(entity.virtualId);
+            this.#players.delete(entity.name);
         }
 
         area.despawn(entity);

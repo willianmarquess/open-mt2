@@ -240,10 +240,10 @@ export default class Player extends GameEntity {
 
         if (this.#experience + value >= expNeeded) {
             const diff = this.#experience + value - expNeeded;
-            this.#experience = diff;
+            this.#experience = expNeeded;
             this.addLevel(1);
             this.#updateStatusPoints();
-            this.addExperience(0);
+            this.addExperience(diff);
             return;
         }
 
