@@ -13,6 +13,7 @@ import OtherCharacterLeftGameEvent from './events/OtherCharacterLeftGameEvent.js
 import ChatEvent from './events/ChatEvent.js';
 import ChatMessageTypeEnum from '../../../../enum/ChatMessageTypeEnum.js';
 import LogoutEvent from './events/LogoutEvent.js';
+import JobUtil from '../../../util/JobUtil.js';
 
 export default class Player extends GameEntity {
     #accountId;
@@ -339,16 +340,17 @@ export default class Player extends GameEntity {
             this.#health = this.#maxHealth;
             this.#mana = this.#maxMana;
             this.#updateStatusPoints();
-            this.#sendPoints();
         }
+        this.#sendPoints();
     }
 
     addLevel(value) {
-        if (this.#level + value > this.#config.MAX_LEVEL) return;
-        if (value < 1) return;
+        const validatedValue = Number(value) > 0 ? Number(value) : 0;
+        if (this.#level + validatedValue > this.#config.MAX_LEVEL) return;
+        if (validatedValue < 1) return;
 
         //add skill point
-        this.#level += value;
+        this.#level += validatedValue;
         this.#updateHealth();
         this.#resetHealth();
         this.#updateMana();
@@ -356,6 +358,33 @@ export default class Player extends GameEntity {
         this.#updateStatusPoints();
         this.#sendPoints();
 
+        this.publish(CharacterLevelUpEvent.type, new CharacterLevelUpEvent({ entity: this }));
+    }
+
+    setLevel(value = 1) {
+        const validatedValue = Number(value) > 0 ? Number(value) : 0;
+        if (validatedValue < 1 || validatedValue > this.#config.MAX_LEVEL) return;
+
+        this.#level = validatedValue;
+        //reset skills
+
+        this.#givenStatusPoints = 0;
+        this.#availableStatusPoints = 0;
+        this.#experience = 0;
+        const className = JobUtil.getClassNameFromClassId(this.#playerClass);
+        this.#st = this.#config.jobs[className].common.st;
+        this.#ht = this.#config.jobs[className].common.ht;
+        this.#dx = this.#config.jobs[className].common.dx;
+        this.#iq = this.#config.jobs[className].common.iq;
+
+        this.#updateHealth();
+        this.#resetHealth();
+        this.#updateMana();
+        this.#resetMana();
+        this.#updateStatusPoints();
+        this.#sendPoints();
+
+        //add skill point
         this.publish(CharacterLevelUpEvent.type, new CharacterLevelUpEvent({ entity: this }));
     }
 
