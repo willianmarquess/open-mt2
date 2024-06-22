@@ -171,7 +171,9 @@ export default class Player extends GameEntity {
 
     #initPoints() {
         this.#updateHealth();
+        this.#resetHealth();
         this.#updateMana();
+        this.#resetMana();
 
         this.#points[PointsEnum.EXPERIENCE] = () => this.#experience;
         this.#points[PointsEnum.HT] = () => this.#ht;
@@ -214,22 +216,27 @@ export default class Player extends GameEntity {
 
         switch (stat) {
             case 'st':
+                //update phy attack
                 this.#st += validatedValue;
                 break;
             case 'ht':
+                //update def
+                this.#updateHealth();
                 this.#ht += validatedValue;
                 break;
             case 'dx':
+                //update phy attack
+                //update dodge
                 this.#dx += validatedValue;
                 break;
             case 'iq':
+                //update mag attack
+                this.#updateMana();
                 this.#iq += validatedValue;
                 break;
         }
         this.#givenStatusPoints += validatedValue;
         this.#availableStatusPoints -= validatedValue;
-        this.#updateHealth();
-        this.#updateMana();
         this.#sendPoints();
     }
 
@@ -270,7 +277,9 @@ export default class Player extends GameEntity {
         //add skill point
         this.#level += value;
         this.#updateHealth();
+        this.#resetHealth();
         this.#updateMana();
+        this.#resetMana();
         this.#updateStatusPoints();
         this.#sendPoints();
 
@@ -303,12 +312,18 @@ export default class Player extends GameEntity {
 
     #updateHealth() {
         this.#maxHealth = this.#baseHealth + this.#ht * this.#hpPerHtPoint + this.#level * this.#hpPerLvl;
+    }
+
+    #resetHealth() {
+        this.#health = this.#maxHealth;
+    }
+
+    #resetMana() {
         this.#health = this.#maxHealth;
     }
 
     #updateMana() {
         this.#maxMana = this.#baseMana + this.#iq * this.#mpPerIqPoint + this.#level * this.#mpPerLvl;
-        this.#mana = this.#maxMana;
     }
 
     getPoint(point) {
