@@ -21,5 +21,6 @@ export default class SelectEmpireService {
 
         const key = CacheKeyGenerator.createEmpireKey(accountId);
         await this.#cacheProvider.set(key, empireId);
+        return Result.ok();
     }
 }

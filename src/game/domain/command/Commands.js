@@ -1,3 +1,5 @@
+import ExperienceCommand from './command/exp/ExperienceCommand.js';
+import ExperienceCommandHandler from './command/exp/ExperienceCommandHandler.js';
 import LogoutCommand from './command/logout/LogoutCommand.js';
 import LogoutCommandHandler from './command/logout/LogoutCommandHandler.js';
 import QuitCommand from './command/quit/QuitCommand.js';
@@ -26,6 +28,13 @@ export default () =>
             {
                 command: QuitCommand,
                 createHandler: (params) => new QuitCommandHandler(params),
+            },
+        ],
+        [
+            ExperienceCommand.name,
+            {
+                command: ExperienceCommand,
+                createHandler: (params) => new ExperienceCommandHandler(params),
             },
         ],
     ]);

@@ -207,60 +207,133 @@ export default class Player extends GameEntity {
         this.#givenStatusPoints = totalStatusPoints;
     }
 
-    addStat(stat, value = 1) {
+    addSt(value = 1) {
         const validatedValue = Number(value) > 0 ? Number(value) : 0;
+        if (validatedValue === 0 || validatedValue > this.#availableStatusPoints) return;
 
-        if (validatedValue > this.#availableStatusPoints) {
-            return;
+        let realValue = 0;
+        if (this.#st + validatedValue >= this.#config.MAX_POINTS) {
+            const diff = this.#config.MAX_POINTS - this.#st;
+            realValue = diff;
+        } else {
+            realValue = validatedValue;
         }
 
-        switch (stat) {
-            case 'st':
-                //update phy attack
-                this.#st += validatedValue;
-                break;
-            case 'ht':
-                //update def
-                this.#updateHealth();
-                this.#ht += validatedValue;
-                break;
-            case 'dx':
-                //update phy attack
-                //update dodge
-                this.#dx += validatedValue;
-                break;
-            case 'iq':
-                //update mag attack
-                this.#updateMana();
-                this.#iq += validatedValue;
-                break;
-        }
-        this.#givenStatusPoints += validatedValue;
-        this.#availableStatusPoints -= validatedValue;
+        //update phy attack
+        this.#st += realValue;
+        this.#givenStatusPoints += realValue;
+        this.#availableStatusPoints -= realValue;
         this.#sendPoints();
     }
 
+    addHt(value = 1) {
+        const validatedValue = Number(value) > 0 ? Number(value) : 0;
+        if (validatedValue === 0 || validatedValue > this.#availableStatusPoints) return;
+
+        let realValue = 0;
+        if (this.#ht + validatedValue >= this.#config.MAX_POINTS) {
+            const diff = this.#config.MAX_POINTS - this.#ht;
+            realValue = diff;
+        } else {
+            realValue = validatedValue;
+        }
+
+        //update def
+        this.#ht += realValue;
+        this.#givenStatusPoints += realValue;
+        this.#availableStatusPoints -= realValue;
+        this.#updateHealth();
+        this.#sendPoints();
+    }
+
+    addDx(value = 1) {
+        const validatedValue = Number(value) > 0 ? Number(value) : 0;
+        if (validatedValue === 0 || validatedValue > this.#availableStatusPoints) return;
+
+        let realValue = 0;
+        if (this.#dx + validatedValue > this.#config.MAX_POINTS) {
+            const diff = this.#config.MAX_POINTS - this.#dx;
+            realValue = diff;
+        } else {
+            realValue = validatedValue;
+        }
+
+        //update phy attack
+        //update dodge
+        this.#dx += realValue;
+        this.#givenStatusPoints += realValue;
+        this.#availableStatusPoints -= realValue;
+        this.#sendPoints();
+    }
+
+    addIq(value = 1) {
+        const validatedValue = Number(value) > 0 ? Number(value) : 0;
+        if (validatedValue === 0 || validatedValue > this.#availableStatusPoints) return;
+
+        let realValue = 0;
+        if (this.#iq + validatedValue > this.#config.MAX_POINTS) {
+            const diff = this.#config.MAX_POINTS - this.#iq;
+            realValue = diff;
+        } else {
+            realValue = validatedValue;
+        }
+
+        //update magic attack
+        //update magic def
+        this.#iq += realValue;
+        this.#givenStatusPoints += realValue;
+        this.#availableStatusPoints -= realValue;
+        this.#updateMana();
+        this.#sendPoints();
+    }
+
+    addStat(stat, value = 1) {
+        switch (stat) {
+            case 'st':
+                this.addSt(value);
+                break;
+            case 'ht':
+                this.addHt(value);
+                break;
+            case 'dx':
+                this.addDx(value);
+                break;
+            case 'iq':
+                this.addIq(value);
+                break;
+        }
+    }
+
     addExperience(value) {
-        if (value < 1 || this.#level >= this.#config.MAX_LEVEL) return;
+        const validatedValue = Number(value) > 0 ? Number(value) : 0;
+
+        if (validatedValue < 0 || (this.#level >= this.#config.MAX_LEVEL && this.#experience === 0)) return;
+
+        if (this.#level >= this.#config.MAX_LEVEL) {
+            this.#experience = 0;
+            this.#updateStatusPoints();
+            this.#sendPoints();
+            return;
+        }
 
         const expNeeded = this.#experienceManager.getNeededExperience(this.#level);
 
-        if (this.#experience + value >= expNeeded) {
-            const diff = this.#experience + value - expNeeded;
-            this.#experience = expNeeded;
+        if (this.#experience + validatedValue >= expNeeded) {
+            const diff = this.#experience + validatedValue - expNeeded;
+            this.#experience = diff;
             this.addLevel(1);
             this.#updateStatusPoints();
-            this.addExperience(diff);
+            this.addExperience(0);
             return;
         }
 
         const expPart = expNeeded / 4;
         const before = this.#experience;
-        this.#experience += value;
+        this.#experience += validatedValue;
 
         const beforePart = before / expPart;
         const afterPart = this.#experience / expPart;
-        const expSteps = afterPart - beforePart;
+        const expSteps = Math.floor(afterPart) - Math.floor(beforePart);
 
         if (expSteps > 0) {
             this.#health = this.#maxHealth;
@@ -319,7 +392,7 @@ export default class Player extends GameEntity {
     }
 
     #resetMana() {
-        this.#health = this.#maxHealth;
+        this.#mana = this.#maxMana;
     }
 
     #updateMana() {
