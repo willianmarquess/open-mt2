@@ -9,10 +9,19 @@ app.start().catch((error) => {
 });
 
 const SIGNALS = ['SIGINT', 'SIGTERM'];
+const ERRORS = ['unhandledRejection', 'uncaughtException'];
 
 SIGNALS.forEach((signal) => {
     process.on(signal, async () => {
         await app.close();
         process.exit(0);
+    });
+});
+
+ERRORS.forEach((signal) => {
+    process.on(signal, async (error) => {
+        console.error(`Error event: ${signal}`, error);
+        await app.close();
+        process.exit(1);
     });
 });

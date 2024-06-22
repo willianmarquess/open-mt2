@@ -1,6 +1,6 @@
 import mysql from 'mysql2/promise';
 
-export default class MySqlConnetion {
+export default class MySqlConnection {
     static getConnection({ dbHost, dbUser, dbPass, dbName, dbPort }) {
         return mysql.createPool({
             host: dbHost,
