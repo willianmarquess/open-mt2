@@ -33,6 +33,7 @@ export default class GoldCommandHandler {
                 message: `Target: ${targetName} not found.`,
                 messageType: ChatMessageTypeEnum.INFO,
             });
+            return;
         }
 
         target.addGold(value);

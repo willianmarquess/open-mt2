@@ -210,6 +210,8 @@ export default class Player extends GameEntity {
         this.#givenStatusPoints = totalStatusPoints;
     }
 
+    teleport() {}
+
     addGold(value = 1) {
         const validatedValue = MathUtil.toUnsignedNumber(value);
         if (validatedValue === 0) return;

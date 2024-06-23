@@ -46,6 +46,32 @@ export default class World {
         return this.#players.get(name);
     }
 
+    getAreaByName(name) {
+        return this.#areas.get(name);
+    }
+
+    getEntityArea(entity) {
+        const area = this.getArea(entity.positionX, entity.positionY);
+
+        if (!area) {
+            this.#logger.info(`[WORLD] Invalid location x: ${entity.positionX}, y: ${entity.positionY}`);
+            return;
+        }
+
+        return area;
+    }
+
+    getAreaByCoordinates(x, y) {
+        const area = this.getArea(x, y);
+
+        if (!area) {
+            this.#logger.info(`[WORLD] Invalid location x: ${x}, y: ${y}`);
+            return;
+        }
+
+        return area;
+    }
+
     #load() {
         if (!this.#config.atlas) {
             this.#logger.warn('[WORLD] No maps to load. Atlas configuration is missing.');

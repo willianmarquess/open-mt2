@@ -46,6 +46,16 @@ export default class RuleBuilder {
         return this;
     }
 
+    isOptionalIf(optionalFunction) {
+        if (typeof optionalFunction !== 'function') {
+            throw new Error('optionalFunction must be a function');
+        }
+        if (optionalFunction()) {
+            this.isOptional();
+        }
+        return this;
+    }
+
     #shouldSkipValidation() {
         return this.#isOptional && (this.#target === null || this.#target === undefined);
     }

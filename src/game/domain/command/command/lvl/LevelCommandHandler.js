@@ -33,6 +33,7 @@ export default class LevelCommandHandler {
                 message: `Target: ${targetName} not found.`,
                 messageType: ChatMessageTypeEnum.INFO,
             });
+            return;
         }
 
         target.setLevel(value);
