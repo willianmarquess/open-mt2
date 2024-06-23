@@ -1,5 +1,7 @@
 import ExperienceCommand from './command/exp/ExperienceCommand.js';
 import ExperienceCommandHandler from './command/exp/ExperienceCommandHandler.js';
+import GoldCommand from './command/gold/GoldCommand.js';
+import GoldCommandHandler from './command/gold/GoldCommandHandler.js';
 import LogoutCommand from './command/logout/LogoutCommand.js';
 import LogoutCommandHandler from './command/logout/LogoutCommandHandler.js';
 import LevelCommand from './command/lvl/LevelCommand.js';
@@ -44,6 +46,13 @@ export default () =>
             {
                 command: LevelCommand,
                 createHandler: (params) => new LevelCommandHandler(params),
+            },
+        ],
+        [
+            GoldCommand.name,
+            {
+                command: GoldCommand,
+                createHandler: (params) => new GoldCommandHandler(params),
             },
         ],
     ]);

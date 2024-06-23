@@ -14,6 +14,7 @@ import ChatEvent from './events/ChatEvent.js';
 import ChatMessageTypeEnum from '../../../../enum/ChatMessageTypeEnum.js';
 import LogoutEvent from './events/LogoutEvent.js';
 import JobUtil from '../../../util/JobUtil.js';
+import MathUtil from '../../../util/MathUtil.js';
 
 export default class Player extends GameEntity {
     #accountId;
@@ -190,6 +191,7 @@ export default class Player extends GameEntity {
         this.#points[PointsEnum.MOVE_SPEED] = () => this.#movementSpeed;
         this.#points[PointsEnum.NEEDED_EXPERIENCE] = () => this.#experienceManager.getNeededExperience(this.#level);
         this.#points[PointsEnum.STATUS_POINTS] = () => this.#availableStatusPoints;
+        this.#points[PointsEnum.GOLD] = () => this.#gold;
     }
 
     #updateStatusPoints() {
@@ -208,8 +210,16 @@ export default class Player extends GameEntity {
         this.#givenStatusPoints = totalStatusPoints;
     }
 
+    addGold(value = 1) {
+        const validatedValue = MathUtil.toUnsignedNumber(value);
+        if (validatedValue === 0) return;
+
+        this.#gold = Math.min(this.#gold + validatedValue, MathUtil.MAX_UINT);
+        this.#sendPoints();
+    }
+
     addSt(value = 1) {
-        const validatedValue = Number(value) > 0 ? Number(value) : 0;
+        const validatedValue = MathUtil.toUnsignedNumber(value);
         if (validatedValue === 0 || validatedValue > this.#availableStatusPoints) return;
 
         let realValue = 0;
@@ -228,7 +238,7 @@ export default class Player extends GameEntity {
     }
 
     addHt(value = 1) {
-        const validatedValue = Number(value) > 0 ? Number(value) : 0;
+        const validatedValue = MathUtil.toUnsignedNumber(value);
         if (validatedValue === 0 || validatedValue > this.#availableStatusPoints) return;
 
         let realValue = 0;
@@ -248,7 +258,7 @@ export default class Player extends GameEntity {
     }
 
     addDx(value = 1) {
-        const validatedValue = Number(value) > 0 ? Number(value) : 0;
+        const validatedValue = MathUtil.toUnsignedNumber(value);
         if (validatedValue === 0 || validatedValue > this.#availableStatusPoints) return;
 
         let realValue = 0;
@@ -268,7 +278,7 @@ export default class Player extends GameEntity {
     }
 
     addIq(value = 1) {
-        const validatedValue = Number(value) > 0 ? Number(value) : 0;
+        const validatedValue = MathUtil.toUnsignedNumber(value);
         if (validatedValue === 0 || validatedValue > this.#availableStatusPoints) return;
 
         let realValue = 0;
@@ -306,7 +316,7 @@ export default class Player extends GameEntity {
     }
 
     addExperience(value) {
-        const validatedValue = Number(value) > 0 ? Number(value) : 0;
+        const validatedValue = MathUtil.toUnsignedNumber(value);
 
         if (validatedValue < 0 || (this.#level >= this.#config.MAX_LEVEL && this.#experience === 0)) return;
 
@@ -345,7 +355,7 @@ export default class Player extends GameEntity {
     }
 
     addLevel(value) {
-        const validatedValue = Number(value) > 0 ? Number(value) : 0;
+        const validatedValue = MathUtil.toUnsignedNumber(value);
         if (this.#level + validatedValue > this.#config.MAX_LEVEL) return;
         if (validatedValue < 1) return;
 
@@ -358,11 +368,12 @@ export default class Player extends GameEntity {
         this.#updateStatusPoints();
         this.#sendPoints();
 
+        //verify if we really need to send this
         this.publish(CharacterLevelUpEvent.type, new CharacterLevelUpEvent({ entity: this }));
     }
 
     setLevel(value = 1) {
-        const validatedValue = Number(value) > 0 ? Number(value) : 0;
+        const validatedValue = MathUtil.toUnsignedNumber(value);
         if (validatedValue < 1 || validatedValue > this.#config.MAX_LEVEL) return;
 
         this.#level = validatedValue;
@@ -385,6 +396,7 @@ export default class Player extends GameEntity {
         this.#sendPoints();
 
         //add skill point
+        //verify if we really need to send this
         this.publish(CharacterLevelUpEvent.type, new CharacterLevelUpEvent({ entity: this }));
     }
 

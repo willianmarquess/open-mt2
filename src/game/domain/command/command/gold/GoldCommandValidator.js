@@ -1,9 +1,9 @@
 import MathUtil from '../../../../../core/domain/util/MathUtil.js';
 import CommandValidator from '../../CommandValidator.js';
 
-export default class ExperienceCommandValidator extends CommandValidator {
-    constructor(experienceCommand) {
-        super(experienceCommand);
+export default class GoldCommandValidator extends CommandValidator {
+    constructor(goldCommand) {
+        super(goldCommand);
     }
 
     build() {
