@@ -28,4 +28,5 @@ export default {
     CHARACTER_REMOVE: 0x02,
     CHAT_OUT: 0x04,
     CHAT_IN: 0x03,
+    TELEPORT: 0x41,
 };

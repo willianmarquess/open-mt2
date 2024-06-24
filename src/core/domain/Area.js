@@ -13,6 +13,8 @@ export default class Area {
     #positionY;
     #width;
     #height;
+    #aka;
+    #goto;
 
     #entities = new Map();
     #entitiesToSpawn = new Queue(SIZE_QUEUE);
@@ -22,12 +24,14 @@ export default class Area {
     #saveCharacterService;
     #logger;
 
-    constructor({ name, positionX, positionY, width, height }, { saveCharacterService, logger }) {
+    constructor({ name, positionX, positionY, width, height, aka, goto }, { saveCharacterService, logger }) {
         this.#name = name;
         this.#positionX = positionX;
         this.#positionY = positionY;
         this.#width = width;
         this.#height = height;
+        this.#aka = aka;
+        this.#goto = goto;
         this.#quadTree = new QuadTree(positionX, positionY, width * 25600, height * 25600, 20);
 
         this.#saveCharacterService = saveCharacterService;
@@ -50,6 +54,12 @@ export default class Area {
     }
     get name() {
         return this.#name;
+    }
+    get aka() {
+        return this.#aka;
+    }
+    get goto() {
+        return this.#goto;
     }
 
     async #savePlayers() {

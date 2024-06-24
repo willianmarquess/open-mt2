@@ -31,6 +31,10 @@ export default class Server {
         return this.#connections;
     }
 
+    get config() {
+        return this.#config;
+    }
+
     setup() {
         this.#server = createServer(this.#onListener.bind(this));
         return this;

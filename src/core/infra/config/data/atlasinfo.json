@@ -4,7 +4,26 @@
     "posX": 256000,
     "posY": 665600,
     "width": 6,
-    "height": 6
+    "height": 6,
+    "aka": "suryong_valley",
+    "goto": {
+      "red": [
+        402100,
+        673900
+      ],
+      "yellow": [
+        270400,
+        739900
+      ],
+      "blue": [
+        321300,
+        808000
+      ],
+      "default": [
+        402100,
+        673900
+      ]
+    }
   },
   {
     "mapName": "map_b2",
@@ -25,56 +44,124 @@
     "posX": 358400,
     "posY": 153600,
     "width": 6,
-    "height": 6
+    "height": 6,
+    "aka": "mountain_sohan",
+    "goto": {
+      "red": [
+        434200,
+        290600
+      ],
+      "yellow": [
+        375200,
+        174900
+      ],
+      "blue": [
+        491800,
+        173600
+      ],
+      "default": [
+        434200,
+        290600
+      ]
+    }
   },
   {
     "mapName": "metin2_map_a1",
+    "aka": "city1_red",
     "posX": 409600,
     "posY": 896000,
     "width": 4,
-    "height": 5
+    "height": 5,
+    "goto": {
+      "default": [
+        469300,
+        964200
+      ]
+    }
   },
   {
     "mapName": "metin2_map_a3",
+    "aka": "city2_red",
     "posX": 307200,
     "posY": 819200,
     "width": 4,
-    "height": 4
+    "height": 4,
+    "goto": {
+      "default": [
+        360800,
+        877600
+      ]
+    }
   },
   {
     "mapName": "metin2_map_b1",
     "posX": 0,
     "posY": 102400,
     "width": 4,
-    "height": 5
+    "height": 5,
+    "goto": {
+      "default": [
+        55700,
+        157900
+      ]
+    },
+    "aka": "city1_yellow"
   },
   {
     "mapName": "metin2_map_b3",
     "posX": 102400,
     "posY": 204800,
     "width": 4,
-    "height": 4
+    "height": 4,
+    "goto": {
+      "default": [
+        138500,
+        234900
+      ]
+    },
+    "aka": "city2_yellow"
   },
   {
     "mapName": "metin2_map_c1",
     "posX": 921600,
     "posY": 204800,
     "width": 4,
-    "height": 5
+    "height": 5,
+    "goto": {
+      "default": [
+        969600,
+        278400
+      ]
+    },
+    "aka": "city1_blue"
   },
   {
     "mapName": "metin2_map_c3",
     "posX": 819200,
     "posY": 204800,
     "width": 4,
-    "height": 4
+    "height": 4,
+    "goto": {
+      "default": [
+        873100,
+        242600
+      ]
+    },
+    "aka": "city2_yellow"
   },
   {
     "mapName": "metin2_map_deviltower1",
     "posX": 204800,
     "posY": 665600,
     "width": 3,
-    "height": 3
+    "height": 3,
+    "aka": "demon_tower",
+    "goto": {
+      "default": [
+        590500,
+        110500
+      ]
+    }
   },
   {
     "mapName": "metin2_map_milgyo",
@@ -88,28 +175,74 @@
     "posX": 204800,
     "posY": 486400,
     "width": 6,
-    "height": 6
+    "height": 6,
+    "aka": "desert",
+    "goto": {
+      "red": [
+        217800,
+        627200
+      ],
+      "yellow": [
+        221900,
+        502700
+      ],
+      "blue": [
+        344000,
+        502500
+      ],
+      "default": [
+        217800,
+        627200
+      ]
+    }
   },
   {
     "mapName": "metin2_map_n_flame_01",
     "posX": 588800,
     "posY": 614400,
     "width": 6,
-    "height": 6
+    "height": 6,
+    "aka": "flame",
+    "goto": {
+      "red": [
+        599400,
+        756300
+      ],
+      "yellow": [
+        597800,
+        62220
+      ],
+      "blue": [
+        730700,
+        689800
+      ],
+      "default": [
+        599400,
+        756300
+      ]
+    }
   },
   {
     "mapName": "metin2_map_spiderdungeon",
     "posX": 51200,
     "posY": 486400,
     "width": 3,
-    "height": 3
+    "height": 3,
+    "aka": "spider_cave1",
+    "goto": {
+      "default": [60000 , 496000]
+    }
   },
   {
     "mapName": "metin2_map_spiderdungeon_02",
     "posX": 665600,
     "posY": 435200,
     "width": 4,
-    "height": 4
+    "height": 4,
+    "aka": "spider_cave2",
+    "goto": {
+      "default": [704100 , 464200]
+    }
   },
   {
     "mapName": "metin2_map_t1",
@@ -193,7 +326,11 @@
     "posX": 819200,
     "posY": 0,
     "width": 1,
-    "height": 1
+    "height": 1,
+    "aka": "wedding",
+    "goto": {
+      "default": [819200, 0]
+    }
   },
   {
     "mapName": "metin2_map_guild_01",
@@ -221,28 +358,44 @@
     "posX": 281600,
     "posY": 0,
     "width": 2,
-    "height": 2
+    "height": 2,
+    "aka": "ghost_florest",
+    "goto": {
+      "default": [288700 , 5700]
+    }
   },
   {
     "mapName": "metin2_map_trent02",
     "posX": 1049600,
     "posY": 0,
     "width": 4,
-    "height": 4
+    "height": 4,
+    "aka": "red_florest",
+    "goto": {
+      "default": [1119500 , 701]
+    }
   },
   {
     "mapName": "gm_guild_build",
     "posX": 83200,
     "posY": 0,
     "width": 1,
-    "height": 1
+    "height": 1,
+    "aka": "event_map1",
+    "goto": {
+      "default": [100000, 100000]
+    }
   },
   {
     "mapName": "metin2_map_duel",
     "posX": 844800,
     "posY": 0,
     "width": 1,
-    "height": 1
+    "height": 1,
+    "aka": "duel",
+    "goto": {
+      "default": [854800, 11000]
+    }
   },
   {
     "mapName": "season1/metin2_map_WL_01",

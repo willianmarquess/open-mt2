@@ -47,7 +47,16 @@ export default class World {
     }
 
     getAreaByName(name) {
-        return this.#areas.get(name);
+        const areaByName = this.#areas.get(name);
+        if (!areaByName) {
+            for (const area of this.#areas.values()) {
+                if (area.aka === name) {
+                    return area;
+                }
+            }
+        }
+
+        return areaByName;
     }
 
     getEntityArea(entity) {
@@ -79,9 +88,9 @@ export default class World {
         }
 
         const maxDimensions = { maxWidth: 0, maxHeight: 0 };
-        this.#config.atlas?.forEach(({ mapName, posX, posY, width, height }) => {
+        this.#config.atlas?.forEach(({ mapName, posX, posY, width, height, aka, goto }) => {
             this.#logger.info(
-                `[WORLD] loading map: name: ${mapName}, posX: ${posX}, posY: ${posY}, width: ${width}, height: ${height}, sizeX: ${posX + width * AREA_UNIT}, sizeY: ${posY + height * AREA_UNIT}`,
+                `[WORLD] loading area: name: ${mapName}, posX: ${posX}, posY: ${posY}, width: ${width}, height: ${height}, sizeX: ${posX + width * AREA_UNIT}, sizeY: ${posY + height * AREA_UNIT}`,
             );
             maxDimensions.maxWidth = Math.max(maxDimensions.maxWidth, posX + width * AREA_UNIT);
             maxDimensions.maxHeight = Math.max(maxDimensions.maxHeight, posY + height * AREA_UNIT);
@@ -92,6 +101,8 @@ export default class World {
                     positionY: posY,
                     width,
                     height,
+                    aka,
+                    goto,
                 },
                 {
                     saveCharacterService: this.#saveCharacterService,

@@ -15,6 +15,7 @@ import ChatMessageTypeEnum from '../../../../enum/ChatMessageTypeEnum.js';
 import LogoutEvent from './events/LogoutEvent.js';
 import JobUtil from '../../../util/JobUtil.js';
 import MathUtil from '../../../util/MathUtil.js';
+import CharacterTeleportedEvent from './events/CharacterTeleportedEvent.js';
 
 export default class Player extends GameEntity {
     #accountId;
@@ -210,7 +211,12 @@ export default class Player extends GameEntity {
         this.#givenStatusPoints = totalStatusPoints;
     }
 
-    teleport() {}
+    teleport(x, y) {
+        this.move(x, y);
+        this.stop();
+
+        this.publish(CharacterTeleportedEvent.type, new CharacterTeleportedEvent());
+    }
 
     addGold(value = 1) {
         const validatedValue = MathUtil.toUnsignedNumber(value);

@@ -9,4 +9,5 @@ export default {
     OTHER_CHARACTER_LEFT_GAME: Symbol.for('OTHER_CHARACTER_LEFT_GAME'),
     CHAT: Symbol.for('CHAT'),
     LOGOUT: Symbol.for('LOGOUT'),
+    CHARACTER_TELEPORTED: Symbol.for('CHARACTER_TELEPORTED'),
 };

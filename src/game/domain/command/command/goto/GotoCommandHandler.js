@@ -1,3 +1,4 @@
+import EmpireUtil from '../../../../../core/domain/util/EmpireUtil.js';
 import ChatMessageTypeEnum from '../../../../../core/enum/ChatMessageTypeEnum.js';
 
 export default class GotoCommandHandler {
@@ -34,29 +35,24 @@ export default class GotoCommandHandler {
                     return;
                 }
 
-                const playerArea = this.#world.getEntityArea(player);
-
-                if (!playerArea) {
-                    this.#logger.error(
-                        `[GotoCommandHandler] Player area not found, This should not happen, player id: ${player.id}`,
-                    );
-                    return;
+                let x,
+                    y = 0;
+                if (areaByName.goto) {
+                    const empireName = EmpireUtil.getEmpireName(player.empire);
+                    const [posX, posY] = areaByName.goto[empireName] || areaByName.goto.default;
+                    x = posX;
+                    y = posY;
+                } else {
+                    x = areaByName.positionX + (areaByName.width * 25600) / 2;
+                    y = areaByName.positionY + (areaByName.height * 25600) / 2;
                 }
 
-                if (areaByName.name !== playerArea.name) {
-                    this.#logger.debug(
-                        `[GotoCommandHandler] Teleporting ${player.name} to area: ${areaByName.name}, x: ${areaByName.positionX}, y: ${areaByName.positionY}`,
-                    );
+                this.#logger.debug(
+                    `[GotoCommandHandler] Teleporting ${player.name} to area: ${areaByName.name}, x: ${x}, y: ${y}`,
+                );
 
-                    this.#world.despawn(player);
-                    player.teleport(areaByName.positionX, areaByName.positionY);
-                    return;
-                }
-
-                player.say({
-                    message: `You are already in the ${areaName} area`,
-                    messageType: ChatMessageTypeEnum.INFO,
-                });
+                this.#world.despawn(player);
+                player.teleport(x, y);
                 break;
             }
 
@@ -72,8 +68,8 @@ export default class GotoCommandHandler {
                     return;
                 }
 
-                console.log(target);
-
+                this.#world.despawn(player);
+                player.teleport(target.positionX + 200, target.positionY + 200);
                 break;
             }
 
@@ -89,7 +85,8 @@ export default class GotoCommandHandler {
                     return;
                 }
 
-                console.log(areaByLocation);
+                this.#world.despawn(player);
+                player.teleport(x, y);
                 break;
             }
         }

@@ -54,6 +54,7 @@ export default class GameServer extends Server {
             logger: this.logger,
             packets: this.packets,
             logoutService: this.#logoutService,
+            config: this.config,
         });
     }
 

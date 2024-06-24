@@ -9,6 +9,8 @@ import CharacterPointsPacket from '../../../core/interface/networking/packets/pa
 import CharacterSpawnPacket from '../../../core/interface/networking/packets/packet/out/CharacterSpawnPacket.js';
 import ChatOutPacket from '../../../core/interface/networking/packets/packet/out/ChatOutPacket.js';
 import RemoveCharacterPacket from '../../../core/interface/networking/packets/packet/out/RemoveCharacterPacket.js';
+import TeleportPacket from '../../../core/interface/networking/packets/packet/out/TeleportPacket.js';
+import Ip from '../../../core/util/Ip.js';
 import Queue from '../../../core/util/Queue.js';
 
 const OUTGOING_MESSAGES_PER_CON_QUEUE_SIZE = 100;
@@ -26,10 +28,12 @@ export default class GameConnection extends Connection {
     #outgoingMessages = new Queue(OUTGOING_MESSAGES_PER_CON_QUEUE_SIZE);
     #player;
     #logoutService;
+    #config;
 
-    constructor({ logger, socket, logoutService }) {
+    constructor({ logger, socket, logoutService, config }) {
         super({ logger, socket });
         this.#logoutService = logoutService;
+        this.#config = config;
     }
 
     set accountId(value) {
@@ -48,12 +52,24 @@ export default class GameConnection extends Connection {
         this.#player.subscribe(PlayerEventsEnum.OTHER_CHARACTER_LEFT_GAME, this.#onOtherCharacterLeftGame.bind(this));
         this.#player.subscribe(PlayerEventsEnum.CHARACTER_SPAWNED, this.#onCharacterSpawned.bind(this));
         this.#player.subscribe(PlayerEventsEnum.CHARACTER_POINTS_UPDATED, this.#onCharacterPointsUpdated.bind(this));
+        this.#player.subscribe(PlayerEventsEnum.CHARACTER_TELEPORTED, this.#onCharacterTeleported.bind(this));
         this.#player.subscribe(PlayerEventsEnum.CHAT, this.#onChat.bind(this));
         this.#player.subscribe(PlayerEventsEnum.LOGOUT, this.#onLogout.bind(this));
     }
 
     get player() {
         return this.#player;
+    }
+
+    #onCharacterTeleported() {
+        this.send(
+            new TeleportPacket({
+                positionX: this.#player.positionX,
+                positionY: this.#player.positionY,
+                port: this.#config.SERVER_PORT,
+                address: Ip.toInt(this.#config.SERVER_ADDRESS),
+            }),
+        );
     }
 
     #onLogout() {
