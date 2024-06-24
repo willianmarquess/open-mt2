@@ -42,6 +42,10 @@ export default class World {
         return this.#players;
     }
 
+    get areas() {
+        return this.#areas;
+    }
+
     getPlayerByName(name) {
         return this.#players.get(name);
     }

@@ -10,9 +10,9 @@ export default class GotoCommand extends Command {
         return '/goto';
     }
     static get description() {
-        return 'teleports you to a <map>, <player> or <location:x,y>';
+        return 'teleports you to a <area>, <player> or <location:x,y>';
     }
     static get example() {
-        return '/goto <map, player, location> <mapName, targetName, <x, y>>';
+        return '/goto <area, player, location> <areaName, targetName, <x, y>>';
     }
 }
