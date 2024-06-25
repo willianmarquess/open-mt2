@@ -19,21 +19,14 @@ import CharacterTeleportedEvent from './events/CharacterTeleportedEvent.js';
 
 export default class Player extends GameEntity {
     #accountId;
-    #empire;
     #playerClass;
     #skillGroup;
     #playTime;
-    #level;
     #experience;
     #gold;
-    #st;
-    #ht;
-    #dx;
-    #iq;
     #stamina;
     #bodyPart;
     #hairPart;
-    #name;
     #givenStatusPoints;
     #availableStatusPoints;
     #slot;
@@ -130,6 +123,13 @@ export default class Player extends GameEntity {
                 entityType: EntityTypeEnum.PLAYER,
                 attackSpeed: baseAttackSpeed,
                 movementSpeed: baseMovementSpeed,
+                dx,
+                ht,
+                iq,
+                st,
+                name,
+                level,
+                empire,
             },
             {
                 animationManager,
@@ -137,23 +137,16 @@ export default class Player extends GameEntity {
         );
 
         this.#accountId = accountId;
-        this.#empire = empire;
         this.#playerClass = playerClass;
         this.#skillGroup = skillGroup;
         this.#playTime = playTime;
-        this.#level = level;
         this.#experience = experience;
         this.#gold = gold;
-        this.#st = st;
-        this.#ht = ht;
-        this.#dx = dx;
-        this.#iq = iq;
         this.#health = health;
         this.#mana = mana;
         this.#stamina = stamina;
         this.#bodyPart = bodyPart;
         this.#hairPart = hairPart;
-        this.#name = name;
         this.#givenStatusPoints = givenStatusPoints;
         this.#availableStatusPoints = availableStatusPoints;
         this.#slot = slot;
@@ -179,26 +172,26 @@ export default class Player extends GameEntity {
         this.#resetMana();
 
         this.#points[PointsEnum.EXPERIENCE] = () => this.#experience;
-        this.#points[PointsEnum.HT] = () => this.#ht;
-        this.#points[PointsEnum.ST] = () => this.#st;
-        this.#points[PointsEnum.IQ] = () => this.#iq;
-        this.#points[PointsEnum.DX] = () => this.#dx;
-        this.#points[PointsEnum.LEVEL] = () => this.#level;
+        this.#points[PointsEnum.HT] = () => this.ht;
+        this.#points[PointsEnum.ST] = () => this.st;
+        this.#points[PointsEnum.IQ] = () => this.iq;
+        this.#points[PointsEnum.DX] = () => this.dx;
+        this.#points[PointsEnum.LEVEL] = () => this.level;
         this.#points[PointsEnum.MAX_HP] = () => this.#maxHealth;
         this.#points[PointsEnum.MAX_MP] = () => this.#maxMana;
         this.#points[PointsEnum.HP] = () => this.#health;
         this.#points[PointsEnum.MP] = () => this.#mana;
         this.#points[PointsEnum.ATTACK_SPEED] = () => this.#attackSpeed;
         this.#points[PointsEnum.MOVE_SPEED] = () => this.#movementSpeed;
-        this.#points[PointsEnum.NEEDED_EXPERIENCE] = () => this.#experienceManager.getNeededExperience(this.#level);
+        this.#points[PointsEnum.NEEDED_EXPERIENCE] = () => this.#experienceManager.getNeededExperience(this.level);
         this.#points[PointsEnum.STATUS_POINTS] = () => this.#availableStatusPoints;
         this.#points[PointsEnum.GOLD] = () => this.#gold;
     }
 
     #updateStatusPoints() {
-        const baseStatusPoints = (this.#level - 1) * this.#config.POINTS_PER_LEVEL;
+        const baseStatusPoints = (this.level - 1) * this.#config.POINTS_PER_LEVEL;
 
-        const expNeeded = this.#experienceManager.getNeededExperience(this.#level);
+        const expNeeded = this.#experienceManager.getNeededExperience(this.level);
         const experienceRatio = this.#experience / expNeeded;
 
         const totalStatusPoints = Math.floor(baseStatusPoints + experienceRatio * 4);
@@ -231,15 +224,15 @@ export default class Player extends GameEntity {
         if (validatedValue === 0 || validatedValue > this.#availableStatusPoints) return;
 
         let realValue = 0;
-        if (this.#st + validatedValue >= this.#config.MAX_POINTS) {
-            const diff = this.#config.MAX_POINTS - this.#st;
+        if (this.st + validatedValue >= this.#config.MAX_POINTS) {
+            const diff = this.#config.MAX_POINTS - this.st;
             realValue = diff;
         } else {
             realValue = validatedValue;
         }
 
         //update phy attack
-        this.#st += realValue;
+        this.st += realValue;
         this.#givenStatusPoints += realValue;
         this.#availableStatusPoints -= realValue;
         this.#sendPoints();
@@ -250,15 +243,15 @@ export default class Player extends GameEntity {
         if (validatedValue === 0 || validatedValue > this.#availableStatusPoints) return;
 
         let realValue = 0;
-        if (this.#ht + validatedValue >= this.#config.MAX_POINTS) {
-            const diff = this.#config.MAX_POINTS - this.#ht;
+        if (this.ht + validatedValue >= this.#config.MAX_POINTS) {
+            const diff = this.#config.MAX_POINTS - this.ht;
             realValue = diff;
         } else {
             realValue = validatedValue;
         }
 
         //update def
-        this.#ht += realValue;
+        this.ht += realValue;
         this.#givenStatusPoints += realValue;
         this.#availableStatusPoints -= realValue;
         this.#updateHealth();
@@ -270,8 +263,8 @@ export default class Player extends GameEntity {
         if (validatedValue === 0 || validatedValue > this.#availableStatusPoints) return;
 
         let realValue = 0;
-        if (this.#dx + validatedValue > this.#config.MAX_POINTS) {
-            const diff = this.#config.MAX_POINTS - this.#dx;
+        if (this.dx + validatedValue > this.#config.MAX_POINTS) {
+            const diff = this.#config.MAX_POINTS - this.dx;
             realValue = diff;
         } else {
             realValue = validatedValue;
@@ -279,7 +272,7 @@ export default class Player extends GameEntity {
 
         //update phy attack
         //update dodge
-        this.#dx += realValue;
+        this.dx += realValue;
         this.#givenStatusPoints += realValue;
         this.#availableStatusPoints -= realValue;
         this.#sendPoints();
@@ -290,8 +283,8 @@ export default class Player extends GameEntity {
         if (validatedValue === 0 || validatedValue > this.#availableStatusPoints) return;
 
         let realValue = 0;
-        if (this.#iq + validatedValue > this.#config.MAX_POINTS) {
-            const diff = this.#config.MAX_POINTS - this.#iq;
+        if (this.iq + validatedValue > this.#config.MAX_POINTS) {
+            const diff = this.#config.MAX_POINTS - this.iq;
             realValue = diff;
         } else {
             realValue = validatedValue;
@@ -299,7 +292,7 @@ export default class Player extends GameEntity {
 
         //update magic attack
         //update magic def
-        this.#iq += realValue;
+        this.iq += realValue;
         this.#givenStatusPoints += realValue;
         this.#availableStatusPoints -= realValue;
         this.#updateMana();
@@ -326,16 +319,16 @@ export default class Player extends GameEntity {
     addExperience(value) {
         const validatedValue = MathUtil.toUnsignedNumber(value);
 
-        if (validatedValue < 0 || (this.#level >= this.#config.MAX_LEVEL && this.#experience === 0)) return;
+        if (validatedValue < 0 || (this.level >= this.#config.MAX_LEVEL && this.#experience === 0)) return;
 
-        if (this.#level >= this.#config.MAX_LEVEL) {
+        if (this.level >= this.#config.MAX_LEVEL) {
             this.#experience = 0;
             this.#updateStatusPoints();
             this.#sendPoints();
             return;
         }
 
-        const expNeeded = this.#experienceManager.getNeededExperience(this.#level);
+        const expNeeded = this.#experienceManager.getNeededExperience(this.level);
 
         if (this.#experience + validatedValue >= expNeeded) {
             const diff = this.#experience + validatedValue - expNeeded;
@@ -364,11 +357,11 @@ export default class Player extends GameEntity {
 
     addLevel(value) {
         const validatedValue = MathUtil.toUnsignedNumber(value);
-        if (this.#level + validatedValue > this.#config.MAX_LEVEL) return;
+        if (this.level + validatedValue > this.#config.MAX_LEVEL) return;
         if (validatedValue < 1) return;
 
         //add skill point
-        this.#level += validatedValue;
+        this.level += validatedValue;
         this.#updateHealth();
         this.#resetHealth();
         this.#updateMana();
@@ -384,17 +377,17 @@ export default class Player extends GameEntity {
         const validatedValue = MathUtil.toUnsignedNumber(value);
         if (validatedValue < 1 || validatedValue > this.#config.MAX_LEVEL) return;
 
-        this.#level = validatedValue;
+        this.level = validatedValue;
         //reset skills
 
         this.#givenStatusPoints = 0;
         this.#availableStatusPoints = 0;
         this.#experience = 0;
         const className = JobUtil.getClassNameFromClassId(this.#playerClass);
-        this.#st = this.#config.jobs[className].common.st;
-        this.#ht = this.#config.jobs[className].common.ht;
-        this.#dx = this.#config.jobs[className].common.dx;
-        this.#iq = this.#config.jobs[className].common.iq;
+        this.st = this.#config.jobs[className].common.st;
+        this.ht = this.#config.jobs[className].common.ht;
+        this.dx = this.#config.jobs[className].common.dx;
+        this.iq = this.#config.jobs[className].common.iq;
 
         this.#updateHealth();
         this.#resetHealth();
@@ -433,7 +426,7 @@ export default class Player extends GameEntity {
     }
 
     #updateHealth() {
-        this.#maxHealth = this.#baseHealth + this.#ht * this.#hpPerHtPoint + this.#level * this.#hpPerLvl;
+        this.#maxHealth = this.#baseHealth + this.ht * this.#hpPerHtPoint + this.level * this.#hpPerLvl;
     }
 
     #resetHealth() {
@@ -445,7 +438,7 @@ export default class Player extends GameEntity {
     }
 
     #updateMana() {
-        this.#maxMana = this.#baseMana + this.#iq * this.#mpPerIqPoint + this.#level * this.#mpPerLvl;
+        this.#maxMana = this.#baseMana + this.iq * this.#mpPerIqPoint + this.level * this.#mpPerLvl;
     }
 
     getPoint(point) {
@@ -665,17 +658,17 @@ export default class Player extends GameEntity {
         return new PlayerDTO({
             id: this.id,
             accountId: this.#accountId,
-            empire: this.#empire,
+            empire: this.empire,
             playerClass: this.#playerClass,
             skillGroup: this.#skillGroup,
             playTime: this.#calcPlayTime(),
-            level: this.#level,
+            level: this.level,
             experience: this.#experience,
             gold: this.#gold,
-            st: this.#st,
-            ht: this.#ht,
-            dx: this.#dx,
-            iq: this.#iq,
+            st: this.st,
+            ht: this.ht,
+            dx: this.dx,
+            iq: this.iq,
             positionX: this.positionX,
             positionY: this.positionY,
             health: this.#health,
@@ -683,7 +676,7 @@ export default class Player extends GameEntity {
             stamina: this.#stamina,
             bodyPart: this.#bodyPart,
             hairPart: this.#hairPart,
-            name: this.#name,
+            name: this.name,
             givenStatusPoints: this.#givenStatusPoints,
             availableStatusPoints: this.#availableStatusPoints,
             slot: this.#slot,
@@ -702,9 +695,6 @@ export default class Player extends GameEntity {
     get accountId() {
         return this.#accountId;
     }
-    get empire() {
-        return this.#empire;
-    }
     get playerClass() {
         return this.#playerClass;
     }
@@ -714,26 +704,11 @@ export default class Player extends GameEntity {
     get playTime() {
         return this.#playTime;
     }
-    get level() {
-        return this.#level;
-    }
     get experience() {
         return this.#experience;
     }
     get gold() {
         return this.#gold;
-    }
-    get st() {
-        return this.#st;
-    }
-    get ht() {
-        return this.#ht;
-    }
-    get dx() {
-        return this.#dx;
-    }
-    get iq() {
-        return this.#iq;
     }
     get health() {
         return this.#health;
@@ -749,9 +724,6 @@ export default class Player extends GameEntity {
     }
     get hairPart() {
         return this.#hairPart;
-    }
-    get name() {
-        return this.#name;
     }
     get givenStatusPoints() {
         return this.#givenStatusPoints;

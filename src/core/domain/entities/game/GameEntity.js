@@ -10,6 +10,9 @@ export default class GameEntity {
     #virtualId;
     #entityType;
     #classId = 0;
+    #name;
+    #level;
+    #empire;
 
     //movement and animation
     #positionX = 0;
@@ -25,11 +28,32 @@ export default class GameEntity {
     #movementSpeed = 0;
     #attackSpeed = 0;
 
+    #st;
+    #dx;
+    #ht;
+    #iq;
+
     #animationManager;
     #emitter = new EventEmitter();
 
     constructor(
-        { id, classId, virtualId, entityType, positionX, positionY, movementSpeed, attackSpeed },
+        {
+            id,
+            classId,
+            virtualId,
+            entityType,
+            positionX,
+            positionY,
+            movementSpeed,
+            attackSpeed,
+            st,
+            dx,
+            ht,
+            iq,
+            name,
+            level,
+            empire,
+        },
         { animationManager },
     ) {
         this.#id = id;
@@ -40,6 +64,13 @@ export default class GameEntity {
         this.#positionY = positionY;
         this.#movementSpeed = movementSpeed;
         this.#attackSpeed = attackSpeed;
+        this.#st = st;
+        this.#dx = dx;
+        this.#ht = ht;
+        this.#iq = iq;
+        this.#name = name;
+        this.#level = level;
+        this.#empire = empire;
 
         this.#animationManager = animationManager;
     }
@@ -150,5 +181,38 @@ export default class GameEntity {
     }
     get positionY() {
         return this.#positionY;
+    }
+    get st() {
+        return this.#st;
+    }
+    get ht() {
+        return this.#ht;
+    }
+    get dx() {
+        return this.#dx;
+    }
+    get iq() {
+        return this.#iq;
+    }
+    set st(value) {
+        this.#st = value;
+    }
+    set ht(value) {
+        this.#ht = value;
+    }
+    set dx(value) {
+        this.#dx = value;
+    }
+    set iq(value) {
+        this.#iq = value;
+    }
+    get name() {
+        return this.#name;
+    }
+    get level() {
+        return this.#level;
+    }
+    get empire() {
+        return this.#empire;
     }
 }
