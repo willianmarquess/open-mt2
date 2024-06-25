@@ -215,4 +215,7 @@ export default class GameEntity {
     get empire() {
         return this.#empire;
     }
+    get classId() {
+        return this.#classId;
+    }
 }

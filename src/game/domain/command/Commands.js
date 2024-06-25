@@ -4,6 +4,8 @@ import GoldCommand from './command/gold/GoldCommand.js';
 import GoldCommandHandler from './command/gold/GoldCommandHandler.js';
 import GotoCommandHandler from './command/goto/GotoCommandHandler.js';
 import GotoCommand from './command/goto/Gotocommand.js';
+import InvokeCommand from './command/invoke/InvokeCommand.js';
+import InvokeCommandHandler from './command/invoke/InvokeCommandHandler.js';
 import ListCommand from './command/list/ListCommand.js';
 import ListCommandHandler from './command/list/ListCommandHandler.js';
 import LogoutCommand from './command/logout/LogoutCommand.js';
@@ -71,6 +73,13 @@ export default () =>
             {
                 command: ListCommand,
                 createHandler: (params) => new ListCommandHandler(params),
+            },
+        ],
+        [
+            InvokeCommand.name,
+            {
+                command: InvokeCommand,
+                createHandler: (params) => new InvokeCommandHandler(params),
             },
         ],
     ]);

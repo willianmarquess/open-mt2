@@ -78,7 +78,7 @@ export default class QuadTree {
             this._sw.queryAroundInternal(entities, x, y, radius, filter);
         } else {
             for (const entity of this.entities) {
-                if (filter !== null && entity.type !== filter) {
+                if (filter !== null && entity.entityType !== filter) {
                     continue;
                 }
 

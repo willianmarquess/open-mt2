@@ -1,3 +1,4 @@
+import EntityTypeEnum from '../enum/EntityTypeEnum.js';
 import QuadTree from '../util/QuadTree.js';
 import Queue from '../util/Queue.js';
 import Player from './entities/game/player/Player.js';
@@ -93,7 +94,12 @@ export default class Area {
             params: { positionX, positionY, arg, rotation, time, movementType, duration },
         } = characterMovedEvent;
         this.#quadTree.updatePosition(entity);
-        const entities = this.#quadTree.queryAround(entity.positionX, entity.positionY, CHAR_VIEW_SIZE);
+        const entities = this.#quadTree.queryAround(
+            entity.positionX,
+            entity.positionY,
+            CHAR_VIEW_SIZE,
+            EntityTypeEnum.PLAYER,
+        );
         for (const otherEntity of entities) {
             if (otherEntity.name === entity.name) continue;
             otherEntity.updateOtherEntity({
@@ -111,7 +117,12 @@ export default class Area {
 
     #onCharacterLevelUp(characterLevelUpEvent) {
         const { entity } = characterLevelUpEvent;
-        const entities = this.#quadTree.queryAround(entity.positionX, entity.positionY, CHAR_VIEW_SIZE);
+        const entities = this.#quadTree.queryAround(
+            entity.positionX,
+            entity.positionY,
+            CHAR_VIEW_SIZE,
+            EntityTypeEnum.PLAYER,
+        );
         for (const otherEntity of entities) {
             if (otherEntity.name === entity.name) continue;
             otherEntity.otherEntityLevelUp({ virtualId: entity.virtualId, level: entity.level });
@@ -124,22 +135,15 @@ export default class Area {
             entity.subscribe(PlayerEventsEnum.CHARACTER_LEVEL_UP, this.#onCharacterLevelUp.bind(this));
             this.#quadTree.insert(entity);
 
-            const entities = this.#quadTree.queryAround(entity.positionX, entity.positionY, CHAR_VIEW_SIZE);
+            const entities = this.#quadTree.queryAround(
+                entity.positionX,
+                entity.positionY,
+                CHAR_VIEW_SIZE,
+                entity.entityType !== EntityTypeEnum.PLAYER && EntityTypeEnum.PLAYER,
+            );
             for (const otherEntity of entities) {
                 if (otherEntity.name === entity.name) continue;
-                if (otherEntity instanceof Player) {
-                    otherEntity.showOtherEntity({
-                        virtualId: entity.virtualId,
-                        playerClass: entity.playerClass,
-                        entityType: entity.entityType,
-                        attackSpeed: entity.attackSpeed,
-                        movementSpeed: entity.movementSpeed,
-                        positionX: entity.positionX,
-                        positionY: entity.positionY,
-                        empireId: entity.empireId,
-                        level: entity.level,
-                        name: entity.name,
-                    });
+                if (entity instanceof Player) {
                     entity.showOtherEntity({
                         virtualId: otherEntity.virtualId,
                         playerClass: otherEntity.playerClass,
@@ -153,6 +157,19 @@ export default class Area {
                         name: otherEntity.name,
                     });
                 }
+
+                otherEntity.showOtherEntity({
+                    virtualId: entity.virtualId,
+                    playerClass: entity.classId,
+                    entityType: entity.entityType,
+                    attackSpeed: entity.attackSpeed,
+                    movementSpeed: entity.movementSpeed,
+                    positionX: entity.positionX,
+                    positionY: entity.positionY,
+                    empireId: entity.empire,
+                    level: entity.level,
+                    name: entity.name,
+                });
             }
 
             this.#entities.set(entity.virtualId, entity);
