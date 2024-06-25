@@ -22,6 +22,7 @@ import LeaveGameService from './domain/service/LeaveGameService.js';
 import Commands from './domain/command/Commands.js';
 import CommandManager from './app/command/CommandManager.js';
 import LogoutService from './app/service/LogoutService.js';
+import MobManager from '../core/domain/manager/MobManager.js';
 
 const container = createContainer();
 
@@ -50,6 +51,7 @@ container.register({
     commands: asFunction(Commands).singleton(),
     commandManager: asClass(CommandManager).singleton(),
     logoutService: asClass(LogoutService).scoped(),
+    mobManager: asClass(MobManager).singleton(),
 });
 
 export { container };
