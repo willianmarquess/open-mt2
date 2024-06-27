@@ -26,10 +26,11 @@ Metin2 are copyrighted by [Webzen](http://webzen.com/ "Webzen").
 | Character Movement    |      |       | ✅    |
 | Load Character Animation Data    |      |       | ✅    |
 | Load Area Data    |      |       | ✅    |
-| Load Mob Data    | X    |       |      |
+| Load Mob Data    |      |       | ✅    |
 | Load NPC Data    | X    |       |      |
 | Load item Data    | X    |       |      |
-| Spawn Mob    | X    |       |      |
+| Spawn Mob    |      |       |  ✅    |
+| Spawn Mob From File    |  X   |       |       |
 | Mob Behavior System    | X    |       |      |
 | Spawn NPC    | X    |       |      |
 | NPC Behavior System    | X    |       |      |
