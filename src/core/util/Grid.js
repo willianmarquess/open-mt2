@@ -22,8 +22,12 @@ export default class Grid {
     }
 
     printGrid() {
-        for (let row = 0; row < this.width; row++) {
-            console.log(this.grid[row].join(' '));
+        for (let y = 0; y < this.height; y++) {
+            let row = [];
+            for (let x = 0; x < this.width; x++) {
+                row.push(this.grid[x][y]);
+            }
+            console.log(row.join(' '));
         }
     }
 }
