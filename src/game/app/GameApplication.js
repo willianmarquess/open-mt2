@@ -4,12 +4,14 @@ export default class GameApplication extends Application {
     #world;
     #animationManager;
     #mobManager;
+    #itemManager;
 
     constructor(container) {
         super(container);
         this.#world = container.world;
         this.#animationManager = container.animationManager;
         this.#mobManager = container.mobManager;
+        this.#itemManager = container.itemManager;
     }
 
     async start() {
@@ -19,6 +21,7 @@ export default class GameApplication extends Application {
         await this.server.setup().start();
         await this.#animationManager.load();
         await this.#mobManager.load();
+        await this.#itemManager.load();
         await this.#world.init(this.server);
         this.logger.info('[APP] Game application started 🎮🚀');
     }

@@ -2,6 +2,7 @@ import empire from './data/empire.json' with { type: 'json' };
 import jobs from './data/jobs.json' with { type: 'json' };
 import atlas from './data/atlasinfo.json' with { type: 'json' };
 import mobs from './data/mobs.json' with { type: 'json' };
+import items from './data/items.json' with { type: 'json' };
 
 export default () => ({
     DB_HOST: process.env.DB_HOST,
@@ -16,6 +17,7 @@ export default () => ({
     jobs,
     atlas,
     mobs,
+    items,
     MAX_LEVEL: 99,
     POINTS_PER_LEVEL: 3,
     MAX_POINTS: 150,

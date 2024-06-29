@@ -23,6 +23,7 @@ import Commands from './domain/command/Commands.js';
 import CommandManager from './app/command/CommandManager.js';
 import LogoutService from './app/service/LogoutService.js';
 import MobManager from '../core/domain/manager/MobManager.js';
+import ItemManager from '../core/domain/manager/ItemManager.js';
 
 const container = createContainer();
 
@@ -52,6 +53,7 @@ container.register({
     commandManager: asClass(CommandManager).singleton(),
     logoutService: asClass(LogoutService).scoped(),
     mobManager: asClass(MobManager).singleton(),
+    itemManager: asClass(ItemManager).singleton(),
 });
 
 export { container };

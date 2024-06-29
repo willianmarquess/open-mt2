@@ -2,6 +2,7 @@ import MathUtil from '../../../../../core/domain/util/MathUtil.js';
 import ChatMessageTypeEnum from '../../../../../core/enum/ChatMessageTypeEnum.js';
 
 const MAX_MOB_TO_INVOKE = 20;
+const MAX_MOB_INVOKE_DISTANCE = 700;
 
 export default class InvokeCommandHandler {
     #logger;
@@ -34,9 +35,15 @@ export default class InvokeCommandHandler {
             return;
         }
 
-        for (let i = 0; i < Math.max(quantity, MAX_MOB_TO_INVOKE); i++) {
-            const positionX = MathUtil.getRandomInt(player.positionX + 150, player.positionX + 1500);
-            const positionY = MathUtil.getRandomInt(player.positionY + 150, player.positionY + 1500);
+        for (let i = 0; i < Math.min(quantity, MAX_MOB_TO_INVOKE); i++) {
+            const positionX = MathUtil.getRandomInt(
+                player.positionX - MAX_MOB_INVOKE_DISTANCE,
+                player.positionX + MAX_MOB_INVOKE_DISTANCE,
+            );
+            const positionY = MathUtil.getRandomInt(
+                player.positionY - MAX_MOB_INVOKE_DISTANCE,
+                player.positionY + MAX_MOB_INVOKE_DISTANCE,
+            );
             const mob = this.#mobManager.getMob(vnum, positionX, positionY);
             this.#world.spawn(mob);
         }

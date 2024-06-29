@@ -29,4 +29,5 @@ export default {
     CHAT_OUT: 0x04,
     CHAT_IN: 0x03,
     TELEPORT: 0x41,
+    ITEM: 0x15,
 };

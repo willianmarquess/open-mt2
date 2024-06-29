@@ -16,6 +16,7 @@ import LogoutEvent from './events/LogoutEvent.js';
 import JobUtil from '../../../util/JobUtil.js';
 import MathUtil from '../../../util/MathUtil.js';
 import CharacterTeleportedEvent from './events/CharacterTeleportedEvent.js';
+import ItemAddedEvent from './events/ItemAddedEvent.js';
 
 export default class Player extends GameEntity {
     #accountId;
@@ -450,6 +451,24 @@ export default class Player extends GameEntity {
 
     getPoints() {
         return this.#points;
+    }
+
+    addItem({ window, position, id, count, flags, antiFlags, highlight, sockets, bonuses }) {
+        //add to inventory
+        this.publish(
+            ItemAddedEvent.type,
+            new ItemAddedEvent({
+                window,
+                position,
+                id,
+                count,
+                flags,
+                antiFlags,
+                highlight,
+                sockets,
+                bonuses,
+            }),
+        );
     }
 
     spawn() {

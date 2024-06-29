@@ -1,9 +1,9 @@
 import Page from './Page.js';
 
-const WindowTypeEnum = {
-    INVENTORY: 1,
-    EQUIPMENT: 2,
-};
+// const WindowTypeEnum = {
+//     INVENTORY: 1,
+//     EQUIPMENT: 2,
+// };
 
 const DEFAULT_INVENTORY_WIDTH = 5;
 const DEFAULT_INVENTORY_HEIGHT = 9;

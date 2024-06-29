@@ -8,6 +8,7 @@ import CharacterPointChangePacket from '../../../core/interface/networking/packe
 import CharacterPointsPacket from '../../../core/interface/networking/packets/packet/out/CharacterPointsPacket.js';
 import CharacterSpawnPacket from '../../../core/interface/networking/packets/packet/out/CharacterSpawnPacket.js';
 import ChatOutPacket from '../../../core/interface/networking/packets/packet/out/ChatOutPacket.js';
+import ItemPacket from '../../../core/interface/networking/packets/packet/out/ItemPacket.js';
 import RemoveCharacterPacket from '../../../core/interface/networking/packets/packet/out/RemoveCharacterPacket.js';
 import TeleportPacket from '../../../core/interface/networking/packets/packet/out/TeleportPacket.js';
 import Ip from '../../../core/util/Ip.js';
@@ -53,12 +54,31 @@ export default class GameConnection extends Connection {
         this.#player.subscribe(PlayerEventsEnum.CHARACTER_SPAWNED, this.#onCharacterSpawned.bind(this));
         this.#player.subscribe(PlayerEventsEnum.CHARACTER_POINTS_UPDATED, this.#onCharacterPointsUpdated.bind(this));
         this.#player.subscribe(PlayerEventsEnum.CHARACTER_TELEPORTED, this.#onCharacterTeleported.bind(this));
+        this.#player.subscribe(PlayerEventsEnum.ITEM_ADDED, this.#onItemAdded.bind(this));
         this.#player.subscribe(PlayerEventsEnum.CHAT, this.#onChat.bind(this));
         this.#player.subscribe(PlayerEventsEnum.LOGOUT, this.#onLogout.bind(this));
     }
 
     get player() {
         return this.#player;
+    }
+
+    #onItemAdded(itemAddedEvent) {
+        const { window, position, id, count, flags, antiFlags, highlight, sockets, bonuses } = itemAddedEvent;
+
+        this.send(
+            new ItemPacket({
+                window,
+                position,
+                id,
+                count,
+                flags,
+                antiFlags,
+                highlight,
+                sockets,
+                bonuses,
+            }),
+        );
     }
 
     #onCharacterTeleported() {

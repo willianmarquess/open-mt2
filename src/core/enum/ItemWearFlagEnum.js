@@ -1,0 +1,15 @@
+export default {
+    WEAR_BODY: 0,
+    WEAR_HEAD: 1,
+    WEAR_FOOTS: 2,
+    WEAR_WRIST: 3,
+    WEAR_WEAPON: 4,
+    WEAR_NECK: 5,
+    WEAR_EAR: 6,
+    WEAR_SHIELD: 7,
+    WEAR_UNIQUE: 8,
+    WEAR_ARROW: 9,
+    WEAR_HAIR: 10,
+    WEAR_ABILITY: 11,
+    NONE: -1,
+};
