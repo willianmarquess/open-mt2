@@ -17,6 +17,7 @@ import JobUtil from '../../../util/JobUtil.js';
 import MathUtil from '../../../util/MathUtil.js';
 import CharacterTeleportedEvent from './events/CharacterTeleportedEvent.js';
 import ItemAddedEvent from './events/ItemAddedEvent.js';
+import Inventory from '../inventory/Inventory.js';
 
 export default class Player extends GameEntity {
     #accountId;
@@ -74,6 +75,7 @@ export default class Player extends GameEntity {
     // #maxWeaponDamage;
 
     #lastPlayTime = performance.now();
+    #inventory;
 
     constructor(
         {
@@ -162,6 +164,7 @@ export default class Player extends GameEntity {
         this.#baseHealth = baseHealth;
         this.#experienceManager = experienceManager;
         this.#config = config;
+        this.#inventory = new Inventory({ config: this.#config });
 
         this.#initPoints();
     }
@@ -453,20 +456,27 @@ export default class Player extends GameEntity {
         return this.#points;
     }
 
-    addItem({ window, position, id, count, flags, antiFlags, highlight, sockets, bonuses }) {
-        //add to inventory
+    addItem(item) {
+        const position = this.#inventory.addItem(item);
+
+        if (position < 0) {
+            this.say({
+                messageType: ChatMessageTypeEnum.INFO,
+                message: 'Inventory is full',
+            });
+            return;
+        }
+
         this.publish(
             ItemAddedEvent.type,
             new ItemAddedEvent({
-                window,
+                window: 1,
                 position,
-                id,
-                count,
-                flags,
-                antiFlags,
-                highlight,
-                sockets,
-                bonuses,
+                id: item.id,
+                count: 1,
+                flags: item.flags,
+                antiFlags: item.antiFlags,
+                highlight: 0,
             }),
         );
     }

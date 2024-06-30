@@ -33,15 +33,7 @@ export default class ItemCommandHandler {
 
         for (let i = 0; i < Math.min(quantity, MAX_ITEM_TO_INSTANTIATE); i++) {
             const item = this.#itemManager.getItem(vnum);
-            player.addItem({
-                window: 1,
-                position: 1,
-                id: item.id,
-                count: 1,
-                flags: 0,
-                antiFlags: 0,
-                highlight: 0,
-            });
+            player.addItem(item);
         }
     }
 }

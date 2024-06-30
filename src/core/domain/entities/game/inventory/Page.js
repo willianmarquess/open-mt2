@@ -11,7 +11,7 @@ export default class Page {
         return this.#grid;
     }
 
-    setItem(item) {
+    addItem(item) {
         for (let y = 0; y < this.#grid.height; y++) {
             for (let x = 0; x < this.#grid.width; x++) {
                 if (this.#isSpaceAvailable(x, y, item.size)) {

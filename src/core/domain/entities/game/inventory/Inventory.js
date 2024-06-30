@@ -27,16 +27,16 @@ export default class Inventory {
         return this.#width * this.#height * this.#pages.length;
     }
 
-    setItem(item) {
+    addItem(item) {
         for (let i = 0; i < this.#pages.length; i++) {
             const page = this.#pages[i];
 
-            var position = page.setItem(item);
+            var position = page.addItem(item);
             if (position != -1) {
-                return true;
+                return position + i * this.#width * this.#height;
             }
         }
 
-        return false;
+        return -1;
     }
 }
