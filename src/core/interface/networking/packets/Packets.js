@@ -21,6 +21,10 @@ import ServerStatusRequestPacket from './packet/in/serverStatus/ServerStatusRequ
 import ServerStatusRequestPacketHandler from './packet/in/serverStatus/ServerStatusRequestPacketHandler.js';
 import HandshakePacket from './packet/bidirectional/handshake/HandshakePacket.js';
 import EmpirePacketHandler from './packet/bidirectional/empire/EmpirePacketHandler.js';
+import ItemUsePacket from './packet/in/itemUse/ItemUsePacket.js';
+import ItemUsePacketHandler from './packet/in/itemUse/ItemUsePacketHandler.js';
+import ItemMovePacket from './packet/in/itemMove/ItemMovePacket.js';
+import ItemMovePacketHandler from './packet/in/itemMove/ItemMovePacketHandler.js';
 
 export default () =>
     new Map([
@@ -99,6 +103,20 @@ export default () =>
             {
                 createPacket: () => new ChatInPacket(),
                 createHandler: (params) => new ChatInPacketHandler(params),
+            },
+        ],
+        [
+            PacketHeaderEnum.ITEM_USE,
+            {
+                createPacket: () => new ItemUsePacket(),
+                createHandler: (params) => new ItemUsePacketHandler(params),
+            },
+        ],
+        [
+            PacketHeaderEnum.ITEM_MOVE,
+            {
+                createPacket: () => new ItemMovePacket(),
+                createHandler: (params) => new ItemMovePacketHandler(params),
             },
         ],
     ]);

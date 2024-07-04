@@ -30,4 +30,6 @@ export default {
     CHAT_IN: 0x03,
     TELEPORT: 0x41,
     ITEM: 0x15,
+    ITEM_USE: 0x0b,
+    ITEM_MOVE: 0x0d,
 };

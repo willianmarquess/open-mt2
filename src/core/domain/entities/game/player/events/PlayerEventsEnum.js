@@ -11,4 +11,5 @@ export default {
     LOGOUT: Symbol.for('LOGOUT'),
     CHARACTER_TELEPORTED: Symbol.for('CHARACTER_TELEPORTED'),
     ITEM_ADDED: Symbol.for('ITEM_ADDED'),
+    ITEM_REMOVED: Symbol.for('ITEM_REMOVED'),
 };

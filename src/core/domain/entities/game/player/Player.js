@@ -18,6 +18,8 @@ import MathUtil from '../../../util/MathUtil.js';
 import CharacterTeleportedEvent from './events/CharacterTeleportedEvent.js';
 import ItemAddedEvent from './events/ItemAddedEvent.js';
 import Inventory from '../inventory/Inventory.js';
+import WindowTypeEnum from '../../../../enum/WindowTypeEnum.js';
+import ItemRemovedEvent from './events/ItemRemovedEvent.js';
 
 export default class Player extends GameEntity {
     #accountId;
@@ -456,6 +458,40 @@ export default class Player extends GameEntity {
         return this.#points;
     }
 
+    haveAvailablePositionInInventory(position, size) {
+        return this.#inventory.haveAvailablePosition(Number(position), Number(size));
+    }
+
+    getItem(position) {
+        return this.#inventory.getItem(Number(position));
+    }
+
+    moveItem({ _fromWindow, fromPosition, _toWindow, toPosition, _count }) {
+        const item = this.#inventory.moveItem(Number(fromPosition), Number(toPosition));
+
+        if (!item) return;
+
+        this.publish(
+            ItemRemovedEvent.type,
+            new ItemRemovedEvent({
+                window: WindowTypeEnum.INVENTORY,
+                position: fromPosition,
+            }),
+        );
+        this.publish(
+            ItemAddedEvent.type,
+            new ItemAddedEvent({
+                window: WindowTypeEnum.INVENTORY,
+                position: toPosition,
+                id: item.id,
+                count: 1,
+                flags: item.flags,
+                antiFlags: item.antiFlags,
+                highlight: 0,
+            }),
+        );
+    }
+
     addItem(item) {
         const position = this.#inventory.addItem(item);
 
@@ -470,7 +506,7 @@ export default class Player extends GameEntity {
         this.publish(
             ItemAddedEvent.type,
             new ItemAddedEvent({
-                window: 1,
+                window: WindowTypeEnum.INVENTORY,
                 position,
                 id: item.id,
                 count: 1,

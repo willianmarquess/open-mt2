@@ -55,12 +55,31 @@ export default class GameConnection extends Connection {
         this.#player.subscribe(PlayerEventsEnum.CHARACTER_POINTS_UPDATED, this.#onCharacterPointsUpdated.bind(this));
         this.#player.subscribe(PlayerEventsEnum.CHARACTER_TELEPORTED, this.#onCharacterTeleported.bind(this));
         this.#player.subscribe(PlayerEventsEnum.ITEM_ADDED, this.#onItemAdded.bind(this));
+        this.#player.subscribe(PlayerEventsEnum.ITEM_REMOVED, this.#onItemRemoved.bind(this));
         this.#player.subscribe(PlayerEventsEnum.CHAT, this.#onChat.bind(this));
         this.#player.subscribe(PlayerEventsEnum.LOGOUT, this.#onLogout.bind(this));
     }
 
     get player() {
         return this.#player;
+    }
+
+    #onItemRemoved(itemRemovedEvent) {
+        const { window, position } = itemRemovedEvent;
+
+        this.send(
+            new ItemPacket({
+                window,
+                position,
+                id: 0,
+                count: 0,
+                flags: 0,
+                antiFlags: 0,
+                highlight: 0,
+                sockets: 0,
+                bonuses: 0,
+            }),
+        );
     }
 
     #onItemAdded(itemAddedEvent) {

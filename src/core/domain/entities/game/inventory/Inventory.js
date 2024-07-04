@@ -1,10 +1,5 @@
 import Page from './Page.js';
 
-// const WindowTypeEnum = {
-//     INVENTORY: 1,
-//     EQUIPMENT: 2,
-// };
-
 const DEFAULT_INVENTORY_WIDTH = 5;
 const DEFAULT_INVENTORY_HEIGHT = 9;
 
@@ -38,5 +33,68 @@ export default class Inventory {
         }
 
         return -1;
+    }
+
+    addItemAt(item, position) {
+        if (this.#isFromEquipamentSlots()) {
+            //set in equipament
+        }
+
+        const page = this.#calcPage(position);
+        const pagePosition = this.#calcPagePosition(page, position);
+        return this.#pages[page].addItemAt(item, pagePosition);
+    }
+
+    #calcPage(position) {
+        return Math.floor(position / (this.#width * this.#height));
+    }
+
+    #calcPagePosition(page, position) {
+        return Math.floor(position - page * this.#width * this.#height);
+    }
+
+    #isFromEquipamentSlots(position) {
+        return position > this.size();
+    }
+
+    getItem(position) {
+        if (this.#isFromEquipamentSlots()) {
+            //get from equipament
+        }
+
+        const page = this.#calcPage(position);
+        const pagePosition = this.#calcPagePosition(page, position);
+        return this.#pages[page].getItem(pagePosition);
+    }
+
+    removeItem(position, size) {
+        if (this.#isFromEquipamentSlots()) {
+            //remove from equipament
+        }
+
+        const page = this.#calcPage(position);
+        const pagePosition = this.#calcPagePosition(page, position);
+        return this.#pages[page].removeItem(pagePosition, size);
+    }
+
+    haveAvailablePosition(position, size) {
+        if (this.#isFromEquipamentSlots()) {
+            //verify in equipament slots
+        }
+
+        const page = this.#calcPage(position);
+        const pagePosition = this.#calcPagePosition(page, position);
+        return this.#pages[page].haveAvailablePosition(pagePosition, size);
+    }
+
+    moveItem(fromPosition, toPosition) {
+        const item = this.getItem(fromPosition);
+
+        if (!item) return;
+        if (!this.haveAvailablePosition(toPosition, item.size)) return;
+
+        this.removeItem(fromPosition, item.size);
+        this.addItemAt(item, toPosition);
+        return item;
     }
 }

@@ -14,7 +14,7 @@ export default class Page {
     addItem(item) {
         for (let y = 0; y < this.#grid.height; y++) {
             for (let x = 0; x < this.#grid.width; x++) {
-                if (this.#isSpaceAvailable(x, y, item.size)) {
+                if (this.#haveSpaceAvailable(x, y, item.size)) {
                     for (let i = 0; i < item.size; i++) {
                         this.#grid.setValue(x, y + i, item);
                     }
@@ -26,7 +26,17 @@ export default class Page {
         return -1;
     }
 
-    #isSpaceAvailable(x, y, size) {
+    addItemAt(item, position) {
+        if (position < 0 || position >= this.grid.width * this.grid.height) return;
+
+        const { x, y } = this.#calcPosition(position);
+
+        for (let i = 0; i < item.size; i++) {
+            this.#grid.setValue(x, y + i, item);
+        }
+    }
+
+    #haveSpaceAvailable(x, y, size) {
         for (let i = 0; i < size; i++) {
             if (y + i >= this.#grid.height) return false;
 
@@ -36,5 +46,41 @@ export default class Page {
         }
 
         return true;
+    }
+
+    #calcPosition(position) {
+        const x = Math.floor(position % this.grid.width);
+        const y = Math.floor(position / this.grid.width);
+
+        return {
+            x,
+            y,
+        };
+    }
+
+    haveAvailablePosition(position, size) {
+        if (position < 0 || position >= this.grid.width * this.grid.height) return false;
+
+        const { x, y } = this.#calcPosition(position);
+
+        return this.#haveSpaceAvailable(x, y, size);
+    }
+
+    getItem(position) {
+        if (position < 0 || position >= this.grid.width * this.grid.height) return;
+
+        const { x, y } = this.#calcPosition(position);
+
+        return this.#grid.getValue(x, y);
+    }
+
+    removeItem(position, size) {
+        if (position < 0 || position >= this.grid.width * this.grid.height) return;
+
+        const { x, y } = this.#calcPosition(position);
+
+        for (let i = 0; i < size; i++) {
+            this.#grid.setValue(x, y + i, null);
+        }
     }
 }
