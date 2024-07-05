@@ -129,17 +129,28 @@ export default class Area {
         }
     }
 
+    #onCharacterUpdate(characterUpdatedEvent) {
+        const { vid, attackSpeed, moveSpeed, positionX, positionY, name, bodyId, weaponId, hairId } =
+            characterUpdatedEvent;
+        const entities = this.#quadTree.queryAround(positionX, positionY, CHAR_VIEW_SIZE, EntityTypeEnum.PLAYER);
+        for (const otherEntity of entities) {
+            if (otherEntity.name === name) continue;
+            otherEntity.otherEntityUpdated({ vid, attackSpeed, moveSpeed, bodyId, weaponId, hairId });
+        }
+    }
+
     tick() {
         for (const entity of this.#entitiesToSpawn.dequeueIterator()) {
             entity.subscribe(PlayerEventsEnum.CHARACTER_MOVED, this.#onCharacterMove.bind(this));
             entity.subscribe(PlayerEventsEnum.CHARACTER_LEVEL_UP, this.#onCharacterLevelUp.bind(this));
+            entity.subscribe(PlayerEventsEnum.CHARACTER_UPDATED, this.#onCharacterUpdate.bind(this));
             this.#quadTree.insert(entity);
 
             const entities = this.#quadTree.queryAround(
                 entity.positionX,
                 entity.positionY,
                 CHAR_VIEW_SIZE,
-                entity.entityType !== EntityTypeEnum.PLAYER && EntityTypeEnum.PLAYER,
+                entity.entityType !== EntityTypeEnum.PLAYER ? EntityTypeEnum.PLAYER : null,
             );
             for (const otherEntity of entities) {
                 if (otherEntity.name === entity.name) continue;

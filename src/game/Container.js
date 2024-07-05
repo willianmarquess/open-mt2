@@ -24,6 +24,7 @@ import CommandManager from './app/command/CommandManager.js';
 import LogoutService from './app/service/LogoutService.js';
 import MobManager from '../core/domain/manager/MobManager.js';
 import ItemManager from '../core/domain/manager/ItemManager.js';
+import MoveItemService from './app/service/MoveItemService.js';
 
 const container = createContainer();
 
@@ -54,6 +55,7 @@ container.register({
     logoutService: asClass(LogoutService).scoped(),
     mobManager: asClass(MobManager).singleton(),
     itemManager: asClass(ItemManager).singleton(),
+    moveItemService: asClass(MoveItemService).scoped(),
 });
 
 export { container };

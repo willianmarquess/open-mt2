@@ -1,4 +1,9 @@
+import { EventEmitter } from 'node:events';
+import Equipament from './Equipament.js';
 import Page from './Page.js';
+import ItemEquippedEvent from './events/ItemEquippedEvent.js';
+import ItemUnequippedEvent from './events/ItemUnequippedEvent.js';
+import ItemEquipamentSlotEnum from '../../../../enum/ItemEquipamentSlotEnum.js';
 
 const DEFAULT_INVENTORY_WIDTH = 5;
 const DEFAULT_INVENTORY_HEIGHT = 9;
@@ -7,11 +12,15 @@ export default class Inventory {
     #pages = [];
     #width = DEFAULT_INVENTORY_WIDTH;
     #height = DEFAULT_INVENTORY_HEIGHT;
+    #equipament;
+    #emitter = new EventEmitter();
 
     constructor({ config }) {
         for (let i = 0; i < config.INVENTORY_PAGES; i++) {
             this.#pages.push(new Page(this.#width, this.#height));
         }
+
+        this.#equipament = new Equipament(this.size());
     }
 
     get pages() {
@@ -36,8 +45,10 @@ export default class Inventory {
     }
 
     addItemAt(item, position) {
-        if (this.#isFromEquipamentSlots()) {
-            //set in equipament
+        if (this.#isFromEquipamentSlots(position)) {
+            this.#equipament.setItem(position, item);
+            this.publish(ItemEquippedEvent.type, new ItemEquippedEvent({ item, slot: position - this.size() }));
+            return;
         }
 
         const page = this.#calcPage(position);
@@ -54,12 +65,16 @@ export default class Inventory {
     }
 
     #isFromEquipamentSlots(position) {
-        return position > this.size();
+        return position >= this.size();
+    }
+
+    isEquipamentPosition(position) {
+        return position >= this.size();
     }
 
     getItem(position) {
-        if (this.#isFromEquipamentSlots()) {
-            //get from equipament
+        if (this.#isFromEquipamentSlots(position)) {
+            return this.#equipament.getItem(position);
         }
 
         const page = this.#calcPage(position);
@@ -67,9 +82,18 @@ export default class Inventory {
         return this.#pages[page].getItem(pagePosition);
     }
 
+    getItemFromSlot(slot) {
+        return this.#equipament.getItem(this.size() + slot);
+    }
+
     removeItem(position, size) {
-        if (this.#isFromEquipamentSlots()) {
-            //remove from equipament
+        if (this.#isFromEquipamentSlots(position)) {
+            const unequippedItem = this.#equipament.removeItem(position);
+            this.publish(
+                ItemUnequippedEvent.type,
+                new ItemUnequippedEvent({ item: unequippedItem, slot: position - this.size() }),
+            );
+            return;
         }
 
         const page = this.#calcPage(position);
@@ -78,8 +102,8 @@ export default class Inventory {
     }
 
     haveAvailablePosition(position, size) {
-        if (this.#isFromEquipamentSlots()) {
-            //verify in equipament slots
+        if (this.#isFromEquipamentSlots(position)) {
+            return this.#equipament.haveAvailableSlot(position);
         }
 
         const page = this.#calcPage(position);
@@ -87,14 +111,59 @@ export default class Inventory {
         return this.#pages[page].haveAvailablePosition(pagePosition, size);
     }
 
+    isValidPosition(position) {
+        return position >= 0 && position < this.size() + this.#equipament.size();
+    }
+
+    isValidSlot(item, position) {
+        return this.#equipament.isValidSlot(item, position);
+    }
+
     moveItem(fromPosition, toPosition) {
         const item = this.getItem(fromPosition);
 
         if (!item) return;
+        if (!this.isValidPosition(toPosition)) return;
         if (!this.haveAvailablePosition(toPosition, item.size)) return;
 
         this.removeItem(fromPosition, item.size);
-        this.addItemAt(item, toPosition);
-        return item;
+        return this.addItemAt(item, toPosition);
+    }
+
+    publish(eventName, event) {
+        this.#emitter.emit(eventName, event);
+    }
+
+    subscribe(eventName, callback) {
+        this.#emitter.on(eventName, callback);
+    }
+
+    unsubscribe(eventName) {
+        this.#emitter.off(eventName);
+    }
+
+    getArmorValues() {
+        return [
+            {
+                type: ItemEquipamentSlotEnum.BODY,
+                flat: this.#equipament.body?.values[1] ?? 0,
+                multi: this.#equipament.body?.values[5] ?? 0,
+            },
+            {
+                type: ItemEquipamentSlotEnum.HEAD,
+                flat: this.#equipament.head?.values[1] ?? 0,
+                multi: this.#equipament.head?.values[5] ?? 0,
+            },
+            {
+                type: ItemEquipamentSlotEnum.FOOTS,
+                flat: this.#equipament.foots?.values[1] ?? 0,
+                multi: this.#equipament.foots?.values[5] ?? 0,
+            },
+            {
+                type: ItemEquipamentSlotEnum.SHIELD,
+                flat: this.#equipament.shield?.values[1] ?? 0,
+                multi: this.#equipament.shield?.values[5] ?? 0,
+            },
+        ];
     }
 }

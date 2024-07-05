@@ -1,7 +1,7 @@
 import PlayerEventsEnum from './PlayerEventsEnum.js';
 
-export default class OtherCharacterUpdatedEvent {
-    static #type = PlayerEventsEnum.OTHER_CHARACTER_UPDATED;
+export default class CharacterUpdatedEvent {
+    static #type = PlayerEventsEnum.CHARACTER_UPDATED;
     static get type() {
         return this.#type;
     }
@@ -9,14 +9,20 @@ export default class OtherCharacterUpdatedEvent {
     #vid;
     #attackSpeed;
     #moveSpeed;
+    #positionX;
+    #positionY;
+    #name;
     #bodyId;
     #weaponId;
     #hairId;
 
-    constructor({ vid, attackSpeed, moveSpeed, bodyId, weaponId, hairId }) {
+    constructor({ vid, attackSpeed, moveSpeed, positionX, positionY, name, bodyId, weaponId, hairId }) {
         this.#vid = vid;
         this.#attackSpeed = attackSpeed;
         this.#moveSpeed = moveSpeed;
+        this.#positionX = positionX;
+        this.#positionY = positionY;
+        this.#name = name;
         this.#weaponId = weaponId;
         this.#bodyId = bodyId;
         this.#hairId = hairId;
@@ -30,6 +36,15 @@ export default class OtherCharacterUpdatedEvent {
     }
     get moveSpeed() {
         return this.#moveSpeed;
+    }
+    get positionX() {
+        return this.#positionX;
+    }
+    get positionY() {
+        return this.#positionY;
+    }
+    get name() {
+        return this.#name;
     }
     get weaponId() {
         return this.#weaponId;

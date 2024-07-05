@@ -7,6 +7,7 @@ import CharacterMoveOutPacket from '../../../core/interface/networking/packets/p
 import CharacterPointChangePacket from '../../../core/interface/networking/packets/packet/out/CharacterPointChangePacket.js';
 import CharacterPointsPacket from '../../../core/interface/networking/packets/packet/out/CharacterPointsPacket.js';
 import CharacterSpawnPacket from '../../../core/interface/networking/packets/packet/out/CharacterSpawnPacket.js';
+import CharacterUpdatePacket from '../../../core/interface/networking/packets/packet/out/CharacterUpdatePacket.js';
 import ChatOutPacket from '../../../core/interface/networking/packets/packet/out/ChatOutPacket.js';
 import ItemPacket from '../../../core/interface/networking/packets/packet/out/ItemPacket.js';
 import RemoveCharacterPacket from '../../../core/interface/networking/packets/packet/out/RemoveCharacterPacket.js';
@@ -47,13 +48,15 @@ export default class GameConnection extends Connection {
 
     set player(newPlayer) {
         this.#player = newPlayer;
-        this.#player.subscribe(PlayerEventsEnum.OTHER_CHARACTER_UPDATED, this.#onOtherCharacterUpdated.bind(this));
+        this.#player.subscribe(PlayerEventsEnum.OTHER_CHARACTER_SPAWNED, this.#onOtherCharacterSpawned.bind(this));
         this.#player.subscribe(PlayerEventsEnum.OTHER_CHARACTER_MOVED, this.#onOtherCharacterMoved.bind(this));
         this.#player.subscribe(PlayerEventsEnum.OTHER_CHARACTER_LEVEL_UP, this.#onOtherCharacterLevelUp.bind(this));
         this.#player.subscribe(PlayerEventsEnum.OTHER_CHARACTER_LEFT_GAME, this.#onOtherCharacterLeftGame.bind(this));
+        this.#player.subscribe(PlayerEventsEnum.OTHER_CHARACTER_UPDATED, this.#onOtherCharacterUpdated.bind(this));
         this.#player.subscribe(PlayerEventsEnum.CHARACTER_SPAWNED, this.#onCharacterSpawned.bind(this));
         this.#player.subscribe(PlayerEventsEnum.CHARACTER_POINTS_UPDATED, this.#onCharacterPointsUpdated.bind(this));
         this.#player.subscribe(PlayerEventsEnum.CHARACTER_TELEPORTED, this.#onCharacterTeleported.bind(this));
+        this.#player.subscribe(PlayerEventsEnum.CHARACTER_UPDATED, this.#onCharacterUpdated.bind(this));
         this.#player.subscribe(PlayerEventsEnum.ITEM_ADDED, this.#onItemAdded.bind(this));
         this.#player.subscribe(PlayerEventsEnum.ITEM_REMOVED, this.#onItemRemoved.bind(this));
         this.#player.subscribe(PlayerEventsEnum.CHAT, this.#onChat.bind(this));
@@ -62,6 +65,32 @@ export default class GameConnection extends Connection {
 
     get player() {
         return this.#player;
+    }
+
+    #onOtherCharacterUpdated(otherCharacterUpdated) {
+        const { attackSpeed, moveSpeed, vid, bodyId, weaponId, hairId } = otherCharacterUpdated;
+
+        this.send(
+            new CharacterUpdatePacket({
+                vid,
+                attackSpeed,
+                moveSpeed,
+                parts: [bodyId, weaponId, 0, hairId],
+            }),
+        );
+    }
+
+    #onCharacterUpdated(characterUpdatedEvent) {
+        const { attackSpeed, moveSpeed, vid, bodyId, weaponId, hairId } = characterUpdatedEvent;
+
+        this.send(
+            new CharacterUpdatePacket({
+                vid,
+                attackSpeed,
+                moveSpeed,
+                parts: [bodyId, weaponId, 0, hairId],
+            }),
+        );
     }
 
     #onItemRemoved(itemRemovedEvent) {
@@ -176,7 +205,7 @@ export default class GameConnection extends Connection {
         );
     }
 
-    #onOtherCharacterUpdated(otherCharacterUpdatedEvent) {
+    #onOtherCharacterSpawned(OtherCharacterSpawnedEvent) {
         const {
             virtualId,
             playerClass,
@@ -188,7 +217,7 @@ export default class GameConnection extends Connection {
             empireId,
             level,
             name,
-        } = otherCharacterUpdatedEvent;
+        } = OtherCharacterSpawnedEvent;
 
         this.send(
             new CharacterSpawnPacket({

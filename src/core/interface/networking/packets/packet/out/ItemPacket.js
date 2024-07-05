@@ -16,7 +16,7 @@ export default class ItemPacket extends PacketOut {
     #flags;
     #antiFlags;
     #highlight;
-    #sockets = new Array(3);
+    #sockets = new Array(3).fill(0);
     #bonuses = new Array(
         new ItemBonus({}),
         new ItemBonus({}),
@@ -42,7 +42,10 @@ export default class ItemPacket extends PacketOut {
         this.#sockets = sockets;
         this.#bonuses = bonuses;
 
-        this.#sockets = new Array(3);
+        this.#flags = 0;
+        this.#antiFlags = 0;
+        this.#highlight = 0;
+        this.#sockets = new Array(3).fill(0);
         this.#bonuses = new Array(
             new ItemBonus({}),
             new ItemBonus({}),

@@ -2,7 +2,7 @@ import EntityTypeEnum from '../../../../enum/EntityTypeEnum.js';
 import PointsEnum from '../../../../enum/PointsEnum.js';
 import PlayerDTO from '../../../dto/PlayerDTO.js';
 import CharacterSpawnedEvent from './events/CharacterSpawnedEvent.js';
-import OtherCharacterUpdatedEvent from './events/OtherCharacterUpdatedEvent.js';
+import OtherCharacterSpawnedEvent from './events/OtherCharacterSpawnedEvent.js';
 import CharacterMovedEvent from './events/CharacterMovedEvent.js';
 import OtherCharacterMovedEvent from './events/OtherCharacterMovedEvent.js';
 import CharacterPointsUpdatedEvent from './events/CharacterPointsUpdatedEvent.js';
@@ -20,6 +20,11 @@ import ItemAddedEvent from './events/ItemAddedEvent.js';
 import Inventory from '../inventory/Inventory.js';
 import WindowTypeEnum from '../../../../enum/WindowTypeEnum.js';
 import ItemRemovedEvent from './events/ItemRemovedEvent.js';
+import ItemAntiFlagEnum from '../../../../enum/ItemAntiFlagEnum.js';
+import CharacterUpdatedEvent from './events/CharacterUpdatedEvent.js';
+import InventoryEventsEnum from '../inventory/events/InventoryEventsEnum.js';
+import ItemEquipamentSlotEnum from '../../../../enum/ItemEquipamentSlotEnum.js';
+import OtherCharacterUpdatedEvent from './events/OtherCharacterUpdatedEvent.js';
 
 export default class Player extends GameEntity {
     #accountId;
@@ -53,12 +58,12 @@ export default class Player extends GameEntity {
     //in game points
     #maxHealth;
     #maxMana;
-    #attackSpeed;
-    #movementSpeed;
+    #defense;
+    // #attackSpeed;
+    // #movementSpeed;
     // #neededExperience;
     // #defenseGrade;
     // #attackGrade;
-    // #defense;
     // #statusPoints;
     // #subSkill;
     // #skill;
@@ -167,6 +172,8 @@ export default class Player extends GameEntity {
         this.#experienceManager = experienceManager;
         this.#config = config;
         this.#inventory = new Inventory({ config: this.#config });
+        this.#inventory.subscribe(InventoryEventsEnum.ITEM_EQUIPPED, this.#onEquippamentChange.bind(this));
+        this.#inventory.subscribe(InventoryEventsEnum.ITEM_UNEQUIPPED, this.#onEquippamentChange.bind(this));
 
         this.#initPoints();
     }
@@ -176,6 +183,7 @@ export default class Player extends GameEntity {
         this.#resetHealth();
         this.#updateMana();
         this.#resetMana();
+        this.#updateDefense();
 
         this.#points[PointsEnum.EXPERIENCE] = () => this.#experience;
         this.#points[PointsEnum.HT] = () => this.ht;
@@ -187,11 +195,33 @@ export default class Player extends GameEntity {
         this.#points[PointsEnum.MAX_MP] = () => this.#maxMana;
         this.#points[PointsEnum.HP] = () => this.#health;
         this.#points[PointsEnum.MP] = () => this.#mana;
-        this.#points[PointsEnum.ATTACK_SPEED] = () => this.#attackSpeed;
-        this.#points[PointsEnum.MOVE_SPEED] = () => this.#movementSpeed;
+        this.#points[PointsEnum.ATTACK_SPEED] = () => this.attackSpeed;
+        this.#points[PointsEnum.MOVE_SPEED] = () => this.movementSpeed;
         this.#points[PointsEnum.NEEDED_EXPERIENCE] = () => this.#experienceManager.getNeededExperience(this.level);
         this.#points[PointsEnum.STATUS_POINTS] = () => this.#availableStatusPoints;
         this.#points[PointsEnum.GOLD] = () => this.#gold;
+
+        this.#points[PointsEnum.DEFENSE] = () => this.#defense;
+        this.#points[PointsEnum.DEFENSE_GRADE] = () => this.#defense;
+    }
+
+    #onEquippamentChange() {
+        //update def, attack and other values
+        this.#updateDefense();
+        this.#updateHealth();
+        this.#updateMana();
+        this.updateView();
+        this.#sendPoints();
+    }
+
+    #updateDefense() {
+        let defense = this.level + Math.floor(0.8 * this.ht);
+        const armorValues = this.#inventory.getArmorValues();
+        armorValues.forEach(({ flat, multi }) => {
+            defense += flat;
+            defense += multi * 2;
+        });
+        this.#defense = defense;
     }
 
     #updateStatusPoints() {
@@ -260,6 +290,7 @@ export default class Player extends GameEntity {
         this.ht += realValue;
         this.#givenStatusPoints += realValue;
         this.#availableStatusPoints -= realValue;
+        this.#updateDefense();
         this.#updateHealth();
         this.#sendPoints();
     }
@@ -408,11 +439,11 @@ export default class Player extends GameEntity {
     }
 
     addMovementSpeed(value) {
-        this.#movementSpeed += value > 0 ? value : 0;
+        this.movementSpeed += value > 0 ? value : 0;
     }
 
     addAttackSpeed(value) {
-        this.#attackSpeed += value > 0 ? value : 0;
+        this.attackSpeed += value > 0 ? value : 0;
     }
 
     addMana(value) {
@@ -466,27 +497,44 @@ export default class Player extends GameEntity {
         return this.#inventory.getItem(Number(position));
     }
 
-    moveItem({ _fromWindow, fromPosition, _toWindow, toPosition, _count }) {
-        const item = this.#inventory.moveItem(Number(fromPosition), Number(toPosition));
+    isWearable(item) {
+        return !item.antiFlags.is(this.antiFlagClass) && !item.antiFlags.is(this.antiFlagGender);
+    }
+
+    moveItem({ fromWindow, fromPosition, toWindow, toPosition, _count }) {
+        const item = this.#inventory.getItem(fromPosition);
 
         if (!item) return;
+        if (fromWindow !== WindowTypeEnum.INVENTORY || toWindow !== WindowTypeEnum.INVENTORY) return;
+        if (!this.#inventory.isValidPosition(toPosition)) return;
+        if (!this.#inventory.haveAvailablePosition(toPosition, item.size)) return;
+
+        let window = WindowTypeEnum.INVENTORY;
+        if (this.#inventory.isEquipamentPosition(toPosition)) {
+            if (!this.isWearable(item)) return;
+            if (!this.#inventory.isValidSlot(item, toPosition)) return;
+            window = WindowTypeEnum.EQUIPMENT;
+        }
+
+        this.#inventory.removeItem(fromPosition, item.size);
+        this.#inventory.addItemAt(item, toPosition);
 
         this.publish(
             ItemRemovedEvent.type,
             new ItemRemovedEvent({
-                window: WindowTypeEnum.INVENTORY,
+                window,
                 position: fromPosition,
             }),
         );
         this.publish(
             ItemAddedEvent.type,
             new ItemAddedEvent({
-                window: WindowTypeEnum.INVENTORY,
+                window,
                 position: toPosition,
                 id: item.id,
                 count: 1,
-                flags: item.flags,
-                antiFlags: item.antiFlags,
+                flags: item.flags.flag,
+                antiFlags: item.antiFlags.flag,
                 highlight: 0,
             }),
         );
@@ -539,8 +587,8 @@ export default class Player extends GameEntity {
         name,
     }) {
         this.publish(
-            OtherCharacterUpdatedEvent.type,
-            new OtherCharacterUpdatedEvent({
+            OtherCharacterSpawnedEvent.type,
+            new OtherCharacterSpawnedEvent({
                 virtualId,
                 playerClass,
                 entityType,
@@ -561,6 +609,13 @@ export default class Player extends GameEntity {
 
     otherEntityLevelUp({ virtualId, level }) {
         this.publish(OtherCharacterLevelUpEvent.type, new OtherCharacterLevelUpEvent({ virtualId, level }));
+    }
+
+    otherEntityUpdated({ vid, attackSpeed, moveSpeed, bodyId, weaponId, hairId }) {
+        this.publish(
+            OtherCharacterUpdatedEvent.type,
+            new OtherCharacterUpdatedEvent({ vid, attackSpeed, moveSpeed, bodyId, weaponId, hairId }),
+        );
     }
 
     logout() {
@@ -608,6 +663,35 @@ export default class Player extends GameEntity {
         );
     }
 
+    updateView() {
+        this.publish(
+            CharacterUpdatedEvent.type,
+            new CharacterUpdatedEvent({
+                name: this.name,
+                attackSpeed: this.attackSpeed,
+                moveSpeed: this.movementSpeed,
+                vid: this.virtualId,
+                positionX: this.positionX,
+                positionY: this.positionY,
+                bodyId: this.getBody()?.id ?? 0,
+                weaponId: this.getWeapon()?.id ?? 0,
+                hairId: this.getHair()?.id ?? 0,
+            }),
+        );
+    }
+
+    getBody() {
+        return this.#inventory.getItemFromSlot(ItemEquipamentSlotEnum.BODY);
+    }
+
+    getWeapon() {
+        return this.#inventory.getItemFromSlot(ItemEquipamentSlotEnum.WEAPON);
+    }
+
+    getHair() {
+        return this.#inventory.getItemFromSlot(ItemEquipamentSlotEnum.COSTUME_HAIR);
+    }
+
     wait({ positionX, positionY, arg, rotation, time, movementType }) {
         super.wait(positionX, positionY);
         this.publish(
@@ -637,6 +721,42 @@ export default class Player extends GameEntity {
 
     #calcPlayTime() {
         return this.#playTime + Math.round((performance.now() - this.#lastPlayTime) / (1000 * 60));
+    }
+
+    get antiFlagClass() {
+        switch (this.#playerClass) {
+            case 0:
+            case 4:
+                return ItemAntiFlagEnum.ANTI_MUSA;
+            case 1:
+            case 5:
+                return ItemAntiFlagEnum.ANTI_ASSASSIN;
+            case 2:
+            case 6:
+                return ItemAntiFlagEnum.ANTI_SURA;
+            case 3:
+            case 7:
+                return ItemAntiFlagEnum.ANTI_MUDANG;
+            default:
+                return 0;
+        }
+    }
+
+    get antiFlagGender() {
+        switch (this.#playerClass) {
+            case 0:
+            case 2:
+            case 5:
+            case 7:
+                return ItemAntiFlagEnum.ANTI_MALE;
+            case 1:
+            case 3:
+            case 4:
+            case 6:
+                return ItemAntiFlagEnum.ANTI_FEMALE;
+            default:
+                return 0;
+        }
     }
 
     static create(
