@@ -58,7 +58,17 @@ export default class Player extends GameEntity {
     //in game points
     #maxHealth;
     #maxMana;
-    #defense;
+    #defense = 0;
+    #defensePerHtPoint = 0;
+    #attack = 0;
+    #attackBonus = 0;
+    #attackPerStPoint = 0;
+    #attackPerDXPoint = 0;
+    #attackPerIQPoint = 0;
+    #magicAttack = 0;
+    #magicAttackBonus = 0;
+    #magicDefense = 0;
+    #magicDefenseBonus = 0;
     // #attackSpeed;
     // #movementSpeed;
     // #neededExperience;
@@ -120,6 +130,10 @@ export default class Player extends GameEntity {
             baseHealth = 0,
             baseMana = 0,
             appearance = 0,
+            defensePerHtPoint = 0,
+            attackPerStPoint = 0,
+            attackPerDXPoint = 0,
+            attackPerIQPoint = 0,
         },
         { animationManager, experienceManager, config },
     ) {
@@ -169,6 +183,10 @@ export default class Player extends GameEntity {
         this.#mpPerIqPoint = mpPerIqPoint;
         this.#baseMana = baseMana;
         this.#baseHealth = baseHealth;
+        this.#defensePerHtPoint = defensePerHtPoint;
+        this.#attackPerStPoint = attackPerStPoint;
+        this.#attackPerDXPoint = attackPerDXPoint;
+        this.#attackPerIQPoint = attackPerIQPoint;
         this.#experienceManager = experienceManager;
         this.#config = config;
         this.#inventory = new Inventory({ config: this.#config });
@@ -184,6 +202,7 @@ export default class Player extends GameEntity {
         this.#updateMana();
         this.#resetMana();
         this.#updateDefense();
+        this.#updateAttack();
 
         this.#points[PointsEnum.EXPERIENCE] = () => this.#experience;
         this.#points[PointsEnum.HT] = () => this.ht;
@@ -200,28 +219,79 @@ export default class Player extends GameEntity {
         this.#points[PointsEnum.NEEDED_EXPERIENCE] = () => this.#experienceManager.getNeededExperience(this.level);
         this.#points[PointsEnum.STATUS_POINTS] = () => this.#availableStatusPoints;
         this.#points[PointsEnum.GOLD] = () => this.#gold;
-
         this.#points[PointsEnum.DEFENSE] = () => this.#defense;
         this.#points[PointsEnum.DEFENSE_GRADE] = () => this.#defense;
+        this.#points[PointsEnum.ATTACK_GRADE] = () => this.#attack;
+        this.#points[PointsEnum.MAGIC_ATT_GRADE] = () => this.#magicAttack;
+        this.#points[PointsEnum.MAGIC_DEF_GRADE] = () => this.#magicDefense;
     }
 
     #onEquippamentChange() {
         //update def, attack and other values
         this.#updateDefense();
+        this.#updateAttack();
         this.#updateHealth();
         this.#updateMana();
         this.updateView();
         this.#sendPoints();
     }
 
-    #updateDefense() {
-        let defense = this.level + Math.floor(0.8 * this.ht);
+    getAttackRating() {
+        return Math.min(90, this.dx * 4 + (this.level * 2) / 6);
+    }
+
+    getAttack() {
+        let attack =
+            this.level * 2 +
+            this.#attackPerStPoint * this.st +
+            this.#attackPerIQPoint * this.iq +
+            this.#attackPerDXPoint * this.dx;
+        attack += this.#attackBonus;
+        const { physic } = this.#inventory.getWeaponValues();
+        attack += Math.floor(Math.random() * (physic.max - physic.min) + physic.min) * 2;
+        attack += physic.bonus * 2;
+        return Math.floor(attack);
+    }
+
+    getMagicAttack() {
+        let magicAttack = this.level * 2 + 2 * this.iq;
+        magicAttack += this.#magicAttackBonus;
+        const { magic } = this.#inventory.getWeaponValues();
+        magicAttack += Math.floor(Math.random() * (magic.max - magic.min) + magic.min) * 2;
+        magicAttack += magic.bonus * 2;
+        return Math.floor(magicAttack);
+    }
+
+    getDefense() {
+        let defense = this.level + Math.floor(this.#defensePerHtPoint * this.ht);
         const armorValues = this.#inventory.getArmorValues();
         armorValues.forEach(({ flat, multi }) => {
             defense += flat;
             defense += multi * 2;
         });
-        this.#defense = defense;
+        return Math.floor(defense);
+    }
+
+    getMagicDefense() {
+        let magicDefense = this.level + (this.iq * 3 + this.ht / 3 + this.getDefense() / 2);
+        magicDefense += this.#magicDefenseBonus;
+        return Math.floor(magicDefense);
+    }
+
+    #updateAttack() {
+        this.#attack = this.getAttack();
+    }
+
+    #updateMagicAttack() {
+        this.#magicAttack = this.getMagicAttack();
+    }
+
+    #updateDefense() {
+        this.#defense = this.getDefense();
+    }
+
+    #updateMagicDefense() {
+        this.#magicDefense = this.getMagicDefense();
     }
 
     #updateStatusPoints() {
@@ -271,6 +341,7 @@ export default class Player extends GameEntity {
         this.st += realValue;
         this.#givenStatusPoints += realValue;
         this.#availableStatusPoints -= realValue;
+        this.#updateAttack();
         this.#sendPoints();
     }
 
@@ -286,11 +357,11 @@ export default class Player extends GameEntity {
             realValue = validatedValue;
         }
 
-        //update def
         this.ht += realValue;
         this.#givenStatusPoints += realValue;
         this.#availableStatusPoints -= realValue;
         this.#updateDefense();
+        this.#updateMagicDefense();
         this.#updateHealth();
         this.#sendPoints();
     }
@@ -307,11 +378,10 @@ export default class Player extends GameEntity {
             realValue = validatedValue;
         }
 
-        //update phy attack
-        //update dodge
         this.dx += realValue;
         this.#givenStatusPoints += realValue;
         this.#availableStatusPoints -= realValue;
+        this.#updateAttack();
         this.#sendPoints();
     }
 
@@ -327,11 +397,12 @@ export default class Player extends GameEntity {
             realValue = validatedValue;
         }
 
-        //update magic attack
-        //update magic def
         this.iq += realValue;
         this.#givenStatusPoints += realValue;
         this.#availableStatusPoints -= realValue;
+        this.#updateAttack();
+        this.#updateMagicAttack();
+        this.#updateMagicDefense();
         this.#updateMana();
         this.#sendPoints();
     }
@@ -404,6 +475,9 @@ export default class Player extends GameEntity {
         this.#updateMana();
         this.#resetMana();
         this.#updateStatusPoints();
+        this.#updateAttack();
+        this.#updateMagicAttack();
+        this.#updateDefense();
         this.#sendPoints();
 
         //verify if we really need to send this
@@ -431,6 +505,8 @@ export default class Player extends GameEntity {
         this.#updateMana();
         this.#resetMana();
         this.#updateStatusPoints();
+        this.#updateAttack();
+        this.#updateDefense();
         this.#sendPoints();
 
         //add skill point
@@ -522,14 +598,14 @@ export default class Player extends GameEntity {
         this.publish(
             ItemRemovedEvent.type,
             new ItemRemovedEvent({
-                window,
+                window: fromWindow,
                 position: fromPosition,
             }),
         );
         this.publish(
             ItemAddedEvent.type,
             new ItemAddedEvent({
-                window,
+                window: toWindow,
                 position: toPosition,
                 id: item.id,
                 count: 1,
@@ -795,6 +871,10 @@ export default class Player extends GameEntity {
             baseHealth,
             baseMana,
             appearance,
+            defensePerHtPoint,
+            attackPerStPoint,
+            attackPerDXPoint,
+            attackPerIQPoint,
         },
         { animationManager, config, experienceManager },
     ) {
@@ -834,6 +914,10 @@ export default class Player extends GameEntity {
                 baseHealth,
                 baseMana,
                 appearance,
+                defensePerHtPoint,
+                attackPerStPoint,
+                attackPerDXPoint,
+                attackPerIQPoint,
             },
             { animationManager, config, experienceManager },
         );

@@ -166,4 +166,19 @@ export default class Inventory {
             },
         ];
     }
+
+    getWeaponValues() {
+        return {
+            magic: {
+                min: this.#equipament.weapon?.values[1] ?? 0,
+                max: this.#equipament.weapon?.values[2] ?? 0,
+                bonus: this.#equipament.weapon?.values[5] ?? 0,
+            },
+            physic: {
+                min: this.#equipament.weapon?.values[3] ?? 0,
+                max: this.#equipament.weapon?.values[4] ?? 0,
+                bonus: this.#equipament.weapon?.values[5] ?? 0,
+            },
+        };
+    }
 }

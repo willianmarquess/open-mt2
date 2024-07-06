@@ -13,7 +13,11 @@
             "mpPerLvl": 50,
             "mpPerIqPoint": 20,
             "initialAttackSpeed": 150,
-            "initialMovementSpeed": 150
+            "initialMovementSpeed": 150,
+            "defensePerHtPoint": 2,
+            "attackPerStPoint": 2,
+            "attackPerDXPoint": 0,
+            "attackPerIQPoint": 0
         }
     },
     "assassin": {
@@ -30,7 +34,11 @@
             "mpPerLvl": 50,
             "mpPerIqPoint": 20,
             "initialAttackSpeed": 150,
-            "initialMovementSpeed": 150
+            "initialMovementSpeed": 150,
+            "defensePerHtPoint": 2,
+            "attackPerStPoint": 4,
+            "attackPerDXPoint": 1.5,
+            "attackPerIQPoint": 0
         }
     },
     "sura": {
@@ -47,7 +55,11 @@
             "mpPerLvl": 50,
             "mpPerIqPoint": 20,
             "initialAttackSpeed": 150,
-            "initialMovementSpeed": 150
+            "initialMovementSpeed": 150,
+            "defensePerHtPoint": 2,
+            "attackPerStPoint": 2,
+            "attackPerDXPoint": 0,
+            "attackPerIQPoint": 1.5
         }
     },
     "shaman": {
@@ -64,7 +76,11 @@
             "mpPerLvl": 50,
             "mpPerIqPoint": 20,
             "initialAttackSpeed": 150,
-            "initialMovementSpeed": 150
+            "initialMovementSpeed": 150,
+            "defensePerHtPoint": 2,
+            "attackPerStPoint": 4,
+            "attackPerDXPoint": 0,
+            "attackPerIQPoint": 1.5
         }
     }
 }
