@@ -2,9 +2,14 @@ import crypto from 'node:crypto';
 
 export default class MathUtil {
     static #max_uint = 1e9;
+    static #max_tiny = 255;
 
     static get MAX_UINT() {
         return this.#max_uint;
+    }
+
+    static get MAX_TINY() {
+        return this.#max_tiny;
     }
 
     static calcDistance(x1, y1, x2, y2) {

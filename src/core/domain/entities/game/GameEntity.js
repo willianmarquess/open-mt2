@@ -167,8 +167,14 @@ export default class GameEntity {
     get movementSpeed() {
         return this.#movementSpeed;
     }
+    set movementSpeed(value) {
+        this.#movementSpeed = value;
+    }
     get attackSpeed() {
         return this.#attackSpeed;
+    }
+    set attackSpeed(value) {
+        this.#attackSpeed = value;
     }
     get virtualId() {
         return this.#virtualId;
@@ -211,6 +217,9 @@ export default class GameEntity {
     }
     get level() {
         return this.#level;
+    }
+    set level(value) {
+        this.#level = value;
     }
     get empire() {
         return this.#empire;

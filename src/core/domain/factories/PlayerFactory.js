@@ -6,11 +6,13 @@ export default class PlayerFactory {
     #config;
     #animationManager;
     #experienceManager;
+    #logger;
 
-    constructor({ config, animationManager, experienceManager }) {
+    constructor({ config, animationManager, experienceManager, logger }) {
         this.#config = config;
         this.#animationManager = animationManager;
         this.#experienceManager = experienceManager;
+        this.#logger = logger;
     }
 
     create({
@@ -93,6 +95,7 @@ export default class PlayerFactory {
                 animationManager: this.#animationManager,
                 config: this.#config,
                 experienceManager: this.#experienceManager,
+                logger: this.#logger,
             },
         );
     }

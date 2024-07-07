@@ -1,6 +1,8 @@
+import ApplyTypeEnum from '../../../../enum/ApplyTypeEnum.js';
 import ItemAntiFlagEnum from '../../../../enum/ItemAntiFlagEnum.js';
 import ItemFlagEnum from '../../../../enum/ItemFlagEnum.js';
 import ItemImmuneFlagEnum from '../../../../enum/ItemImmuneFlagEnum.js';
+import ItemLimitTypeEnum from '../../../../enum/ItemLimitTypeEnum.js';
 import ItemWearFlagEnum from '../../../../enum/ItemWearFlagEnum.js';
 import BitFlag from '../../../../util/BitFlag.js';
 import ItemApply from './ItemApply.js';
@@ -144,6 +146,10 @@ export default class Item {
         return this.#addon;
     }
 
+    getLevelLimit() {
+        return this.#limits.find((limit) => limit.type === ItemLimitTypeEnum.LEVEL)?.value ?? 0;
+    }
+
     static create(proto) {
         const antiFlagsBitFlag = parseFlags(proto.anti_flag, ItemAntiFlagEnum);
         const flagsBitFlag = parseFlags(proto.flag, ItemFlagEnum);
@@ -169,13 +175,28 @@ export default class Item {
             immuneFlags: immuneFlagsBitFlag,
             wearFlags: wearFlagsBitFlag,
             limits: [
-                new ItemLimit({ type: proto.limit_type0, value: proto.limit_value0 }),
-                new ItemLimit({ type: proto.limit_type1, value: proto.limit_value1 }),
+                new ItemLimit({
+                    type: ItemLimitTypeEnum[proto.limit_type0] || ItemLimitTypeEnum.LIMIT_NONE,
+                    value: proto.limit_value0,
+                }),
+                new ItemLimit({
+                    type: ItemLimitTypeEnum[proto.limit_type1] || ItemLimitTypeEnum.LIMIT_NONE,
+                    value: proto.limit_value1,
+                }),
             ],
             applies: [
-                new ItemApply({ type: proto.addon_type0, value: proto.addon_value0 }),
-                new ItemApply({ type: proto.addon_type1, value: proto.addon_value1 }),
-                new ItemApply({ type: proto.addon_type2, value: proto.addon_value2 }),
+                new ItemApply({
+                    type: ApplyTypeEnum[proto.addon_type0] || ApplyTypeEnum.APPLY_NONE,
+                    value: proto.addon_value0,
+                }),
+                new ItemApply({
+                    type: ApplyTypeEnum[proto.addon_type1] || ApplyTypeEnum.APPLY_NONE,
+                    value: proto.addon_value1,
+                }),
+                new ItemApply({
+                    type: ApplyTypeEnum[proto.addon_type2] || ApplyTypeEnum.APPLY_NONE,
+                    value: proto.addon_value2,
+                }),
             ],
             values: [
                 Number(proto.value0),
