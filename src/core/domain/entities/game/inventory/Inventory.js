@@ -119,6 +119,10 @@ export default class Inventory {
         return this.#equipament.isValidSlot(item, position);
     }
 
+    getWearPosition(item) {
+        return this.#equipament.getWearPosition(item);
+    }
+
     moveItem(fromPosition, toPosition) {
         const item = this.getItem(fromPosition);
 

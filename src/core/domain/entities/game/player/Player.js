@@ -608,84 +608,6 @@ export default class Player extends GameEntity {
         return this.#points;
     }
 
-    haveAvailablePositionInInventory(position, size) {
-        return this.#inventory.haveAvailablePosition(Number(position), Number(size));
-    }
-
-    getItem(position) {
-        return this.#inventory.getItem(Number(position));
-    }
-
-    isWearable(item) {
-        return (
-            this.level >= item.getLevelLimit() &&
-            !item.antiFlags.is(this.antiFlagClass) &&
-            !item.antiFlags.is(this.antiFlagGender)
-        );
-    }
-
-    moveItem({ fromWindow, fromPosition, toWindow, toPosition, /*_count*/ }) {
-        const item = this.#inventory.getItem(fromPosition);
-
-        if (!item) return;
-        if (fromWindow !== WindowTypeEnum.INVENTORY || toWindow !== WindowTypeEnum.INVENTORY) return;
-        if (!this.#inventory.isValidPosition(toPosition)) return;
-        if (!this.#inventory.haveAvailablePosition(toPosition, item.size)) return;
-
-        if (this.#inventory.isEquipamentPosition(toPosition)) {
-            if (!this.isWearable(item)) return;
-            if (!this.#inventory.isValidSlot(item, toPosition)) return;
-        }
-
-        this.#inventory.removeItem(fromPosition, item.size);
-        this.#inventory.addItemAt(item, toPosition);
-
-        this.publish(
-            ItemRemovedEvent.type,
-            new ItemRemovedEvent({
-                window: fromWindow,
-                position: fromPosition,
-            }),
-        );
-        this.publish(
-            ItemAddedEvent.type,
-            new ItemAddedEvent({
-                window: toWindow,
-                position: toPosition,
-                id: item.id,
-                count: 1,
-                flags: item.flags.flag,
-                antiFlags: item.antiFlags.flag,
-                highlight: 0,
-            }),
-        );
-    }
-
-    addItem(item) {
-        const position = this.#inventory.addItem(item);
-
-        if (position < 0) {
-            this.say({
-                messageType: ChatMessageTypeEnum.INFO,
-                message: 'Inventory is full',
-            });
-            return;
-        }
-
-        this.publish(
-            ItemAddedEvent.type,
-            new ItemAddedEvent({
-                window: WindowTypeEnum.INVENTORY,
-                position,
-                id: item.id,
-                count: 1,
-                flags: item.flags,
-                antiFlags: item.antiFlags,
-                highlight: 0,
-            }),
-        );
-    }
-
     spawn() {
         this.#lastPlayTime = performance.now();
         this.publish(CharacterSpawnedEvent.type, new CharacterSpawnedEvent());
@@ -878,6 +800,187 @@ export default class Player extends GameEntity {
             default:
                 return 0;
         }
+    }
+
+    /* 
+        ITEM MANAGEMENT
+    */
+
+    #sendItemAdded({ window, position, item }) {
+        this.publish(
+            ItemAddedEvent.type,
+            new ItemAddedEvent({
+                window,
+                position,
+                id: item.id,
+                count: item.count ?? 1,
+                flags: item.flags.flag,
+                antiFlags: item.antiFlags.flag,
+                highlight: 0,
+            }),
+        );
+    }
+
+    #sendItemRemoved({ window, position }) {
+        this.publish(
+            ItemRemovedEvent.type,
+            new ItemRemovedEvent({
+                window,
+                position,
+            }),
+        );
+    }
+
+    #useWearableItem({ item, position, window }) {
+        if (this.#inventory.isEquipamentPosition(position)) {
+            this.#inventory.removeItem(position, item.size);
+            const addedPosition = this.#inventory.addItem(item);
+
+            if (addedPosition >= 0) {
+                this.#sendItemRemoved({
+                    window,
+                    position,
+                });
+
+                this.#sendItemAdded({
+                    window: WindowTypeEnum.INVENTORY,
+                    position: addedPosition,
+                    item,
+                });
+            } else {
+                this.say({
+                    messageType: ChatMessageTypeEnum.INFO,
+                    message: 'Inventory is full',
+                });
+                this.#inventory.addItemAt(item, position);
+            }
+        } else {
+            const wearPosition = this.#inventory.getWearPosition(item);
+            if (!wearPosition) return;
+
+            const itemEquipped = this.getItem(wearPosition);
+
+            if (itemEquipped) {
+                this.#inventory.removeItem(position, item.size);
+                this.#inventory.removeItem(wearPosition, itemEquipped.size);
+
+                const addedPosition = this.#inventory.addItem(itemEquipped);
+
+                if (addedPosition >= 0) {
+                    this.#sendItemRemoved({
+                        window: WindowTypeEnum.EQUIPMENT,
+                        position: wearPosition,
+                    });
+                    this.#sendItemRemoved({
+                        window: WindowTypeEnum.INVENTORY,
+                        position,
+                    });
+                    this.#inventory.addItemAt(item, wearPosition);
+                    this.#sendItemAdded({
+                        window: WindowTypeEnum.EQUIPMENT,
+                        position: wearPosition,
+                        item,
+                    });
+                    this.#sendItemAdded({
+                        window: WindowTypeEnum.INVENTORY,
+                        position: addedPosition,
+                        item: itemEquipped,
+                    });
+                } else {
+                    this.#inventory.addItemAt(item, position);
+                    this.#inventory.addItemAt(itemEquipped, wearPosition);
+                    this.say({
+                        messageType: ChatMessageTypeEnum.INFO,
+                        message: 'Inventory is full',
+                    });
+                }
+            } else {
+                this.#inventory.removeItem(position, item.size);
+                this.#inventory.addItemAt(item, wearPosition);
+
+                this.#sendItemRemoved({
+                    window: WindowTypeEnum.INVENTORY,
+                    position,
+                });
+                this.#sendItemAdded({
+                    window: WindowTypeEnum.EQUIPMENT,
+                    position: wearPosition,
+                    item,
+                });
+            }
+        }
+    }
+
+    #useNonWearableItem(){}
+
+    useItem({ window, position }) {
+        const item = this.getItem(position);
+
+        if (!item) return;
+
+        if (this.#isWearable(item)) {
+            this.#useWearableItem({ item, position, window });
+        } else {
+            this.#useNonWearableItem({ item, position, window });
+        }
+    }
+
+    getItem(position) {
+        return this.#inventory.getItem(Number(position));
+    }
+
+    #isWearable(item) {
+        return (
+            this.level >= item.getLevelLimit() &&
+            item.wearFlags.flag > 0 &&
+            !item.antiFlags.is(this.antiFlagClass) &&
+            !item.antiFlags.is(this.antiFlagGender)
+        );
+    }
+
+    moveItem({ fromWindow, fromPosition, toWindow, toPosition /*_count*/ }) {
+        const item = this.getItem(fromPosition);
+
+        if (!item) return;
+        if (fromWindow !== WindowTypeEnum.INVENTORY || toWindow !== WindowTypeEnum.INVENTORY) return;
+        if (!this.#inventory.isValidPosition(toPosition)) return;
+        if (!this.#inventory.haveAvailablePosition(toPosition, item.size)) return;
+
+        if (this.#inventory.isEquipamentPosition(toPosition)) {
+            if (!this.#isWearable(item)) return;
+            if (!this.#inventory.isValidSlot(item, toPosition)) return;
+        }
+
+        this.#inventory.removeItem(fromPosition, item.size);
+        this.#inventory.addItemAt(item, toPosition);
+
+        this.#sendItemRemoved({
+            window: fromWindow,
+            position: fromPosition,
+        });
+        this.#sendItemAdded({
+            window: toWindow,
+            position: toPosition,
+            item,
+        });
+    }
+
+    addItem(item) {
+        const position = this.#inventory.addItem(item);
+
+        if (position < 0) {
+            this.say({
+                messageType: ChatMessageTypeEnum.INFO,
+                message: 'Inventory is full',
+            });
+            return;
+        }
+
+        this.#sendItemAdded({
+            window: WindowTypeEnum.INVENTORY,
+            position,
+            item,
+        });
     }
 
     static create(

@@ -276,6 +276,33 @@ export default class Equipament {
         return !this.#slots[slot - this.#offset]?.get();
     }
 
+    getWearPosition(item) {
+        switch (true) {
+            case item.wearFlags.is(ItemWearFlagEnum.WEAR_BODY):
+                return this.#offset + ItemEquipamentSlotEnum.BODY;
+            case item.wearFlags.is(ItemWearFlagEnum.WEAR_HEAD):
+                return this.#offset + ItemEquipamentSlotEnum.HEAD;
+            case item.wearFlags.is(ItemWearFlagEnum.WEAR_FOOTS):
+                return this.#offset + ItemEquipamentSlotEnum.FOOTS;
+            case item.wearFlags.is(ItemWearFlagEnum.WEAR_EAR):
+                return this.#offset + ItemEquipamentSlotEnum.EAR;
+            case item.wearFlags.is(ItemWearFlagEnum.WEAR_NECK):
+                return this.#offset + ItemEquipamentSlotEnum.NECK;
+            case item.wearFlags.is(ItemWearFlagEnum.WEAR_SHIELD):
+                return this.#offset + ItemEquipamentSlotEnum.SHIELD;
+            case item.wearFlags.is(ItemWearFlagEnum.WEAR_WEAPON):
+                return this.#offset + ItemEquipamentSlotEnum.WEAPON;
+            case item.wearFlags.is(ItemWearFlagEnum.WEAR_ARROW):
+                return this.#offset + ItemEquipamentSlotEnum.ARROW;
+            case item.wearFlags.is(ItemWearFlagEnum.WEAR_WRIST):
+                return this.#offset + ItemEquipamentSlotEnum.WRIST;
+            case item.wearFlags.is(ItemWearFlagEnum.WEAR_ABILITY):
+                return this.#offset + ItemEquipamentSlotEnum.ABILITY1;
+            case item.wearFlags.is(ItemWearFlagEnum.WEAR_UNIQUE):
+                return this.#offset + ItemEquipamentSlotEnum.UNIQUE1;
+        }
+    }
+
     isValidSlot(item, slot) {
         switch (slot - this.#offset) {
             case ItemEquipamentSlotEnum.BODY:

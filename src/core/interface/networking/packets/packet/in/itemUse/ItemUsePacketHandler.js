@@ -1,8 +1,10 @@
 export default class ItemUsePacketHandler {
     #logger;
+    #useItemService;
 
-    constructor({ logger }) {
+    constructor({ logger, useItemService }) {
         this.#logger = logger;
+        this.#useItemService = useItemService;
     }
 
     async execute(connection, packet) {
@@ -14,7 +16,8 @@ export default class ItemUsePacketHandler {
         }
 
         const { window, position } = packet;
+        const { player } = connection;
 
-        console.log(window, position);
+        this.#useItemService.execute({ player, window, position });
     }
 }
