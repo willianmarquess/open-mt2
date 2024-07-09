@@ -9,8 +9,11 @@ import CharacterPointsPacket from '../../../core/interface/networking/packets/pa
 import CharacterSpawnPacket from '../../../core/interface/networking/packets/packet/out/CharacterSpawnPacket.js';
 import CharacterUpdatePacket from '../../../core/interface/networking/packets/packet/out/CharacterUpdatePacket.js';
 import ChatOutPacket from '../../../core/interface/networking/packets/packet/out/ChatOutPacket.js';
+import ItemDroppedHidePacket from '../../../core/interface/networking/packets/packet/out/ItemDroppedHidePacket.js';
+import ItemDroppedPacket from '../../../core/interface/networking/packets/packet/out/ItemDroppedPacket.js';
 import ItemPacket from '../../../core/interface/networking/packets/packet/out/ItemPacket.js';
 import RemoveCharacterPacket from '../../../core/interface/networking/packets/packet/out/RemoveCharacterPacket.js';
+//import SetItemOwnershipPacket from '../../../core/interface/networking/packets/packet/out/SetItemOwnershipPacket.js';
 import TeleportPacket from '../../../core/interface/networking/packets/packet/out/TeleportPacket.js';
 import Ip from '../../../core/util/Ip.js';
 import Queue from '../../../core/util/Queue.js';
@@ -59,6 +62,8 @@ export default class GameConnection extends Connection {
         this.#player.subscribe(PlayerEventsEnum.CHARACTER_UPDATED, this.#onCharacterUpdated.bind(this));
         this.#player.subscribe(PlayerEventsEnum.ITEM_ADDED, this.#onItemAdded.bind(this));
         this.#player.subscribe(PlayerEventsEnum.ITEM_REMOVED, this.#onItemRemoved.bind(this));
+        this.#player.subscribe(PlayerEventsEnum.ITEM_DROPPED, this.#onItemDropped.bind(this));
+        this.#player.subscribe(PlayerEventsEnum.ITEM_DROPPED_HIDE, this.#onItemDroppedHide.bind(this));
         this.#player.subscribe(PlayerEventsEnum.CHAT, this.#onChat.bind(this));
         this.#player.subscribe(PlayerEventsEnum.LOGOUT, this.#onLogout.bind(this));
     }
@@ -91,6 +96,34 @@ export default class GameConnection extends Connection {
                 parts: [bodyId, weaponId, 0, hairId],
             }),
         );
+    }
+
+    #onItemDroppedHide(itemDroppedHideEvent) {
+        const { virtualId } = itemDroppedHideEvent;
+
+        this.send(
+            new ItemDroppedHidePacket({
+                virtualId,
+            }),
+        );
+    }
+
+    #onItemDropped(itemDroppedEvent) {
+        const { id, positionX, positionY, virtualId /*ownerName*/ } = itemDroppedEvent;
+
+        this.send(
+            new ItemDroppedPacket({
+                id,
+                positionX,
+                positionY,
+                virtualId,
+            }),
+        );
+
+        // this.send(new SetItemOwnershipPacket({
+        //     ownerName,
+        //     virtualId
+        // }));
     }
 
     #onItemRemoved(itemRemovedEvent) {

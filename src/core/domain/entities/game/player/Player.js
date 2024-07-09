@@ -26,6 +26,9 @@ import InventoryEventsEnum from '../inventory/events/InventoryEventsEnum.js';
 import ItemEquipamentSlotEnum from '../../../../enum/ItemEquipamentSlotEnum.js';
 import OtherCharacterUpdatedEvent from './events/OtherCharacterUpdatedEvent.js';
 import ApplyTypeEnum from '../../../../enum/ApplyTypeEnum.js';
+import DropItemEvent from './events/DropItemEvent.js';
+import ItemDroppedEvent from './events/ItemDroppedEvent.js';
+import ItemDroppedHideEvent from './events/ItemDroppedHideEvent.js';
 
 export default class Player extends GameEntity {
     #accountId;
@@ -359,7 +362,7 @@ export default class Player extends GameEntity {
     }
 
     addGold(value = 1) {
-        const validatedValue = MathUtil.toUnsignedNumber(value);
+        const validatedValue = MathUtil.toNumber(value);
         if (validatedValue === 0) return;
 
         this.#gold = Math.min(this.#gold + validatedValue, MathUtil.MAX_UINT);
@@ -911,7 +914,9 @@ export default class Player extends GameEntity {
         }
     }
 
-    #useNonWearableItem(){}
+    #useNonWearableItem() {
+        //todo: use potion, and other things
+    }
 
     useItem({ window, position }) {
         const item = this.getItem(position);
@@ -981,6 +986,84 @@ export default class Player extends GameEntity {
             position,
             item,
         });
+    }
+
+    #dropGold(amount) {
+        const amountValidated = Math.max(0, Number(amount));
+
+        if (amountValidated > this.#gold) {
+            this.say({
+                messageType: ChatMessageTypeEnum.INFO,
+                message: 'You are trying to drop more gold than you have',
+            });
+            this.#logger.error(`[PLAYER] Player: ${this.id} is trying to drop more gold than he has`);
+            return;
+        }
+
+        this.addGold(-amount);
+
+        //send drop gold
+    }
+
+    dropItem({ window, position, gold, count }) {
+        if (gold > 0) {
+            this.#dropGold(gold);
+            return;
+        }
+
+        const item = this.#inventory.getItem(position);
+
+        if (!item) return;
+
+        if (count === item.count) {
+            this.#inventory.removeItem(position, item.size);
+            this.#sendItemRemoved({
+                window,
+                position,
+            });
+        } else {
+            item.count -= count;
+
+            this.#sendItemAdded({
+                window,
+                position,
+                item,
+            });
+        }
+
+        this.publish(
+            DropItemEvent.type,
+            new DropItemEvent({
+                item,
+                count,
+                positionX: this.positionX,
+                positionY: this.positionY,
+                ownerName: this.name,
+            }),
+        );
+    }
+
+    showDroppedItem({ virtualId, count, positionX, positionY, ownerName, id }) {
+        this.publish(
+            ItemDroppedEvent.type,
+            new ItemDroppedEvent({
+                virtualId,
+                count,
+                positionX,
+                positionY,
+                ownerName,
+                id,
+            }),
+        );
+    }
+
+    hideDroppedItem({ virtualId }) {
+        this.publish(
+            ItemDroppedHideEvent.type,
+            new ItemDroppedHideEvent({
+                virtualId,
+            }),
+        );
     }
 
     static create(

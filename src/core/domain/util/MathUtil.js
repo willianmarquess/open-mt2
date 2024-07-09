@@ -24,6 +24,11 @@ export default class MathUtil {
         return isValidNumber ? Number(value) : 0;
     }
 
+    static toNumber(value) {
+        const isValidNumber = !isNaN(parseFloat(value)) && isFinite(value);
+        return isValidNumber ? Number(value) : 0;
+    }
+
     static getRandomInt(min, max) {
         const randomBytes = crypto.randomBytes(1);
         const randomInt = randomBytes[0];

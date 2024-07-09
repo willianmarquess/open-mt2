@@ -25,6 +25,8 @@ import ItemUsePacket from './packet/in/itemUse/ItemUsePacket.js';
 import ItemUsePacketHandler from './packet/in/itemUse/ItemUsePacketHandler.js';
 import ItemMovePacket from './packet/in/itemMove/ItemMovePacket.js';
 import ItemMovePacketHandler from './packet/in/itemMove/ItemMovePacketHandler.js';
+import ItemDropPacket from './packet/in/itemDrop/ItemDropPacket.js';
+import ItemDropPacketHandler from './packet/in/itemDrop/ItemDropPacketHandler.js';
 
 export default () =>
     new Map([
@@ -117,6 +119,13 @@ export default () =>
             {
                 createPacket: () => new ItemMovePacket(),
                 createHandler: (params) => new ItemMovePacketHandler(params),
+            },
+        ],
+        [
+            PacketHeaderEnum.ITEM_DROP,
+            {
+                createPacket: () => new ItemDropPacket(),
+                createHandler: (params) => new ItemDropPacketHandler(params),
             },
         ],
     ]);

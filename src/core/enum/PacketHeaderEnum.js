@@ -32,4 +32,8 @@ export default {
     ITEM: 0x15,
     ITEM_USE: 0x0b,
     ITEM_MOVE: 0x0d,
+    ITEM_DROP: 0x14,
+    ITEM_DROPPED: 0x1a,
+    ITEM_DROPPED_HIDE: 0x1b,
+    SET_ITEM_OWNERSHIP: 0x1f,
 };

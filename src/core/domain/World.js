@@ -111,6 +111,7 @@ export default class World {
                 {
                     saveCharacterService: this.#saveCharacterService,
                     logger: this.#logger,
+                    world: this,
                 },
             );
             this.#areas.set(mapName, area);

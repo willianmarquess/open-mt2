@@ -40,6 +40,7 @@ export default class Item {
     #specular;
     #socket;
     #addon;
+    #count;
 
     constructor({
         id,
@@ -62,6 +63,7 @@ export default class Item {
         specular,
         socket,
         addon,
+        count = 1,
     }) {
         this.#id = id;
         this.#name = name;
@@ -83,6 +85,7 @@ export default class Item {
         this.#specular = specular;
         this.#socket = socket;
         this.#addon = addon;
+        this.#count = count;
     }
 
     get id() {
@@ -146,11 +149,15 @@ export default class Item {
         return this.#addon;
     }
 
+    get count() {
+        return this.#count;
+    }
+
     getLevelLimit() {
         return this.#limits.find((limit) => limit.type === ItemLimitTypeEnum.LEVEL)?.value ?? 0;
     }
 
-    static create(proto) {
+    static create(proto, count) {
         const antiFlagsBitFlag = parseFlags(proto.anti_flag, ItemAntiFlagEnum);
         const flagsBitFlag = parseFlags(proto.flag, ItemFlagEnum);
         const immuneFlagsBitFlag = parseFlags(proto.immune, ItemImmuneFlagEnum);
@@ -206,6 +213,7 @@ export default class Item {
                 Number(proto.value4),
                 Number(proto.value5),
             ],
+            count,
         });
     }
 }

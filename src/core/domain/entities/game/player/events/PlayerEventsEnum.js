@@ -14,4 +14,7 @@ export default {
     ITEM_REMOVED: Symbol.for('ITEM_REMOVED'),
     CHARACTER_UPDATED: Symbol.for('CHARACTER_UPDATED'),
     OTHER_CHARACTER_UPDATED: Symbol.for('OTHER_CHARACTER_UPDATED'),
+    DROP_ITEM: Symbol.for('DROP_ITEM'),
+    ITEM_DROPPED: Symbol.for('ITEM_DROPPED'),
+    ITEM_DROPPED_HIDE: Symbol.for('ITEM_DROPPED_HIDE'),
 };
