@@ -1,6 +1,5 @@
+import MathUtil from '../../../../../core/domain/util/MathUtil.js';
 import ChatMessageTypeEnum from '../../../../../core/enum/ChatMessageTypeEnum.js';
-
-const MAX_ITEM_TO_INSTANTIATE = 5;
 
 export default class ItemCommandHandler {
     #logger;
@@ -31,9 +30,7 @@ export default class ItemCommandHandler {
             return;
         }
 
-        for (let i = 0; i < Math.min(quantity, MAX_ITEM_TO_INSTANTIATE); i++) {
-            const item = this.#itemManager.getItem(vnum);
-            player.addItem(item);
-        }
+        const item = this.#itemManager.getItem(vnum, Math.min(quantity, MathUtil.MAX_TINY));
+        player.addItem(item);
     }
 }

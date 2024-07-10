@@ -18,13 +18,13 @@ export default class ItemManager {
         return this.#items.has(id);
     }
 
-    getItem(id) {
+    getItem(id, count) {
         if (!this.hasItem(id)) {
             return;
         }
 
         const proto = this.#items.get(id);
 
-        return Item.create(proto);
+        return Item.create(proto, count);
     }
 }

@@ -213,7 +213,7 @@ export default class Item {
                 Number(proto.value4),
                 Number(proto.value5),
             ],
-            count,
+            count: flagsBitFlag.is(ItemFlagEnum.ITEM_STACKABLE) ? count : 1,
         });
     }
 }
