@@ -36,4 +36,5 @@ export default {
     ITEM_DROPPED: 0x1a,
     ITEM_DROPPED_HIDE: 0x1b,
     SET_ITEM_OWNERSHIP: 0x1f,
+    ITEM_PICKUP: 0x0f,
 };

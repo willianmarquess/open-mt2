@@ -70,6 +70,10 @@ export default class Area {
         return this.#goto;
     }
 
+    getEntity(virtualId) {
+        return this.#entities.get(virtualId);
+    }
+
     #onItemDrop(itemDropEvent) {
         const { item, count, positionX, positionY, ownerName } = itemDropEvent;
         const virtualId = this.#world.generateVirtualId();

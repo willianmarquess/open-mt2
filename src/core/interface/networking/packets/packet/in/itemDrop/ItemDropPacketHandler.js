@@ -1,8 +1,10 @@
 export default class ItemDropPacketHandler {
     #logger;
+    #dropItemService;
 
-    constructor({ logger }) {
+    constructor({ logger, dropItemService }) {
         this.#logger = logger;
+        this.#dropItemService = dropItemService;
     }
 
     async execute(connection, packet) {
@@ -15,7 +17,7 @@ export default class ItemDropPacketHandler {
 
         const { window, position, gold, count } = packet;
         const { player } = connection;
-        console.log({ window, position, gold, count });
-        player.dropItem({ window, position, gold, count });
+
+        this.#dropItemService.execute({ player, window, position, gold, count });
     }
 }

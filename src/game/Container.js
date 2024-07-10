@@ -26,6 +26,8 @@ import MobManager from '../core/domain/manager/MobManager.js';
 import ItemManager from '../core/domain/manager/ItemManager.js';
 import MoveItemService from './app/service/MoveItemService.js';
 import UseItemService from './app/service/UseItemService.js';
+import PickupItemService from './app/service/PickupItemService.js';
+import DropItemService from './app/service/DropItemService.js';
 
 const container = createContainer();
 
@@ -58,6 +60,8 @@ container.register({
     itemManager: asClass(ItemManager).singleton(),
     moveItemService: asClass(MoveItemService).scoped(),
     useItemService: asClass(UseItemService).scoped(),
+    pickupItemService: asClass(PickupItemService).scoped(),
+    dropItemService: asClass(DropItemService).scoped(),
 });
 
 export { container };

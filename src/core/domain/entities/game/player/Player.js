@@ -978,7 +978,7 @@ export default class Player extends GameEntity {
                 messageType: ChatMessageTypeEnum.INFO,
                 message: 'Inventory is full',
             });
-            return;
+            return false;
         }
 
         this.#sendItemAdded({
@@ -986,6 +986,8 @@ export default class Player extends GameEntity {
             position,
             item,
         });
+
+        return true;
     }
 
     #dropGold(amount) {
@@ -1002,7 +1004,19 @@ export default class Player extends GameEntity {
 
         this.addGold(-amount);
 
-        //send drop gold
+        this.publish(
+            DropItemEvent.type,
+            new DropItemEvent({
+                item: {
+                    id: 1,
+                    count: amount,
+                },
+                count: amount,
+                positionX: this.positionX,
+                positionY: this.positionY,
+                ownerName: this.name,
+            }),
+        );
     }
 
     dropItem({ window, position, gold, count }) {
@@ -1041,6 +1055,27 @@ export default class Player extends GameEntity {
                 ownerName: this.name,
             }),
         );
+    }
+
+    pickup(droppedItem) {
+        const isGold = droppedItem.item.id === 1;
+
+        if (isGold) {
+            this.addGold(Number(droppedItem.count));
+            return true;
+        }
+
+        const itsMine = droppedItem.ownerName === this.name || !droppedItem.ownerName;
+
+        if (!itsMine) {
+            this.say({
+                messageType: ChatMessageTypeEnum.INFO,
+                message: 'This item is not yours',
+            });
+            return false;
+        }
+
+        return this.addItem(droppedItem.item);
     }
 
     showDroppedItem({ virtualId, count, positionX, positionY, ownerName, id }) {
