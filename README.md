@@ -35,8 +35,8 @@ Metin2 are copyrighted by [Webzen](http://webzen.com/ "Webzen").
 | Spawn NPC    | X    |       |      |
 | NPC Behavior System    | X    |       |      |
 | NPC Shop System    | X    |       |      |
-| Spawn Item    | X    |       |      |
-| Equip Item    | X    |       |      |
+| Spawn Item    |      |       |  ✅   |
+| Equip Item    |      |       |   ✅  |
 | Attributes Item System    | X    |       |      |
 | Internal Chat    |      |       | ✅    |
 | Command System    |      | X     |      |
