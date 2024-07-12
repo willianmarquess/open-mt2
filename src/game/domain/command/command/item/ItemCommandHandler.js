@@ -4,13 +4,15 @@ import ChatMessageTypeEnum from '../../../../../core/enum/ChatMessageTypeEnum.js
 export default class ItemCommandHandler {
     #logger;
     #itemManager;
+    #itemRepository;
 
-    constructor({ logger, itemManager }) {
+    constructor({ logger, itemManager, itemRepository }) {
         this.#logger = logger;
         this.#itemManager = itemManager;
+        this.#itemRepository = itemRepository;
     }
 
-    execute(player, itemCommand) {
+    async execute(player, itemCommand) {
         if (!itemCommand.isValid()) {
             const errors = itemCommand.errors();
             this.#logger.error(errors);
@@ -31,6 +33,9 @@ export default class ItemCommandHandler {
         }
 
         const item = this.#itemManager.getItem(vnum, Math.min(quantity, MathUtil.MAX_TINY));
-        player.addItem(item);
+        if (player.addItem(item)) {
+            const id = await this.#itemRepository.create(item.toDatabase());
+            item.dbId = id;
+        }
     }
 }

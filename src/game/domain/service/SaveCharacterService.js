@@ -1,11 +1,13 @@
 export default class SaveCharacterService {
     #playerRepository;
+    #itemManager;
 
-    constructor({ playerRepository }) {
+    constructor({ playerRepository, itemManager }) {
         this.#playerRepository = playerRepository;
+        this.#itemManager = itemManager;
     }
 
     async execute(player) {
-        return this.#playerRepository.update(player.toDatabase());
+        return Promise.all([this.#playerRepository.update(player.toDatabase()), this.#itemManager.flush(player.id)]);
     }
 }

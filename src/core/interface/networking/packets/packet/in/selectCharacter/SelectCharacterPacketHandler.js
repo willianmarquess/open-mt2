@@ -1,7 +1,6 @@
 import ConnectionStateEnum from '../../../../../../enum/ConnectionStateEnum.js';
 import CharacterDetailsPacket from '../../out/CharacterDetailsPacket.js';
 import CharacterPointsPacket from '../../out/CharacterPointsPacket.js';
-import CharacterUpdatePacket from '../../out/CharacterUpdatePacket.js';
 
 export default class SelectCharacterPacketHandler {
     #selectCharacterService;
@@ -62,12 +61,5 @@ export default class SelectCharacterPacketHandler {
         }
 
         connection.send(characterPointsPacket);
-        connection.send(
-            new CharacterUpdatePacket({
-                vid: player.virtualId,
-                attackSpeed: player.attackSpeed,
-                moveSpeed: player.movementSpeed,
-            }),
-        );
     }
 }

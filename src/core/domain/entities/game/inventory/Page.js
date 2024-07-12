@@ -30,10 +30,13 @@ export default class Page {
         if (position < 0 || position >= this.grid.width * this.grid.height) return;
 
         const { x, y } = this.#calcPosition(position);
+        if (!this.#haveSpaceAvailable(x, y, item.size)) return false;
 
         for (let i = 0; i < item.size; i++) {
             this.#grid.setValue(x, y + i, item);
         }
+
+        return true;
     }
 
     #haveSpaceAvailable(x, y, size) {

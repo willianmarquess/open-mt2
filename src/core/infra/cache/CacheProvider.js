@@ -47,4 +47,8 @@ export default class CacheProvider {
     async exists(key) {
         return this.#client.exists(key);
     }
+
+    async keys(pattern) {
+        return this.#client.keys(pattern);
+    }
 }

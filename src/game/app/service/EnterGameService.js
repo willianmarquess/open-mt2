@@ -8,5 +8,6 @@ export default class EnterGameService {
     execute({ player }) {
         player.spawn();
         this.#world.spawn(player);
+        player.sendInventory();
     }
 }

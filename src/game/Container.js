@@ -28,6 +28,7 @@ import MoveItemService from './app/service/MoveItemService.js';
 import UseItemService from './app/service/UseItemService.js';
 import PickupItemService from './app/service/PickupItemService.js';
 import DropItemService from './app/service/DropItemService.js';
+import ItemRepository from './infra/database/ItemRepository.js';
 
 const container = createContainer();
 
@@ -41,6 +42,7 @@ container.register({
     world: asClass(World).singleton(),
     cacheProvider: asClass(CacheProvider).singleton(),
     playerRepository: asClass(PlayerRepository).singleton(),
+    itemRepository: asClass(ItemRepository).singleton(),
     authenticateService: asClass(AuthenticateService).scoped(),
     createCharacterService: asClass(CreateCharacterService).scoped(),
     loadCharactersService: asClass(LoadCharactersService).scoped(),

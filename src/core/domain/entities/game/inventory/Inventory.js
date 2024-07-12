@@ -4,6 +4,7 @@ import Page from './Page.js';
 import ItemEquippedEvent from './events/ItemEquippedEvent.js';
 import ItemUnequippedEvent from './events/ItemUnequippedEvent.js';
 import ItemEquipamentSlotEnum from '../../../../enum/ItemEquipamentSlotEnum.js';
+import WindowTypeEnum from '../../../../enum/WindowTypeEnum.js';
 
 const DEFAULT_INVENTORY_WIDTH = 5;
 const DEFAULT_INVENTORY_HEIGHT = 9;
@@ -15,16 +16,29 @@ export default class Inventory {
     #equipament;
     #emitter = new EventEmitter();
 
-    constructor({ config }) {
+    #items;
+    #ownerId;
+
+    constructor({ config, ownerId }) {
         for (let i = 0; i < config.INVENTORY_PAGES; i++) {
             this.#pages.push(new Page(this.#width, this.#height));
         }
 
         this.#equipament = new Equipament(this.size());
+        this.#items = new Map();
+        this.#ownerId = ownerId;
+    }
+
+    get ownerId() {
+        return this.#ownerId;
     }
 
     get pages() {
         return this.#pages;
+    }
+
+    get items() {
+        return this.#items;
     }
 
     size() {
@@ -37,7 +51,14 @@ export default class Inventory {
 
             var position = page.addItem(item);
             if (position != -1) {
-                return position + i * this.#width * this.#height;
+                const realPosition = Math.floor(position + i * this.#width * this.#height);
+                item.position = realPosition;
+                item.ownerId = this.#ownerId;
+                item.window = this.isEquipamentPosition(realPosition)
+                    ? WindowTypeEnum.EQUIPMENT
+                    : WindowTypeEnum.INVENTORY;
+                this.#items.set(item.dbId, item);
+                return realPosition;
             }
         }
 
@@ -47,13 +68,22 @@ export default class Inventory {
     addItemAt(item, position) {
         if (this.#isFromEquipamentSlots(position)) {
             this.#equipament.setItem(position, item);
+            item.position = position;
+            item.ownerId = this.#ownerId;
+            item.window = this.isEquipamentPosition(position) ? WindowTypeEnum.EQUIPMENT : WindowTypeEnum.INVENTORY;
+            this.#items.set(item.dbId, item);
             this.publish(ItemEquippedEvent.type, new ItemEquippedEvent({ item, slot: position - this.size() }));
             return;
         }
 
         const page = this.#calcPage(position);
         const pagePosition = this.#calcPagePosition(page, position);
-        return this.#pages[page].addItemAt(item, pagePosition);
+        if (this.#pages[page].addItemAt(item, pagePosition)) {
+            item.position = pagePosition;
+            item.ownerId = this.#ownerId;
+            item.window = this.isEquipamentPosition(pagePosition) ? WindowTypeEnum.EQUIPMENT : WindowTypeEnum.INVENTORY;
+            this.#items.set(item.dbId, item);
+        }
     }
 
     #calcPage(position) {
@@ -87,8 +117,13 @@ export default class Inventory {
     }
 
     removeItem(position, size) {
+        const item = this.getItem(position);
+
+        if (!item) return;
+
         if (this.#isFromEquipamentSlots(position)) {
             const unequippedItem = this.#equipament.removeItem(position);
+            this.#items.delete(item.dbId);
             this.publish(
                 ItemUnequippedEvent.type,
                 new ItemUnequippedEvent({ item: unequippedItem, slot: position - this.size() }),
@@ -98,7 +133,8 @@ export default class Inventory {
 
         const page = this.#calcPage(position);
         const pagePosition = this.#calcPagePosition(page, position);
-        return this.#pages[page].removeItem(pagePosition, size);
+        this.#pages[page].removeItem(pagePosition, size);
+        this.#items.delete(item.dbId);
     }
 
     haveAvailablePosition(position, size) {
@@ -121,17 +157,6 @@ export default class Inventory {
 
     getWearPosition(item) {
         return this.#equipament.getWearPosition(item);
-    }
-
-    moveItem(fromPosition, toPosition) {
-        const item = this.getItem(fromPosition);
-
-        if (!item) return;
-        if (!this.isValidPosition(toPosition)) return;
-        if (!this.haveAvailablePosition(toPosition, item.size)) return;
-
-        this.removeItem(fromPosition, item.size);
-        return this.addItemAt(item, toPosition);
     }
 
     publish(eventName, event) {

@@ -6,12 +6,14 @@ export default class SelectCharacterService {
     #playerRepository;
     #playerFactory;
     #world;
+    #itemManager;
 
-    constructor({ playerRepository, logger, playerFactory, world }) {
+    constructor({ playerRepository, logger, playerFactory, world, itemManager }) {
         this.#logger = logger;
         this.#playerRepository = playerRepository;
         this.#playerFactory = playerFactory;
         this.#world = world;
+        this.#itemManager = itemManager;
     }
 
     async execute({ slot, accountId }) {
@@ -23,6 +25,11 @@ export default class SelectCharacterService {
         }
 
         const player = this.#playerFactory.create({ ...playerFounded, virtualId: this.#world.generateVirtualId() });
+        const items = await this.#itemManager.getItems(player.id);
+
+        for (const item of items) {
+            player.inventory.addItemAt(item, item.position);
+        }
 
         return Result.ok(player);
     }

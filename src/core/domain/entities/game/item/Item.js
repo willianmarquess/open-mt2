@@ -42,6 +42,28 @@ export default class Item {
     #addon;
     #count;
 
+    #dbId;
+    #ownerId;
+    #position;
+    #window;
+    #socket0;
+    #socket1;
+    #socket2;
+    #attributeType0;
+    #attributeValue0;
+    #attributeType1;
+    #attributeValue1;
+    #attributeType2;
+    #attributeValue2;
+    #attributeType3;
+    #attributeValue3;
+    #attributeType4;
+    #attributeValue4;
+    #attributeType5;
+    #attributeValue5;
+    #attributeType6;
+    #attributeValue6;
+
     constructor({
         id,
         name,
@@ -64,6 +86,24 @@ export default class Item {
         socket,
         addon,
         count = 1,
+        socket0 = 0,
+        socket1 = 0,
+        socket2 = 0,
+        attributeType0 = 0,
+        attributeValue0 = 0,
+        attributeType1 = 0,
+        attributeValue1 = 0,
+        attributeType2 = 0,
+        attributeValue2 = 0,
+        attributeType3 = 0,
+        attributeValue3 = 0,
+        attributeType4 = 0,
+        attributeValue4 = 0,
+        attributeType5 = 0,
+        attributeValue5 = 0,
+        attributeType6 = 0,
+        attributeValue6 = 0,
+        dbId,
     }) {
         this.#id = id;
         this.#name = name;
@@ -86,6 +126,24 @@ export default class Item {
         this.#socket = socket;
         this.#addon = addon;
         this.#count = count;
+        this.#socket0 = socket0;
+        this.#socket1 = socket1;
+        this.#socket2 = socket2;
+        this.#attributeType0 = attributeType0;
+        this.#attributeValue0 = attributeValue0;
+        this.#attributeType1 = attributeType1;
+        this.#attributeValue1 = attributeValue1;
+        this.#attributeType2 = attributeType2;
+        this.#attributeValue2 = attributeValue2;
+        this.#attributeType3 = attributeType3;
+        this.#attributeValue3 = attributeValue3;
+        this.#attributeType4 = attributeType4;
+        this.#attributeValue4 = attributeValue4;
+        this.#attributeType5 = attributeType5;
+        this.#attributeValue5 = attributeValue5;
+        this.#attributeType6 = attributeType6;
+        this.#attributeValue6 = attributeValue6;
+        this.#dbId = dbId;
     }
 
     get id() {
@@ -148,9 +206,134 @@ export default class Item {
     get addon() {
         return this.#addon;
     }
-
     get count() {
         return this.#count;
+    }
+    get ownerId() {
+        return this.#ownerId;
+    }
+    set ownerId(value) {
+       this.#ownerId = value;
+    }
+    get position() {
+        return this.#position;
+    }
+    set position(value) {
+        this.#position = value;
+    }
+    get dbId() {
+        return this.#dbId;
+    }
+    get socket0() {
+        return this.#socket0;
+    }
+    get socket1() {
+        return this.#socket1;
+    }
+    get socket2() {
+        return this.#socket2;
+    }
+    get attributeType0() {
+        return this.#attributeType0;
+    }
+    get attributeValue0() {
+        return this.#attributeValue0;
+    }
+    get attributeType1() {
+        return this.#attributeType1;
+    }
+    get attributeValue1() {
+        return this.#attributeValue1;
+    }
+    get attributeType2() {
+        return this.#attributeType2;
+    }
+    get attributeValue2() {
+        return this.#attributeValue2;
+    }
+    get attributeType3() {
+        return this.#attributeType3;
+    }
+    get attributeValue3() {
+        return this.#attributeValue3;
+    }
+    get attributeType4() {
+        return this.#attributeType4;
+    }
+    get attributeValue4() {
+        return this.#attributeValue4;
+    }
+    get attributeType5() {
+        return this.#attributeType5;
+    }
+    get attributeValue5() {
+        return this.#attributeValue5;
+    }
+    get attributeType6() {
+        return this.#attributeType6;
+    }
+    get attributeValue6() {
+        return this.#attributeValue6;
+    }
+    get window() {
+        return this.#window;
+    }
+    set dbId(value) {
+        this.#dbId = value;
+    }
+    set socket0(value) {
+        this.#socket0 = value;
+    }
+    set socket1(value) {
+        this.#socket1 = value;
+    }
+    set socket2(value) {
+        this.#socket2 = value;
+    }
+    set attributeType0(value) {
+        this.#attributeType0 = value;
+    }
+    set attributeValue0(value) {
+        this.#attributeValue0 = value;
+    }
+    set attributeType1(value) {
+        this.#attributeType1 = value;
+    }
+    set attributeValue1(value) {
+        this.#attributeValue1 = value;
+    }
+    set attributeType2(value) {
+        this.#attributeType2 = value;
+    }
+    set attributeValue2(value) {
+        this.#attributeValue2 = value;
+    }
+    set attributeType3(value) {
+        this.#attributeType3 = value;
+    }
+    set attributeValue3(value) {
+        this.#attributeValue3 = value;
+    }
+    set attributeType4(value) {
+        this.#attributeType4 = value;
+    }
+    set attributeValue4(value) {
+        this.#attributeValue4 = value;
+    }
+    set attributeType5(value) {
+        this.#attributeType5 = value;
+    }
+    set attributeValue5(value) {
+        this.#attributeValue5 = value;
+    }
+    set attributeType6(value) {
+        this.#attributeType6 = value;
+    }
+    set attributeValue6(value) {
+        this.#attributeValue6 = value;
+    }
+    set window(value) {
+        this.#window = value;
     }
 
     getLevelLimit() {
@@ -215,5 +398,85 @@ export default class Item {
             ],
             count: flagsBitFlag.is(ItemFlagEnum.ITEM_STACKABLE) ? count : 1,
         });
+    }
+
+    static fromDatabase({
+        id,
+        ownerId,
+        window,
+        position,
+        count,
+        protoId,
+        socket0,
+        socket1,
+        socket2,
+        attributeType0,
+        attributeValue0,
+        attributeType1,
+        attributeValue1,
+        attributeType2,
+        attributeValue2,
+        attributeType3,
+        attributeValue3,
+        attributeType4,
+        attributeValue4,
+        attributeType5,
+        attributeValue5,
+        attributeType6,
+        attributeValue6,
+        proto,
+    }) {
+        const item = this.create(proto, count);
+        item.dbId = id;
+        item.ownerId = ownerId;
+        item.window = window;
+        item.position = position;
+        item.protoId = protoId;
+        item.socket0 = socket0;
+        item.socket1 = socket1;
+        item.socket2 = socket2;
+        item.attributeType0 = attributeType0;
+        item.attributeValue0 = attributeValue0;
+        item.attributeType1 = attributeType1;
+        item.attributeValue1 = attributeValue1;
+        item.attributeType2 = attributeType2;
+        item.attributeValue2 = attributeValue2;
+        item.attributeType3 = attributeType3;
+        item.attributeValue3 = attributeValue3;
+        item.attributeType4 = attributeType4;
+        item.attributeValue4 = attributeValue4;
+        item.attributeType5 = attributeType5;
+        item.attributeValue5 = attributeValue5;
+        item.attributeType6 = attributeType6;
+        item.attributeValue6 = attributeValue6;
+        return item;
+    }
+
+    toDatabase() {
+        return {
+            id: this.#dbId,
+            ownerId: this.#ownerId,
+            window: this.#window,
+            position: this.#position,
+            count: this.#count,
+            protoId: this.#id,
+            socket0: this.#socket0,
+            socket1: this.#socket1,
+            socket2: this.#socket2,
+            attributeType0: this.#attributeType0,
+            attributeValue0: this.#attributeValue0,
+            attributeType1: this.#attributeType1,
+            attributeValue1: this.#attributeValue1,
+            attributeType2: this.#attributeType2,
+            attributeValue2: this.#attributeValue2,
+            attributeType3: this.#attributeType3,
+            attributeValue3: this.#attributeValue3,
+            attributeType4: this.#attributeType4,
+            attributeValue4: this.#attributeValue4,
+            attributeType5: this.#attributeType5,
+            attributeValue5: this.#attributeValue5,
+            attributeType6: this.#attributeType6,
+            attributeValue6: this.#attributeValue6,
+        };
     }
 }

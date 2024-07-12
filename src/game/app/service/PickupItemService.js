@@ -1,8 +1,12 @@
+import ChatMessageTypeEnum from '../../../core/enum/ChatMessageTypeEnum.js';
+
 export default class PickupItemService {
     #world;
+    #itemRepository;
 
-    constructor({ world }) {
+    constructor({ world, itemRepository }) {
         this.#world = world;
+        this.#itemRepository = itemRepository;
     }
 
     async execute({ player, virtualId }) {
@@ -14,8 +18,28 @@ export default class PickupItemService {
 
         if (!droppedItem) return;
 
-        if (player.pickup(droppedItem)) {
+        const { item, count, ownerName } = droppedItem;
+
+        const isGold = item.id === 1;
+
+        if (isGold) {
+            player.addGold(Number(count));
+            return;
+        }
+
+        const canPickup = ownerName === player.name || !ownerName;
+
+        if (!canPickup) {
+            player.say({
+                messageType: ChatMessageTypeEnum.INFO,
+                message: 'This item is not yours',
+            });
+            return;
+        }
+
+        if (player.addItem(item)) {
             area.despawn(droppedItem);
+            await this.#itemRepository.create(item.toDatabase());
         }
     }
 }

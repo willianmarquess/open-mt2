@@ -195,7 +195,7 @@ export default class Player extends GameEntity {
         this.#attackPerIQPoint = attackPerIQPoint;
         this.#experienceManager = experienceManager;
         this.#config = config;
-        this.#inventory = new Inventory({ config: this.#config });
+        this.#inventory = new Inventory({ config: this.#config, ownerId: this.id });
         this.#inventory.subscribe(InventoryEventsEnum.ITEM_EQUIPPED, this.#onItemEquipped.bind(this));
         this.#inventory.subscribe(InventoryEventsEnum.ITEM_UNEQUIPPED, this.#onItemUnequipped.bind(this));
 
@@ -809,7 +809,7 @@ export default class Player extends GameEntity {
         ITEM MANAGEMENT
     */
 
-    #sendItemAdded({ window, position, item }) {
+    sendItemAdded({ window, position, item }) {
         this.publish(
             ItemAddedEvent.type,
             new ItemAddedEvent({
@@ -824,7 +824,7 @@ export default class Player extends GameEntity {
         );
     }
 
-    #sendItemRemoved({ window, position }) {
+    sendItemRemoved({ window, position }) {
         this.publish(
             ItemRemovedEvent.type,
             new ItemRemovedEvent({
@@ -834,107 +834,11 @@ export default class Player extends GameEntity {
         );
     }
 
-    #useWearableItem({ item, position, window }) {
-        if (this.#inventory.isEquipamentPosition(position)) {
-            this.#inventory.removeItem(position, item.size);
-            const addedPosition = this.#inventory.addItem(item);
-
-            if (addedPosition >= 0) {
-                this.#sendItemRemoved({
-                    window,
-                    position,
-                });
-
-                this.#sendItemAdded({
-                    window: WindowTypeEnum.INVENTORY,
-                    position: addedPosition,
-                    item,
-                });
-            } else {
-                this.say({
-                    messageType: ChatMessageTypeEnum.INFO,
-                    message: 'Inventory is full',
-                });
-                this.#inventory.addItemAt(item, position);
-            }
-        } else {
-            const wearPosition = this.#inventory.getWearPosition(item);
-            if (!wearPosition) return;
-
-            const itemEquipped = this.getItem(wearPosition);
-
-            if (itemEquipped) {
-                this.#inventory.removeItem(position, item.size);
-                this.#inventory.removeItem(wearPosition, itemEquipped.size);
-
-                const addedPosition = this.#inventory.addItem(itemEquipped);
-
-                if (addedPosition >= 0) {
-                    this.#sendItemRemoved({
-                        window: WindowTypeEnum.EQUIPMENT,
-                        position: wearPosition,
-                    });
-                    this.#sendItemRemoved({
-                        window: WindowTypeEnum.INVENTORY,
-                        position,
-                    });
-                    this.#inventory.addItemAt(item, wearPosition);
-                    this.#sendItemAdded({
-                        window: WindowTypeEnum.EQUIPMENT,
-                        position: wearPosition,
-                        item,
-                    });
-                    this.#sendItemAdded({
-                        window: WindowTypeEnum.INVENTORY,
-                        position: addedPosition,
-                        item: itemEquipped,
-                    });
-                } else {
-                    this.#inventory.addItemAt(item, position);
-                    this.#inventory.addItemAt(itemEquipped, wearPosition);
-                    this.say({
-                        messageType: ChatMessageTypeEnum.INFO,
-                        message: 'Inventory is full',
-                    });
-                }
-            } else {
-                this.#inventory.removeItem(position, item.size);
-                this.#inventory.addItemAt(item, wearPosition);
-
-                this.#sendItemRemoved({
-                    window: WindowTypeEnum.INVENTORY,
-                    position,
-                });
-                this.#sendItemAdded({
-                    window: WindowTypeEnum.EQUIPMENT,
-                    position: wearPosition,
-                    item,
-                });
-            }
-        }
-    }
-
-    #useNonWearableItem() {
-        //todo: use potion, and other things
-    }
-
-    useItem({ window, position }) {
-        const item = this.getItem(position);
-
-        if (!item) return;
-
-        if (this.#isWearable(item)) {
-            this.#useWearableItem({ item, position, window });
-        } else {
-            this.#useNonWearableItem({ item, position, window });
-        }
-    }
-
     getItem(position) {
         return this.#inventory.getItem(Number(position));
     }
 
-    #isWearable(item) {
+    isWearable(item) {
         return (
             this.level >= item.getLevelLimit() &&
             item.wearFlags.flag > 0 &&
@@ -952,18 +856,18 @@ export default class Player extends GameEntity {
         if (!this.#inventory.haveAvailablePosition(toPosition, item.size)) return;
 
         if (this.#inventory.isEquipamentPosition(toPosition)) {
-            if (!this.#isWearable(item)) return;
+            if (!this.isWearable(item)) return;
             if (!this.#inventory.isValidSlot(item, toPosition)) return;
         }
 
         this.#inventory.removeItem(fromPosition, item.size);
         this.#inventory.addItemAt(item, toPosition);
 
-        this.#sendItemRemoved({
+        this.sendItemRemoved({
             window: fromWindow,
             position: fromPosition,
         });
-        this.#sendItemAdded({
+        this.sendItemAdded({
             window: toWindow,
             position: toPosition,
             item,
@@ -981,7 +885,7 @@ export default class Player extends GameEntity {
             return false;
         }
 
-        this.#sendItemAdded({
+        this.sendItemAdded({
             window: WindowTypeEnum.INVENTORY,
             position,
             item,
@@ -990,61 +894,18 @@ export default class Player extends GameEntity {
         return true;
     }
 
-    #dropGold(amount) {
-        const amountValidated = Math.max(0, Number(amount));
-
-        if (amountValidated > this.#gold) {
-            this.say({
-                messageType: ChatMessageTypeEnum.INFO,
-                message: 'You are trying to drop more gold than you have',
-            });
-            this.#logger.error(`[PLAYER] Player: ${this.id} is trying to drop more gold than he has`);
-            return;
-        }
-
-        this.addGold(-amount);
-
-        this.publish(
-            DropItemEvent.type,
-            new DropItemEvent({
-                item: {
-                    id: 1,
-                    count: amount,
-                },
-                count: amount,
-                positionX: this.positionX,
-                positionY: this.positionY,
-                ownerName: this.name,
-            }),
-        );
-    }
-
-    dropItem({ window, position, gold, count }) {
-        if (gold > 0) {
-            this.#dropGold(gold);
-            return;
-        }
-
-        const item = this.#inventory.getItem(position);
-
-        if (!item) return;
-
-        if (count === item.count) {
-            this.#inventory.removeItem(position, item.size);
-            this.#sendItemRemoved({
-                window,
-                position,
-            });
-        } else {
-            item.count -= count;
-
-            this.#sendItemAdded({
-                window,
-                position,
+    sendInventory() {
+        for (const item of this.#inventory.items.values()) {
+            this.sendItemAdded({
+                window: item.window,
+                position: item.position,
                 item,
             });
         }
+        this.updateView();
+    }
 
+    dropItem({ item, count }) {
         this.publish(
             DropItemEvent.type,
             new DropItemEvent({
@@ -1055,27 +916,6 @@ export default class Player extends GameEntity {
                 ownerName: this.name,
             }),
         );
-    }
-
-    pickup(droppedItem) {
-        const isGold = droppedItem.item.id === 1;
-
-        if (isGold) {
-            this.addGold(Number(droppedItem.count));
-            return true;
-        }
-
-        const itsMine = droppedItem.ownerName === this.name || !droppedItem.ownerName;
-
-        if (!itsMine) {
-            this.say({
-                messageType: ChatMessageTypeEnum.INFO,
-                message: 'This item is not yours',
-            });
-            return false;
-        }
-
-        return this.addItem(droppedItem.item);
     }
 
     showDroppedItem({ virtualId, count, positionX, positionY, ownerName, id }) {
@@ -1268,5 +1108,8 @@ export default class Player extends GameEntity {
     }
     get slot() {
         return this.#slot;
+    }
+    get inventory() {
+        return this.#inventory;
     }
 }
