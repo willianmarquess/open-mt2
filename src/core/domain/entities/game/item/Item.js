@@ -213,7 +213,7 @@ export default class Item {
         return this.#ownerId;
     }
     set ownerId(value) {
-       this.#ownerId = value;
+        this.#ownerId = value;
     }
     get position() {
         return this.#position;

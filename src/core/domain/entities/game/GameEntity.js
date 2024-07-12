@@ -227,4 +227,7 @@ export default class GameEntity {
     get classId() {
         return this.#classId;
     }
+    get state() {
+        return this.#state;
+    }
 }

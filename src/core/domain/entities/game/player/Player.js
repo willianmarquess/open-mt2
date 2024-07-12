@@ -29,6 +29,7 @@ import ApplyTypeEnum from '../../../../enum/ApplyTypeEnum.js';
 import DropItemEvent from './events/DropItemEvent.js';
 import ItemDroppedEvent from './events/ItemDroppedEvent.js';
 import ItemDroppedHideEvent from './events/ItemDroppedHideEvent.js';
+import EntityStateEnum from '../../../../enum/EntityStateEnum.js';
 
 export default class Player extends GameEntity {
     #accountId;
@@ -74,6 +75,8 @@ export default class Player extends GameEntity {
     #magicAttackBonus = 0;
     #magicDefense = 0;
     #magicDefenseBonus = 0;
+    #healthRegenBonus = 0;
+    #manaRegenBonus = 0;
     // #attackSpeed;
     // #movementSpeed;
     // #neededExperience;
@@ -233,6 +236,39 @@ export default class Player extends GameEntity {
 
         this.#applies[ApplyTypeEnum.APPLY_ATT_SPEED] = (value) => this.addAttackSpeed(value);
         this.#applies[ApplyTypeEnum.APPLY_MOV_SPEED] = (value) => this.addMovementSpeed(value);
+        this.#applies[ApplyTypeEnum.APPLY_HP_REGEN] = (value) => this.addHealthRegen(value);
+        this.#applies[ApplyTypeEnum.APPLY_SP_REGEN] = (value) => this.addManaRegen(value);
+
+        setInterval(this.#regenHealth.bind(this), 3000);
+        setInterval(this.#regenMana.bind(this), 3000);
+    }
+
+    #regenHealth() {
+        if (this.#health >= this.#maxHealth) return;
+
+        let percent = this.state === EntityStateEnum.IDLE ? 5 : 1;
+        percent += percent * (this.#healthRegenBonus / 100);
+        const amount = this.#maxHealth * (percent / 100);
+        this.addHealth(Math.floor(amount));
+        this.say({
+            messageType: ChatMessageTypeEnum.INFO,
+            message: `[HP REGEN] amount: ${Math.floor(amount)} percent: ${percent}`,
+        });
+        this.#sendPoints();
+    }
+
+    #regenMana() {
+        if (this.#mana >= this.#maxMana) return;
+
+        let percent = this.state === EntityStateEnum.IDLE ? 5 : 1;
+        percent += percent * (this.#manaRegenBonus / 100);
+        const amount = this.#maxMana * (percent / 100);
+        this.addMana(Math.floor(amount));
+        this.say({
+            messageType: ChatMessageTypeEnum.INFO,
+            message: `[MANA REGEN] amount: ${Math.floor(amount)} percent: ${percent}`,
+        });
+        this.#sendPoints();
     }
 
     #addItemApplies(item) {
@@ -558,6 +594,16 @@ export default class Player extends GameEntity {
         this.publish(CharacterLevelUpEvent.type, new CharacterLevelUpEvent({ entity: this }));
     }
 
+    addHealthRegen(value) {
+        const validatedValue = Math.min(value, MathUtil.MAX_UINT);
+        this.#healthRegenBonus += validatedValue;
+    }
+
+    addManaRegen(value) {
+        const validatedValue = Math.min(value, MathUtil.MAX_UINT);
+        this.#manaRegenBonus += validatedValue;
+    }
+
     addMovementSpeed(value) {
         const validatedValue = Math.min(value, MathUtil.MAX_TINY);
         this.movementSpeed += validatedValue;
@@ -569,7 +615,7 @@ export default class Player extends GameEntity {
     }
 
     addMana(value) {
-        this.#mana += value > 0 ? value : 0;
+        this.#mana = Math.min(this.#mana + Math.max(value, 0), this.#maxMana);
     }
 
     addMaxMana(value) {
@@ -577,7 +623,7 @@ export default class Player extends GameEntity {
     }
 
     addHealth(value) {
-        this.#health += value > 0 ? value : 0;
+        this.#health = Math.min(this.#health + Math.max(value, 0), this.#maxHealth);
     }
 
     addMaxHealth(value) {

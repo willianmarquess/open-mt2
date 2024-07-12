@@ -9,7 +9,7 @@ export default class MoveItemService {
         this.#itemManager = itemManager;
     }
 
-    async execute({ player, fromWindow, fromPosition, toWindow, toPosition, /*count*/ }) {
+    async execute({ player, fromWindow, fromPosition, toWindow, toPosition /*count*/ }) {
         this.#logger.debug(`[MoveItemService] moving item from ${fromPosition} to ${toPosition}`);
 
         const item = player.getItem(fromPosition);
