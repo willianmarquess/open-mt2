@@ -1,0 +1,80 @@
+[
+  {
+    "type": "g",
+    "x": "238",
+    "y": "864",
+    "rangeX": "20",
+    "rangeY": "20",
+    "z": "0",
+    "direction": "0",
+    "spawnTime": "3600s",
+    "percent": "100",
+    "count": "1",
+    "vnum": "3048"
+  },
+  {
+    "type": "g",
+    "x": "146",
+    "y": "895",
+    "rangeX": "20",
+    "rangeY": "20",
+    "z": "0",
+    "direction": "0",
+    "spawnTime": "3600s",
+    "percent": "100",
+    "count": "1",
+    "vnum": "3049"
+  },
+  {
+    "type": "g",
+    "x": "288",
+    "y": "457",
+    "rangeX": "20",
+    "rangeY": "20",
+    "z": "0",
+    "direction": "0",
+    "spawnTime": "3600s",
+    "percent": "100",
+    "count": "1",
+    "vnum": "3078"
+  },
+  {
+    "type": "g",
+    "x": "209",
+    "y": "359",
+    "rangeX": "20",
+    "rangeY": "20",
+    "z": "0",
+    "direction": "0",
+    "spawnTime": "3600s",
+    "percent": "100",
+    "count": "1",
+    "vnum": "3079"
+  },
+  {
+    "type": "g",
+    "x": "626",
+    "y": "1110",
+    "rangeX": "20",
+    "rangeY": "20",
+    "z": "0",
+    "direction": "0",
+    "spawnTime": "3600s",
+    "percent": "100",
+    "count": "1",
+    "vnum": "3058"
+  },
+  {
+    "type": "g",
+    "x": "659",
+    "y": "424",
+    "rangeX": "20",
+    "rangeY": "20",
+    "z": "0",
+    "direction": "0",
+    "spawnTime": "3600s",
+    "percent": "100",
+    "count": "1",
+    "vnum": "3059"
+  }
+]

@@ -1,0 +1,28 @@
+[
+  {
+    "type": "m",
+    "x": "385",
+    "y": "274",
+    "rangeX": "0",
+    "rangeY": "0",
+    "z": "0",
+    "direction": "1",
+    "spawnTime": "1m",
+    "percent": "100",
+    "count": "1",
+    "vnum": "20089"
+  },
+  {
+    "type": "m",
+    "x": "385",
+    "y": "893",
+    "rangeX": "0",
+    "rangeY": "0",
+    "z": "0",
+    "direction": "1",
+    "spawnTime": "1m",
+    "percent": "100",
+    "count": "1",
+    "vnum": "10098"
+  }
+]
