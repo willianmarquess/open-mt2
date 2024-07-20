@@ -88,11 +88,11 @@ export default class ItemManager {
             return;
         }
 
-        const itemsToUpdate = this.#itemCache.getItemsToUpdate();
-        const itemsToDelete = this.#itemCache.getItemsToDelete();
+        const itemsToUpdate = this.#itemCache.getItemsToUpdate(ownerId);
+        const itemsToDelete = this.#itemCache.getItemsToDelete(ownerId);
 
-        const updatePromises = itemsToUpdate.map((item) => this.#itemRepository.update(JSON.parse(item)));
-        const deletePromises = itemsToDelete.map((item) => this.#itemRepository.delete(JSON.parse(item)));
+        const updatePromises = itemsToUpdate.map((item) => this.#itemRepository.update(item));
+        const deletePromises = itemsToDelete.map((item) => this.#itemRepository.delete(item));
 
         if (updatePromises.length === 0 && deletePromises.length === 0) return;
 
