@@ -65,7 +65,7 @@ container.register({
     useItemService: asClass(UseItemService).scoped(),
     pickupItemService: asClass(PickupItemService).scoped(),
     dropItemService: asClass(DropItemService).scoped(),
-    itemCache: asClass(ItemCache).singleton()
+    itemCache: asClass(ItemCache).singleton(),
 });
 
 export { container };
