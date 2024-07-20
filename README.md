@@ -1,4 +1,4 @@
-# Metin2 JS - Server Emulator
+# Open Metin2 - Server Emulator
 
 ![GitHub repo size](https://img.shields.io/github/repo-size/willianmarquess/mt2-server-javascript?style=for-the-badge)
 ![GitHub language count](https://img.shields.io/github/languages/count/willianmarquess/mt2-server-javascript?style=for-the-badge)
