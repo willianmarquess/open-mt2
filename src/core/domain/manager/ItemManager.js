@@ -1,18 +1,17 @@
-import CacheKeyGenerator from '../../util/CacheKeyGenerator.js';
 import Item from '../entities/game/item/Item.js';
 
 export default class ItemManager {
     #config;
     #items = new Map();
-    #cacheProvider;
     #itemRepository;
     #logger;
+    #itemCache;
 
-    constructor({ config, cacheProvider, itemRepository, logger }) {
+    constructor({ config, itemRepository, logger, itemCache }) {
         this.#config = config;
-        this.#cacheProvider = cacheProvider;
         this.#itemRepository = itemRepository;
         this.#logger = logger;
+        this.#itemCache = itemCache;
     }
 
     load() {
@@ -76,45 +75,30 @@ export default class ItemManager {
 
     async update(item) {
         const itemToDatabase = item.toDatabase();
-        const key = CacheKeyGenerator.createItemUpdateKey(itemToDatabase.ownerId, itemToDatabase.id);
-        return this.#cacheProvider.set(key, JSON.stringify(itemToDatabase));
+        this.#itemCache.setToUpdate(itemToDatabase.ownerId, itemToDatabase);
     }
 
     async delete(item) {
         const itemToDatabase = item.toDatabase();
-        const deleteKey = CacheKeyGenerator.createItemDeleteKey(itemToDatabase.ownerId, itemToDatabase.id);
-        const updateKey = CacheKeyGenerator.createItemUpdateKey(itemToDatabase.ownerId, itemToDatabase.id);
-
-        if (await this.#cacheProvider.exists(updateKey)) {
-            await this.#cacheProvider.delete(updateKey);
-        }
-
-        return this.#cacheProvider.set(deleteKey, JSON.stringify(itemToDatabase));
+        this.#itemCache.setToDelete(itemToDatabase.ownerId, itemToDatabase);
     }
 
     async flush(ownerId) {
-        const [itemstoUpdateKeys, itemsToDeleteKeys] = await Promise.all([
-            this.#cacheProvider.keys(`player:${ownerId}:update:item:*`),
-            this.#cacheProvider.keys(`player:${ownerId}:delete:item:*`),
-        ]);
+        if (!this.#itemCache.has(ownerId)) {
+            return;
+        }
 
-        const [itemstoUpdate, itemsToDelete] = await Promise.all([
-            Promise.all(itemstoUpdateKeys.map((key) => this.#cacheProvider.get(key))),
-            Promise.all(itemsToDeleteKeys.map((key) => this.#cacheProvider.get(key))),
-        ]);
+        const itemsToUpdate = this.#itemCache.getItemsToUpdate();
+        const itemsToDelete = this.#itemCache.getItemsToDelete();
 
-        const updatePromises = itemstoUpdate.map((item) => this.#itemRepository.update(JSON.parse(item)));
-
+        const updatePromises = itemsToUpdate.map((item) => this.#itemRepository.update(JSON.parse(item)));
         const deletePromises = itemsToDelete.map((item) => this.#itemRepository.delete(JSON.parse(item)));
 
         if (updatePromises.length === 0 && deletePromises.length === 0) return;
 
         await Promise.all([...updatePromises, ...deletePromises]);
 
-        await Promise.all([
-            ...itemstoUpdateKeys.map((key) => this.#cacheProvider.delete(key)),
-            ...itemsToDeleteKeys.map((key) => this.#cacheProvider.delete(key)),
-        ]);
+        this.#itemCache.clear();
 
         this.#logger.debug(`[ITEM MANAGER] Saving items of player id: ${ownerId}`);
     }

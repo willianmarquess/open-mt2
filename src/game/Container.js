@@ -29,6 +29,7 @@ import UseItemService from './app/service/UseItemService.js';
 import PickupItemService from './app/service/PickupItemService.js';
 import DropItemService from './app/service/DropItemService.js';
 import ItemRepository from './infra/database/ItemRepository.js';
+import ItemCache from '../core/domain/util/ItemCache.js';
 
 const container = createContainer();
 
@@ -64,6 +65,7 @@ container.register({
     useItemService: asClass(UseItemService).scoped(),
     pickupItemService: asClass(PickupItemService).scoped(),
     dropItemService: asClass(DropItemService).scoped(),
+    itemCache: asClass(ItemCache).singleton()
 });
 
 export { container };

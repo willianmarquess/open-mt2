@@ -109,9 +109,9 @@ export default class UseItemService {
     }
 
     async #useNonWearableItem(
-        {
-            /*item, position, window*/
-        },
+        // {
+        //     /*item, position, window*/
+        // },
     ) {
         //TODO
     }
