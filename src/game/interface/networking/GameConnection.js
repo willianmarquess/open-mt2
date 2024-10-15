@@ -250,6 +250,7 @@ export default class GameConnection extends Connection {
             empireId,
             level,
             name,
+            angle,
         } = OtherCharacterSpawnedEvent;
 
         this.send(
@@ -262,6 +263,7 @@ export default class GameConnection extends Connection {
                 positionX,
                 positionY,
                 positionZ: 0,
+                angle,
             }),
         );
 

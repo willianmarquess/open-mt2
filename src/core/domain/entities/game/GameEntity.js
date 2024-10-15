@@ -13,6 +13,7 @@ export default class GameEntity {
     #name;
     #level;
     #empire;
+    #angle;
 
     //movement and animation
     #positionX = 0;
@@ -35,6 +36,7 @@ export default class GameEntity {
 
     #animationManager;
     #emitter = new EventEmitter();
+    #nearbyEntities = new Map();
 
     constructor(
         {
@@ -179,14 +181,23 @@ export default class GameEntity {
     get virtualId() {
         return this.#virtualId;
     }
+    set virtualId(value) {
+        this.#virtualId = value;
+    }
     get entityType() {
         return this.#entityType;
     }
     get positionX() {
         return this.#positionX;
     }
+    set positionX(value) {
+        this.#positionX = value;
+    }
     get positionY() {
         return this.#positionY;
+    }
+    set positionY(value) {
+        this.#positionY = value;
     }
     get st() {
         return this.#st;
@@ -229,5 +240,33 @@ export default class GameEntity {
     }
     get state() {
         return this.#state;
+    }
+    get angle() {
+        return this.#angle;
+    }
+    set angle(value) {
+        this.#angle = value;
+    }
+
+    addNearbyEntity(entity) {
+        if (entity instanceof GameEntity) {
+            this.#nearbyEntities.set(entity.virtualId, entity);
+        }
+    }
+
+    removeNearbyEntity(entity) {
+        if (entity instanceof GameEntity) {
+            this.#nearbyEntities.delete(entity.virtualId);
+        }
+    }
+
+    isNearby(entity) {
+        if (entity instanceof GameEntity) {
+            return this.#nearbyEntities.has(entity.virtualId);
+        }
+    }
+
+    get nearbyEntities() {
+        return this.#nearbyEntities;
     }
 }

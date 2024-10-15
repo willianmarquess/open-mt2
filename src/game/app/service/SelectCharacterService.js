@@ -24,7 +24,10 @@ export default class SelectCharacterService {
             return Result.error(ErrorTypesEnum.PLAYER_NOT_FOUND);
         }
 
-        const player = this.#playerFactory.create({ ...playerFounded, virtualId: this.#world.generateVirtualId() });
+        const player = this.#playerFactory.create({ ...playerFounded });
+
+        player.virtualId = this.#world.generateVirtualId();
+
         const items = await this.#itemManager.getItems(player.id);
 
         for (const item of items) {

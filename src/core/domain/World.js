@@ -18,6 +18,7 @@ export default class World {
     #logger;
     #config;
     #saveCharacterService;
+    #spawnManager;
 
     #virtualId = 0;
 
@@ -28,10 +29,11 @@ export default class World {
     #height = 0;
     #grid;
 
-    constructor({ logger, config, saveCharacterService }) {
+    constructor({ logger, config, saveCharacterService, spawnManager }) {
         this.#logger = logger;
         this.#config = config;
         this.#saveCharacterService = saveCharacterService;
+        this.#spawnManager = spawnManager;
     }
 
     generateVirtualId() {
@@ -85,14 +87,14 @@ export default class World {
         return area;
     }
 
-    #load() {
+    async #load() {
         if (!this.#config.atlas) {
             this.#logger.warn('[WORLD] No maps to load. Atlas configuration is missing.');
             return;
         }
 
         const maxDimensions = { maxWidth: 0, maxHeight: 0 };
-        this.#config.atlas?.forEach(({ mapName, posX, posY, width, height, aka, goto }) => {
+        for (const { mapName, posX, posY, width, height, aka, goto } of this.#config.atlas) {
             this.#logger.info(
                 `[WORLD] loading area: name: ${mapName}, posX: ${posX}, posY: ${posY}, width: ${width}, height: ${height}, sizeX: ${posX + width * AREA_UNIT}, sizeY: ${posY + height * AREA_UNIT}`,
             );
@@ -112,10 +114,12 @@ export default class World {
                     saveCharacterService: this.#saveCharacterService,
                     logger: this.#logger,
                     world: this,
+                    spawnManager: this.#spawnManager,
                 },
             );
+            await area.load();
             this.#areas.set(mapName, area);
-        });
+        }
 
         this.#width = maxDimensions.maxWidth;
         this.#height = maxDimensions.maxHeight;
@@ -138,7 +142,7 @@ export default class World {
 
     async init(server) {
         this.#server = server;
-        this.#load();
+        await this.#load();
         this.#tick();
     }
 

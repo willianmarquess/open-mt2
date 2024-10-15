@@ -19,6 +19,10 @@ export default class MathUtil {
         return Math.sqrt(a * a + b * b);
     }
 
+    static calcAngle(direction) {
+        return direction == 0 ? this.getRandomInt(0, 7) * 45 : (direction - 1) * 45;
+    }
+
     static toUnsignedNumber(value) {
         const isValidNumber = !isNaN(parseFloat(value)) && isFinite(value) && Number(value) > 0;
         return isValidNumber ? Number(value) : 0;

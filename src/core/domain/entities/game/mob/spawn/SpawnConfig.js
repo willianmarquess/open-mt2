@@ -1,4 +1,4 @@
-import SpawnConfigTypeEnum from '../../../../../enum/SpawnConfigTypeEnum';
+import SpawnConfigTypeEnum from '../../../../../enum/SpawnConfigTypeEnum.js';
 
 const SpawnConfigMap = {
     g: SpawnConfigTypeEnum.GROUP,
@@ -17,9 +17,9 @@ export default class SpawnConfig {
     #direction;
     #respawnTime;
     #id;
-    #amount;
+    #count;
 
-    constructor({ type, x, y, rangeX, rangeY, direction, respawnTime, id, amount }) {
+    constructor({ type, x, y, rangeX, rangeY, direction, respawnTime, id, count }) {
         this.#type = type;
         this.#x = x;
         this.#y = y;
@@ -28,7 +28,7 @@ export default class SpawnConfig {
         this.#direction = direction;
         this.#respawnTime = respawnTime;
         this.#id = id;
-        this.#amount = amount;
+        this.#count = count;
     }
 
     get type() {
@@ -55,13 +55,13 @@ export default class SpawnConfig {
     get id() {
         return this.#id;
     }
-    get amount() {
-        return this.#amount;
+    get count() {
+        return this.#count;
     }
 
     isAggresive() {}
 
-    static create({ type, x, y, rangeX, rangeY, direction, respawnTime, id, amount }) {
+    static create({ type, x, y, rangeX, rangeY, direction, respawnTime, id, count }) {
         return new SpawnConfig({
             type: SpawnConfigMap[type] || SpawnConfigMap.m,
             x,
@@ -71,7 +71,7 @@ export default class SpawnConfig {
             direction,
             respawnTime,
             id,
-            amount,
+            count,
         });
     }
 }

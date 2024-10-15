@@ -92,12 +92,10 @@ export default class MobManager {
     #config;
     #mobs = new Map();
     #animationManager;
-    #world;
 
-    constructor({ config, world, animationManager }) {
+    constructor({ config, animationManager }) {
         this.#config = config;
         this.#animationManager = animationManager;
-        this.#world = world;
     }
 
     load() {
@@ -110,19 +108,18 @@ export default class MobManager {
         return this.#mobs.has(id);
     }
 
-    getMob(id, positionX, positionY) {
+    getMob(id, positionX, positionY, direction = 0) {
         const proto = this.#mobs.get(id);
         if (!proto) return;
 
         switch (proto.type) {
-            case 'MONSTER':
+            case 'MONSTER': {
                 return new Monster(
                     {
                         id: Number(proto.vnum),
-                        virtualId: this.#world.generateVirtualId(),
                         entityType: EntityTypeEnum.MONSTER,
-                        positionX,
-                        positionY,
+                        positionX: Number(positionX),
+                        positionY: Number(positionY),
                         name: proto.name,
                         rank: proto.rank,
                         battleType: proto.battle_type,
@@ -165,17 +162,18 @@ export default class MobManager {
                         hpPercentToGetGodspeed: Number(proto.sp_godspeed),
                         hpPercentToGetDeathblow: Number(proto.sp_deathblow),
                         hpPercentToGetRevive: Number(proto.sp_revive),
+                        direction,
                     },
                     { animationManager: this.#animationManager },
                 );
-            case 'NPC':
+            }
+            case 'NPC': {
                 return new NPC(
                     {
                         id: Number(proto.vnum),
-                        virtualId: this.#world.generateVirtualId(),
                         entityType: EntityTypeEnum.MONSTER,
-                        positionX,
-                        positionY,
+                        positionX: Number(positionX),
+                        positionY: Number(positionY),
                         name: proto.name,
                         rank: proto.rank,
                         battleType: proto.battle_type,
@@ -218,9 +216,11 @@ export default class MobManager {
                         hpPercentToGetGodspeed: Number(proto.sp_godspeed),
                         hpPercentToGetDeathblow: Number(proto.sp_deathblow),
                         hpPercentToGetRevive: Number(proto.sp_revive),
+                        direction,
                     },
                     { animationManager: this.#animationManager },
                 );
+            }
         }
     }
 }

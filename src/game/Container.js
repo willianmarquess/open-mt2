@@ -30,6 +30,7 @@ import PickupItemService from './app/service/PickupItemService.js';
 import DropItemService from './app/service/DropItemService.js';
 import ItemRepository from './infra/database/ItemRepository.js';
 import ItemCache from '../core/domain/util/ItemCache.js';
+import SpawnManager from '../core/domain/manager/SpawnManager.js';
 
 const container = createContainer();
 
@@ -66,6 +67,7 @@ container.register({
     pickupItemService: asClass(PickupItemService).scoped(),
     dropItemService: asClass(DropItemService).scoped(),
     itemCache: asClass(ItemCache).singleton(),
+    spawnManager: asClass(SpawnManager).singleton(),
 });
 
 export { container };

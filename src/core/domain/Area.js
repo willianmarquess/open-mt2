@@ -5,11 +5,13 @@ import GameEntity from './entities/game/GameEntity.js';
 import DroppedItem from './entities/game/item/DroppedItem.js';
 import Player from './entities/game/player/Player.js';
 import PlayerEventsEnum from './entities/game/player/events/PlayerEventsEnum.js';
+import MathUtil from './util/MathUtil.js';
 
 const SIZE_QUEUE = 1000;
 const CHAR_VIEW_SIZE = 10000;
 const SAVE_PLAYERS_INTERVAL = 30000;
 const REMOVE_ITEM_FROM_GROUND = 30000;
+const SPAWN_POSITION_MULTIPLIER = 100;
 
 export default class Area {
     #name;
@@ -29,8 +31,12 @@ export default class Area {
     #logger;
 
     #world;
+    #spawnManager;
 
-    constructor({ name, positionX, positionY, width, height, aka, goto }, { saveCharacterService, logger, world }) {
+    constructor(
+        { name, positionX, positionY, width, height, aka, goto },
+        { saveCharacterService, logger, world, spawnManager },
+    ) {
         this.#name = name;
         this.#positionX = positionX;
         this.#positionY = positionY;
@@ -44,8 +50,20 @@ export default class Area {
         this.#logger = logger;
 
         this.#world = world;
+        this.#spawnManager = spawnManager;
 
         setInterval(this.#savePlayers.bind(this), SAVE_PLAYERS_INTERVAL);
+    }
+
+    async load() {
+        const entitiesToSpawn = await this.#spawnManager.getEntities(this.#name);
+        entitiesToSpawn.forEach((entity) => {
+            entity.virtualId = this.#world.generateVirtualId();
+            entity.positionY = this.#positionY + entity.positionY * SPAWN_POSITION_MULTIPLIER;
+            entity.positionX = this.#positionX + entity.positionX * SPAWN_POSITION_MULTIPLIER;
+            entity.angle = MathUtil.calcAngle(entity.direction);
+            this.spawn(entity);
+        });
     }
 
     get positionX() {
@@ -124,24 +142,45 @@ export default class Area {
             params: { positionX, positionY, arg, rotation, time, movementType, duration },
         } = characterMovedEvent;
         this.#quadTree.updatePosition(entity);
-        const entities = this.#quadTree.queryAround(
-            entity.positionX,
-            entity.positionY,
-            CHAR_VIEW_SIZE,
-            EntityTypeEnum.PLAYER,
-        );
+        const entities = this.#quadTree.queryAround(entity.positionX, entity.positionY, CHAR_VIEW_SIZE);
         for (const otherEntity of entities) {
             if (otherEntity.name === entity.name) continue;
-            otherEntity.updateOtherEntity({
-                virtualId: entity.virtualId,
-                arg,
-                movementType,
-                time,
-                rotation,
-                positionX,
-                positionY,
-                duration,
-            });
+
+            if (entity.isNearby(otherEntity)) {
+                if (otherEntity instanceof Player) {
+                    otherEntity.updateOtherEntity({
+                        virtualId: entity.virtualId,
+                        arg,
+                        movementType,
+                        time,
+                        rotation,
+                        positionX,
+                        positionY,
+                        duration,
+                    });
+                }
+            } else {
+                if (entity instanceof GameEntity) {
+                    entity.addNearbyEntity(otherEntity);
+                }
+
+                if (otherEntity instanceof GameEntity) {
+                    otherEntity.addNearbyEntity(entity);
+                }
+            }
+        }
+
+        for (const [virtualId, nearbyEntity] of entity.nearbyEntities.entries()) {
+            const stayNearby = entities.some((e) => e.virtualId === virtualId);
+            if (!stayNearby) {
+                if (entity instanceof GameEntity) {
+                    entity.removeNearbyEntity(nearbyEntity);
+                }
+
+                if (nearbyEntity instanceof GameEntity) {
+                    nearbyEntity.removeNearbyEntity(entity);
+                }
+            }
         }
     }
 
@@ -187,56 +226,13 @@ export default class Area {
             );
             for (const otherEntity of entities) {
                 if (otherEntity.name === entity.name) continue;
-                if (entity instanceof GameEntity && otherEntity instanceof GameEntity) {
-                    if (entity instanceof Player) {
-                        entity.showOtherEntity({
-                            virtualId: otherEntity.virtualId,
-                            playerClass: otherEntity.playerClass,
-                            entityType: otherEntity.entityType,
-                            attackSpeed: otherEntity.attackSpeed,
-                            movementSpeed: otherEntity.movementSpeed,
-                            positionX: otherEntity.positionX,
-                            positionY: otherEntity.positionY,
-                            empireId: otherEntity.empireId,
-                            level: otherEntity.level,
-                            name: otherEntity.name,
-                        });
-                    }
 
-                    otherEntity.showOtherEntity({
-                        virtualId: entity.virtualId,
-                        playerClass: entity.classId,
-                        entityType: entity.entityType,
-                        attackSpeed: entity.attackSpeed,
-                        movementSpeed: entity.movementSpeed,
-                        positionX: entity.positionX,
-                        positionY: entity.positionY,
-                        empireId: entity.empire,
-                        level: entity.level,
-                        name: entity.name,
-                    });
+                if (entity instanceof GameEntity) {
+                    entity.addNearbyEntity(otherEntity);
                 }
 
-                if (entity instanceof DroppedItem && otherEntity instanceof Player) {
-                    otherEntity.showDroppedItem({
-                        virtualId: entity.virtualId,
-                        count: entity.count,
-                        ownerName: entity.ownerName,
-                        positionX: entity.positionX,
-                        positionY: entity.positionY,
-                        id: entity.item.id,
-                    });
-                }
-
-                if (entity instanceof Player && otherEntity instanceof DroppedItem) {
-                    entity.showDroppedItem({
-                        virtualId: otherEntity.virtualId,
-                        count: otherEntity.count,
-                        ownerName: otherEntity.ownerName,
-                        positionX: otherEntity.positionX,
-                        positionY: otherEntity.positionY,
-                        id: otherEntity.item.id,
-                    });
+                if (otherEntity instanceof GameEntity) {
+                    otherEntity.addNearbyEntity(entity);
                 }
             }
 
@@ -251,12 +247,12 @@ export default class Area {
                 EntityTypeEnum.PLAYER,
             );
             for (const otherEntity of entities) {
-                if (otherEntity.name === entity.name) continue;
-                if (otherEntity instanceof Player && entity instanceof GameEntity) {
-                    otherEntity.hideOtherEntity({ virtualId: entity.virtualId });
+                if (entity instanceof GameEntity) {
+                    entity.removeNearbyEntity(otherEntity);
                 }
-                if (otherEntity instanceof Player && entity instanceof DroppedItem) {
-                    otherEntity.hideDroppedItem({ virtualId: entity.virtualId });
+
+                if (otherEntity instanceof GameEntity) {
+                    otherEntity.removeNearbyEntity(entity);
                 }
             }
             this.#entities.delete(entity.virtualId);

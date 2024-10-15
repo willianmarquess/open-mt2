@@ -45,6 +45,7 @@ export default class InvokeCommandHandler {
                 player.positionY + MAX_MOB_INVOKE_DISTANCE,
             );
             const mob = this.#mobManager.getMob(vnum, positionX, positionY);
+            mob.virtualId = this.#world.generateVirtualId();
             this.#world.spawn(mob);
         }
     }

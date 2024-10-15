@@ -30,6 +30,7 @@ import DropItemEvent from './events/DropItemEvent.js';
 import ItemDroppedEvent from './events/ItemDroppedEvent.js';
 import ItemDroppedHideEvent from './events/ItemDroppedHideEvent.js';
 import EntityStateEnum from '../../../../enum/EntityStateEnum.js';
+import DroppedItem from '../item/DroppedItem.js';
 
 export default class Player extends GameEntity {
     #accountId;
@@ -677,6 +678,7 @@ export default class Player extends GameEntity {
         empireId,
         level,
         name,
+        angle,
     }) {
         this.publish(
             OtherCharacterSpawnedEvent.type,
@@ -691,6 +693,7 @@ export default class Player extends GameEntity {
                 empireId,
                 level,
                 name,
+                angle,
             }),
         );
     }
@@ -985,6 +988,55 @@ export default class Player extends GameEntity {
                 virtualId,
             }),
         );
+    }
+
+    addNearbyEntity(entity) {
+        super.addNearbyEntity(entity);
+        this.onNearbyEntityAdded(entity);
+    }
+
+    removeNearbyEntity(entity) {
+        super.removeNearbyEntity(entity);
+        this.onNearbyEntityRemoved(entity);
+    }
+
+    onNearbyEntityAdded(otherEntity) {
+        if (otherEntity instanceof GameEntity) {
+            this.showOtherEntity({
+                virtualId: otherEntity.virtualId,
+                playerClass: otherEntity.classId,
+                entityType: otherEntity.entityType,
+                attackSpeed: otherEntity.attackSpeed,
+                movementSpeed: otherEntity.movementSpeed,
+                positionX: otherEntity.positionX,
+                positionY: otherEntity.positionY,
+                empireId: otherEntity.empireId,
+                level: otherEntity.level,
+                name: otherEntity.name,
+                angle: otherEntity.angle,
+            });
+        }
+
+        if (otherEntity instanceof DroppedItem) {
+            this.showDroppedItem({
+                virtualId: otherEntity.virtualId,
+                count: otherEntity.count,
+                ownerName: otherEntity.ownerName,
+                positionX: otherEntity.positionX,
+                positionY: otherEntity.positionY,
+                id: otherEntity.item.id,
+            });
+        }
+    }
+
+    onNearbyEntityRemoved(otherEntity) {
+        if (otherEntity instanceof GameEntity) {
+            this.hideOtherEntity({ virtualId: otherEntity.virtualId });
+        }
+
+        if (otherEntity instanceof DroppedItem) {
+            this.hideDroppedItem({ virtualId: otherEntity.virtualId });
+        }
     }
 
     static create(

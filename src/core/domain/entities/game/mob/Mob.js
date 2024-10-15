@@ -72,6 +72,7 @@ export default class Mob extends GameEntity {
     #attackRange;
     #dropItem;
     #resurrectionId;
+    #direction;
 
     #resists = [];
     #enchants = [];
@@ -138,6 +139,7 @@ export default class Mob extends GameEntity {
             hpPercentToGetGodspeed,
             hpPercentToGetDeathblow,
             hpPercentToGetRevive,
+            direction,
         },
         { animationManager },
     ) {
@@ -194,6 +196,7 @@ export default class Mob extends GameEntity {
         this.#hpPercentToGetGodspeed = hpPercentToGetGodspeed;
         this.#hpPercentToGetDeathblow = hpPercentToGetDeathblow;
         this.#hpPercentToGetRevive = hpPercentToGetRevive;
+        this.#direction = direction;
     }
 
     addResist(type) {
@@ -315,5 +318,8 @@ export default class Mob extends GameEntity {
     }
     get hpPercentToGetRevive() {
         return this.#hpPercentToGetRevive;
+    }
+    get direction() {
+        return this.#direction;
     }
 }
