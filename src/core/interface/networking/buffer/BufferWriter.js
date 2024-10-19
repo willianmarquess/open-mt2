@@ -52,7 +52,7 @@ export default class BufferWriter {
     }
 
     writeFloatLE(value) {
-        this.#buffer.writeFloatLE(value);
+        this.#buffer.writeFloatLE(value, this.#lastPos);
         this.#lastPos += 4;
         return this;
     }

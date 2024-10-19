@@ -47,7 +47,7 @@ export default class CharacterSpawnPacket extends PacketOut {
 
     pack() {
         this.bufferWriter.writeUint32LE(this.#vid);
-        this.bufferWriter.writeUint32LE(this.#angle);
+        this.bufferWriter.writeFloatLE(this.#angle);
         this.bufferWriter.writeUint32LE(this.#positionX);
         this.bufferWriter.writeUint32LE(this.#positionY);
         this.bufferWriter.writeUint32LE(this.#positionZ);
