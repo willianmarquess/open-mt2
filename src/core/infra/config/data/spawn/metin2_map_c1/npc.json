@@ -1,27 +1,107 @@
 [
   {
-    "type": "m       444     623     0       0       0       7       1m      100     1       20340"
+    "type": "m",
+    "x": "444",
+    "y": "623",
+    "rangeX": "0",
+    "rangeY": "0",
+    "z": "0",
+    "direction": "7",
+    "spawnTime": "1m",
+    "percent": "100",
+    "count": "1",
+    "vnum": "20340"
   },
   {
-    "type": "m       444     627     0       0       0       7       1m      100     1       20341"
+    "type": "m",
+    "x": "444",
+    "y": "627",
+    "rangeX": "0",
+    "rangeY": "0",
+    "z": "0",
+    "direction": "7",
+    "spawnTime": "1m",
+    "percent": "100",
+    "count": "1",
+    "vnum": "20341"
   },
   {
-    "type": "m       444     631     0       0       0       7       1m      100     1       20342"
+    "type": "m",
+    "x": "444",
+    "y": "631",
+    "rangeX": "0",
+    "rangeY": "0",
+    "z": "0",
+    "direction": "7",
+    "spawnTime": "1m",
+    "percent": "100",
+    "count": "1",
+    "vnum": "20342"
   },
   {
-    "type": "m       444     635     0       0       0       7       1m      100     1       20343"
+    "type": "m",
+    "x": "444",
+    "y": "635",
+    "rangeX": "0",
+    "rangeY": "0",
+    "z": "0",
+    "direction": "7",
+    "spawnTime": "1m",
+    "percent": "100",
+    "count": "1",
+    "vnum": "20343"
   },
   {
-    "type": "m       443     644     0       0       0       7       1m      100     1       20344"
+    "type": "m",
+    "x": "443",
+    "y": "644",
+    "rangeX": "0",
+    "rangeY": "0",
+    "z": "0",
+    "direction": "7",
+    "spawnTime": "1m",
+    "percent": "100",
+    "count": "1",
+    "vnum": "20344"
   },
   {
-    "type": "m       443     648     0       0       0       7       1m      100     1       20345"
+    "type": "m",
+    "x": "443",
+    "y": "648",
+    "rangeX": "0",
+    "rangeY": "0",
+    "z": "0",
+    "direction": "7",
+    "spawnTime": "1m",
+    "percent": "100",
+    "count": "1",
+    "vnum": "20345"
   },
   {
-    "type": "m       443     652     0       0       0       7       1m      100     1       20346"
+    "type": "m",
+    "x": "443",
+    "y": "652",
+    "rangeX": "0",
+    "rangeY": "0",
+    "z": "0",
+    "direction": "7",
+    "spawnTime": "1m",
+    "percent": "100",
+    "count": "1",
+    "vnum": "20346"
   },
   {
-    "type": "m       443     656     0       0       0       7       1m      100     1       20347"
+    "type": "m",
+    "x": "443",
+    "y": "656",
+    "rangeX": "0",
+    "rangeY": "0",
+    "z": "0",
+    "direction": "7",
+    "spawnTime": "1m",
+    "percent": "100",
+    "count": "1",
+    "vnum": "20347"
   },
   {
     "type": "m",

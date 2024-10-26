@@ -8,7 +8,7 @@ import PlayerEventsEnum from './entities/game/player/events/PlayerEventsEnum.js'
 import MathUtil from './util/MathUtil.js';
 
 const SIZE_QUEUE = 1000;
-const CHAR_VIEW_SIZE = 10000;
+const CHAR_VIEW_SIZE = 15000;
 const SAVE_PLAYERS_INTERVAL = 30000;
 const REMOVE_ITEM_FROM_GROUND = 30000;
 const SPAWN_POSITION_MULTIPLIER = 100;
@@ -44,7 +44,7 @@ export default class Area {
         this.#height = height;
         this.#aka = aka;
         this.#goto = goto;
-        this.#quadTree = new QuadTree(positionX, positionY, width * 25600, height * 25600, 20);
+        this.#quadTree = new QuadTree(positionX, positionY, width * 25600, height * 25600, 200);
 
         this.#saveCharacterService = saveCharacterService;
         this.#logger = logger;

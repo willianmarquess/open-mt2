@@ -2,6 +2,8 @@ import EntityTypeEnum from '../../../../enum/EntityTypeEnum.js';
 import Mob from './Mob.js';
 
 export default class Monster extends Mob {
+    #group;
+
     constructor(
         {
             id,
@@ -107,5 +109,13 @@ export default class Monster extends Mob {
             },
             { animationManager },
         );
+    }
+
+    get group() {
+        return this.#group;
+    }
+
+    set group(value) {
+        this.#group = value;
     }
 }
