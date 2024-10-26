@@ -11,6 +11,7 @@
 import EntityTypeEnum from '../../enum/EntityTypeEnum.js';
 import Monster from '../entities/game/mob/Monster.js';
 import NPC from '../entities/game/mob/NPC.js';
+import Stone from '../entities/game/mob/Stone.js';
 
 // const MobRankEnum = {
 //     PAWN: 0,
@@ -201,6 +202,60 @@ export default class MobManager {
                         def: Number(proto.def),
                         attackSpeed: Number(proto.attack_speed),
                         movementSpeed: Number(proto.move_speed),
+                        aggressiveHpPct: Number(proto.aggressive_hp_pct),
+                        aggressiveSight: Number(proto.aggressive_sight),
+                        attackRange: Number(proto.attack_range),
+                        dropItem: Number(proto.drop_item),
+                        resurrectionId: Number(proto.resurrection_vnum),
+                        damMultiply: Number(proto.dam_multiply),
+                        summon: Number(proto.summon),
+                        drainSp: Number(proto.drain_sp),
+                        mobColor: Number(proto.mob_color),
+                        polymorphItem: Number(proto.polymorph_item),
+                        hpPercentToGetBerserk: Number(proto.sp_berserk),
+                        hpPercentToGetStoneSkin: Number(proto.sp_stoneskin),
+                        hpPercentToGetGodspeed: Number(proto.sp_godspeed),
+                        hpPercentToGetDeathblow: Number(proto.sp_deathblow),
+                        hpPercentToGetRevive: Number(proto.sp_revive),
+                        direction,
+                    },
+                    { animationManager: this.#animationManager },
+                );
+            }
+            case 'STONE': {
+                return new Stone(
+                    {
+                        id: Number(proto.vnum),
+                        entityType: EntityTypeEnum.MONSTER,
+                        positionX: Number(positionX),
+                        positionY: Number(positionY),
+                        name: proto.name,
+                        rank: proto.rank,
+                        battleType: proto.battle_type,
+                        level: Number(proto.level),
+                        size: Number(proto.size),
+                        aiFlag: proto.ai_flag,
+                        mountCapacity: Number(proto.mount_capacity),
+                        raceFlag: proto.race_flag,
+                        immuneFlag: proto.immune_flag,
+                        empire: Number(proto.empire),
+                        folder: proto.folder,
+                        onClick: Number(proto.on_click),
+                        st: Number(proto.st),
+                        dx: Number(proto.dx),
+                        ht: Number(proto.ht),
+                        iq: Number(proto.iq),
+                        damageMin: Number(proto.damage_min),
+                        damageMax: Number(proto.damage_max),
+                        maxHp: Number(proto.max_hp),
+                        regenCycle: Number(proto.regen_cycle),
+                        regenPercent: Number(proto.regen_percent),
+                        goldMin: Number(proto.gold_min),
+                        goldMax: Number(proto.gold_max),
+                        exp: Number(proto.exp),
+                        def: Number(proto.def),
+                        attackSpeed: Math.min(255, Number(proto.attack_speed)),
+                        movementSpeed: Math.min(255, Number(proto.move_speed)),
                         aggressiveHpPct: Number(proto.aggressive_hp_pct),
                         aggressiveSight: Number(proto.aggressive_sight),
                         attackRange: Number(proto.attack_range),

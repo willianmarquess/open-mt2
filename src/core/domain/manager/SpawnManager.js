@@ -9,7 +9,7 @@ import MathUtil from '../util/MathUtil.js';
 
 const DEFAULT_SPAWN_CONFIG_PATH = 'src/core/infra/config/data/spawn';
 
-const spawnFiles = ['regen', 'npc', 'boss'];
+const spawnFiles = ['regen', 'npc', 'boss', 'stone'];
 
 export default class SpawnManager {
     #logger;
@@ -32,94 +32,122 @@ export default class SpawnManager {
         return monster;
     }
 
+    #createMonsters(spawn) {
+        const entitiesToSpawn = [];
+        switch (spawn.type) {
+            case SpawnConfigTypeEnum.MONSTER: {
+                const entity = this.#createMonster({
+                    id: spawn.id,
+                    x: spawn.x,
+                    y: spawn.y,
+                    direction: spawn.direction,
+                    rangeX: spawn.rangeX,
+                    rangeY: spawn.rangeY,
+                });
+                if (entity && entity instanceof Mob) {
+                    entitiesToSpawn.push(entity);
+                }
+                break;
+            }
+            case SpawnConfigTypeEnum.GROUP_COLLECTION: {
+                const groupCollectionConfig = this.#groupsCollection.find((g) => g.vnum === spawn.id);
+
+                if (!groupCollectionConfig) {
+                    this.#logger.error(`[SpawnManager] group collection not found with vnum: ${spawn.id}`);
+                    break;
+                }
+
+                const sortedIndex = MathUtil.getRandomInt(0, groupCollectionConfig.mobs.length - 1);
+
+                const { vnum: groupVnum } = groupCollectionConfig.mobs[sortedIndex];
+
+                const groupConfig = this.#groups.find((g) => g.vnum === groupVnum);
+
+                if (!groupConfig) {
+                    this.#logger.error(`[SpawnManager] group not found with vnum: ${groupVnum}`);
+                    break;
+                }
+                const leader = this.#createMonster({
+                    id: groupConfig.leaderVnum,
+                    x: spawn.x,
+                    y: spawn.y,
+                    direction: spawn.direction,
+                    rangeX: spawn.rangeX,
+                    rangeY: spawn.rangeY,
+                });
+
+                if (!leader) {
+                    this.#logger.error(`[SpawnManager] monster not found with vnum: ${groupConfig.leaderVnum}`);
+                    break;
+                }
+
+                const monsterGroup = new MonsterGroup({
+                    vnum: groupVnum,
+                    leader: leader,
+                });
+
+                entitiesToSpawn.push(leader);
+
+                for (const monsterConfig of groupConfig.mobs) {
+                    const monster = this.#createMonster({
+                        id: monsterConfig.vnum,
+                        x: spawn.x,
+                        y: spawn.y,
+                        direction: spawn.direction,
+                        rangeX: spawn.rangeX,
+                        rangeY: spawn.rangeY,
+                    });
+
+                    if (monster && monster instanceof Mob) {
+                        entitiesToSpawn.push(monster);
+                        monsterGroup.addMember(monster);
+                    }
+                }
+                break;
+            }
+            case SpawnConfigTypeEnum.SPECIAL:
+            case SpawnConfigTypeEnum.GROUP:
+            default:
+                this.#logger.error('[SpawnManager] invalid spawn type', spawn.type);
+                break;
+        }
+
+        return entitiesToSpawn;
+    }
+
     async getEntities(areaName) {
         const spawns = await this.loadFromArea(areaName);
 
         const entitiesToSpawn = [];
-        spawns.npc.forEach((spawn) => {
+
+        for (const spawn of spawns.npc) {
             const entity = this.#mobManager.getMob(spawn.id, spawn.x, spawn.y, spawn.direction);
             if (entity && entity instanceof Mob) {
                 entitiesToSpawn.push(entity);
             }
-        });
+        }
 
-        spawns.regen.forEach((spawn) => {
-            switch (spawn.type) {
-                case SpawnConfigTypeEnum.MONSTER: {
-                    const entity = this.#mobManager.getMob(spawn.id, spawn.x, spawn.y, spawn.direction);
-                    if (entity && entity instanceof Mob) {
-                        entitiesToSpawn.push(entity);
-                    }
-                    break;
-                }
-                case SpawnConfigTypeEnum.GROUP:
-                    break;
-                case SpawnConfigTypeEnum.GROUP_COLLECTION: {
-                    const groupCollectionConfig = this.#groupsCollection.find((g) => g.vnum === spawn.id);
-
-                    if (!groupCollectionConfig) {
-                        this.#logger.error(`[SpawnManager] group collection not found with vnum: ${spawn.id}`);
-                        return;
-                    }
-
-                    for (const { vnum: groupVnum, count } of groupCollectionConfig.mobs) {
-                        const groupConfig = this.#groups.find((g) => g.vnum === groupVnum);
-
-                        if (!groupConfig) {
-                            this.#logger.error(`[SpawnManager] group not found with vnum: ${groupVnum}`);
-                            continue;
-                        }
-
-                        for (let i = 0; i < count; i++) {
-                            const leader = this.#createMonster({
-                                id: groupConfig.leaderVnum,
-                                x: spawn.x,
-                                y: spawn.y,
-                                direction: spawn.direction,
-                                rangeX: spawn.rangeX,
-                                rangeY: spawn.rangeY,
-                            });
-
-                            if (!leader) {
-                                this.#logger.error(
-                                    `[SpawnManager] monster not found with vnum: ${groupConfig.leaderVnum}`,
-                                );
-                                continue;
-                            }
-
-                            const monsterGroup = new MonsterGroup({
-                                vnum: groupVnum,
-                                leader: leader,
-                            });
-
-                            entitiesToSpawn.push(leader);
-
-                            for (const monsterConfig of groupConfig.mobs) {
-                                const monster = this.#createMonster({
-                                    id: monsterConfig.vnum,
-                                    x: spawn.x,
-                                    y: spawn.y,
-                                    direction: spawn.direction,
-                                    rangeX: spawn.rangeX,
-                                    rangeY: spawn.rangeY,
-                                });
-
-                                if (monster && monster instanceof Mob) {
-                                    entitiesToSpawn.push(monster);
-                                    monsterGroup.addMember(monster);
-                                }
-                            }
-                        }
-                    }
-                    break;
-                }
-                case SpawnConfigTypeEnum.SPECIAL:
-                    break;
-                default:
-                    this.#logger.error('[SpawnManager] invalid spawn type', spawn.type);
-                    break;
+        for (const spawn of spawns.regen) {
+            const entities = this.#createMonsters(spawn);
+            if (Array.isArray(entities)) {
+                entitiesToSpawn.push(...this.#createMonsters(spawn));
             }
-        });
+        }
+
+        for (const spawn of spawns.boss) {
+            const entities = this.#createMonsters(spawn);
+            if (Array.isArray(entities)) {
+                entitiesToSpawn.push(...this.#createMonsters(spawn));
+            }
+        }
+
+        for (const spawn of spawns.stone) {
+            const entities = this.#createMonsters(spawn);
+
+            if (Array.isArray(entities)) {
+                entitiesToSpawn.push(...this.#createMonsters(spawn));
+            }
+        }
 
         return entitiesToSpawn;
     }
@@ -131,6 +159,7 @@ export default class SpawnManager {
             regen: [],
             npc: [],
             boss: [],
+            stone: [],
         };
 
         for (const file of spawnFiles) {

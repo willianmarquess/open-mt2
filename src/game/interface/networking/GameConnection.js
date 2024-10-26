@@ -18,7 +18,7 @@ import TeleportPacket from '../../../core/interface/networking/packets/packet/ou
 import Ip from '../../../core/util/Ip.js';
 import Queue from '../../../core/util/Queue.js';
 
-const OUTGOING_MESSAGES_PER_CON_QUEUE_SIZE = 1000;
+const OUTGOING_MESSAGES_PER_CON_QUEUE_SIZE = 100000;
 
 // const hexString = (buffer) =>
 //     buffer.reduce((acc, byte, index) => {
