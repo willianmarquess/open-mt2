@@ -1,6 +1,6 @@
 import { expect } from 'chai';
-import EmpirePacket from '../../../../../../../../src/core/interface/networking/packets/packet/bidirectional/EmpirePacket.js';
-import PacketHeaderEnum from '../../../../../../../../src/core/enum/PacketHeaderEnum.js';
+import PacketHeaderEnum from '../../../../../../../../../src/core/enum/PacketHeaderEnum.js';
+import EmpirePacket from '../../../../../../../../../src/core/interface/networking/packets/packet/bidirectional/empire/EmpirePacket.js';
 
 describe('EmpirePacket', function () {
     let empirePacket;

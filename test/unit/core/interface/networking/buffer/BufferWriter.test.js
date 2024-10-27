@@ -47,6 +47,7 @@ describe('BufferWriter', function () {
     it('should write a float in little-endian format', function () {
         bufferWriter.writeFloatLE(3.14);
         const buffer = bufferWriter.buffer;
-        expect(buffer.readFloatLE()).to.be.closeTo(3.14, 0.00001);
+
+        expect(buffer.readFloatLE(1)).to.be.closeTo(3.14, 0.00001);
     });
 });

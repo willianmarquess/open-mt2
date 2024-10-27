@@ -15,13 +15,13 @@ describe('PlayerFactory', () => {
     beforeEach(() => {
         config = {
             empire: {
-                EmpireName: {
+                red: {
                     startPosX: 100,
                     startPosY: 200,
                 },
             },
             jobs: {
-                ClassName: {
+                assassin: {
                     common: {
                         st: 10,
                         ht: 10,

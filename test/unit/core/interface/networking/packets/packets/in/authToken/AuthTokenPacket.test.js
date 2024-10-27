@@ -1,6 +1,6 @@
 import { expect } from 'chai';
-import AuthTokenPacket from '../../../../../../../../src/core/interface/networking/packets/packet/in/AuthTokenPacket.js';
-import PacketHeaderEnum from '../../../../../../../../src/core/enum/PacketHeaderEnum.js';
+import PacketHeaderEnum from '../../../../../../../../../src/core/enum/PacketHeaderEnum.js';
+import AuthTokenPacket from '../../../../../../../../../src/core/interface/networking/packets/packet/in/authToken/AuthTokenPacket.js';
 
 describe('AuthTokenPacket', function () {
     let authTokenPacket;
