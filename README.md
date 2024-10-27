@@ -27,12 +27,12 @@ Metin2 are copyrighted by [Webzen](http://webzen.com/ "Webzen").
 | Load Character Animation Data    |      |       | ✅    |
 | Load Area Data    |      |       | ✅    |
 | Load Mob Data    |      |       | ✅    |
-| Load NPC Data    | X    |       |      |
-| Load item Data    | X    |       |      |
+| Load NPC Data    |      |       | ✅    |
+| Load item Data    |      |       | ✅    |
 | Spawn Mob    |      |       |  ✅    |
-| Spawn Mob From File    |  X   |       |       |
+| Spawn Mob From File    |      |       |  ✅    |
 | Mob Behavior System    | X    |       |      |
-| Spawn NPC    | X    |       |      |
+| Spawn NPC    |      |       |  ✅   |
 | NPC Behavior System    | X    |       |      |
 | NPC Shop System    | X    |       |      |
 | Spawn Item    |      |       |  ✅   |
@@ -48,8 +48,8 @@ Metin2 are copyrighted by [Webzen](http://webzen.com/ "Webzen").
 | Character Attack System(physic, magic, melee, range)    | X    |       |      |
 | Character Defense System(physic, magic, melee, range)    | X    |       |      |
 | Character Bonus and Reduces System(physic, magic, melee, range)    | X    |       |      |
-| Character Inventory    | X    |       |      |
-| Character Regen System    | X    |       |      |
+| Character Inventory    |      |       | ✅    |
+| Character Regen System    |      |       | ✅    |
 | Character Duel System   | X    |       |      |
 | Drop System   | X    |       |      |
 | Affect System   | X    |       |      |
