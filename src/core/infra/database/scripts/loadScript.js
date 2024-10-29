@@ -7,8 +7,8 @@ async function loadScript() {
         await fs.readFile(path.resolve(url.fileURLToPath(import.meta.url), '../script.sql'))
     ).toString();
     const cleanedScript = bruteScript.replace(/(\r\n|\n|\r)/gm, '');
-    const scriptSplitedByCommand = cleanedScript.split(';');
-    const validCommandScriptArray = scriptSplitedByCommand.filter((s) => s);
+    const scriptSplittedByCommand = cleanedScript.split(';');
+    const validCommandScriptArray = scriptSplittedByCommand.filter((s) => s);
     return validCommandScriptArray;
 }
 

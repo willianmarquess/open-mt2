@@ -28,6 +28,19 @@ CREATE TABLE auth.account (
     FOREIGN KEY (accountStatusId) REFERENCES account_status(id) ON DELETE CASCADE
 );
 
+INSERT INTO auth.account_status (`allowLogin`, `clientStatus`, `description`)
+VALUES (TRUE, 'OK', 'Default Status');
+
+INSERT INTO auth.account (`deleteCode`, `email`, `lastLogin`, `password`, 
+`accountStatusId`, `username`)
+VALUES ('1234567', 'admin@test.com', NULL, 
+'$2b$05$KXeREc2TNuUR6IcgzUiX4.WA/0i3Yd3WpUHMtAcQi1ojWRdeQ9ExS', 1, 'admin');
+
+INSERT INTO auth.account (`deleteCode`, `email`, `lastLogin`, `password`, 
+`accountStatusId`, `username`)
+VALUES ('1234567', 'admin1@test.com', NULL, 
+'$2b$05$KXeREc2TNuUR6IcgzUiX4.WA/0i3Yd3WpUHMtAcQi1ojWRdeQ9ExS', 1, 'admin1');
+
 DROP DATABASE IF EXISTS `game`;
 
 CREATE DATABASE `game`;
@@ -63,9 +76,11 @@ CREATE TABLE game.player (
     slot TINYINT UNSIGNED NOT NULL DEFAULT 0
 );
 
+DROP TABLE IF EXISTS game.item;
+
 CREATE TABLE game.item (
     id INT UNSIGNED PRIMARY KEY AUTO_INCREMENT,
-    ownerId INT NOT NULL,
+    ownerId INT UNSIGNED NOT NULL,
     createdAt TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     updatedAt TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
     window TINYINT UNSIGNED NOT NULL,
@@ -90,6 +105,6 @@ CREATE TABLE game.item (
     attributeType6 INT UNSIGNED DEFAULT 0,
     attributeValue6 INT UNSIGNED DEFAULT 0,
     FOREIGN KEY (ownerId)
-        REFERENCES player(id)
+        REFERENCES game.player(id)
         ON DELETE CASCADE
 );
