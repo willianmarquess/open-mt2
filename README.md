@@ -61,41 +61,9 @@ Metin2 are copyrighted by [Webzen](http://webzen.com/ "Webzen").
 | Grafana Monitoring   | X   |       |      |
 | Game Api(for websites etc)   | X   |       |      |
 
-## Prerequisites
+## Getting Started
 
-Before you start, make sure you have the following tools installed:
-
-- **Node.js** (version 20 or higher)
-- **Docker**
-- **40k client**
-
-## Running the Project
-
-You can choose to run the project using Docker or locally.
-
-### Using Docker
-
-To run the project with Docker, use the commands below:
-
-1. To run everything with Docker:
-   ```bash
-   npm run docker:all
-
-### Run locally
-
-1. Install dependencies
-    ```bash
-    npm run install
-2. Setup .env file (you can use .env.example as example)
-3. To run only the dependencies with Docker
-    ```bash
-    npm run docker:dep
-4. Run the auth server
-    ```bash
-    npm run dev:auth
-5. Run the game server
-    ```bash
-    npm run dev:game
+- Follow this [**guide**](docs/guide.md)
 
 ## Auth Flow
 The image bellow show how the client interacts with auth server.
