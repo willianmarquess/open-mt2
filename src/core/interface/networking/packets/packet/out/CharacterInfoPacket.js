@@ -1,6 +1,26 @@
 import PacketHeaderEnum from '../../../../../enum/PacketHeaderEnum.js';
 import PacketOut from './PacketOut.js';
 
+/**
+ * @packet
+ * @type Out
+ * @name CharacterInfoPacket
+ * @header 0x88
+ * @size 54
+ * @description Represents the basic information about the character.
+ * @fields
+ *   - {byte} header 1 Packet header
+ *   - {int} vid 4 Player identification in game
+ *   - {string} playerName 25 Name of player (ascii)
+ *   - {short[4]} parts 8 Equipment parts
+ *   - {byte} empireId 1 Id of empire
+ *   - {int} guildId 4 Id of guild
+ *   - {int} level 4 Player level
+ *   - {short} rankPoints 2 Rank points
+ *   - {byte} pkMode 1 If pk is enable
+ *   - {int} mountId 4 Id of mount
+ */
+
 export default class CharacterInfoPacket extends PacketOut {
     #vid;
     #playerName;

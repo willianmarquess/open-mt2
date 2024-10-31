@@ -16,7 +16,8 @@
     "test:unit": "mocha --config test/.mocharc.unit.json --exit",
     "test:coverage": "c8 npm run test:unit",
     "docker:all": "docker-compose -f docker-compose.yml up -d",
-    "docker:dep": "docker-compose -f docker-compose.dep.yml up -d"
+    "docker:dep": "docker-compose -f docker-compose.dep.yml up -d",
+    "generate:doc": "node tools/doc/docGenerator.js"
   },
   "author": "Willian Marques (willian.goncalves4@gmail.com)",
   "license": "ISC",

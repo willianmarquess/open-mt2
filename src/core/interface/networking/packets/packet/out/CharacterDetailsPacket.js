@@ -1,6 +1,25 @@
 import PacketHeaderEnum from '../../../../../enum/PacketHeaderEnum.js';
 import PacketOut from './PacketOut.js';
 
+/**
+ * @packet
+ * @type Out
+ * @name CharacterDetailsPacket
+ * @header 0x71
+ * @size 46
+ * @description Represents the detail information about the character.
+ * @fields
+ *   - {byte} header 1 Packet header
+ *   - {int} vid 4 Player identification in game
+ *   - {short} playerClass 2 Number which indicates the player class
+ *   - {string} playerName 25 Name of player (ascii)
+ *   - {int} positionX 4 Position X of player in game
+ *   - {int} positionY 4 Position Y of player in game
+ *   - {int} positionZ 4 Position Z of player in game
+ *   - {byte} empireId 1 Id of empire
+ *   - {byte} skillGroup 1 Id of skill group
+ */
+
 export default class CharacterDetailsPacket extends PacketOut {
     #vid;
     #playerClass;
