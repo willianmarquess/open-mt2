@@ -65,6 +65,10 @@ Metin2 are copyrighted by [Webzen](http://webzen.com/ "Webzen").
 
 - Follow this [**guide**](docs/guide.md)
 
+## Documentation
+
+- See the packet [**documentation**](docs/packets.md) (work in progress)
+
 ## Auth Flow
 The image bellow show how the client interacts with auth server.
 ![](https://github.com/willianmarquess/mt2-server-javascript/blob/master/docs/images/mt2-auth-server.drawio.png)
