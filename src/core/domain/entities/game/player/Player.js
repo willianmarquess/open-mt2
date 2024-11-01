@@ -23,7 +23,7 @@ import ItemRemovedEvent from './events/ItemRemovedEvent.js';
 import ItemAntiFlagEnum from '../../../../enum/ItemAntiFlagEnum.js';
 import CharacterUpdatedEvent from './events/CharacterUpdatedEvent.js';
 import InventoryEventsEnum from '../inventory/events/InventoryEventsEnum.js';
-import ItemEquipamentSlotEnum from '../../../../enum/ItemEquipamentSlotEnum.js';
+import ItemEquipmentSlotEnum from '../../../../enum/ItemEquipmentSlotEnum.js';
 import OtherCharacterUpdatedEvent from './events/OtherCharacterUpdatedEvent.js';
 import ApplyTypeEnum from '../../../../enum/ApplyTypeEnum.js';
 import DropItemEvent from './events/DropItemEvent.js';
@@ -31,6 +31,8 @@ import ItemDroppedEvent from './events/ItemDroppedEvent.js';
 import ItemDroppedHideEvent from './events/ItemDroppedHideEvent.js';
 import EntityStateEnum from '../../../../enum/EntityStateEnum.js';
 import DroppedItem from '../item/DroppedItem.js';
+
+const REGEN_INTERVAL = 3000;
 
 export default class Player extends GameEntity {
     #accountId;
@@ -240,8 +242,8 @@ export default class Player extends GameEntity {
         this.#applies[ApplyTypeEnum.APPLY_HP_REGEN] = (value) => this.addHealthRegen(value);
         this.#applies[ApplyTypeEnum.APPLY_SP_REGEN] = (value) => this.addManaRegen(value);
 
-        setInterval(this.#regenHealth.bind(this), 3000);
-        setInterval(this.#regenMana.bind(this), 3000);
+        setInterval(this.#regenHealth.bind(this), REGEN_INTERVAL);
+        setInterval(this.#regenMana.bind(this), REGEN_INTERVAL);
     }
 
     #regenHealth() {
@@ -298,8 +300,9 @@ export default class Player extends GameEntity {
         }
     }
 
-    #onEquipamentChange() {
+    #onEquipmentChange() {
         this.#updateDefense();
+        this.#updateMagicDefense();
         this.#updateAttack();
         this.#updateHealth();
         this.#updateMana();
@@ -309,12 +312,12 @@ export default class Player extends GameEntity {
 
     #onItemEquipped({ item }) {
         this.#addItemApplies(item);
-        this.#onEquipamentChange();
+        this.#onEquipmentChange();
     }
 
     #onItemUnequipped({ item }) {
         this.#removeItemApplies(item);
-        this.#onEquipamentChange();
+        this.#onEquipmentChange();
     }
 
     getAttackRating() {
@@ -375,6 +378,49 @@ export default class Player extends GameEntity {
         this.#magicDefense = this.getMagicDefense();
     }
 
+    addStat(stat, value = 1) {
+        if (['st', 'ht', 'dx', 'iq'].includes(stat)) return;
+        const validatedValue = MathUtil.toUnsignedNumber(value);
+        if (validatedValue === 0 || validatedValue > this.#availableStatusPoints) return;
+
+        let realValue = 0;
+        if (this[stat] + validatedValue > this.#config.MAX_POINTS) {
+            const diff = this.#config.MAX_POINTS - this[stat];
+            realValue = diff;
+        } else {
+            realValue = validatedValue;
+        }
+
+        this[stat] += realValue;
+        this.#givenStatusPoints += realValue;
+        this.#availableStatusPoints -= realValue;
+
+        switch (stat) {
+            case 'st':
+                this.#updateAttack();
+                this.#sendPoints();
+                break;
+            case 'ht':
+                this.#updateDefense();
+                this.#updateMagicDefense();
+                this.#updateHealth();
+                this.#sendPoints();
+                break;
+            case 'dx':
+                this.#updateAttack();
+                this.#sendPoints();
+                break;
+            case 'iq':
+                this.#updateAttack();
+                this.#updateMagicAttack();
+                this.#updateMagicDefense();
+                this.#updateMana();
+                break;
+        }
+
+        this.#sendPoints();
+    }
+
     #updateStatusPoints() {
         const baseStatusPoints = (this.level - 1) * this.#config.POINTS_PER_LEVEL;
 
@@ -404,105 +450,6 @@ export default class Player extends GameEntity {
 
         this.#gold = Math.min(this.#gold + validatedValue, MathUtil.MAX_UINT);
         this.#sendPoints();
-    }
-
-    addSt(value = 1) {
-        const validatedValue = MathUtil.toUnsignedNumber(value);
-        if (validatedValue === 0 || validatedValue > this.#availableStatusPoints) return;
-
-        let realValue = 0;
-        if (this.st + validatedValue >= this.#config.MAX_POINTS) {
-            const diff = this.#config.MAX_POINTS - this.st;
-            realValue = diff;
-        } else {
-            realValue = validatedValue;
-        }
-
-        //update phy attack
-        this.st += realValue;
-        this.#givenStatusPoints += realValue;
-        this.#availableStatusPoints -= realValue;
-        this.#updateAttack();
-        this.#sendPoints();
-    }
-
-    addHt(value = 1) {
-        const validatedValue = MathUtil.toUnsignedNumber(value);
-        if (validatedValue === 0 || validatedValue > this.#availableStatusPoints) return;
-
-        let realValue = 0;
-        if (this.ht + validatedValue >= this.#config.MAX_POINTS) {
-            const diff = this.#config.MAX_POINTS - this.ht;
-            realValue = diff;
-        } else {
-            realValue = validatedValue;
-        }
-
-        this.ht += realValue;
-        this.#givenStatusPoints += realValue;
-        this.#availableStatusPoints -= realValue;
-        this.#updateDefense();
-        this.#updateMagicDefense();
-        this.#updateHealth();
-        this.#sendPoints();
-    }
-
-    addDx(value = 1) {
-        const validatedValue = MathUtil.toUnsignedNumber(value);
-        if (validatedValue === 0 || validatedValue > this.#availableStatusPoints) return;
-
-        let realValue = 0;
-        if (this.dx + validatedValue > this.#config.MAX_POINTS) {
-            const diff = this.#config.MAX_POINTS - this.dx;
-            realValue = diff;
-        } else {
-            realValue = validatedValue;
-        }
-
-        this.dx += realValue;
-        this.#givenStatusPoints += realValue;
-        this.#availableStatusPoints -= realValue;
-        this.#updateAttack();
-        this.#sendPoints();
-    }
-
-    addIq(value = 1) {
-        const validatedValue = MathUtil.toUnsignedNumber(value);
-        if (validatedValue === 0 || validatedValue > this.#availableStatusPoints) return;
-
-        let realValue = 0;
-        if (this.iq + validatedValue > this.#config.MAX_POINTS) {
-            const diff = this.#config.MAX_POINTS - this.iq;
-            realValue = diff;
-        } else {
-            realValue = validatedValue;
-        }
-
-        this.iq += realValue;
-        this.#givenStatusPoints += realValue;
-        this.#availableStatusPoints -= realValue;
-        this.#updateAttack();
-        this.#updateMagicAttack();
-        this.#updateMagicDefense();
-        this.#updateMana();
-        this.#sendPoints();
-    }
-
-    addStat(stat, value = 1) {
-        switch (stat) {
-            case 'st':
-                this.addSt(value);
-                break;
-            case 'ht':
-                this.addHt(value);
-                break;
-            case 'dx':
-                this.addDx(value);
-                break;
-            case 'iq':
-                this.addIq(value);
-                break;
-        }
     }
 
     addExperience(value) {
@@ -620,7 +567,7 @@ export default class Player extends GameEntity {
     }
 
     addMaxMana(value) {
-        this.#maxMana += value > 0 ? value : 0;
+        this.#maxMana += MathUtil.toUnsignedNumber(value);
     }
 
     addHealth(value) {
@@ -628,7 +575,7 @@ export default class Player extends GameEntity {
     }
 
     addMaxHealth(value) {
-        this.#maxHealth += value > 0 ? value : 0;
+        this.#maxHealth += MathUtil.toUnsignedNumber(value);
     }
 
     #updateHealth() {
@@ -776,15 +723,15 @@ export default class Player extends GameEntity {
     }
 
     getBody() {
-        return this.#inventory.getItemFromSlot(ItemEquipamentSlotEnum.BODY);
+        return this.#inventory.getItemFromSlot(ItemEquipmentSlotEnum.BODY);
     }
 
     getWeapon() {
-        return this.#inventory.getItemFromSlot(ItemEquipamentSlotEnum.WEAPON);
+        return this.#inventory.getItemFromSlot(ItemEquipmentSlotEnum.WEAPON);
     }
 
     getHair() {
-        return this.#inventory.getItemFromSlot(ItemEquipamentSlotEnum.COSTUME_HAIR);
+        return this.#inventory.getItemFromSlot(ItemEquipmentSlotEnum.COSTUME_HAIR);
     }
 
     wait({ positionX, positionY, arg, rotation, time, movementType }) {
@@ -904,7 +851,7 @@ export default class Player extends GameEntity {
         if (!this.#inventory.isValidPosition(toPosition)) return;
         if (!this.#inventory.haveAvailablePosition(toPosition, item.size)) return;
 
-        if (this.#inventory.isEquipamentPosition(toPosition)) {
+        if (this.#inventory.isEquipmentPosition(toPosition)) {
             if (!this.isWearable(item)) return;
             if (!this.#inventory.isValidSlot(item, toPosition)) return;
         }

@@ -1,7 +1,7 @@
-import ItemEquipamentSlotEnum from '../../../../enum/ItemEquipamentSlotEnum.js';
+import ItemEquipmentSlotEnum from '../../../../enum/ItemEquipmentSlotEnum.js';
 import ItemWearFlagEnum from '../../../../enum/ItemWearFlagEnum.js';
 
-export default class Equipament {
+export default class Equipment {
     #slots;
 
     #weapon;
@@ -23,8 +23,8 @@ export default class Equipament {
     #ability6;
     #ability7;
     #ability8;
-    #custumeBody;
-    #custumeHair;
+    #costumeBody;
+    #costumeHair;
     #ring1;
     #ring2;
     #belt;
@@ -34,145 +34,145 @@ export default class Equipament {
     constructor(offset) {
         this.#offset = offset;
         this.#slots = {
-            [ItemEquipamentSlotEnum.BODY]: {
+            [ItemEquipmentSlotEnum.BODY]: {
                 set: (value) => {
                     this.#body = value;
                 },
                 get: () => this.#body,
             },
-            [ItemEquipamentSlotEnum.HEAD]: {
+            [ItemEquipmentSlotEnum.HEAD]: {
                 set: (value) => {
                     this.#head = value;
                 },
                 get: () => this.#head,
             },
-            [ItemEquipamentSlotEnum.FOOTS]: {
+            [ItemEquipmentSlotEnum.FOOTS]: {
                 set: (value) => {
                     this.#foots = value;
                 },
                 get: () => this.#foots,
             },
-            [ItemEquipamentSlotEnum.WRIST]: {
+            [ItemEquipmentSlotEnum.WRIST]: {
                 set: (value) => {
                     this.#wrist = value;
                 },
                 get: () => this.#wrist,
             },
-            [ItemEquipamentSlotEnum.WEAPON]: {
+            [ItemEquipmentSlotEnum.WEAPON]: {
                 set: (value) => {
                     this.#weapon = value;
                 },
                 get: () => this.#weapon,
             },
-            [ItemEquipamentSlotEnum.NECK]: {
+            [ItemEquipmentSlotEnum.NECK]: {
                 set: (value) => {
                     this.#neck = value;
                 },
                 get: () => this.#neck,
             },
-            [ItemEquipamentSlotEnum.EAR]: {
+            [ItemEquipmentSlotEnum.EAR]: {
                 set: (value) => {
                     this.#ear = value;
                 },
                 get: () => this.#ear,
             },
-            [ItemEquipamentSlotEnum.UNIQUE1]: {
+            [ItemEquipmentSlotEnum.UNIQUE1]: {
                 set: (value) => {
                     this.#unique1 = value;
                 },
                 get: () => this.#unique1,
             },
-            [ItemEquipamentSlotEnum.UNIQUE2]: {
+            [ItemEquipmentSlotEnum.UNIQUE2]: {
                 set: (value) => {
                     this.#unique2 = value;
                 },
                 get: () => this.#unique2,
             },
-            [ItemEquipamentSlotEnum.ARROW]: {
+            [ItemEquipmentSlotEnum.ARROW]: {
                 set: (value) => {
                     this.#arrow = value;
                 },
                 get: () => this.#arrow,
             },
-            [ItemEquipamentSlotEnum.SHIELD]: {
+            [ItemEquipmentSlotEnum.SHIELD]: {
                 set: (value) => {
                     this.#shield = value;
                 },
                 get: () => this.#shield,
             },
-            [ItemEquipamentSlotEnum.ABILITY1]: {
+            [ItemEquipmentSlotEnum.ABILITY1]: {
                 set: (value) => {
                     this.#ability1 = value;
                 },
                 get: () => this.#ability1,
             },
-            [ItemEquipamentSlotEnum.ABILITY2]: {
+            [ItemEquipmentSlotEnum.ABILITY2]: {
                 set: (value) => {
                     this.#ability2 = value;
                 },
                 get: () => this.#ability2,
             },
-            [ItemEquipamentSlotEnum.ABILITY3]: {
+            [ItemEquipmentSlotEnum.ABILITY3]: {
                 set: (value) => {
                     this.#ability3 = value;
                 },
                 get: () => this.#ability3,
             },
-            [ItemEquipamentSlotEnum.ABILITY4]: {
+            [ItemEquipmentSlotEnum.ABILITY4]: {
                 set: (value) => {
                     this.#ability4 = value;
                 },
                 get: () => this.#ability4,
             },
-            [ItemEquipamentSlotEnum.ABILITY5]: {
+            [ItemEquipmentSlotEnum.ABILITY5]: {
                 set: (value) => {
                     this.#ability5 = value;
                 },
                 get: () => this.#ability5,
             },
-            [ItemEquipamentSlotEnum.ABILITY6]: {
+            [ItemEquipmentSlotEnum.ABILITY6]: {
                 set: (value) => {
                     this.#ability6 = value;
                 },
                 get: () => this.#ability6,
             },
-            [ItemEquipamentSlotEnum.ABILITY7]: {
+            [ItemEquipmentSlotEnum.ABILITY7]: {
                 set: (value) => {
                     this.#ability7 = value;
                 },
                 get: () => this.#ability7,
             },
-            [ItemEquipamentSlotEnum.ABILITY8]: {
+            [ItemEquipmentSlotEnum.ABILITY8]: {
                 set: (value) => {
                     this.#ability8 = value;
                 },
                 get: () => this.#ability8,
             },
-            [ItemEquipamentSlotEnum.COSTUME_BODY]: {
+            [ItemEquipmentSlotEnum.COSTUME_BODY]: {
                 set: (value) => {
-                    this.#custumeBody = value;
+                    this.#costumeBody = value;
                 },
-                get: () => this.#custumeBody,
+                get: () => this.#costumeBody,
             },
-            [ItemEquipamentSlotEnum.COSTUME_HAIR]: {
+            [ItemEquipmentSlotEnum.COSTUME_HAIR]: {
                 set: (value) => {
-                    this.#custumeHair = value;
+                    this.#costumeHair = value;
                 },
-                get: () => this.#custumeHair,
+                get: () => this.#costumeHair,
             },
-            [ItemEquipamentSlotEnum.RING1]: {
+            [ItemEquipmentSlotEnum.RING1]: {
                 set: (value) => {
                     this.#ring1 = value;
                 },
                 get: () => this.#ring1,
             },
-            [ItemEquipamentSlotEnum.RING2]: {
+            [ItemEquipmentSlotEnum.RING2]: {
                 set: (value) => {
                     this.#ring2 = value;
                 },
                 get: () => this.#ring2,
             },
-            [ItemEquipamentSlotEnum.BELT]: {
+            [ItemEquipmentSlotEnum.BELT]: {
                 set: (value) => {
                     this.#belt = value;
                 },
@@ -243,10 +243,10 @@ export default class Equipament {
         return this.#ability8;
     }
     get custumeBody() {
-        return this.#custumeBody;
+        return this.#costumeBody;
     }
     get custumeHair() {
-        return this.#custumeHair;
+        return this.#costumeHair;
     }
     get ring1() {
         return this.#ring1;
@@ -279,63 +279,63 @@ export default class Equipament {
     getWearPosition(item) {
         switch (true) {
             case item.wearFlags.is(ItemWearFlagEnum.WEAR_BODY):
-                return this.#offset + ItemEquipamentSlotEnum.BODY;
+                return this.#offset + ItemEquipmentSlotEnum.BODY;
             case item.wearFlags.is(ItemWearFlagEnum.WEAR_HEAD):
-                return this.#offset + ItemEquipamentSlotEnum.HEAD;
+                return this.#offset + ItemEquipmentSlotEnum.HEAD;
             case item.wearFlags.is(ItemWearFlagEnum.WEAR_FOOTS):
-                return this.#offset + ItemEquipamentSlotEnum.FOOTS;
+                return this.#offset + ItemEquipmentSlotEnum.FOOTS;
             case item.wearFlags.is(ItemWearFlagEnum.WEAR_EAR):
-                return this.#offset + ItemEquipamentSlotEnum.EAR;
+                return this.#offset + ItemEquipmentSlotEnum.EAR;
             case item.wearFlags.is(ItemWearFlagEnum.WEAR_NECK):
-                return this.#offset + ItemEquipamentSlotEnum.NECK;
+                return this.#offset + ItemEquipmentSlotEnum.NECK;
             case item.wearFlags.is(ItemWearFlagEnum.WEAR_SHIELD):
-                return this.#offset + ItemEquipamentSlotEnum.SHIELD;
+                return this.#offset + ItemEquipmentSlotEnum.SHIELD;
             case item.wearFlags.is(ItemWearFlagEnum.WEAR_WEAPON):
-                return this.#offset + ItemEquipamentSlotEnum.WEAPON;
+                return this.#offset + ItemEquipmentSlotEnum.WEAPON;
             case item.wearFlags.is(ItemWearFlagEnum.WEAR_ARROW):
-                return this.#offset + ItemEquipamentSlotEnum.ARROW;
+                return this.#offset + ItemEquipmentSlotEnum.ARROW;
             case item.wearFlags.is(ItemWearFlagEnum.WEAR_WRIST):
-                return this.#offset + ItemEquipamentSlotEnum.WRIST;
+                return this.#offset + ItemEquipmentSlotEnum.WRIST;
             case item.wearFlags.is(ItemWearFlagEnum.WEAR_ABILITY):
-                return this.#offset + ItemEquipamentSlotEnum.ABILITY1;
+                return this.#offset + ItemEquipmentSlotEnum.ABILITY1;
             case item.wearFlags.is(ItemWearFlagEnum.WEAR_UNIQUE):
-                return this.#offset + ItemEquipamentSlotEnum.UNIQUE1;
+                return this.#offset + ItemEquipmentSlotEnum.UNIQUE1;
         }
     }
 
     isValidSlot(item, slot) {
         switch (slot - this.#offset) {
-            case ItemEquipamentSlotEnum.BODY:
+            case ItemEquipmentSlotEnum.BODY:
                 return item.wearFlags.is(ItemWearFlagEnum.WEAR_BODY);
-            case ItemEquipamentSlotEnum.HEAD:
+            case ItemEquipmentSlotEnum.HEAD:
                 return item.wearFlags.is(ItemWearFlagEnum.WEAR_HEAD);
-            case ItemEquipamentSlotEnum.FOOTS:
+            case ItemEquipmentSlotEnum.FOOTS:
                 return item.wearFlags.is(ItemWearFlagEnum.WEAR_FOOTS);
-            case ItemEquipamentSlotEnum.WRIST:
+            case ItemEquipmentSlotEnum.WRIST:
                 return item.wearFlags.is(ItemWearFlagEnum.WEAR_WRIST);
-            case ItemEquipamentSlotEnum.WEAPON:
+            case ItemEquipmentSlotEnum.WEAPON:
                 return item.wearFlags.is(ItemWearFlagEnum.WEAR_WEAPON);
-            case ItemEquipamentSlotEnum.NECK:
+            case ItemEquipmentSlotEnum.NECK:
                 return item.wearFlags.is(ItemWearFlagEnum.WEAR_NECK);
-            case ItemEquipamentSlotEnum.EAR:
+            case ItemEquipmentSlotEnum.EAR:
                 return item.wearFlags.is(ItemWearFlagEnum.WEAR_EAR);
-            case ItemEquipamentSlotEnum.SHIELD:
+            case ItemEquipmentSlotEnum.SHIELD:
                 return item.wearFlags.is(ItemWearFlagEnum.WEAR_SHIELD);
-            case ItemEquipamentSlotEnum.UNIQUE1:
-            case ItemEquipamentSlotEnum.UNIQUE2:
+            case ItemEquipmentSlotEnum.UNIQUE1:
+            case ItemEquipmentSlotEnum.UNIQUE2:
                 return item.wearFlags.is(ItemWearFlagEnum.WEAR_UNIQUE);
-            case ItemEquipamentSlotEnum.ARROW:
+            case ItemEquipmentSlotEnum.ARROW:
                 return item.wearFlags.is(ItemWearFlagEnum.WEAR_ARROW);
-            case ItemEquipamentSlotEnum.COSTUME_HAIR:
+            case ItemEquipmentSlotEnum.COSTUME_HAIR:
                 return item.wearFlags.is(ItemWearFlagEnum.WEAR_HAIR);
-            case ItemEquipamentSlotEnum.ABILITY1:
-            case ItemEquipamentSlotEnum.ABILITY2:
-            case ItemEquipamentSlotEnum.ABILITY3:
-            case ItemEquipamentSlotEnum.ABILITY4:
-            case ItemEquipamentSlotEnum.ABILITY5:
-            case ItemEquipamentSlotEnum.ABILITY6:
-            case ItemEquipamentSlotEnum.ABILITY7:
-            case ItemEquipamentSlotEnum.ABILITY8:
+            case ItemEquipmentSlotEnum.ABILITY1:
+            case ItemEquipmentSlotEnum.ABILITY2:
+            case ItemEquipmentSlotEnum.ABILITY3:
+            case ItemEquipmentSlotEnum.ABILITY4:
+            case ItemEquipmentSlotEnum.ABILITY5:
+            case ItemEquipmentSlotEnum.ABILITY6:
+            case ItemEquipmentSlotEnum.ABILITY7:
+            case ItemEquipmentSlotEnum.ABILITY8:
                 return item.wearFlags.is(ItemWearFlagEnum.WEAR_ABILITY);
         }
     }

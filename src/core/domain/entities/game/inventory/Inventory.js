@@ -1,9 +1,9 @@
 import { EventEmitter } from 'node:events';
-import Equipament from './Equipament.js';
+import Equipment from './Equipment.js';
 import Page from './Page.js';
 import ItemEquippedEvent from './events/ItemEquippedEvent.js';
 import ItemUnequippedEvent from './events/ItemUnequippedEvent.js';
-import ItemEquipamentSlotEnum from '../../../../enum/ItemEquipamentSlotEnum.js';
+import ItemEquipmentSlotEnum from '../../../../enum/ItemEquipmentSlotEnum.js';
 import WindowTypeEnum from '../../../../enum/WindowTypeEnum.js';
 
 const DEFAULT_INVENTORY_WIDTH = 5;
@@ -13,7 +13,7 @@ export default class Inventory {
     #pages = [];
     #width = DEFAULT_INVENTORY_WIDTH;
     #height = DEFAULT_INVENTORY_HEIGHT;
-    #equipament;
+    #equipment;
     #emitter = new EventEmitter();
 
     #items;
@@ -24,7 +24,7 @@ export default class Inventory {
             this.#pages.push(new Page(this.#width, this.#height));
         }
 
-        this.#equipament = new Equipament(this.size());
+        this.#equipment = new Equipment(this.size());
         this.#items = new Map();
         this.#ownerId = ownerId;
     }
@@ -54,7 +54,7 @@ export default class Inventory {
                 const realPosition = Math.floor(position + i * this.#width * this.#height);
                 item.position = realPosition;
                 item.ownerId = this.#ownerId;
-                item.window = this.isEquipamentPosition(realPosition)
+                item.window = this.isEquipmentPosition(realPosition)
                     ? WindowTypeEnum.EQUIPMENT
                     : WindowTypeEnum.INVENTORY;
                 this.#items.set(item.dbId, item);
@@ -66,11 +66,11 @@ export default class Inventory {
     }
 
     addItemAt(item, position) {
-        if (this.#isFromEquipamentSlots(position)) {
-            this.#equipament.setItem(position, item);
+        if (this.#isFromEquipmentSlots(position)) {
+            this.#equipment.setItem(position, item);
             item.position = position;
             item.ownerId = this.#ownerId;
-            item.window = this.isEquipamentPosition(position) ? WindowTypeEnum.EQUIPMENT : WindowTypeEnum.INVENTORY;
+            item.window = this.isEquipmentPosition(position) ? WindowTypeEnum.EQUIPMENT : WindowTypeEnum.INVENTORY;
             this.#items.set(item.dbId, item);
             this.publish(ItemEquippedEvent.type, new ItemEquippedEvent({ item, slot: position - this.size() }));
             return;
@@ -81,7 +81,7 @@ export default class Inventory {
         if (this.#pages[page].addItemAt(item, pagePosition)) {
             item.position = pagePosition;
             item.ownerId = this.#ownerId;
-            item.window = this.isEquipamentPosition(pagePosition) ? WindowTypeEnum.EQUIPMENT : WindowTypeEnum.INVENTORY;
+            item.window = this.isEquipmentPosition(pagePosition) ? WindowTypeEnum.EQUIPMENT : WindowTypeEnum.INVENTORY;
             this.#items.set(item.dbId, item);
         }
     }
@@ -94,17 +94,17 @@ export default class Inventory {
         return Math.floor(position - page * this.#width * this.#height);
     }
 
-    #isFromEquipamentSlots(position) {
+    #isFromEquipmentSlots(position) {
         return position >= this.size();
     }
 
-    isEquipamentPosition(position) {
+    isEquipmentPosition(position) {
         return position >= this.size();
     }
 
     getItem(position) {
-        if (this.#isFromEquipamentSlots(position)) {
-            return this.#equipament.getItem(position);
+        if (this.#isFromEquipmentSlots(position)) {
+            return this.#equipment.getItem(position);
         }
 
         const page = this.#calcPage(position);
@@ -113,7 +113,7 @@ export default class Inventory {
     }
 
     getItemFromSlot(slot) {
-        return this.#equipament.getItem(this.size() + slot);
+        return this.#equipment.getItem(this.size() + slot);
     }
 
     removeItem(position, size) {
@@ -121,8 +121,8 @@ export default class Inventory {
 
         if (!item) return;
 
-        if (this.#isFromEquipamentSlots(position)) {
-            const unequippedItem = this.#equipament.removeItem(position);
+        if (this.#isFromEquipmentSlots(position)) {
+            const unequippedItem = this.#equipment.removeItem(position);
             this.#items.delete(item.dbId);
             this.publish(
                 ItemUnequippedEvent.type,
@@ -138,8 +138,8 @@ export default class Inventory {
     }
 
     haveAvailablePosition(position, size) {
-        if (this.#isFromEquipamentSlots(position)) {
-            return this.#equipament.haveAvailableSlot(position);
+        if (this.#isFromEquipmentSlots(position)) {
+            return this.#equipment.haveAvailableSlot(position);
         }
 
         const page = this.#calcPage(position);
@@ -148,15 +148,15 @@ export default class Inventory {
     }
 
     isValidPosition(position) {
-        return position >= 0 && position < this.size() + this.#equipament.size();
+        return position >= 0 && position < this.size() + this.#equipment.size();
     }
 
     isValidSlot(item, position) {
-        return this.#equipament.isValidSlot(item, position);
+        return this.#equipment.isValidSlot(item, position);
     }
 
     getWearPosition(item) {
-        return this.#equipament.getWearPosition(item);
+        return this.#equipment.getWearPosition(item);
     }
 
     publish(eventName, event) {
@@ -174,24 +174,24 @@ export default class Inventory {
     getArmorValues() {
         return [
             {
-                type: ItemEquipamentSlotEnum.BODY,
-                flat: this.#equipament.body?.values[1] ?? 0,
-                multi: this.#equipament.body?.values[5] ?? 0,
+                type: ItemEquipmentSlotEnum.BODY,
+                flat: this.#equipment.body?.values[1] ?? 0,
+                multi: this.#equipment.body?.values[5] ?? 0,
             },
             {
-                type: ItemEquipamentSlotEnum.HEAD,
-                flat: this.#equipament.head?.values[1] ?? 0,
-                multi: this.#equipament.head?.values[5] ?? 0,
+                type: ItemEquipmentSlotEnum.HEAD,
+                flat: this.#equipment.head?.values[1] ?? 0,
+                multi: this.#equipment.head?.values[5] ?? 0,
             },
             {
-                type: ItemEquipamentSlotEnum.FOOTS,
-                flat: this.#equipament.foots?.values[1] ?? 0,
-                multi: this.#equipament.foots?.values[5] ?? 0,
+                type: ItemEquipmentSlotEnum.FOOTS,
+                flat: this.#equipment.foots?.values[1] ?? 0,
+                multi: this.#equipment.foots?.values[5] ?? 0,
             },
             {
-                type: ItemEquipamentSlotEnum.SHIELD,
-                flat: this.#equipament.shield?.values[1] ?? 0,
-                multi: this.#equipament.shield?.values[5] ?? 0,
+                type: ItemEquipmentSlotEnum.SHIELD,
+                flat: this.#equipment.shield?.values[1] ?? 0,
+                multi: this.#equipment.shield?.values[5] ?? 0,
             },
         ];
     }
@@ -199,14 +199,14 @@ export default class Inventory {
     getWeaponValues() {
         return {
             magic: {
-                min: this.#equipament.weapon?.values[1] ?? 0,
-                max: this.#equipament.weapon?.values[2] ?? 0,
-                bonus: this.#equipament.weapon?.values[5] ?? 0,
+                min: this.#equipment.weapon?.values[1] ?? 0,
+                max: this.#equipment.weapon?.values[2] ?? 0,
+                bonus: this.#equipment.weapon?.values[5] ?? 0,
             },
             physic: {
-                min: this.#equipament.weapon?.values[3] ?? 0,
-                max: this.#equipament.weapon?.values[4] ?? 0,
-                bonus: this.#equipament.weapon?.values[5] ?? 0,
+                min: this.#equipment.weapon?.values[3] ?? 0,
+                max: this.#equipment.weapon?.values[4] ?? 0,
+                bonus: this.#equipment.weapon?.values[5] ?? 0,
             },
         };
     }

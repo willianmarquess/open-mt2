@@ -19,7 +19,7 @@ export default class MoveItemService {
         if (!player.inventory.isValidPosition(toPosition)) return;
         if (!player.inventory.haveAvailablePosition(toPosition, item.size)) return;
 
-        if (player.inventory.isEquipamentPosition(toPosition)) {
+        if (player.inventory.isEquipmentPosition(toPosition)) {
             if (!player.isWearable(item)) return;
             if (!player.inventory.isValidSlot(item, toPosition)) return;
         }
