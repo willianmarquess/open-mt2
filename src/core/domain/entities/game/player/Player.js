@@ -379,7 +379,7 @@ export default class Player extends GameEntity {
     }
 
     addStat(stat, value = 1) {
-        if (['st', 'ht', 'dx', 'iq'].includes(stat)) return;
+        if (!['st', 'ht', 'dx', 'iq'].includes(stat)) return;
         const validatedValue = MathUtil.toUnsignedNumber(value);
         if (validatedValue === 0 || validatedValue > this.#availableStatusPoints) return;
 

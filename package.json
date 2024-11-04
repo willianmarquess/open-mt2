@@ -14,6 +14,7 @@
     "prepare": "husky",
     "lint:fix": "eslint --fix {src,test}/**/*.js",
     "test:unit": "mocha --config test/.mocharc.unit.json --exit",
+    "test:integration": "node --env-file=.env --experimental-json-modules node_modules/mocha/bin/mocha --config test/.mocharc.integration.json --exit",
     "test:coverage": "c8 npm run test:unit",
     "docker:all": "docker-compose -f docker-compose.yml up -d",
     "docker:dep": "docker-compose -f docker-compose.dep.yml up -d",

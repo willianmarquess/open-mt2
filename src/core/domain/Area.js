@@ -260,7 +260,9 @@ export default class Area {
         }
 
         for (const entity of this.#entities.values()) {
-            entity.tick();
+            if (entity instanceof GameEntity) {
+                entity.tick();
+            }
         }
     }
 }

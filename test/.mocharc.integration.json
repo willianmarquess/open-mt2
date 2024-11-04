@@ -1,0 +1,7 @@
+{
+    "extension": ["js"],
+    "spec": "test/integration/**/*.test.js",
+    "color": true,
+    "file": "test/setup.integration.js",
+    "timeout": 10000
+}
