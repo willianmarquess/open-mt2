@@ -1,0 +1,129 @@
+{
+  "ScriptType": "MotionData",
+  "MotionFileName": "D:\\Ymir Work\\monster2\\triton_boss2\\special_attack.GR2",
+  "MotionDuration": 2.666667,
+  "Accumulation": [
+    0,
+    -219.45,
+    0
+  ],
+  "MotionEventData": {
+    "MotionEventDataCount": 10
+  },
+  "Event00": {
+    "MotionEventType": 1,
+    "StartingTime": 0.583942,
+    "IndependentFlag": 0,
+    "AttachingEnable": 1,
+    "AttachingBoneName": "Bip01 R Finger11",
+    "FollowingEnable": 1,
+    "EffectFileName": "d:/ymir work/effect/monster/holy_blue1_hand.mse",
+    "EffectPosition": "0.000000 0.000000 -10.000000"
+  },
+  "Event01": {
+    "MotionEventType": 1,
+    "StartingTime": 0.583942,
+    "IndependentFlag": 0,
+    "AttachingEnable": 1,
+    "AttachingBoneName": "Bip01 L Finger11",
+    "FollowingEnable": 1,
+    "EffectFileName": "d:/ymir work/effect/monster/holy_blue1_hand.mse",
+    "EffectPosition": "0.000000 0.000000 -10.000000"
+  },
+  "Event02": {
+    "MotionEventType": 1,
+    "StartingTime": 1.135442,
+    "IndependentFlag": 0,
+    "AttachingEnable": 1,
+    "AttachingBoneName": "Bip01 R Finger11",
+    "FollowingEnable": 1,
+    "EffectFileName": "d:/ymir work/effect/monster/holy_blue1_hand.mse",
+    "EffectPosition": "0.000000 0.000000 -10.000000"
+  },
+  "Event03": {
+    "MotionEventType": 1,
+    "StartingTime": 1.135442,
+    "IndependentFlag": 0,
+    "AttachingEnable": 1,
+    "AttachingBoneName": "Bip01 L Finger11",
+    "FollowingEnable": 1,
+    "EffectFileName": "d:/ymir work/effect/monster/holy_blue1_hand.mse",
+    "EffectPosition": "0.000000 0.000000 -10.000000"
+  },
+  "Event04": {
+    "MotionEventType": 1,
+    "StartingTime": 1.933496,
+    "IndependentFlag": 0,
+    "AttachingEnable": 0,
+    "AttachingBoneName": "Bip01 R Hand",
+    "FollowingEnable": 0,
+    "EffectFileName": "d:/ymir work/effect/monster2/mob_blow2.mse",
+    "EffectPosition": "0.000000 -200.000000 250.000000"
+  },
+  "Event05": {
+    "MotionEventType": 1,
+    "StartingTime": 1.537713,
+    "IndependentFlag": 0,
+    "AttachingEnable": 0,
+    "AttachingBoneName": "Bone33",
+    "FollowingEnable": 0,
+    "EffectFileName": "d:/ymir work/effect/monster2/ray_blue1.mse",
+    "EffectPosition": "0.000000 -250.000000 250.000000"
+  },
+  "Event06": {
+    "MotionEventType": 1,
+    "StartingTime": 1.537713,
+    "IndependentFlag": 0,
+    "AttachingEnable": 0,
+    "AttachingBoneName": "Bone33",
+    "FollowingEnable": 0,
+    "EffectFileName": "d:/ymir work/effect/monster2/spell1.mse",
+    "EffectPosition": "0.000000 -250.000000 250.000000"
+  },
+  "Event07": {
+    "MotionEventType": 4,
+    "StartingTime": 1.537713,
+    "DuringTime": 0.2,
+    "EnableHitProcess": 0,
+    "AttackType": 0,
+    "HittingType": 2,
+    "StiffenTime": 0,
+    "InvisibleTime": 0.3,
+    "ExternalForce": 0,
+    "HitLimitCount": 0,
+    "CollisionType": 4,
+    "SphereDataCount": 1
+  },
+  "SphereData00": {
+    "Radius": 300,
+    "Position": "0.000000 -1100.000000 0.000000"
+  },
+  "Event08": {
+    "MotionEventType": 4,
+    "StartingTime": 1.66099,
+    "DuringTime": 0.2,
+    "EnableHitProcess": 0,
+    "AttackType": 0,
+    "HittingType": 2,
+    "StiffenTime": 0,
+    "InvisibleTime": 0.3,
+    "ExternalForce": 0,
+    "HitLimitCount": 0,
+    "CollisionType": 4,
+    "SphereDataCount": 1
+  },
+  "Event09": {
+    "MotionEventType": 4,
+    "StartingTime": 1.777778,
+    "DuringTime": 0.2,
+    "EnableHitProcess": 0,
+    "AttackType": 0,
+    "HittingType": 2,
+    "StiffenTime": 0,
+    "InvisibleTime": 0.3,
+    "ExternalForce": 0,
+    "HitLimitCount": 0,
+    "CollisionType": 4,
+    "SphereDataCount": 1
+  }
+}

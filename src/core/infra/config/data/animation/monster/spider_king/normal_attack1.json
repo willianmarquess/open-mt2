@@ -1,0 +1,16 @@
+{
+  "ScriptType": "MotionData",
+  "MotionFileName": "D:\\Ymir Work\\monster2\\spider_king\\20_1.GR2",
+  "MotionDuration": 1.333333,
+  "MotionEventData": {
+    "MotionEventDataCount": 1
+  },
+  "Event00": {
+    "MotionEventType": 6,
+    "StartingTime": 0.733171,
+    "AttachingEnable": 1,
+    "AttachingBoneName": "Dummy01",
+    "FlyFileName": "d:/ymir work/effect/monster/spider_king_20_1_throw.msf",
+    "FlyPosition": "0.000000 0.000000 0.000000"
+  }
+}

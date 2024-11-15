@@ -1,0 +1,36 @@
+{
+  "ScriptType": "MotionData",
+  "MotionFileName": "D:\\YMIR WORK\\monster\\milgyo_founder\\25.GR2",
+  "MotionDuration": 1.666667,
+  "MotionEventData": {
+    "MotionEventDataCount": 2
+  },
+  "Event00": {
+    "MotionEventType": 1,
+    "StartingTime": 0.1103,
+    "IndependentFlag": 0,
+    "AttachingEnable": 1,
+    "AttachingBoneName": "Bip01",
+    "FollowingEnable": 1,
+    "EffectFileName": "d:/ymir work/effect/monster/milgyo_founder_25.mse",
+    "EffectPosition": "0.000000 0.000000 -130.000000"
+  },
+  "Event01": {
+    "MotionEventType": 4,
+    "StartingTime": 0.121655,
+    "DuringTime": 0.2,
+    "EnableHitProcess": 0,
+    "AttackType": 0,
+    "HittingType": 2,
+    "StiffenTime": 0,
+    "InvisibleTime": 0.3,
+    "ExternalForce": 0,
+    "HitLimitCount": 0,
+    "CollisionType": 4,
+    "SphereDataCount": 1
+  },
+  "SphereData00": {
+    "Radius": 300,
+    "Position": "0.000000 0.000000 100.000000"
+  }
+}

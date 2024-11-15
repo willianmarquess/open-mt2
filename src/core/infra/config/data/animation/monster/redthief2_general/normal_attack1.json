@@ -1,0 +1,40 @@
+{
+  "ScriptType": "MotionData",
+  "MotionFileName": "D:\\Ymir Work\\monster2\\redthief2_general\\normal_attack1.GR2",
+  "MotionDuration": 1.5,
+  "MotionEventData": {
+    "MotionEventDataCount": 2
+  },
+  "Event00": {
+    "MotionEventType": 4,
+    "StartingTime": 0.868613,
+    "DuringTime": 0.2,
+    "EnableHitProcess": 0,
+    "AttackType": 0,
+    "HittingType": 1,
+    "StiffenTime": 0,
+    "InvisibleTime": 0.3,
+    "ExternalForce": 0,
+    "HitLimitCount": 0,
+    "CollisionType": 4,
+    "SphereDataCount": 1
+  },
+  "SphereData00": {
+    "Radius": 110,
+    "Position": "0.000000 -150.000000 0.000000"
+  },
+  "Event01": {
+    "MotionEventType": 4,
+    "StartingTime": 0.434307,
+    "DuringTime": 0.2,
+    "EnableHitProcess": 0,
+    "AttackType": 0,
+    "HittingType": 1,
+    "StiffenTime": 0,
+    "InvisibleTime": 0.3,
+    "ExternalForce": 0,
+    "HitLimitCount": 0,
+    "CollisionType": 4,
+    "SphereDataCount": 1
+  }
+}

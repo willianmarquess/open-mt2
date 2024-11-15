@@ -1,0 +1,24 @@
+{
+  "ScriptType": "MotionData",
+  "MotionFileName": "D:\\Ymir Work\\monster\\recycle_monster\\20_1.GR2",
+  "MotionDuration": 2,
+  "MotionEventData": {
+    "MotionEventDataCount": 2
+  },
+  "Event00": {
+    "MotionEventType": 6,
+    "StartingTime": 0.798054,
+    "AttachingEnable": 1,
+    "AttachingBoneName": "Bip01 L Hand",
+    "FlyFileName": "d:/ymir work/effect/monster/recycle_monster_20_1_throw.msf",
+    "FlyPosition": "0.000000 0.000000 0.000000"
+  },
+  "Event01": {
+    "MotionEventType": 6,
+    "StartingTime": 1.270073,
+    "AttachingEnable": 1,
+    "AttachingBoneName": "Bip01 R Hand",
+    "FlyFileName": "d:/ymir work/effect/monster/recycle_monster_20_1_throw.msf",
+    "FlyPosition": "0.000000 0.000000 0.000000"
+  }
+}

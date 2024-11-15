@@ -1,0 +1,69 @@
+{
+  "ScriptType": "MotionData",
+  "MotionFileName": "D:\\Ymir Work\\monster2\\gnoll_minotaur\\special_attack01.GR2",
+  "MotionDuration": 1.8333,
+  "Accumulation": [
+    0,
+    0,
+    0
+  ],
+  "MotionEventData": {
+    "MotionEventDataCount": 4
+  },
+  "Event00": {
+    "MotionEventType": 1,
+    "StartingTime": 0.695864,
+    "IndependentFlag": 0,
+    "AttachingEnable": 0,
+    "AttachingBoneName": "Bip01 Footsteps",
+    "FollowingEnable": 0,
+    "EffectFileName": "d:/ymir work/effect/monster/skeleton_god_24.mse",
+    "EffectPosition": "0.000000 -435.000000 164.000000"
+  },
+  "Event01": {
+    "MotionEventType": 4,
+    "StartingTime": 0.651257,
+    "DuringTime": 0.2,
+    "EnableHitProcess": 1,
+    "AttackType": 0,
+    "HittingType": 1,
+    "StiffenTime": 0,
+    "InvisibleTime": 1,
+    "ExternalForce": 0,
+    "HitLimitCount": 0,
+    "CollisionType": 4,
+    "SphereDataCount": 1
+  },
+  "SphereData00": {
+    "Radius": 200,
+    "Position": "0.000000 -370.000000 80.000000"
+  },
+  "Event02": {
+    "MotionEventType": 4,
+    "StartingTime": 0.749392,
+    "DuringTime": 0.2,
+    "EnableHitProcess": 1,
+    "AttackType": 0,
+    "HittingType": 1,
+    "StiffenTime": 0,
+    "InvisibleTime": 1,
+    "ExternalForce": 0,
+    "HitLimitCount": 0,
+    "CollisionType": 4,
+    "SphereDataCount": 1
+  },
+  "Event03": {
+    "MotionEventType": 4,
+    "StartingTime": 0.700324,
+    "DuringTime": 0.2,
+    "EnableHitProcess": 1,
+    "AttackType": 0,
+    "HittingType": 1,
+    "StiffenTime": 0,
+    "InvisibleTime": 1,
+    "ExternalForce": 0,
+    "HitLimitCount": 0,
+    "CollisionType": 4,
+    "SphereDataCount": 1
+  }
+}

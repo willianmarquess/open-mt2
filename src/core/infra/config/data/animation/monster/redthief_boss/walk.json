@@ -1,0 +1,10 @@
+{
+  "ScriptType": "MotionData",
+  "MotionFileName": "D:\\Ymir Work\\monster2\\redthief_boss\\walk.GR2",
+  "MotionDuration": 1,
+  "Accumulation": [
+    0,
+    -256,
+    0
+  ]
+}

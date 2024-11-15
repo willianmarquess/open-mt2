@@ -1,0 +1,21 @@
+{
+  "ScriptType": "MotionData",
+  "MotionFileName": "D:\\Ymir Work\\monster2\\redthief_bow\\normal_attack1.GR2",
+  "MotionDuration": 1.5,
+  "Accumulation": [
+    0,
+    -219.45,
+    0
+  ],
+  "MotionEventData": {
+    "MotionEventDataCount": 1
+  },
+  "Event00": {
+    "MotionEventType": 6,
+    "StartingTime": 1.069343,
+    "AttachingEnable": 1,
+    "AttachingBoneName": "Bip01 R Hand",
+    "FlyFileName": "d:/ymir work/pc/assassin/effect/arrow_01.msf",
+    "FlyPosition": "0.000000 -10.000000 0.000000"
+  }
+}

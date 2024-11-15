@@ -1,0 +1,40 @@
+{
+  "ScriptType": "MotionData",
+  "MotionFileName": "D:\\Ymir Work\\monster2\\gnoll_boss2\\normal_attack1.GR2",
+  "MotionDuration": 1.166667,
+  "MotionEventData": {
+    "MotionEventDataCount": 2
+  },
+  "Event00": {
+    "MotionEventType": 4,
+    "StartingTime": 0.36618,
+    "DuringTime": 0.2,
+    "EnableHitProcess": 0,
+    "AttackType": 0,
+    "HittingType": 1,
+    "StiffenTime": 0,
+    "InvisibleTime": 0.3,
+    "ExternalForce": 0,
+    "HitLimitCount": 0,
+    "CollisionType": 4,
+    "SphereDataCount": 1
+  },
+  "SphereData00": {
+    "Radius": 180,
+    "Position": "120.000000 -250.000000 0.000000"
+  },
+  "Event01": {
+    "MotionEventType": 4,
+    "StartingTime": 0.391728,
+    "DuringTime": 0.2,
+    "EnableHitProcess": 0,
+    "AttackType": 0,
+    "HittingType": 1,
+    "StiffenTime": 0,
+    "InvisibleTime": 0.3,
+    "ExternalForce": 0,
+    "HitLimitCount": 0,
+    "CollisionType": 4,
+    "SphereDataCount": 1
+  }
+}

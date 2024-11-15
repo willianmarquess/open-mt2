@@ -1,0 +1,10 @@
+{
+  "ScriptType": "MotionData",
+  "MotionFileName": "D:\\Ymir Work\\npc2\\tiger_young1\\run.GR2",
+  "MotionDuration": 0.6,
+  "Accumulation": [
+    0,
+    -200,
+    0
+  ]
+}

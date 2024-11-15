@@ -1,0 +1,18 @@
+{
+  "ScriptType": "MotionData",
+  "MotionFileName": "D:\\Ymir Work\\monster2\\fire_ghost\\00.GR2",
+  "MotionDuration": 1,
+  "MotionEventData": {
+    "MotionEventDataCount": 1
+  },
+  "Event00": {
+    "MotionEventType": 1,
+    "StartingTime": 0.017032,
+    "IndependentFlag": 0,
+    "AttachingEnable": 0,
+    "AttachingBoneName": "Bip01 HeadNub",
+    "FollowingEnable": 0,
+    "EffectFileName": "d:/ymir work/effect/monster2/fire_ghost_body.mse",
+    "EffectPosition": "0.000000 0.000000 100.000000"
+  }
+}

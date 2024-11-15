@@ -1,0 +1,78 @@
+{
+  "ScriptType": "MotionData",
+  "MotionFileName": "D:/Ymir Work/monster2/manticore_boss2/special_attack.GR2",
+  "MotionDuration": 2.5,
+  "Accumulation": [
+    0,
+    0,
+    0
+  ],
+  "MotionEventData": {
+    "MotionEventDataCount": 6
+  },
+  "Event00": {
+    "MotionEventType": 1,
+    "StartingTime": 1.703163,
+    "IndependentFlag": 0,
+    "AttachingEnable": 0,
+    "AttachingBoneName": "Bip01 HeadNub",
+    "FollowingEnable": 0,
+    "EffectFileName": "d:/ymir work/effect/monster2/impact4.mse",
+    "EffectPosition": "0.000000 -250.000000 0.000000"
+  },
+  "Event01": {
+    "MotionEventType": 1,
+    "StartingTime": 1.745742,
+    "IndependentFlag": 0,
+    "AttachingEnable": 0,
+    "AttachingBoneName": "Bip01 HeadNub",
+    "FollowingEnable": 0,
+    "EffectFileName": "d:/ymir work/effect/monster2/impact3.mse",
+    "EffectPosition": "0.000000 -250.000000 0.000000"
+  },
+  "Event02": {
+    "MotionEventType": 2,
+    "StartingTime": 1.751825,
+    "DuringTime": 0.2,
+    "Power": 300,
+    "AffectingRange": 200
+  },
+  "Event03": {
+    "MotionEventType": 1,
+    "StartingTime": 1.812652,
+    "IndependentFlag": 0,
+    "AttachingEnable": 0,
+    "AttachingBoneName": "Bip01 HeadNub",
+    "FollowingEnable": 0,
+    "EffectFileName": "d:/ymir work/effect/monster2/impact3.mse",
+    "EffectPosition": "-150.000000 0.000000 0.000000"
+  },
+  "Event04": {
+    "MotionEventType": 1,
+    "StartingTime": 1.855231,
+    "IndependentFlag": 0,
+    "AttachingEnable": 0,
+    "AttachingBoneName": "Bip01 HeadNub",
+    "FollowingEnable": 0,
+    "EffectFileName": "d:/ymir work/effect/monster2/impact3.mse",
+    "EffectPosition": "150.000000 0.000000 0.000000"
+  },
+  "Event05": {
+    "MotionEventType": 4,
+    "StartingTime": 1.757908,
+    "DuringTime": 0.2,
+    "EnableHitProcess": 0,
+    "AttackType": 0,
+    "HittingType": 2,
+    "StiffenTime": 0,
+    "InvisibleTime": 0.3,
+    "ExternalForce": 0,
+    "HitLimitCount": 0,
+    "CollisionType": 4,
+    "SphereDataCount": 1
+  },
+  "SphereData00": {
+    "Radius": 400,
+    "Position": "0.000000 0.000000 100.000000"
+  }
+}

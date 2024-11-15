@@ -1,0 +1,18 @@
+{
+  "ScriptType": "MotionData",
+  "MotionFileName": "C:\\Documents and Settings\\levites.YMIR.000\\���� ȭ��\\Work\\20050615\\monster2\\ent_elder\\25.GR2",
+  "MotionDuration": 2.666667,
+  "MotionEventData": {
+    "MotionEventDataCount": 1
+  },
+  "Event00": {
+    "MotionEventType": 1,
+    "StartingTime": 1.589619,
+    "IndependentFlag": 0,
+    "AttachingEnable": 0,
+    "AttachingBoneName": "Bip01 HeadNub",
+    "FollowingEnable": 0,
+    "EffectFileName": "d:/ymir work/effect/monster2/giant_desert_turtle_24.mse",
+    "EffectPosition": "0.000000 -550.000000 0.000000"
+  }
+}

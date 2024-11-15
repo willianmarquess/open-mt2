@@ -1,0 +1,41 @@
+{
+  "ScriptType": "MotionData",
+  "MotionFileName": "D:\\Ymir Work\\monster2\\redthief_magic\\normal_attack.GR2",
+  "MotionDuration": 1.333333,
+  "Accumulation": [
+    0,
+    -219.45,
+    0
+  ],
+  "MotionEventData": {
+    "MotionEventDataCount": 3
+  },
+  "Event00": {
+    "MotionEventType": 6,
+    "StartingTime": 0.697486,
+    "AttachingEnable": 1,
+    "AttachingBoneName": "equip",
+    "FlyFileName": "d:/ymir work/effect/monster2/fire_ghost_fireball.msf",
+    "FlyPosition": "0.000000 -40.000000 10.000000"
+  },
+  "Event01": {
+    "MotionEventType": 1,
+    "StartingTime": 0,
+    "IndependentFlag": 0,
+    "AttachingEnable": 1,
+    "AttachingBoneName": "redthief_magic_weapon",
+    "FollowingEnable": 1,
+    "EffectFileName": "d:/ymir work/effect/monster/yellow_tigerman_24.mse",
+    "EffectPosition": "0.000000 0.000000 0.000000"
+  },
+  "Event02": {
+    "MotionEventType": 1,
+    "StartingTime": 0.697486,
+    "IndependentFlag": 0,
+    "AttachingEnable": 1,
+    "AttachingBoneName": "redthief_magic_weapon",
+    "FollowingEnable": 1,
+    "EffectFileName": "d:/ymir work/effect/monster/chaos_ghost_20_1_blow.mse",
+    "EffectPosition": "0.000000 -40.000000 10.000000"
+  }
+}

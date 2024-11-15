@@ -1,0 +1,36 @@
+{
+  "ScriptType": "MotionData",
+  "MotionFileName": "D:\\Ymir Work\\monster2\\giant_magic\\normal_attack1.GR2",
+  "MotionDuration": 1.333333,
+  "MotionEventData": {
+    "MotionEventDataCount": 3
+  },
+  "Event00": {
+    "MotionEventType": 1,
+    "StartingTime": 0,
+    "IndependentFlag": 0,
+    "AttachingEnable": 1,
+    "AttachingBoneName": "Bip01 R Finger22",
+    "FollowingEnable": 1,
+    "EffectFileName": "d:/ymir work/effect/monster/holy_red1_hand.mse",
+    "EffectPosition": "0.000000 0.000000 0.000000"
+  },
+  "Event01": {
+    "MotionEventType": 6,
+    "StartingTime": 0.347121,
+    "AttachingEnable": 1,
+    "AttachingBoneName": "Bip01 R Hand",
+    "FlyFileName": "d:/ymir work/effect/monster/holy_red1_throw.msf",
+    "FlyPosition": "0.000000 0.000000 0.000000"
+  },
+  "Event02": {
+    "MotionEventType": 1,
+    "StartingTime": 0.347121,
+    "IndependentFlag": 0,
+    "AttachingEnable": 1,
+    "AttachingBoneName": "Bip01 R Finger22",
+    "FollowingEnable": 0,
+    "EffectFileName": "d:/ymir work/effect/monster2/fire_ghost_boom.mse",
+    "EffectPosition": "0.000000 -50.000000 0.000000"
+  }
+}

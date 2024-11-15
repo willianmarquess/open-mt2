@@ -1,0 +1,36 @@
+{
+  "ScriptType": "MotionData",
+  "MotionFileName": "d:/ymir work/monster2/fire_ghost/20_1.gr2",
+  "MotionDuration": 1.833333,
+  "MotionEventData": {
+    "MotionEventDataCount": 3
+  },
+  "Event00": {
+    "MotionEventType": 6,
+    "StartingTime": 1.217762,
+    "AttachingEnable": 0,
+    "AttachingBoneName": "Bip01 HeadNub",
+    "FlyFileName": "d:/ymir work/effect/monster2/fire_ghost_fireball.msf",
+    "FlyPosition": "0.000000 -50.000000 150.000000"
+  },
+  "Event01": {
+    "MotionEventType": 1,
+    "StartingTime": 0.026764,
+    "IndependentFlag": 0,
+    "AttachingEnable": 1,
+    "AttachingBoneName": "Bip01",
+    "FollowingEnable": 1,
+    "EffectFileName": "d:/ymir work/effect/monster2/fire_ghost_body.mse",
+    "EffectPosition": "0.000000 0.000000 0.000000"
+  },
+  "Event02": {
+    "MotionEventType": 1,
+    "StartingTime": 0.87429,
+    "IndependentFlag": 0,
+    "AttachingEnable": 1,
+    "AttachingBoneName": "Bip01",
+    "FollowingEnable": 1,
+    "EffectFileName": "d:/ymir work/effect/monster2/fire_ghost_body.mse",
+    "EffectPosition": "0.000000 0.000000 0.000000"
+  }
+}

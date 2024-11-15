@@ -1,0 +1,62 @@
+{
+  "ScriptType": "MotionData",
+  "MotionFileName": "D:\\Ymir Work\\monster2\\crustacean_bow\\normal_attack1.GR2",
+  "MotionDuration": 1.333333,
+  "MotionEventData": {
+    "MotionEventDataCount": 6
+  },
+  "Event00": {
+    "MotionEventType": 6,
+    "StartingTime": 0.366586,
+    "AttachingEnable": 1,
+    "AttachingBoneName": "Bip01 Tail3",
+    "FlyFileName": "d:/ymir work/pc/assassin/effect/arrow_01.msf",
+    "FlyPosition": "0.000000 0.000000 10.000000"
+  },
+  "Event01": {
+    "MotionEventType": 6,
+    "StartingTime": 0.554745,
+    "AttachingEnable": 1,
+    "AttachingBoneName": "Bip01 Tail3",
+    "FlyFileName": "d:/ymir work/pc/assassin/effect/arrow_01.msf",
+    "FlyPosition": "0.000000 0.000000 10.000000"
+  },
+  "Event02": {
+    "MotionEventType": 6,
+    "StartingTime": 0.707218,
+    "AttachingEnable": 1,
+    "AttachingBoneName": "Bip01 Tail3",
+    "FlyFileName": "d:/ymir work/pc/assassin/effect/arrow_01.msf",
+    "FlyPosition": "0.000000 0.000000 10.000000"
+  },
+  "Event03": {
+    "MotionEventType": 1,
+    "StartingTime": 0.366586,
+    "IndependentFlag": 0,
+    "AttachingEnable": 1,
+    "AttachingBoneName": "Bip01 Tail3",
+    "FollowingEnable": 0,
+    "EffectFileName": "d:/ymir work/effect/monster/spider_king_20_1_blow.mse",
+    "EffectPosition": "0.000000 0.000000 0.000000"
+  },
+  "Event04": {
+    "MotionEventType": 1,
+    "StartingTime": 0.554745,
+    "IndependentFlag": 0,
+    "AttachingEnable": 1,
+    "AttachingBoneName": "Bip01 Tail3",
+    "FollowingEnable": 0,
+    "EffectFileName": "d:/ymir work/effect/monster/spider_king_20_1_blow.mse",
+    "EffectPosition": "0.000000 0.000000 0.000000"
+  },
+  "Event05": {
+    "MotionEventType": 1,
+    "StartingTime": 0.707218,
+    "IndependentFlag": 0,
+    "AttachingEnable": 1,
+    "AttachingBoneName": "Bip01 Tail3",
+    "FollowingEnable": 0,
+    "EffectFileName": "d:/ymir work/effect/monster/spider_king_20_1_blow.mse",
+    "EffectPosition": "0.000000 0.000000 0.000000"
+  }
+}

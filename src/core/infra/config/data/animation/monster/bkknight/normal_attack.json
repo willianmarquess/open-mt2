@@ -1,0 +1,16 @@
+{
+  "ScriptType": "MotionData",
+  "MotionFileName": "d:/ymir work/monster/bkknight/20.gr2",
+  "MotionDuration": 1.333333,
+  "MotionEventData": {
+    "MotionEventDataCount": 1
+  },
+  "Event00": {
+    "MotionEventType": 6,
+    "StartingTime": 0.596918,
+    "AttachingEnable": 1,
+    "AttachingBoneName": "Box03",
+    "FlyFileName": "d:/ymir work/effect/monster/bou_20_1_throw.msf",
+    "FlyPosition": "0.000000 0.000000 0.000000"
+  }
+}

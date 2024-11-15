@@ -1,0 +1,111 @@
+{
+  "ScriptType": "MotionData",
+  "MotionFileName": "D:\\Ymir Work\\monster2\\gnoll_boss2\\special_attack.GR2",
+  "MotionDuration": 2.166667,
+  "MotionEventData": {
+    "MotionEventDataCount": 9
+  },
+  "Event00": {
+    "MotionEventType": 1,
+    "StartingTime": 1.418086,
+    "IndependentFlag": 0,
+    "AttachingEnable": 0,
+    "AttachingBoneName": "Bip01 HeadNub",
+    "FollowingEnable": 0,
+    "EffectFileName": "d:/ymir work/effect/monster2/impact2.mse",
+    "EffectPosition": "-100.000000 100.000000 0.000000"
+  },
+  "Event01": {
+    "MotionEventType": 1,
+    "StartingTime": 0.37429,
+    "IndependentFlag": 0,
+    "AttachingEnable": 0,
+    "AttachingBoneName": "Bip01 R Hand",
+    "FollowingEnable": 0,
+    "EffectFileName": "d:/ymir work/effect/monster2/blast1.mse",
+    "EffectPosition": "-0.120000 -150.000000 220.000000"
+  },
+  "Event02": {
+    "MotionEventType": 1,
+    "StartingTime": 0.453366,
+    "IndependentFlag": 0,
+    "AttachingEnable": 0,
+    "AttachingBoneName": "Bip01 R Hand",
+    "FollowingEnable": 0,
+    "EffectFileName": "d:/ymir work/effect/monster2/back_blast1.mse",
+    "EffectPosition": "-0.120000 -60.000000 100.000000"
+  },
+  "Event03": {
+    "MotionEventType": 1,
+    "StartingTime": 1.470803,
+    "IndependentFlag": 0,
+    "AttachingEnable": 0,
+    "AttachingBoneName": "Bip01 R Hand",
+    "FollowingEnable": 0,
+    "EffectFileName": "d:/ymir work/effect/monster/skeleton_god_24.mse",
+    "EffectPosition": "0.000000 -10.000000 220.000000"
+  },
+  "Event04": {
+    "MotionEventType": 1,
+    "StartingTime": 0.421736,
+    "IndependentFlag": 0,
+    "AttachingEnable": 1,
+    "AttachingBoneName": "Bip01 R Hand",
+    "FollowingEnable": 0,
+    "EffectFileName": "d:/ymir work/effect/monster2/blast2.mse",
+    "EffectPosition": "0.000000 0.000000 50.000000"
+  },
+  "Event05": {
+    "MotionEventType": 2,
+    "StartingTime": 0.432279,
+    "DuringTime": 0.05,
+    "Power": 100,
+    "AffectingRange": 200
+  },
+  "Event06": {
+    "MotionEventType": 4,
+    "StartingTime": 0.912003,
+    "DuringTime": 0.2,
+    "EnableHitProcess": 0,
+    "AttackType": 0,
+    "HittingType": 2,
+    "StiffenTime": 0,
+    "InvisibleTime": 0.3,
+    "ExternalForce": 0,
+    "HitLimitCount": 0,
+    "CollisionType": 4,
+    "SphereDataCount": 1
+  },
+  "SphereData00": {
+    "Radius": 250,
+    "Position": "-200.000000 -250.000000 0.000000"
+  },
+  "Event07": {
+    "MotionEventType": 4,
+    "StartingTime": 1.418086,
+    "DuringTime": 0.2,
+    "EnableHitProcess": 0,
+    "AttackType": 0,
+    "HittingType": 2,
+    "StiffenTime": 0,
+    "InvisibleTime": 0.3,
+    "ExternalForce": 0,
+    "HitLimitCount": 0,
+    "CollisionType": 4,
+    "SphereDataCount": 1
+  },
+  "Event08": {
+    "MotionEventType": 4,
+    "StartingTime": 1.465531,
+    "DuringTime": 0.2,
+    "EnableHitProcess": 0,
+    "AttackType": 0,
+    "HittingType": 2,
+    "StiffenTime": 0,
+    "InvisibleTime": 0.3,
+    "ExternalForce": 0,
+    "HitLimitCount": 0,
+    "CollisionType": 4,
+    "SphereDataCount": 1
+  }
+}

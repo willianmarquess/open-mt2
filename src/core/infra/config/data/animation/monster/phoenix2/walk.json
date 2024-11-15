@@ -1,0 +1,10 @@
+{
+  "ScriptType": "MotionData",
+  "MotionFileName": "D:\\Ymir Work\\npc2\\phoenix1\\walk.GR2",
+  "MotionDuration": 0.8,
+  "Accumulation": [
+    0,
+    -215.25,
+    0
+  ]
+}

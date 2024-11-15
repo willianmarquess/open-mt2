@@ -1,0 +1,36 @@
+{
+  "ScriptType": "MotionData",
+  "MotionFileName": "d:/ymir work/monster/milgyo_founder/20.gr2",
+  "MotionDuration": 1.333333,
+  "MotionEventData": {
+    "MotionEventDataCount": 3
+  },
+  "Event00": {
+    "MotionEventType": 1,
+    "StartingTime": 0.05515,
+    "IndependentFlag": 0,
+    "AttachingEnable": 1,
+    "AttachingBoneName": "Bip01 R Hand",
+    "FollowingEnable": 1,
+    "EffectFileName": "d:/ymir work/effect/monster/milgyo_founder_20_hand.mse",
+    "EffectPosition": "0.000000 0.000000 0.000000"
+  },
+  "Event01": {
+    "MotionEventType": 1,
+    "StartingTime": 0.05515,
+    "IndependentFlag": 0,
+    "AttachingEnable": 1,
+    "AttachingBoneName": "Bip01 L Hand",
+    "FollowingEnable": 1,
+    "EffectFileName": "d:/ymir work/effect/monster/milgyo_founder_20_hand.mse",
+    "EffectPosition": "0.000000 0.000000 0.000000"
+  },
+  "Event02": {
+    "MotionEventType": 6,
+    "StartingTime": 0.570965,
+    "AttachingEnable": 1,
+    "AttachingBoneName": "Bip01 Spine1",
+    "FlyFileName": "d:/ymir work/effect/monster/milgyo_founder_20_throw.msf",
+    "FlyPosition": "0.000000 0.000000 0.000000"
+  }
+}

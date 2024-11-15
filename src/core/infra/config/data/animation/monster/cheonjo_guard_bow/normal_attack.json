@@ -1,0 +1,16 @@
+{
+  "ScriptType": "MotionData",
+  "MotionFileName": "d:/ymir work/npc/jinno_patrol_bow/20.gr2",
+  "MotionDuration": 2,
+  "MotionEventData": {
+    "MotionEventDataCount": 1
+  },
+  "Event00": {
+    "MotionEventType": 6,
+    "StartingTime": 1.085158,
+    "AttachingEnable": 1,
+    "AttachingBoneName": "Bip01 R Hand",
+    "FlyFileName": "d:/ymir work/pc/assassin/effect/arrow_01_fast.msf",
+    "FlyPosition": "0.000000 0.000000 0.000000"
+  }
+}

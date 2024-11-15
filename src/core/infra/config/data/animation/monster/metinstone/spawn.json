@@ -1,0 +1,26 @@
+{
+  "ScriptType": "MotionData",
+  "MotionFileName": "D:\\Ymir Work\\monster\\metinstone\\metinstone_drop.GR2",
+  "MotionDuration": 0.5,
+  "MotionEventData": {
+    "MotionEventDataCount": 2
+  },
+  "Event00": {
+    "MotionEventType": 1,
+    "StartingTime": 0.079487,
+    "AttachingEnable": 1,
+    "AttachingBoneName": "ChamferCyl04",
+    "FollowingEnable": 1,
+    "EffectFileName": "d:/ymir work/effect/background/metinstone_drop.mse",
+    "EffectPosition": "0.000000 0.000000 0.000000"
+  },
+  "Event01": {
+    "MotionEventType": 1,
+    "StartingTime": 0.448718,
+    "AttachingEnable": 0,
+    "AttachingBoneName": "Object68",
+    "FollowingEnable": 0,
+    "EffectFileName": "d:/ymir work/effect/background/metinstone_crash.mse",
+    "EffectPosition": "0.000000 0.000000 0.000000"
+  }
+}

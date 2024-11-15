@@ -1,0 +1,18 @@
+{
+  "ScriptType": "MotionData",
+  "MotionFileName": "d:/ymir work/monster/ice_snow_golem/20_1.gr2",
+  "MotionDuration": 1.5,
+  "MotionEventData": {
+    "MotionEventDataCount": 1
+  },
+  "Event00": {
+    "MotionEventType": 1,
+    "StartingTime": 0.832117,
+    "IndependentFlag": 0,
+    "AttachingEnable": 0,
+    "AttachingBoneName": "Bip01 HeadNub",
+    "FollowingEnable": 0,
+    "EffectFileName": "d:/ymir work/effect/monster/ice_snow_golem_20_blow.mse",
+    "EffectPosition": "0.000000 -150.000000 0.000000"
+  }
+}

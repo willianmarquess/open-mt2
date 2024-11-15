@@ -1,0 +1,16 @@
+{
+  "ScriptType": "MotionData",
+  "MotionFileName": "d:/ymir work/monster/ice_snow_monster/20.gr2",
+  "MotionDuration": 2.5,
+  "MotionEventData": {
+    "MotionEventDataCount": 1
+  },
+  "Event00": {
+    "MotionEventType": 6,
+    "StartingTime": 0.650852,
+    "AttachingEnable": 1,
+    "AttachingBoneName": "Bone03",
+    "FlyFileName": "d:/ymir work/effect/monster/ice_snow_monster_20_throw.msf",
+    "FlyPosition": "0.000000 0.000000 0.000000"
+  }
+}

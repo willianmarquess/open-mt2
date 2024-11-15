@@ -1,0 +1,10 @@
+{
+  "ScriptType": "MotionData",
+  "MotionFileName": "D:\\Ymir Work\\monster2\\manticore_soldier\\walk.GR2",
+  "MotionDuration": 1,
+  "Accumulation": [
+    0,
+    -270,
+    0
+  ]
+}
