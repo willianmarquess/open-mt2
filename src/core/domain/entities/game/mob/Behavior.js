@@ -1,9 +1,9 @@
 import EntityStateEnum from '../../../../enum/EntityStateEnum.js';
 import MathUtil from '../../../util/MathUtil.js';
 
-const POSITION_OFFSET = 800;
-const MIN_DELAY = 5000;
-const MAX_DELAY = 15000;
+const POSITION_OFFSET = 600;
+const MIN_DELAY = 10000;
+const MAX_DELAY = 25000;
 
 export default class Behavior {
     #monster;

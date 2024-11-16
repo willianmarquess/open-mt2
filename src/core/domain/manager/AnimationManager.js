@@ -24,7 +24,7 @@ export default class AnimationManager {
     }
 
     getAnimation(job, type, sub) {
-        return this.#animations[job][type][sub];
+        return this.#animations?.[job]?.[type]?.[sub];
     }
 
     async load() {
