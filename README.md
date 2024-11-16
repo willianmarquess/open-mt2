@@ -72,7 +72,8 @@ Metin2 are copyrighted by [Webzen](http://webzen.com/ "Webzen").
 ## Commands
 
 In this implementation we are using custom commands, described bellow:
-(for now, any player can execute any command)
+
+**(for now, any player can execute any command)**
 
 - **/help**
     - Description: This command shows all the commands and the description of each command as well as an example.
