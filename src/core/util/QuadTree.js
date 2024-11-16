@@ -20,7 +20,7 @@ export default class QuadTree {
         this.capacity = capacity;
         this.bounds = new Rectangle(x, y, width, height);
         this.subdivided = false;
-        this.entities = [];
+        this.entities = new Map();
         this._nw = null;
         this._ne = null;
         this._sw = null;
@@ -32,8 +32,8 @@ export default class QuadTree {
             return false;
         }
 
-        if (this.entities.length < this.capacity && !this.subdivided) {
-            this.entities.push(entity);
+        if (this.entities.size < this.capacity && !this.subdivided) {
+            this.entities.set(entity.virtualId, entity);
             return true;
         }
 
@@ -51,9 +51,8 @@ export default class QuadTree {
             );
         }
 
-        const index = this.entities.indexOf(entity);
-        if (index > -1) {
-            this.entities.splice(index, 1);
+        if (this.entities.has(entity.virtualId)) {
+            this.entities.delete(entity.virtualId);
             return true;
         }
 
@@ -77,7 +76,7 @@ export default class QuadTree {
             this._se.queryAroundInternal(entities, x, y, radius, filter);
             this._sw.queryAroundInternal(entities, x, y, radius, filter);
         } else {
-            for (const entity of this.entities) {
+            for (const entity of this.entities.values()) {
                 if (filter !== null && entity.entityType !== filter) {
                     continue;
                 }
@@ -121,16 +120,14 @@ export default class QuadTree {
         this._se = new QuadTree(this.x + halfWidth, this.y + halfHeight, halfWidth, halfHeight, this.capacity);
         this.subdivided = true;
 
-        for (const entity of this.entities) {
+        for (const entity of this.entities.values()) {
             this._nw.insert(entity) || this._ne.insert(entity) || this._sw.insert(entity) || this._se.insert(entity);
         }
-        this.entities = [];
+        this.entities.clear();
     }
 
     updatePosition(entity) {
-        if (!this.bounds.contains(entity.positionX, entity.positionY)) {
-            this.remove(entity);
-            this.insert(entity);
-        }
+        this.remove(entity);
+        this.insert(entity);
     }
 }

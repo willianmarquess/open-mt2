@@ -1,8 +1,13 @@
 import EntityTypeEnum from '../../../../enum/EntityTypeEnum.js';
+import MathUtil from '../../../util/MathUtil.js';
+import Behavior from './Behavior.js';
+import MonsterMovedEvent from './events/MonsterMovedEvent.js';
 import Mob from './Mob.js';
 
 export default class Monster extends Mob {
     #group;
+    #behavior;
+    #behaviorInitialized = false;
 
     constructor(
         {
@@ -109,6 +114,7 @@ export default class Monster extends Mob {
             },
             { animationManager },
         );
+        this.#behavior = new Behavior(this);
     }
 
     get group() {
@@ -117,5 +123,35 @@ export default class Monster extends Mob {
 
     set group(value) {
         this.#group = value;
+    }
+
+    goto(x, y) {
+        const rotation = MathUtil.calcRotation(x - this.positionX, y - this.positionY) / 5;
+        super.goto(x, y, rotation);
+        this.publish(
+            MonsterMovedEvent.type,
+            new MonsterMovedEvent({
+                params: {
+                    positionX: x,
+                    positionY: y,
+                    arg: 0,
+                    rotation,
+                    time: performance.now(),
+                    duration: this.movementDuration,
+                },
+                entity: this,
+            }),
+        );
+    }
+
+    tick() {
+        super.tick();
+
+        if (!this.#behaviorInitialized) {
+            this.#behavior.init();
+            this.#behaviorInitialized = true;
+        }
+
+        this.#behavior.tick();
     }
 }

@@ -40,4 +40,19 @@ export default class MathUtil {
         const adjustedInt = Math.floor((randomInt / 256) * range) + min;
         return adjustedInt;
     }
+
+    static calcRotation(x, y) {
+        const vectorLength = Math.sqrt(x * x + y * y);
+
+        const normalizedX = x / vectorLength;
+        const normalizedY = y / vectorLength;
+        const upVectorX = 0;
+        const upVectorY = 1;
+
+        const rotationRadians = -(Math.atan2(normalizedY, normalizedX) - Math.atan2(upVectorY, upVectorX));
+
+        let rotationDegress = rotationRadians * (180 / Math.PI);
+        if (rotationDegress < 0) rotationDegress += 360;
+        return rotationDegress;
+    }
 }

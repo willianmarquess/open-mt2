@@ -115,10 +115,9 @@ async function processDirectory(inputDirPath, outputDirPath) {
     for (const entry of dirEntries) {
         const fullPath = path.join(inputDirPath, entry.name);
         if (entry.isDirectory()) {
-            // Create corresponding directory in the output
             const outputSubDir = path.join(outputDirPath, entry.name);
             await fs.promises.mkdir(outputSubDir, { recursive: true });
-            await processDirectory(fullPath, outputSubDir); // Recursively process subdirectories
+            await processDirectory(fullPath, outputSubDir); 
         } else if (entry.isFile() && path.extname(entry.name) === '.msa') {
             const outputFilePath = path.join(outputDirPath, path.basename(entry.name, '.msa') + '.json');
             await processFile(fullPath, outputFilePath);
@@ -130,7 +129,6 @@ const inputDir = '../motionData';
 const outputDir = '../src/core/infra/config/data/animation';
 
 (async () => {
-    // Create the output directory if it doesn't exist
     await fs.promises.mkdir(outputDir, { recursive: true });
     await processDirectory(inputDir, outputDir);
     console.log('MSA files converted to JSON and saved to the output directory.');

@@ -121,6 +121,8 @@ export default class GameEntity {
 
         if (animation) {
             this.#movementDuration = AnimationUtil.calcAnimationDuration(animation, this.#movementSpeed, distance);
+        } else {
+            this.#movementDuration = 0;
         }
 
         this.#rotation = rotation * 5;

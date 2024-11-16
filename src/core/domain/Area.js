@@ -3,13 +3,15 @@ import QuadTree from '../util/QuadTree.js';
 import Queue from '../util/Queue.js';
 import GameEntity from './entities/game/GameEntity.js';
 import DroppedItem from './entities/game/item/DroppedItem.js';
+import Monster from './entities/game/mob/Monster.js';
+import MonsterEventsEnum from './entities/game/mob/events/MonsterEventsEnum.js';
 import Player from './entities/game/player/Player.js';
 import PlayerEventsEnum from './entities/game/player/events/PlayerEventsEnum.js';
 import MathUtil from './util/MathUtil.js';
 
 const SIZE_QUEUE = 100000;
 const CHAR_VIEW_SIZE = 15000;
-const SAVE_PLAYERS_INTERVAL = 30000;
+const SAVE_PLAYERS_INTERVAL = 120000;
 const REMOVE_ITEM_FROM_GROUND = 30000;
 const SPAWN_POSITION_MULTIPLIER = 100;
 
@@ -136,6 +138,48 @@ export default class Area {
         this.#entitiesToDespawn.enqueue(entity);
     }
 
+    #onMonsterMove(monsterMovedEvent) {
+        const {
+            entity: monster,
+            params: { positionX, positionY, arg, rotation, time, movementType, duration },
+        } = monsterMovedEvent;
+        this.#quadTree.updatePosition(monster);
+        const players = this.#quadTree.queryAround(
+            monster.positionX,
+            monster.positionY,
+            CHAR_VIEW_SIZE,
+            EntityTypeEnum.PLAYER,
+        );
+
+        for (const player of players) {
+            if (monster.isNearby(player)) {
+                if (player instanceof Player) {
+                    player.updateOtherEntity({
+                        virtualId: monster.virtualId,
+                        arg,
+                        movementType,
+                        time,
+                        rotation,
+                        positionX,
+                        positionY,
+                        duration,
+                    });
+                }
+            } else {
+                monster.addNearbyEntity(player);
+                player.addNearbyEntity(monster);
+            }
+        }
+
+        for (const [virtualId, player] of monster.nearbyEntities.entries()) {
+            const stayNearby = players.some((e) => e.virtualId === virtualId);
+            if (!stayNearby) {
+                monster.removeNearbyEntity(player);
+                player.removeNearbyEntity(monster);
+            }
+        }
+    }
+
     #onCharacterMove(characterMovedEvent) {
         const {
             entity,
@@ -211,10 +255,16 @@ export default class Area {
     tick() {
         for (const entity of this.#entitiesToSpawn.dequeueIterator()) {
             if (entity instanceof GameEntity) {
-                entity.subscribe(PlayerEventsEnum.CHARACTER_MOVED, this.#onCharacterMove.bind(this));
+                if (entity instanceof Player) {
+                    entity.subscribe(PlayerEventsEnum.CHARACTER_MOVED, this.#onCharacterMove.bind(this));
+                }
                 entity.subscribe(PlayerEventsEnum.CHARACTER_LEVEL_UP, this.#onCharacterLevelUp.bind(this));
                 entity.subscribe(PlayerEventsEnum.CHARACTER_UPDATED, this.#onCharacterUpdate.bind(this));
                 entity.subscribe(PlayerEventsEnum.DROP_ITEM, this.#onItemDrop.bind(this));
+
+                if (entity instanceof Monster) {
+                    entity.subscribe(MonsterEventsEnum.MONSTER_MOVED, this.#onMonsterMove.bind(this));
+                }
             }
             this.#quadTree.insert(entity);
 

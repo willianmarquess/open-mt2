@@ -1,4 +1,5 @@
 import fs from 'fs/promises';
+import { existsSync } from 'fs';
 import path from 'path';
 import AnimationSubTypeEnum from '../../enum/AnimationSubTypeEnum.js';
 import AnimationTypeEnum from '../../enum/AnimationTypeEnum.js';
@@ -11,10 +12,11 @@ const DEFAULT_ANIMATIONS_PATH = 'src/core/infra/config/data/animation';
 export default class AnimationManager {
     #animations = {};
     #logger;
+    #config;
 
-    constructor({ logger }) {
+    constructor({ logger, config }) {
         this.#logger = logger;
-        this.load();
+        this.#config = config;
     }
 
     get animations() {
@@ -26,6 +28,20 @@ export default class AnimationManager {
     }
 
     async load() {
+        for (const mob of this.#config.mobs) {
+            if (!mob) continue;
+            for (const type of Object.values(AnimationTypeEnum)) {
+                const path = DEFAULT_ANIMATIONS_PATH + `/monster/${mob.folder}/${type}.json`;
+
+                const animationData = await this.#loadAnimationData(path);
+                if (!animationData) continue;
+
+                this.#animations[mob.vnum] = this.#animations[mob.vnum] || {};
+                this.#animations[mob.vnum][type] = this.#animations[mob.vnum][type] || {};
+                this.#animations[mob.vnum][type][AnimationSubTypeEnum.GENERAL] = animationData;
+            }
+        }
+
         for (const job of Object.values(JobEnum)) {
             for (const type of Object.values(AnimationTypeEnum)) {
                 for (const sub of Object.values(AnimationSubTypeEnum)) {
@@ -38,9 +54,13 @@ export default class AnimationManager {
                     );
                     const path =
                         DEFAULT_ANIMATIONS_PATH + `/${genderFolder}/${classFolder}/${subTypeFolder}/${typeFile}`;
+
+                    const animationData = await this.#loadAnimationData(path);
+                    if (!animationData) continue;
+
                     this.#animations[job] = this.#animations[job] || {};
                     this.#animations[job][type] = this.#animations[job][type] || {};
-                    this.#animations[job][type][sub] = await this.#loadAnimationData(path);
+                    this.#animations[job][type][sub] = animationData;
                 }
             }
         }
@@ -50,6 +70,7 @@ export default class AnimationManager {
         const currentDir = process.cwd();
         const absoluteFilePath = path.join(currentDir, filePath);
         try {
+            if (!existsSync(absoluteFilePath)) return;
             const fileContent = await fs.readFile(absoluteFilePath, 'utf8');
             const animationData = JSON.parse(fileContent || '');
             const { MotionDuration: duration, Accumulation = [] } = animationData;
@@ -63,7 +84,6 @@ export default class AnimationManager {
             });
         } catch (error) {
             this.#logger.error(`Error loading animation data from ${filePath}:${error.message}`);
-            return {};
         }
     }
 }

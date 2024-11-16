@@ -130,14 +130,14 @@ export default class SpawnManager {
         for (const spawn of spawns.regen) {
             const entities = this.#createMonsters(spawn);
             if (Array.isArray(entities)) {
-                entitiesToSpawn.push(...this.#createMonsters(spawn));
+                entitiesToSpawn.push(...entities);
             }
         }
 
         for (const spawn of spawns.boss) {
             const entities = this.#createMonsters(spawn);
             if (Array.isArray(entities)) {
-                entitiesToSpawn.push(...this.#createMonsters(spawn));
+                entitiesToSpawn.push(...entities);
             }
         }
 
@@ -145,7 +145,7 @@ export default class SpawnManager {
             const entities = this.#createMonsters(spawn);
 
             if (Array.isArray(entities)) {
-                entitiesToSpawn.push(...this.#createMonsters(spawn));
+                entitiesToSpawn.push(...entities);
             }
         }
 
