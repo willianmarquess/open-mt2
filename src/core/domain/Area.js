@@ -229,7 +229,7 @@ export default class Area {
             CHAR_VIEW_SIZE,
             EntityTypeEnum.PLAYER,
         );
-        for (const otherEntity of entities) {
+        for (const otherEntity of entities.values()) {
             if (otherEntity.name === entity.name) continue;
             otherEntity.otherEntityLevelUp({ virtualId: entity.virtualId, level: entity.level });
         }
@@ -239,7 +239,7 @@ export default class Area {
         const { vid, attackSpeed, moveSpeed, positionX, positionY, name, bodyId, weaponId, hairId } =
             characterUpdatedEvent;
         const entities = this.#quadTree.queryAround(positionX, positionY, CHAR_VIEW_SIZE, EntityTypeEnum.PLAYER);
-        for (const otherEntity of entities) {
+        for (const otherEntity of entities.values()) {
             if (otherEntity.name === name) continue;
             otherEntity.otherEntityUpdated({ vid, attackSpeed, moveSpeed, bodyId, weaponId, hairId });
         }

@@ -962,6 +962,17 @@ export default class Player extends GameEntity {
                 name: otherEntity.name,
                 angle: otherEntity.angle,
             });
+
+            if (otherEntity instanceof Player) {
+                this.otherEntityUpdated({
+                    vid: otherEntity.virtualId,
+                    attackSpeed: otherEntity.attackSpeed,
+                    moveSpeed: otherEntity.movementSpeed,
+                    bodyId: otherEntity.getBody()?.id ?? 0,
+                    weaponId: otherEntity.getWeapon()?.id ?? 0,
+                    hairId: otherEntity.getHair()?.id ?? 0,
+                });
+            }
         }
 
         if (otherEntity instanceof DroppedItem) {
@@ -1094,8 +1105,8 @@ export default class Player extends GameEntity {
             health: this.#health,
             mana: this.#mana,
             stamina: this.#stamina,
-            bodyPart: this.#bodyPart,
-            hairPart: this.#hairPart,
+            bodyPart: this.getBody()?.id ?? 0,
+            hairPart: this.getHair()?.id ?? 0,
             name: this.name,
             givenStatusPoints: this.#givenStatusPoints,
             availableStatusPoints: this.#availableStatusPoints,
