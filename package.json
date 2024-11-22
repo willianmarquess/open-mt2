@@ -6,8 +6,8 @@
   "type": "module",
   "scripts": {
     "dev:auth": "node --env-file=.env --watch --experimental-json-modules src/auth/main.js",
-    "auth": "node --experimental-json-modules src/auth/main.js",
-    "game": "node --experimental-json-modules src/game/main.js",
+    "auth": "node --env-file=.env --experimental-json-modules src/auth/main.js",
+    "game": "node --env-file=.env --experimental-json-modules src/game/main.js",
     "dev:game": "node --env-file=.env --watch --experimental-json-modules src/game/main.js",
     "migrate": "cross-env node --env-file=.env --experimental-json-modules tools/database/migrate.js",
     "format": "prettier -w {src,test}/**/*.js",
@@ -15,6 +15,7 @@
     "lint:fix": "eslint --fix {src,test}/**/*.js",
     "test:unit": "mocha --config test/.mocharc.unit.json --exit",
     "test:integration": "node --env-file=.env --experimental-json-modules node_modules/mocha/bin/mocha --config test/.mocharc.integration.json --exit",
+    "test:performance": "node --env-file=.env --experimental-json-modules test/performance/index.js",
     "test:coverage": "c8 npm run test:unit",
     "docker:all": "docker-compose -f docker-compose.yml up -d",
     "docker:dep": "docker-compose -f docker-compose.dep.yml up -d",

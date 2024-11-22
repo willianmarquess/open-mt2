@@ -186,7 +186,11 @@ export default class World {
         const startTickTime = performance.now();
 
         this.#server.processMessages();
-        this.#areas.forEach((area) => area.tick());
+
+        for (const area of this.#areas.values()) {
+            area.tick();
+        }
+
         this.#server.sendPendingMessages();
 
         const delta = performance.now() - startTickTime;

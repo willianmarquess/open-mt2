@@ -10,7 +10,7 @@ import PlayerEventsEnum from './entities/game/player/events/PlayerEventsEnum.js'
 import MathUtil from './util/MathUtil.js';
 
 const SIZE_QUEUE = 100000;
-const CHAR_VIEW_SIZE = 15000;
+const CHAR_VIEW_SIZE = 9500;
 const SAVE_PLAYERS_INTERVAL = 120000;
 const REMOVE_ITEM_FROM_GROUND = 30000;
 const SPAWN_POSITION_MULTIPLIER = 100;
@@ -46,7 +46,7 @@ export default class Area {
         this.#height = height;
         this.#aka = aka;
         this.#goto = goto;
-        this.#quadTree = new QuadTree(positionX, positionY, width * 25600, height * 25600, 200);
+        this.#quadTree = new QuadTree(positionX, positionY, width * 25600, height * 25600, 50);
 
         this.#saveCharacterService = saveCharacterService;
         this.#logger = logger;
@@ -144,14 +144,9 @@ export default class Area {
             params: { positionX, positionY, arg, rotation, time, movementType, duration },
         } = monsterMovedEvent;
         this.#quadTree.updatePosition(monster);
-        const players = this.#quadTree.queryAround(
-            monster.positionX,
-            monster.positionY,
-            CHAR_VIEW_SIZE,
-            EntityTypeEnum.PLAYER,
-        );
+        const players = this.#quadTree.queryAround(positionX, positionY, CHAR_VIEW_SIZE, EntityTypeEnum.PLAYER);
 
-        for (const player of players) {
+        for (const player of players.values()) {
             if (monster.isNearby(player)) {
                 if (player instanceof Player) {
                     player.updateOtherEntity({
@@ -172,8 +167,7 @@ export default class Area {
         }
 
         for (const [virtualId, player] of monster.nearbyEntities.entries()) {
-            const stayNearby = players.some((e) => e.virtualId === virtualId);
-            if (!stayNearby) {
+            if (!players.has(virtualId)) {
                 monster.removeNearbyEntity(player);
                 player.removeNearbyEntity(monster);
             }
@@ -186,8 +180,8 @@ export default class Area {
             params: { positionX, positionY, arg, rotation, time, movementType, duration },
         } = characterMovedEvent;
         this.#quadTree.updatePosition(entity);
-        const entities = this.#quadTree.queryAround(entity.positionX, entity.positionY, CHAR_VIEW_SIZE);
-        for (const otherEntity of entities) {
+        const entities = this.#quadTree.queryAround(positionX, positionY, CHAR_VIEW_SIZE);
+        for (const otherEntity of entities.values()) {
             if (otherEntity.name === entity.name) continue;
 
             if (entity.isNearby(otherEntity)) {
@@ -215,8 +209,7 @@ export default class Area {
         }
 
         for (const [virtualId, nearbyEntity] of entity.nearbyEntities.entries()) {
-            const stayNearby = entities.some((e) => e.virtualId === virtualId);
-            if (!stayNearby) {
+            if (!entities.has(virtualId)) {
                 if (entity instanceof GameEntity) {
                     entity.removeNearbyEntity(nearbyEntity);
                 }
@@ -274,7 +267,7 @@ export default class Area {
                 CHAR_VIEW_SIZE,
                 entity.entityType !== EntityTypeEnum.PLAYER ? EntityTypeEnum.PLAYER : null,
             );
-            for (const otherEntity of entities) {
+            for (const otherEntity of entities.values()) {
                 if (otherEntity.name === entity.name) continue;
 
                 if (entity instanceof GameEntity) {
@@ -296,7 +289,7 @@ export default class Area {
                 CHAR_VIEW_SIZE,
                 EntityTypeEnum.PLAYER,
             );
-            for (const otherEntity of entities) {
+            for (const otherEntity of entities.values()) {
                 if (entity instanceof GameEntity) {
                     entity.removeNearbyEntity(otherEntity);
                 }

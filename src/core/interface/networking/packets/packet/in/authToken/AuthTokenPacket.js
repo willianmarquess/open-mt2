@@ -11,7 +11,7 @@ export default class AuthTokenPacket extends PacketIn {
         super({
             header: PacketHeaderEnum.TOKEN,
             name: 'AuthTokenPacket',
-            size: 50,
+            size: 52,
             validator: AuthTokenPacketValidator,
         });
         this.#username = username;

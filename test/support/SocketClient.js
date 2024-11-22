@@ -6,21 +6,20 @@ export default class SocketClient {
 
     async connect(host, port) {
         return new Promise((resolve, reject) => {
-            this.#client = createConnection({ host, port }, () => {
-                console.log(`Conectado ao servidor em ${host}:${port}`);
+            this.#client = createConnection({ host, port, timeout: 50000 }, () => {
+                console.log(`Connected with server: ${host}:${port}`);
                 resolve(this.#client);
             });
 
             this.#client.on('data', (data) => {
-                console.log('mensagem recebida');
                 this.#data = Buffer.concat([this.#data, data]);
             });
             this.#client.on('error', (err) => {
-                console.error(`Erro na conexão: ${err.message}`);
+                console.error(`Connection error: ${err.message}`);
                 reject(err);
             });
             this.#client.on('end', () => {
-                console.log('Desconectado do servidor');
+                console.log('Disconnected from server');
             });
         });
     }
@@ -46,6 +45,10 @@ export default class SocketClient {
 
     sendMessage(message) {
         this.#client.write(message);
+    }
+
+    get data() {
+        return this.#data;
     }
 
     async close() {

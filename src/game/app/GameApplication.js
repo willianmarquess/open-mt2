@@ -27,9 +27,13 @@ export default class GameApplication extends Application {
     }
 
     async close() {
-        this.logger.info('[APP] Closing game application... 🎮🛬');
-        await this.server.close();
-        await this.databaseManager.close();
-        await this.cacheProvider.close();
+        try {
+            this.logger.info('[APP] Closing game application... 🎮🛬');
+            await this.server.close();
+            await this.databaseManager.close();
+            await this.cacheProvider.close();
+        } catch (error) {
+            this.logger.error(error);
+        }
     }
 }

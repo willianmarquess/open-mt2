@@ -1,5 +1,5 @@
 import { expect } from 'chai';
-import SocketClient from '../support/SocketClient.js';
+import SocketClient from '../../support/SocketClient.js';
 import BufferWriter from '../../../src/core/interface/networking/buffer/BufferWriter.js';
 import PacketHeaderEnum from '../../../src/core/enum/PacketHeaderEnum.js';
 import BufferReader from '../../../src/core/interface/networking/buffer/BufferReader.js';

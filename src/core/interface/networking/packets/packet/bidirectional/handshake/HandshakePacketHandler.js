@@ -24,7 +24,7 @@ export default class HandshakePacketHandler {
 
         const currentTime = performance.now();
         const delta = currentTime - (packet.time + packet.delta);
-        const isSynchEnough = delta >= 0 && delta <= 50;
+        const isSynchEnough = delta >= 0 && delta <= 500;
 
         if (isSynchEnough) {
             this.#logger.info(

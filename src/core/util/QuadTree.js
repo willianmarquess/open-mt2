@@ -51,16 +51,11 @@ export default class QuadTree {
             );
         }
 
-        if (this.entities.has(entity.virtualId)) {
-            this.entities.delete(entity.virtualId);
-            return true;
-        }
-
-        return false;
+        return this.entities.delete(entity.virtualId);
     }
 
     queryAround(x, y, radius, filter = null) {
-        const entities = [];
+        const entities = new Map();
         this.queryAroundInternal(entities, x, y, radius, filter);
         return entities;
     }
@@ -84,7 +79,7 @@ export default class QuadTree {
                 const dx = entity.positionX - x;
                 const dy = entity.positionY - y;
                 if (dx * dx + dy * dy <= radius * radius) {
-                    entities.push(entity);
+                    entities.set(entity.virtualId, entity);
                 }
             }
         }
