@@ -1,22 +1,24 @@
 import { expect } from 'chai';
 import sinon from 'sinon';
-import fs from 'fs/promises';
+import fsPromise from 'fs/promises';
+import fs from 'fs';
 import AnimationManager from '../../../../../src/core/domain/manager/AnimationManager.js';
 import JobEnum from '../../../../../src/core/enum/JobEnum.js';
 import AnimationTypeEnum from '../../../../../src/core/enum/AnimationTypeEnum.js';
 import AnimationSubTypeEnum from '../../../../../src/core/enum/AnimationSubTypeEnum.js';
 import Animation from '../../../../../src/core/domain/Animation.js';
-import JobUtil from '../../../../../src/core/domain/util/JobUtil.js';
 
 describe('AnimationManager', () => {
     let logger;
     let animationManager;
     let readFileStub;
+    let existsFileSyncStub;
 
     beforeEach(() => {
         logger = { info: sinon.stub(), error: sinon.stub() };
-        animationManager = new AnimationManager({ logger });
-        readFileStub = sinon.stub(fs, 'readFile');
+        animationManager = new AnimationManager({ logger, config: { mobs: [] } });
+        readFileStub = sinon.stub(fsPromise, 'readFile');
+        existsFileSyncStub = sinon.stub(fs, 'existsSync');
     });
 
     afterEach(() => {
@@ -34,9 +36,7 @@ describe('AnimationManager', () => {
         });
 
         readFileStub.resolves(animationData);
-
-        const classNameStub = sinon.stub(JobUtil, 'getClassNameFromClassId');
-        classNameStub.returns('Warrior');
+        existsFileSyncStub.resolves(true);
 
         await animationManager.load();
 
@@ -57,16 +57,13 @@ describe('AnimationManager', () => {
     it('should handle error when loading animation data', async () => {
         readFileStub.rejects(new Error('File not found'));
 
-        const classNameStub = sinon.stub(JobUtil, 'getClassNameFromClassId');
-        classNameStub.returns('Warrior');
-
         await animationManager.load();
 
         for (const job of Object.values(JobEnum)) {
             for (const type of Object.values(AnimationTypeEnum)) {
                 for (const sub of Object.values(AnimationSubTypeEnum)) {
                     const animation = animationManager.getAnimation(job, type, sub);
-                    expect(animation).to.be.empty;
+                    expect(animation).to.be.undefined;
                 }
             }
         }

@@ -3,7 +3,7 @@ import CacheKeyGenerator from '../../../core/util/CacheKeyGenerator.js';
 import Result from '../../../core/app/Result.js';
 import ErrorTypesEnum from '../../../core/enum/ErrorTypesEnum.js';
 
-const TOKEN_EXPIRATION_SECS = 60;
+const TOKEN_EXPIRATION_SECS = 60 * 60 * 24;
 
 export default class LoginService {
     #accountRepository;

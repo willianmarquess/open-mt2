@@ -59,7 +59,7 @@ describe('HandshakePacketHandler', () => {
 
     it('should resend handshake if synchronization delta is outside allowed range', async () => {
         packetMock.isValid.returns(true);
-        sinon.stub(global, 'performance').value({ now: () => packetMock.time + packetMock.delta + 100 });
+        sinon.stub(global, 'performance').value({ now: () => packetMock.time + packetMock.delta + 600 });
 
         await handshakePacketHandler.execute(connectionMock, packetMock);
 

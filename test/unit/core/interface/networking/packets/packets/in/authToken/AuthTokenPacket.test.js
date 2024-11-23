@@ -16,7 +16,7 @@ describe('AuthTokenPacket', function () {
     it('should initialize with correct header, name, and size', function () {
         expect(authTokenPacket.header).to.equal(PacketHeaderEnum.TOKEN);
         expect(authTokenPacket.name).to.equal('AuthTokenPacket');
-        expect(authTokenPacket.size).to.equal(50);
+        expect(authTokenPacket.size).to.equal(52);
     });
 
     it('should initialize properties correctly', function () {

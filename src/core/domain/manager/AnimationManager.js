@@ -1,5 +1,5 @@
-import fs from 'fs/promises';
-import { existsSync } from 'fs';
+import fsPromise from 'fs/promises';
+import fs from 'fs';
 import path from 'path';
 import AnimationSubTypeEnum from '../../enum/AnimationSubTypeEnum.js';
 import AnimationTypeEnum from '../../enum/AnimationTypeEnum.js';
@@ -70,8 +70,8 @@ export default class AnimationManager {
         const currentDir = process.cwd();
         const absoluteFilePath = path.join(currentDir, filePath);
         try {
-            if (!existsSync(absoluteFilePath)) return;
-            const fileContent = await fs.readFile(absoluteFilePath, 'utf8');
+            if (!fs.existsSync(absoluteFilePath)) return;
+            const fileContent = await fsPromise.readFile(absoluteFilePath, 'utf8');
             const animationData = JSON.parse(fileContent || '');
             const { MotionDuration: duration, Accumulation = [] } = animationData;
             const [accX = 0, accY = 0, accZ = 0] = Accumulation;
