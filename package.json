@@ -37,7 +37,7 @@
   },
   "dependencies": {
     "awilix": "^10.0.2",
-    "bcrypt": "^5.1.1",
+    "bcryptjs": "^2.4.3",
     "cross-env": "^7.0.3",
     "mysql2": "^3.9.7",
     "redis": "^4.6.13",

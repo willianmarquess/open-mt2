@@ -1,7 +1,7 @@
 version: "3.8"
 services:
   auth-server:
-      image: node:latest
+      image: node:22
       container_name: auth-server
       env_file:
       - ./.env
@@ -10,7 +10,7 @@ services:
         - $AUTH_SERVER_PORT:$AUTH_SERVER_PORT
       environment:
         - AUTH_SERVER_PORT=$AUTH_SERVER_PORT
-        - AUTH_SERVER_ADDRESS=$AUTH_SERVER_ADDRESS
+        - AUTH_SERVER_ADDRESS=0.0.0.0
         - LOG_LEVEL=$LOG_LEVEL
         - DB_PORT=$DB_PORT
         - DB_ROOT_PASSWORD=$DB_ROOT_PASSWORD
@@ -25,9 +25,9 @@ services:
         - cache
         - database
       working_dir: /usr/app
-      command: bash -c "npm install && npm run auth"
+      command: bash -c "npm install && npm run migrate && npm run auth"
   game-server:
-      image: node:latest
+      image: node:22
       container_name: game-server
       env_file:
       - ./.env
@@ -36,7 +36,7 @@ services:
         - $GAME_SERVER_PORT:$GAME_SERVER_PORT
       environment:
         - GAME_SERVER_PORT=$GAME_SERVER_PORT
-        - GAME_SERVER_ADDRESS=$GAME_SERVER_ADDRESS
+        - GAME_SERVER_ADDRESS=0.0.0.0
         - LOG_LEVEL=$LOG_LEVEL
         - DB_PORT=$DB_PORT
         - DB_ROOT_PASSWORD=$DB_ROOT_PASSWORD
