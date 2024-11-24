@@ -543,23 +543,23 @@ export default class Player extends GameEntity {
     }
 
     addHealthRegen(value) {
-        const validatedValue = Math.min(value, MathUtil.MAX_UINT);
+        const validatedValue = Math.min(this.#healthRegenBonus + value, MathUtil.MAX_UINT);
         this.#healthRegenBonus += validatedValue;
     }
 
     addManaRegen(value) {
-        const validatedValue = Math.min(value, MathUtil.MAX_UINT);
-        this.#manaRegenBonus += validatedValue;
+        const validatedValue = Math.min(this.#manaRegenBonus + value, MathUtil.MAX_UINT);
+        this.#manaRegenBonus = validatedValue;
     }
 
     addMovementSpeed(value) {
-        const validatedValue = Math.min(value, MathUtil.MAX_TINY);
-        this.movementSpeed += validatedValue;
+        const validatedValue = Math.min(this.movementSpeed + value, MathUtil.MAX_TINY);
+        this.movementSpeed = validatedValue;
     }
 
     addAttackSpeed(value) {
-        const validatedValue = Math.min(value, MathUtil.MAX_TINY);
-        this.attackSpeed += validatedValue;
+        const validatedValue = Math.min(this.attackSpeed + value, MathUtil.MAX_TINY);
+        this.attackSpeed = validatedValue;
     }
 
     addMana(value) {
