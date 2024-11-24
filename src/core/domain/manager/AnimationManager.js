@@ -9,8 +9,10 @@ import Animation from '../Animation.js';
 
 const DEFAULT_ANIMATIONS_PATH = 'src/core/infra/config/data/animation';
 
+const createAnimationKey = (job, type, sub) => `${job}:${type}:${sub}`;
+
 export default class AnimationManager {
-    #animations = {};
+    #animations = new Map();
     #logger;
     #config;
 
@@ -24,21 +26,19 @@ export default class AnimationManager {
     }
 
     getAnimation(job, type, sub) {
-        return this.#animations?.[job]?.[type]?.[sub];
+        return this.#animations.get(createAnimationKey(job, type, sub));
     }
 
     async load() {
         for (const mob of this.#config.mobs) {
-            if (!mob) continue;
+            if (!mob || !mob.folder) continue;
             for (const type of Object.values(AnimationTypeEnum)) {
                 const path = DEFAULT_ANIMATIONS_PATH + `/monster/${mob.folder}/${type}.json`;
 
                 const animationData = await this.#loadAnimationData(path);
                 if (!animationData) continue;
 
-                this.#animations[mob.vnum] = this.#animations[mob.vnum] || {};
-                this.#animations[mob.vnum][type] = this.#animations[mob.vnum][type] || {};
-                this.#animations[mob.vnum][type][AnimationSubTypeEnum.GENERAL] = animationData;
+                this.#animations.set(createAnimationKey(mob.vnum, type, AnimationSubTypeEnum.GENERAL), animationData);
             }
         }
 
@@ -58,9 +58,7 @@ export default class AnimationManager {
                     const animationData = await this.#loadAnimationData(path);
                     if (!animationData) continue;
 
-                    this.#animations[job] = this.#animations[job] || {};
-                    this.#animations[job][type] = this.#animations[job][type] || {};
-                    this.#animations[job][type][sub] = animationData;
+                    this.#animations.set(createAnimationKey(job, type, sub), animationData);
                 }
             }
         }
