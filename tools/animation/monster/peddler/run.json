@@ -1,0 +1,10 @@
+{
+  "ScriptType": "MotionData",
+  "MotionFileName": "d:/ymir work/npc/peddler/run.gr2",
+  "MotionDuration": 0.6,
+  "Accumulation": [
+    0,
+    -240.25,
+    0
+  ]
+}

@@ -1,0 +1,81 @@
+{
+  "ScriptType": "MotionData",
+  "MotionFileName": "D:\\Ymir Work\\pc\\assassin\\skill\\cheonryong.GR2",
+  "MotionDuration": 1,
+  "Accumulation": [
+    0,
+    -134.12,
+    0
+  ],
+  "CancelEnableSkill": 0,
+  "AttackingData": {
+    "AttackType": 1,
+    "HittingType": 1,
+    "StiffenTime": 0,
+    "InvisibleTime": 0.3,
+    "ExternalForce": 0,
+    "MotionType": 3,
+    "HitDataCount": 0
+  },
+  "MotionEventData": {
+    "MotionEventDataCount": 7
+  },
+  "Event00": {
+    "MotionEventType": 1,
+    "StartingTime": 0.035897,
+    "IndependentFlag": 0,
+    "AttachingEnable": 0,
+    "AttachingBoneName": "Bip01 Footsteps",
+    "FollowingEnable": 0,
+    "EffectFileName": "d:/ymir work/pc/assassin/effect/cheonryongchuta_up.mse",
+    "EffectPosition": "0.000000 0.000000 0.000000"
+  },
+  "Event01": {
+    "MotionEventType": 1,
+    "StartingTime": 0.292308,
+    "IndependentFlag": 0,
+    "AttachingEnable": 0,
+    "AttachingBoneName": "Bip01 Footsteps",
+    "FollowingEnable": 1,
+    "EffectFileName": "d:/ymir work/pc/assassin/effect/cheonryongchuta_down.mse",
+    "EffectPosition": "0.000000 -50.000000 0.000000"
+  },
+  "Event02": {
+    "MotionEventType": 1,
+    "StartingTime": 0.430769,
+    "IndependentFlag": 0,
+    "AttachingEnable": 1,
+    "AttachingBoneName": "Bip01 Footsteps",
+    "FollowingEnable": 1,
+    "EffectFileName": "d:/ymir work/pc/assassin/effect/cheonryongchuta_blow.mse",
+    "EffectPosition": "0.000000 0.000000 0.000000"
+  },
+  "Event03": {
+    "MotionEventType": 9,
+    "StartingTime": 0.158974
+  },
+  "Event04": {
+    "MotionEventType": 8,
+    "StartingTime": 0.084615
+  },
+  "Event05": {
+    "MotionEventType": 7,
+    "StartingTime": 0.264103
+  },
+  "Event06": {
+    "MotionEventType": 4,
+    "StartingTime": 0.382051,
+    "DuringTime": 0.2,
+    "AttackType": 1,
+    "HittingType": 1,
+    "StiffenTime": 0,
+    "InvisibleTime": 0.3,
+    "ExternalForce": 0,
+    "CollisionType": 0,
+    "SphereDataCount": 1
+  },
+  "SphereData00": {
+    "Radius": 100,
+    "Position": "0.000000 -200.000000 50.000000"
+  }
+}

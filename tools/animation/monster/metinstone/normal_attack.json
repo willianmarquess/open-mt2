@@ -1,0 +1,18 @@
+{
+  "ScriptType": "MotionData",
+  "MotionFileName": "D:\\Ymir Work\\monster\\metinstone\\metinstone_attack.GR2",
+  "MotionDuration": 0.166667,
+  "MotionEventData": {
+    "MotionEventDataCount": 1
+  },
+  "Event00": {
+    "MotionEventType": 1,
+    "StartingTime": 0.004444,
+    "IndependentFlag": 0,
+    "AttachingEnable": 0,
+    "AttachingBoneName": "ChamferCyl04",
+    "FollowingEnable": 0,
+    "EffectFileName": "d:/ymir work/effect/background/metinstone_splash.mse",
+    "EffectPosition": "0.000000 0.000000 0.000000"
+  }
+}

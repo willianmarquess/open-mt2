@@ -1,4 +1,5 @@
 import { createServer } from 'node:net';
+import GameConnection from '../../../game/interface/networking/GameConnection.js';
 
 export default class Server {
     #server;
@@ -7,6 +8,7 @@ export default class Server {
     #config;
     #container;
     #packets;
+    #isShuttingDown = false;
 
     constructor(container) {
         this.#logger = container.logger;
@@ -33,6 +35,10 @@ export default class Server {
 
     get config() {
         return this.#config;
+    }
+
+    get isShuttingDown() {
+        return this.#isShuttingDown;
     }
 
     setup() {
@@ -71,11 +77,26 @@ export default class Server {
         });
     }
 
-    close() {
+    async close() {
+        this.#isShuttingDown = true;
+
+        for (const connection of this.#connections.values()) {
+            if (connection instanceof GameConnection) {
+                await connection.saveAndDestroy();
+            }
+        }
+
+        if (!this.#server.listening || this.#isShuttingDown) return;
+
         return new Promise((resolve, reject) => {
             this.#server.close((err) => {
-                if (err) reject(err);
-                resolve();
+                if (err) {
+                    this.#logger.error('[SERVER] Error when try to close server:', err);
+                    reject(err);
+                } else {
+                    this.#logger.info('[SERVER] Server closed with success.');
+                    resolve();
+                }
             });
         });
     }

@@ -1,0 +1,28 @@
+{
+  "ScriptType": "MotionData",
+  "MotionFileName": "d:/ymir work/monster/chuhen/20.gr2",
+  "MotionDuration": 2.666667,
+  "MotionEventData": {
+    "MotionEventDataCount": 2
+  },
+  "Event00": {
+    "MotionEventType": 1,
+    "StartingTime": 0.804542,
+    "IndependentFlag": 0,
+    "AttachingEnable": 0,
+    "AttachingBoneName": "Bip01 HeadNub",
+    "FollowingEnable": 0,
+    "EffectFileName": "d:/ymir work/effect/monster/chuheun_20.mse",
+    "EffectPosition": "0.000000 0.000000 0.000000"
+  },
+  "Event01": {
+    "MotionEventType": 1,
+    "StartingTime": 1.219789,
+    "IndependentFlag": 0,
+    "AttachingEnable": 0,
+    "AttachingBoneName": "Bip01 HeadNub",
+    "FollowingEnable": 0,
+    "EffectFileName": "d:/ymir work/effect/monster/chuheun_20.mse",
+    "EffectPosition": "0.000000 0.000000 0.000000"
+  }
+}

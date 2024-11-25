@@ -3,7 +3,7 @@ import pluginJs from "@eslint/js";
 
 export default [
   {
-    ignores: ["src/core/infra/config/*", "test/performance/*"]
+    ignores: ["src/core/infra/config/*", "test/performance/*", "src/game/infra/config/*"]
   },
   {
     languageOptions: { globals: globals.node },

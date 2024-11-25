@@ -1,0 +1,62 @@
+{
+  "ScriptType": "MotionData",
+  "MotionFileName": "D:\\YMIR WORK\\pc\\warrior\\skill\\daejin.GR2",
+  "MotionDuration": 2,
+  "Accumulation": [
+    0,
+    0,
+    0
+  ],
+  "AttackingData": {
+    "AttackingType": 2,
+    "HittingType": 1,
+    "StiffenTime": 0,
+    "InvisibleTime": 0,
+    "ExternalForce": 0,
+    "AttackingStartTime": 0,
+    "AttackingEndTime": 0,
+    "AttackingBone": "",
+    "WeaponLength": 0,
+    "HitPosition": []
+  },
+  "MotionEventData": {
+    "MotionEventDataCount": 3
+  },
+  "Event00": {
+    "MotionEventType": 1,
+    "StartingTime": 1.235897,
+    "AttachingEnable": 1,
+    "AttachingBoneName": "Bip01 Footsteps",
+    "FollowingEnable": 1,
+    "EffectFileName": "d:/ymir work/pc/warrior/effect/daejingak.mse",
+    "EffectPosition": "0.000000 -30.000000 0.000000"
+  },
+  "Event01": {
+    "MotionEventType": 2,
+    "StartingTime": 1.220513,
+    "DuringTime": 0.2,
+    "Power": 300,
+    "AffectingRange": 200
+  },
+  "Event02": {
+    "MotionEventType": 4,
+    "StartingTime": 1.220513,
+    "DuringTime": 0.3,
+    "AttackingType": 3,
+    "HittingType": 1,
+    "StiffenTime": 0,
+    "InvisibleTime": 0.3,
+    "ExternalForce": 20,
+    "AttackingStartTime": 0,
+    "AttackingEndTime": 10,
+    "AttackingBone": "",
+    "WeaponLength": 0,
+    "HitPosition": []
+  },
+  "CollisionType": 0,
+  "SphereDataCount": 1,
+  "SphereData00": {
+    "Radius": 300,
+    "Position": "0.000000 30.000000 0.000000"
+  }
+}

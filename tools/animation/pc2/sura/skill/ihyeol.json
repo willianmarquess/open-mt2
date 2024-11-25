@@ -1,0 +1,17 @@
+{
+  "ScriptType": "MotionData",
+  "MotionFileName": "D:\\Ymir Work\\pc\\sura\\skill\\ihyeol.GR2",
+  "MotionDuration": 2,
+  "MotionEventData": {
+    "MotionEventDataCount": 1
+  },
+  "Event00": {
+    "MotionEventType": 1,
+    "StartingTime": 0.594872,
+    "AttachingEnable": 1,
+    "AttachingBoneName": "Bip01 Footsteps",
+    "FollowingEnable": 1,
+    "EffectFileName": "d:/ymir work/pc/sura/effect/yihyoulsul.mse",
+    "EffectPosition": "0.000000 -33.000000 0.000000"
+  }
+}

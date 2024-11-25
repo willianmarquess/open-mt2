@@ -2,7 +2,7 @@ import Server from '../../../core/interface/server/Server.js';
 import Queue from '../../../core/util/Queue.js';
 import GameConnection from '../networking/GameConnection.js';
 
-const INCOMING_MESSAGES_QUEUE_SIZE = 100000;
+const INCOMING_MESSAGES_QUEUE_SIZE = 5_000;
 
 export default class GameServer extends Server {
     #incomingMessages = new Queue(INCOMING_MESSAGES_QUEUE_SIZE);
@@ -60,6 +60,8 @@ export default class GameServer extends Server {
 
     async onClose(connection) {
         super.onClose(connection);
-        await connection.onClose();
+        if (!super.isShuttingDown) {
+            await connection.onClose();
+        }
     }
 }

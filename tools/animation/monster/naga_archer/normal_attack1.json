@@ -1,0 +1,21 @@
+{
+  "ScriptType": "MotionData",
+  "MotionFileName": "D:\\Ymir Work\\monster2\\naga_archer\\normal_attack01.GR2",
+  "MotionDuration": 1,
+  "Accumulation": [
+    0,
+    0,
+    0
+  ],
+  "MotionEventData": {
+    "MotionEventDataCount": 1
+  },
+  "Event00": {
+    "MotionEventType": 6,
+    "StartingTime": 0.554745,
+    "AttachingEnable": 1,
+    "AttachingBoneName": "Bip01 L Hand",
+    "FlyFileName": "d:/ymir work/effect/monster/skeleton_magician_20_2_throw.msf",
+    "FlyPosition": "0.000000 0.000000 0.000000"
+  }
+}

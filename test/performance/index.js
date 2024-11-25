@@ -107,10 +107,10 @@ async function createFakePlayers() {
 
 async function startRandomMovement(gameFlows) {
     for (const gameFlow of gameFlows) {
-        setTimeout(() => gameFlow.moveToRandomLocation(), MathUtil.getRandomInt(2000, 7000));
+        setTimeout(() => gameFlow.moveToRandomLocation(), MathUtil.getRandomInt(1000, 3000));
     }
 
-    await timers.setTimeout(7000);
+    await timers.setTimeout(3000);
     startRandomMovement(gameFlows);
 }
 

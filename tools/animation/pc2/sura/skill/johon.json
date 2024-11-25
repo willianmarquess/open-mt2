@@ -1,0 +1,17 @@
+{
+  "ScriptType": "MotionData",
+  "MotionFileName": "D:\\Ymir Work\\pc\\sura\\skill\\johon.GR2",
+  "MotionDuration": 2,
+  "MotionEventData": {
+    "MotionEventDataCount": 1
+  },
+  "Event00": {
+    "MotionEventType": 1,
+    "StartingTime": 0.512821,
+    "AttachingEnable": 1,
+    "AttachingBoneName": "Bip01 Footsteps",
+    "FollowingEnable": 1,
+    "EffectFileName": "d:/ymir work/pc/sura/effect/johonheupjeong.mse",
+    "EffectPosition": "0.000000 -33.000000 0.000000"
+  }
+}

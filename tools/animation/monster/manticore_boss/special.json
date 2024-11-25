@@ -1,0 +1,63 @@
+{
+  "ScriptType": "MotionData",
+  "MotionFileName": "D:\\Ymir Work\\monster2\\manticore_boss\\special_attack.GR2",
+  "MotionDuration": 2,
+  "MotionEventData": {
+    "MotionEventDataCount": 5
+  },
+  "Event00": {
+    "MotionEventType": 1,
+    "StartingTime": 1.221411,
+    "IndependentFlag": 0,
+    "AttachingEnable": 0,
+    "AttachingBoneName": "equip",
+    "FollowingEnable": 0,
+    "EffectFileName": "d:/ymir work/effect/monster2/impact1.mse",
+    "EffectPosition": "-120.000000 -70.000000 -300.000000"
+  },
+  "Event01": {
+    "MotionEventType": 1,
+    "StartingTime": 1.284672,
+    "IndependentFlag": 0,
+    "AttachingEnable": 0,
+    "AttachingBoneName": "Bip01 HeadNub",
+    "FollowingEnable": 0,
+    "EffectFileName": "d:/ymir work/effect/monster2/impact3.mse",
+    "EffectPosition": "0.000000 -300.000000 0.000000"
+  },
+  "Event02": {
+    "MotionEventType": 4,
+    "StartingTime": 1.338199,
+    "DuringTime": 0.2,
+    "EnableHitProcess": 0,
+    "AttackType": 0,
+    "HittingType": 2,
+    "StiffenTime": 0,
+    "InvisibleTime": 0.3,
+    "ExternalForce": 0,
+    "HitLimitCount": 0,
+    "CollisionType": 4,
+    "SphereDataCount": 1
+  },
+  "SphereData00": {
+    "Radius": 320,
+    "Position": "0.000000 -150.000000 0.000000"
+  },
+  "Event03": {
+    "MotionEventType": 2,
+    "StartingTime": 1.29927,
+    "DuringTime": 0.2,
+    "Power": 300,
+    "AffectingRange": 200
+  },
+  "Event04": {
+    "MotionEventType": 1,
+    "StartingTime": 0.632603,
+    "IndependentFlag": 0,
+    "AttachingEnable": 0,
+    "AttachingBoneName": "Bip01 HeadNub",
+    "FollowingEnable": 0,
+    "EffectFileName": "d:/ymir work/effect/monster2/smoke2.mse",
+    "EffectPosition": "0.000000 -50.000000 0.000000"
+  }
+}

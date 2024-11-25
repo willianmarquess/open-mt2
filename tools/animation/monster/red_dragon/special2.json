@@ -1,0 +1,58 @@
+{
+  "ScriptType": "MotionData",
+  "MotionFileName": "d:\\ymir work\\monster2\\red_dragon\\26.GR2",
+  "MotionDuration": 1.6667,
+  "Accumulation": [
+    0,
+    0,
+    0
+  ],
+  "MotionEventData": {
+    "MotionEventDataCount": 4
+  },
+  "Event00": {
+    "MotionEventType": 1,
+    "StartingTime": 0.52717,
+    "IndependentFlag": 0,
+    "AttachingEnable": 0,
+    "AttachingBoneName": "Bip01",
+    "FollowingEnable": 1,
+    "EffectFileName": "d:/ymir work/monster2/blue_dragon/water_impact01.mse",
+    "EffectPosition": "0.000000 -100.000000 0.000000"
+  },
+  "Event01": {
+    "MotionEventType": 4,
+    "StartingTime": 0.587997,
+    "DuringTime": 0.2,
+    "EnableHitProcess": 1,
+    "AttackType": 0,
+    "HittingType": 2,
+    "StiffenTime": 0,
+    "InvisibleTime": 0.3,
+    "ExternalForce": 0,
+    "HitLimitCount": 0,
+    "CollisionType": 4,
+    "SphereDataCount": 1
+  },
+  "SphereData00": {
+    "Radius": 2000,
+    "Position": "0.000000 0.000000 0.000000"
+  },
+  "Event02": {
+    "MotionEventType": 2,
+    "StartingTime": 0.600162,
+    "DuringTime": 0.3,
+    "Power": 700,
+    "AffectingRange": 5000
+  },
+  "Event03": {
+    "MotionEventType": 1,
+    "StartingTime": 0.583942,
+    "IndependentFlag": 0,
+    "AttachingEnable": 0,
+    "AttachingBoneName": "Bip01 HeadNub",
+    "FollowingEnable": 1,
+    "EffectFileName": "d:/ymir work/monster2/blue_dragon/water_impact02.mse",
+    "EffectPosition": "0.000000 -70.000000 0.000000"
+  }
+}

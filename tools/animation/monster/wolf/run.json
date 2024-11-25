@@ -1,0 +1,10 @@
+{
+  "ScriptType": "MotionData",
+  "MotionFileName": "d:/ymir work/monster/wolf/03.gr2",
+  "MotionDuration": 0.6,
+  "Accumulation": [
+    0,
+    -255.45,
+    0
+  ]
+}

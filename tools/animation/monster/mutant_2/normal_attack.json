@@ -1,0 +1,73 @@
+{
+  "ScriptType": "MotionData",
+  "MotionFileName": "D:\\ymir work\\monster2\\mutant_2\\20.GR2",
+  "MotionDuration": 1.666667,
+  "Accumulation": [
+    0,
+    0,
+    0
+  ],
+  "AttackingData": {
+    "AttackType": 0,
+    "HittingType": 0,
+    "StiffenTime": 0,
+    "InvisibleTime": 0,
+    "ExternalForce": 0,
+    "HitLimitCount": 0,
+    "MotionType": 0,
+    "HitDataCount": 1
+  },
+  "HitData00": {
+    "AttackingStartTime": 0.616383,
+    "AttackingEndTime": 0.656934,
+    "AttackingBone": "equip_right",
+    "WeaponLength": 148,
+    "HitPosition": [
+      [
+        0.616383,
+        -47.687897,
+        -143.849792,
+        116.069954,
+        -174.838043,
+        -178.511566,
+        48.938591
+      ],
+      [
+        0.624716,
+        -3.072762,
+        -180.550171,
+        138.913452,
+        -100.271515,
+        -283.585846,
+        96.840729
+      ],
+      [
+        0.633049,
+        52.138374,
+        -195.755341,
+        177.577179,
+        13.88279,
+        -338.149231,
+        190.042068
+      ],
+      [
+        0.641383,
+        107.705772,
+        -180.48082,
+        216.447571,
+        139.113724,
+        -309.081482,
+        282.410583
+      ],
+      [
+        0.649716,
+        157.005829,
+        -135.381897,
+        242.809952,
+        248.748138,
+        -204.11673,
+        336.357361
+      ]
+    ]
+  }
+}

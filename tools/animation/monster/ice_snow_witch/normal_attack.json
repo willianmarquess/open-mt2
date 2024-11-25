@@ -1,0 +1,15 @@
+{
+  "ScriptType": "MotionData",
+  "MotionFileName": "d:/ymir work/monster/ice_snow_witch/20.gr2",
+  "MotionDuration": 2.333333,
+  "MotionEventData": {
+    "MotionEventDataCount": 1
+  },
+  "Event00": {
+    "MotionEventType": 10,
+    "StartingTime": 1.288727,
+    "EffectFileName": "d:/ymir work/effect/monster/ice_snow_witch.mse",
+    "EffectPosition": "0.000000 0.000000 0.000000",
+    "FollowingEnable": 0
+  }
+}

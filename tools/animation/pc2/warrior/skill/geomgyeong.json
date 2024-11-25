@@ -1,0 +1,43 @@
+{
+  "ScriptType": "MotionData",
+  "MotionFileName": "d:/ymir work/pc/warrior/skill/geomgyeong.gr2",
+  "MotionDuration": 2,
+  "Accumulation": [
+    0,
+    0,
+    0
+  ],
+  "MotionEventData": {
+    "MotionEventDataCount": 3
+  },
+  "Event00": {
+    "MotionEventType": 1,
+    "StartingTime": 0.025641,
+    "IndependentFlag": 0,
+    "AttachingEnable": 1,
+    "AttachingBoneName": "equip_right_hand",
+    "FollowingEnable": 1,
+    "EffectFileName": "d:/ymir work/pc/warrior/effect/geom.mse",
+    "EffectPosition": "0.000000 0.000000 0.000000"
+  },
+  "Event01": {
+    "MotionEventType": 1,
+    "StartingTime": 0.394872,
+    "IndependentFlag": 0,
+    "AttachingEnable": 1,
+    "AttachingBoneName": "equip_right_hand",
+    "FollowingEnable": 1,
+    "EffectFileName": "d:/ymir work/pc/warrior/effect/geom_sword_making.mse",
+    "EffectPosition": "0.000000 0.000000 0.000000"
+  },
+  "Event02": {
+    "MotionEventType": 1,
+    "StartingTime": 0.635897,
+    "IndependentFlag": 0,
+    "AttachingEnable": 0,
+    "AttachingBoneName": "Bip01 Footsteps",
+    "FollowingEnable": 0,
+    "EffectFileName": "d:/ymir work/pc/warrior/effect/geom-badak.mse",
+    "EffectPosition": "0.000000 0.000000 0.000000"
+  }
+}

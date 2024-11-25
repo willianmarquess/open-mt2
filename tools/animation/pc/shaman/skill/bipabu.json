@@ -1,0 +1,32 @@
+{
+  "ScriptType": "MotionData",
+  "MotionFileName": "D:\\Ymir Work\\pc\\shaman\\skill\\shoot.GR2",
+  "MotionDuration": 1.5,
+  "LoopData": {
+    "MotionLoopCount": 0,
+    "LoopCancelEnable": 0,
+    "LoopStartTime": 1.032847,
+    "LoopEndTime": 1.226277
+  },
+  "MotionEventData": {
+    "MotionEventDataCount": 2
+  },
+  "Event00": {
+    "MotionEventType": 1,
+    "StartingTime": 0.661539,
+    "IndependentFlag": 0,
+    "AttachingEnable": 1,
+    "AttachingBoneName": "Bip01 R Finger2",
+    "FollowingEnable": 1,
+    "EffectFileName": "d:/ymir work/pc/shaman/effect/1bipamaking.mse",
+    "EffectPosition": "0.000000 0.000000 0.000000"
+  },
+  "Event01": {
+    "MotionEventType": 6,
+    "StartingTime": 1.09854,
+    "AttachingEnable": 1,
+    "AttachingBoneName": "Bip01 R Finger2",
+    "FlyFileName": "d:/ymir work/pc/shaman/effect/bipabu.msf",
+    "FlyPosition": "0.000000 0.000000 0.000000"
+  }
+}

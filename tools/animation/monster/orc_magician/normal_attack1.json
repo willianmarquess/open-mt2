@@ -1,0 +1,25 @@
+{
+  "ScriptType": "MotionData",
+  "MotionFileName": "D:\\Ymir Work\\monster\\orc_magician\\20_1.GR2",
+  "MotionDuration": 1.666667,
+  "MotionEventData": {
+    "MotionEventDataCount": 2
+  },
+  "Event00": {
+    "MotionEventType": 10,
+    "StartingTime": 0.656934,
+    "EffectFileName": "d:/ymir work/effect/monster/orc_magician_20_1_blow.mse",
+    "EffectPosition": "0.000000 0.000000 0.000000",
+    "FollowingEnable": 0
+  },
+  "Event01": {
+    "MotionEventType": 1,
+    "StartingTime": 0.555556,
+    "IndependentFlag": 0,
+    "AttachingEnable": 1,
+    "AttachingBoneName": "Bip01 R Hand",
+    "FollowingEnable": 1,
+    "EffectFileName": "d:/ymir work/effect/monster/orc_magician_20_1_weapon.mse",
+    "EffectPosition": "0.000000 0.000000 0.000000"
+  }
+}

@@ -1,0 +1,69 @@
+{
+  "ScriptType": "MotionData",
+  "MotionFileName": "D:\\Ymir Work\\monster2\\lemures_magic\\normal_attack1.GR2",
+  "MotionDuration": 1.5,
+  "Accumulation": [
+    0,
+    -219.45,
+    0
+  ],
+  "MotionEventData": {
+    "MotionEventDataCount": 6
+  },
+  "Event00": {
+    "MotionEventType": 1,
+    "StartingTime": 0.525547,
+    "IndependentFlag": 0,
+    "AttachingEnable": 0,
+    "AttachingBoneName": "Bip01 R Hand",
+    "FollowingEnable": 0,
+    "EffectFileName": "d:/ymir work/effect/monster2/spell1.mse",
+    "EffectPosition": "30.000000 -100.000000 200.000000"
+  },
+  "Event01": {
+    "MotionEventType": 6,
+    "StartingTime": 0.562044,
+    "AttachingEnable": 1,
+    "AttachingBoneName": "Bip01 L Hand",
+    "FlyFileName": "d:/ymir work/effect/monster/holy_blue1_throw.msf",
+    "FlyPosition": "0.000000 0.000000 0.000000"
+  },
+  "Event02": {
+    "MotionEventType": 6,
+    "StartingTime": 0.846715,
+    "AttachingEnable": 1,
+    "AttachingBoneName": "Bip01 R Hand",
+    "FlyFileName": "d:/ymir work/effect/monster/holy_blue1_throw.msf",
+    "FlyPosition": "0.000000 0.000000 0.000000"
+  },
+  "Event03": {
+    "MotionEventType": 1,
+    "StartingTime": 1.164234,
+    "IndependentFlag": 0,
+    "AttachingEnable": 0,
+    "AttachingBoneName": "Bip01 HeadNub",
+    "FollowingEnable": 0,
+    "EffectFileName": "d:/ymir work/effect/monster2/mob_blow2.mse",
+    "EffectPosition": "30.000000 -70.000000 200.000000"
+  },
+  "Event04": {
+    "MotionEventType": 1,
+    "StartingTime": 0.846715,
+    "IndependentFlag": 0,
+    "AttachingEnable": 0,
+    "AttachingBoneName": "Bip01 HeadNub",
+    "FollowingEnable": 0,
+    "EffectFileName": "d:/ymir work/effect/monster2/spell1.mse",
+    "EffectPosition": "30.000000 -100.000000 200.000000"
+  },
+  "Event05": {
+    "MotionEventType": 1,
+    "StartingTime": 0.437956,
+    "IndependentFlag": 0,
+    "AttachingEnable": 1,
+    "AttachingBoneName": "Bip01 L Hand",
+    "FollowingEnable": 1,
+    "EffectFileName": "d:/ymir work/effect/monster/holy_blue1_hand.mse",
+    "EffectPosition": "0.000000 -50.000000 0.000000"
+  }
+}

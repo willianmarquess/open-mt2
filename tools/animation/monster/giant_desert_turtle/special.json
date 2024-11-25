@@ -1,0 +1,84 @@
+{
+  "ScriptType": "MotionData",
+  "MotionFileName": "D:\\YMIR WORK\\monster2\\giant_desert_turtle\\24.GR2",
+  "MotionDuration": 1.4,
+  "MotionEventData": {
+    "MotionEventDataCount": 7
+  },
+  "Event00": {
+    "MotionEventType": 1,
+    "StartingTime": 0.83455,
+    "IndependentFlag": 0,
+    "AttachingEnable": 0,
+    "AttachingBoneName": "Bip01 L Toe0Nub",
+    "FollowingEnable": 0,
+    "EffectFileName": "d:/ymir work/effect/monster2/giant_desert_turtle_24.mse",
+    "EffectPosition": "-100.000000 -150.000000 0.000000"
+  },
+  "Event01": {
+    "MotionEventType": 2,
+    "StartingTime": 0.831144,
+    "DuringTime": 0.1,
+    "Power": 100,
+    "AffectingRange": 150
+  },
+  "Event02": {
+    "MotionEventType": 4,
+    "StartingTime": 0.824331,
+    "DuringTime": 0.2,
+    "EnableHitProcess": 0,
+    "AttackType": 0,
+    "HittingType": 2,
+    "StiffenTime": 0,
+    "InvisibleTime": 0.3,
+    "ExternalForce": 0,
+    "HitLimitCount": 0,
+    "CollisionType": 4,
+    "SphereDataCount": 1
+  },
+  "SphereData00": {
+    "Radius": 200,
+    "Position": "-100.000000 -200.000000 0.000000"
+  },
+  "Event03": {
+    "MotionEventType": 4,
+    "StartingTime": 0.981022,
+    "DuringTime": 0.2,
+    "EnableHitProcess": 0,
+    "AttackType": 0,
+    "HittingType": 2,
+    "StiffenTime": 0,
+    "InvisibleTime": 0.3,
+    "ExternalForce": 0,
+    "HitLimitCount": 0,
+    "CollisionType": 4,
+    "SphereDataCount": 1
+  },
+  "Event04": {
+    "MotionEventType": 2,
+    "StartingTime": 0.984428,
+    "DuringTime": 0.1,
+    "Power": 100,
+    "AffectingRange": 150
+  },
+  "Event05": {
+    "MotionEventType": 1,
+    "StartingTime": 0.977616,
+    "IndependentFlag": 0,
+    "AttachingEnable": 0,
+    "AttachingBoneName": "Bip01 L Toe0Nub",
+    "FollowingEnable": 0,
+    "EffectFileName": "d:/ymir work/effect/monster2/giant_desert_turtle_24.mse",
+    "EffectPosition": "100.000000 -200.000000 0.000000"
+  },
+  "Event06": {
+    "MotionEventType": 1,
+    "StartingTime": 0.827737,
+    "IndependentFlag": 0,
+    "AttachingEnable": 0,
+    "AttachingBoneName": "Bip01 L Toe0Nub",
+    "FollowingEnable": 0,
+    "EffectFileName": "d:/ymir work/effect/monster2/giant_desert_turtle_24.mse",
+    "EffectPosition": "100.000000 -200.000000 0.000000"
+  }
+}

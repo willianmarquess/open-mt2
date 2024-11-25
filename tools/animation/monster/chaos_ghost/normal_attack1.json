@@ -1,0 +1,16 @@
+{
+  "ScriptType": "MotionData",
+  "MotionFileName": "d:/ymir work/monster/chaos_ghost/20_1.gr2",
+  "MotionDuration": 1.333333,
+  "MotionEventData": {
+    "MotionEventDataCount": 1
+  },
+  "Event00": {
+    "MotionEventType": 6,
+    "StartingTime": 0.707218,
+    "AttachingEnable": 1,
+    "AttachingBoneName": "Bone51",
+    "FlyFileName": "d:/ymir work/effect/monster/chaos_ghost_20_1_throw.msf",
+    "FlyPosition": "0.000000 0.000000 0.000000"
+  }
+}

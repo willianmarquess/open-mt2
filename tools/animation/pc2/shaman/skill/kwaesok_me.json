@@ -1,0 +1,34 @@
+{
+  "ScriptType": "MotionData",
+  "MotionFileName": "D:\\Ymir Work\\pc\\shaman\\skill\\me.GR2",
+  "MotionDuration": 1.666667,
+  "LoopData": {
+    "MotionLoopCount": 1,
+    "LoopCancelEnable": 0,
+    "LoopStartTime": 0.666667,
+    "LoopEndTime": 0.940171
+  },
+  "MotionEventData": {
+    "MotionEventDataCount": 2
+  },
+  "Event00": {
+    "MotionEventType": 1,
+    "StartingTime": 0.675214,
+    "IndependentFlag": 0,
+    "AttachingEnable": 0,
+    "AttachingBoneName": "Bip01 HeadNub",
+    "FollowingEnable": 0,
+    "EffectFileName": "d:/ymir work/pc/shaman/effect/10kwaesok_making.mse",
+    "EffectPosition": "0.000000 0.000000 0.000000"
+  },
+  "Event01": {
+    "MotionEventType": 1,
+    "StartingTime": 0.354701,
+    "IndependentFlag": 0,
+    "AttachingEnable": 0,
+    "AttachingBoneName": "Bip01 HeadNub",
+    "FollowingEnable": 0,
+    "EffectFileName": "d:/ymir work/pc/shaman/effect/10kwaesok_making.mse",
+    "EffectPosition": "0.000000 0.000000 0.000000"
+  }
+}

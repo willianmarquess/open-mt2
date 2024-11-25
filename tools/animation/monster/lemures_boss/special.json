@@ -1,0 +1,90 @@
+{
+  "ScriptType": "MotionData",
+  "MotionFileName": "D:\\Ymir Work\\monster2\\lemures_boss\\special_attack.GR2",
+  "MotionDuration": 3,
+  "Accumulation": [
+    0,
+    -219.45,
+    0
+  ],
+  "MotionEventData": {
+    "MotionEventDataCount": 9
+  },
+  "Event00": {
+    "MotionEventType": 1,
+    "StartingTime": 0.948905,
+    "IndependentFlag": 0,
+    "AttachingEnable": 0,
+    "AttachingBoneName": "Bip01 HeadNub",
+    "FollowingEnable": 0,
+    "EffectFileName": "d:/ymir work/effect/monster2/smoke2.mse",
+    "EffectPosition": "0.000000 0.000000 0.000000"
+  },
+  "Event01": {
+    "MotionEventType": 8,
+    "StartingTime": 0.854015
+  },
+  "Event02": {
+    "MotionEventType": 7,
+    "StartingTime": 1.547445
+  },
+  "Event03": {
+    "MotionEventType": 9,
+    "StartingTime": 1.218978
+  },
+  "Event04": {
+    "MotionEventType": 1,
+    "StartingTime": 0.313869,
+    "IndependentFlag": 0,
+    "AttachingEnable": 0,
+    "AttachingBoneName": "Bip01 HeadNub",
+    "FollowingEnable": 0,
+    "EffectFileName": "d:/ymir work/effect/monster/light_emissive3.mse",
+    "EffectPosition": "0.000000 0.000000 0.000000"
+  },
+  "Event05": {
+    "MotionEventType": 1,
+    "StartingTime": 0.313869,
+    "IndependentFlag": 0,
+    "AttachingEnable": 0,
+    "AttachingBoneName": "Bip01 HeadNub",
+    "FollowingEnable": 0,
+    "EffectFileName": "d:/ymir work/effect/monster2/spell2.mse",
+    "EffectPosition": "0.000000 0.000000 0.000000"
+  },
+  "Event06": {
+    "MotionEventType": 1,
+    "StartingTime": 2.065693,
+    "IndependentFlag": 0,
+    "AttachingEnable": 0,
+    "AttachingBoneName": "Bip01 HeadNub",
+    "FollowingEnable": 0,
+    "EffectFileName": "d:/ymir work/effect/monster/yellow_tigerman_24_1.mse",
+    "EffectPosition": "0.000000 -350.000000 0.000000"
+  },
+  "Event07": {
+    "MotionEventType": 2,
+    "StartingTime": 2.109489,
+    "DuringTime": 0.2,
+    "Power": 300,
+    "AffectingRange": 200
+  },
+  "Event08": {
+    "MotionEventType": 4,
+    "StartingTime": 2.109489,
+    "DuringTime": 0.2,
+    "EnableHitProcess": 0,
+    "AttackType": 0,
+    "HittingType": 2,
+    "StiffenTime": 0,
+    "InvisibleTime": 0.3,
+    "ExternalForce": 0,
+    "HitLimitCount": 0,
+    "CollisionType": 4,
+    "SphereDataCount": 1
+  },
+  "SphereData00": {
+    "Radius": 550,
+    "Position": "0.000000 -150.000000 0.000000"
+  }
+}

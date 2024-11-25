@@ -1,0 +1,93 @@
+{
+  "ScriptType": "MotionData",
+  "MotionFileName": "d:\\ymir work\\monster2\\blue_dragon\\28.GR2",
+  "MotionDuration": 3.6667,
+  "Accumulation": [
+    0,
+    0,
+    0
+  ],
+  "MotionEventData": {
+    "MotionEventDataCount": 6
+  },
+  "Event00": {
+    "MotionEventType": 1,
+    "StartingTime": 0.90511,
+    "IndependentFlag": 0,
+    "AttachingEnable": 1,
+    "AttachingBoneName": "Bip01 Head",
+    "FollowingEnable": 1,
+    "EffectFileName": "d:/ymir work/monster2/ch_water_dragon/water_breathe02.mse",
+    "EffectPosition": "0.000000 0.000000 -50.000000"
+  },
+  "Event01": {
+    "MotionEventType": 4,
+    "StartingTime": 1.708029,
+    "DuringTime": 0.2,
+    "EnableHitProcess": 0,
+    "AttackType": 0,
+    "HittingType": 2,
+    "StiffenTime": 0,
+    "InvisibleTime": 0.3,
+    "ExternalForce": 0,
+    "HitLimitCount": 0,
+    "CollisionType": 4,
+    "SphereDataCount": 1
+  },
+  "SphereData00": {
+    "Radius": 400,
+    "Position": "0.000000 -200.000000 0.000000"
+  },
+  "Event02": {
+    "MotionEventType": 4,
+    "StartingTime": 1.50365,
+    "DuringTime": 0.2,
+    "EnableHitProcess": 0,
+    "AttackType": 0,
+    "HittingType": 1,
+    "StiffenTime": 0,
+    "InvisibleTime": 0.3,
+    "ExternalForce": 0,
+    "HitLimitCount": 0,
+    "CollisionType": 4,
+    "SphereDataCount": 1
+  },
+  "Event03": {
+    "MotionEventType": 4,
+    "StartingTime": 1.912409,
+    "DuringTime": 0.2,
+    "EnableHitProcess": 0,
+    "AttackType": 0,
+    "HittingType": 2,
+    "StiffenTime": 0,
+    "InvisibleTime": 0.3,
+    "ExternalForce": 0,
+    "HitLimitCount": 0,
+    "CollisionType": 4,
+    "SphereDataCount": 1
+  },
+  "Event04": {
+    "MotionEventType": 1,
+    "StartingTime": 0.90511,
+    "IndependentFlag": 0,
+    "AttachingEnable": 1,
+    "AttachingBoneName": "Bip01 Head",
+    "FollowingEnable": 1,
+    "EffectFileName": "d:/ymir work/monster2/ch_water_dragon/water_breathe05.mse",
+    "EffectPosition": "0.000000 -30.000000 -50.000000"
+  },
+  "Event05": {
+    "MotionEventType": 4,
+    "StartingTime": 2.116788,
+    "DuringTime": 0.2,
+    "EnableHitProcess": 0,
+    "AttackType": 0,
+    "HittingType": 1,
+    "StiffenTime": 0,
+    "InvisibleTime": 0.3,
+    "ExternalForce": 0,
+    "HitLimitCount": 0,
+    "CollisionType": 4,
+    "SphereDataCount": 1
+  }
+}

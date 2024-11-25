@@ -12,4 +12,8 @@ export default class AnimationUtil {
 
         return ((distance / animationSpeed) * 1000 * i) / 100;
     }
+
+    static createAnimationKey(job, type, sub) {
+        return `${job}:${type}:${sub}`;
+    }
 }

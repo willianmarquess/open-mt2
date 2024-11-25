@@ -25,7 +25,7 @@ services:
         - cache
         - database
       working_dir: /usr/app
-      command: bash -c "npm install && npm run migrate && npm run auth"
+      command: bash -c "npm install && npm run migrate && node --experimental-json-modules src/auth/main.js"
   game-server:
       image: node:22
       container_name: game-server
@@ -37,6 +37,7 @@ services:
       environment:
         - GAME_SERVER_PORT=$GAME_SERVER_PORT
         - GAME_SERVER_ADDRESS=0.0.0.0
+        - REAL_SERVER_ADDRESS=$GAME_SERVER_ADDRESS
         - LOG_LEVEL=$LOG_LEVEL
         - DB_PORT=$DB_PORT
         - DB_ROOT_PASSWORD=$DB_ROOT_PASSWORD
@@ -51,7 +52,7 @@ services:
         - cache
         - database
       working_dir: /usr/app
-      command: bash -c "npm install && npm run game"
+      command: bash -c "npm install && node --experimental-json-modules src/game/main.js"
 
   cache:
     image: redis:latest

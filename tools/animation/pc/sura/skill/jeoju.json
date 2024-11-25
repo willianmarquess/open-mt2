@@ -1,0 +1,30 @@
+{
+  "ScriptType": "MotionData",
+  "MotionFileName": "D:\\Ymir Work\\pc\\sura\\skill\\maryeong.GR2",
+  "MotionDuration": 1.466667,
+  "Accumulation": [
+    0,
+    0,
+    0
+  ],
+  "MotionEventData": {
+    "MotionEventDataCount": 2
+  },
+  "Event00": {
+    "MotionEventType": 1,
+    "StartingTime": 0.034615,
+    "AttachingEnable": 1,
+    "AttachingBoneName": "Bip01 L Finger22",
+    "FollowingEnable": 1,
+    "EffectFileName": "d:/ymir work/pc/sura/effect/maryeong_making.mse",
+    "EffectPosition": "0.000000 -10.000000 10.000000"
+  },
+  "Event01": {
+    "MotionEventType": 6,
+    "StartingTime": 0.738462,
+    "AttachingEnable": 1,
+    "AttachingBoneName": "Bip01 L Hand",
+    "FlyFileName": "d:/ymir work/pc/sura/effect/maryeong_throw.msf",
+    "FlyPosition": "0.000000 0.000000 0.000000"
+  }
+}

@@ -1,0 +1,16 @@
+{
+  "ScriptType": "MotionData",
+  "MotionFileName": "d:/ymir work/monster/thief3/20.gr2",
+  "MotionDuration": 2,
+  "MotionEventData": {
+    "MotionEventDataCount": 1
+  },
+  "Event00": {
+    "MotionEventType": 6,
+    "StartingTime": 1.153285,
+    "AttachingEnable": 1,
+    "AttachingBoneName": "Object01",
+    "FlyFileName": "d:/ymir work/pc/assassin/effect/arrow_01.msf",
+    "FlyPosition": "0.000000 0.000000 0.000000"
+  }
+}
