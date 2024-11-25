@@ -1,27 +1,8 @@
-import globals from "globals";
-import pluginJs from "@eslint/js";
+import eslint from "@eslint/js";
+import tseslint from "typescript-eslint";
 
-export default [
-  {
-    ignores: ["src/core/infra/config/*"]
+export default tseslint.config(eslint.configs.recommended, tseslint.configs.recommended, {
+  rules: {
+    "@typescript-eslint/explicit-function-return-type": "error",
   },
-  {
-    languageOptions: { globals: globals.node },
-  },
-  pluginJs.configs.recommended,
-  {
-    rules: {
-      'no-control-regex': 'off'
-    }
-  },
-  {
-    files: [
-      "test/**"
-    ],
-    languageOptions: {
-      globals: {
-        ...globals.mocha
-      }
-    }
-  }
-];
+});

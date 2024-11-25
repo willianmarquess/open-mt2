@@ -1,6 +1,6 @@
-import Result from '../../../core/app/Result.js';
-import ErrorTypesEnum from '../../../core/enum/ErrorTypesEnum.js';
-import CacheKeyGenerator from '../../../core/util/CacheKeyGenerator.js';
+import Result from "../../../core/app/Result.js";
+import ErrorTypesEnum from "../../../core/enum/ErrorTypesEnum.js";
+import CacheKeyGenerator from "../../../core/util/CacheKeyGenerator.js";
 
 /**
  * @typedef {Object} AuthenticateInput
@@ -9,37 +9,37 @@ import CacheKeyGenerator from '../../../core/util/CacheKeyGenerator.js';
  */
 
 export default class AuthenticateService {
-    #logger;
-    #cacheProvider;
+  #logger;
+  #cacheProvider;
 
-    constructor({ logger, cacheProvider }) {
-        this.#logger = logger;
-        this.#cacheProvider = cacheProvider;
+  constructor({ logger, cacheProvider }) {
+    this.#logger = logger;
+    this.#cacheProvider = cacheProvider;
+  }
+
+  /**
+   * Executes the authentication process.
+   *
+   * @param {AuthenticateInput} authenticateInput - The input required for authentication.
+   * @returns {Promise<void>} A promise that resolves to a void.
+   */
+  async execute(authenticateInput) {
+    const { key, username } = authenticateInput;
+    const cacheKey = CacheKeyGenerator.createTokenKey(key);
+    const tokenExists = await this.#cacheProvider.exists(cacheKey);
+
+    if (!tokenExists) {
+      this.#logger.info(`[AuthenticateService] Invalid token for username: ${username}`);
+      return Result.error(ErrorTypesEnum.INVALID_TOKEN);
     }
 
-    /**
-     * Executes the authentication process.
-     *
-     * @param {AuthenticateInput} authenticateInput - The input required for authentication.
-     * @returns {Promise<void>} A promise that resolves to a void.
-     */
-    async execute(authenticateInput) {
-        const { key, username } = authenticateInput;
-        const cacheKey = CacheKeyGenerator.createTokenKey(key);
-        const tokenExists = await this.#cacheProvider.exists(cacheKey);
+    const token = JSON.parse(await this.#cacheProvider.get(cacheKey));
 
-        if (!tokenExists) {
-            this.#logger.info(`[AuthenticateService] Invalid token for username: ${username}`);
-            return Result.error(ErrorTypesEnum.INVALID_TOKEN);
-        }
-
-        const token = JSON.parse(await this.#cacheProvider.get(cacheKey));
-
-        if (username !== token.username) {
-            this.#logger.info(`[AuthenticateService] Invalid token for username: ${username}`);
-            return Result.error(ErrorTypesEnum.INVALID_TOKEN);
-        }
-
-        return Result.ok(token);
+    if (username !== token.username) {
+      this.#logger.info(`[AuthenticateService] Invalid token for username: ${username}`);
+      return Result.error(ErrorTypesEnum.INVALID_TOKEN);
     }
+
+    return Result.ok(token);
+  }
 }

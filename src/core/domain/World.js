@@ -95,9 +95,9 @@ export default class World {
 
         const maxDimensions = { maxWidth: 0, maxHeight: 0 };
         for (const { mapName, posX, posY, width, height, aka, goto } of this.#config.atlas) {
-            this.#logger.info(
-                `[WORLD] loading area: name: ${mapName}, posX: ${posX}, posY: ${posY}, width: ${width}, height: ${height}, sizeX: ${posX + width * AREA_UNIT}, sizeY: ${posY + height * AREA_UNIT}`,
-            );
+            // this.#logger.info(
+            //     `[WORLD] loading area: name: ${mapName}, posX: ${posX}, posY: ${posY}, width: ${width}, height: ${height}, sizeX: ${posX + width * AREA_UNIT}, sizeY: ${posY + height * AREA_UNIT}`,
+            // );
             maxDimensions.maxWidth = Math.max(maxDimensions.maxWidth, posX + width * AREA_UNIT);
             maxDimensions.maxHeight = Math.max(maxDimensions.maxHeight, posY + height * AREA_UNIT);
             const area = new Area(
@@ -194,7 +194,7 @@ export default class World {
 
         if (this.#deltas.length === 100) {
             const averageTick = this.#deltas.reduce((acc, curr) => acc + curr, 0);
-            this.#logger.info(`average tick time is: ~${(averageTick / 100).toFixed(2)}ms`);
+            // this.#logger.info(`average tick time is: ~${(averageTick / 100).toFixed(2)}ms`);
             this.#deltas = [];
         }
 

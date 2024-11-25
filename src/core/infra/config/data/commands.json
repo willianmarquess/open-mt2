@@ -1,18 +1,18 @@
 [
-    {
-        "command": "/help",
-        "description": "command to discover all valid commands",
-        "claims": ["common", "implementor", "emperor"]
-    },
-    {
-        "command": "/stat",
-        "example": "/stat <ht, st, dx, it> <number>",
-        "description": "add points to a point status",
-        "claims": ["common", "implementor", "emperor"]
-    },
-    {
-        "command": "/logout",
-        "description": "logout the account",
-        "claims": ["common", "implementor", "emperor"]
-    }
+  {
+    "command": "/help",
+    "description": "command to discover all valid commands",
+    "claims": ["common", "implementor", "emperor"]
+  },
+  {
+    "command": "/stat",
+    "example": "/stat <ht, st, dx, it> <number>",
+    "description": "add points to a point status",
+    "claims": ["common", "implementor", "emperor"]
+  },
+  {
+    "command": "/logout",
+    "description": "logout the account",
+    "claims": ["common", "implementor", "emperor"]
+  }
 ]

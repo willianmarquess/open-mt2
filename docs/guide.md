@@ -23,7 +23,7 @@ ps: If you changed the ports in the .env, put the relative values ​​here
 
 - Install dependencies
 ```bash
-npm run install
+npm install
 ```
 - Setup .env file (you can use .env.example as example)
 - Execute this command on terminal:

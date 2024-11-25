@@ -33,6 +33,7 @@ export default class ServerStatusPacket extends PacketOut {
             this.bufferWriter.writeUint16LE(s.port).writeUint8(s.status);
         });
         this.bufferWriter.writeUint8(this.#isSuccess);
+        console.log('ServerStatusPacket', this.bufferWriter.buffer);
         return this.bufferWriter.buffer;
     }
 }

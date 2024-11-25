@@ -1,86 +1,86 @@
 {
-    "warrior": {
-        "common": {
-            "st": 15,
-            "ht": 13,
-            "dx": 8,
-            "iq": 4,
-            "initialHp": 700,
-            "initialMp": 500,
-            "initialStamina": 1000,
-            "hpPerLvl": 100,
-            "hpPerHtPoint": 50,
-            "mpPerLvl": 50,
-            "mpPerIqPoint": 20,
-            "initialAttackSpeed": 150,
-            "initialMovementSpeed": 150,
-            "defensePerHtPoint": 2,
-            "attackPerStPoint": 2,
-            "attackPerDXPoint": 0,
-            "attackPerIQPoint": 0
-        }
-    },
-    "assassin": {
-        "common": {
-            "st": 13,
-            "ht": 7,
-            "dx": 15,
-            "iq": 5,
-            "initialHp": 700,
-            "initialMp": 500,
-            "initialStamina": 1000,
-            "hpPerLvl": 100,
-            "hpPerHtPoint": 50,
-            "mpPerLvl": 50,
-            "mpPerIqPoint": 20,
-            "initialAttackSpeed": 150,
-            "initialMovementSpeed": 150,
-            "defensePerHtPoint": 2,
-            "attackPerStPoint": 4,
-            "attackPerDXPoint": 1.5,
-            "attackPerIQPoint": 0
-        }
-    },
-    "sura": {
-        "common": {
-            "st": 9,
-            "ht": 7,
-            "dx": 9,
-            "iq": 15,
-            "initialHp": 700,
-            "initialMp": 700,
-            "initialStamina": 1000,
-            "hpPerLvl": 100,
-            "hpPerHtPoint": 50,
-            "mpPerLvl": 50,
-            "mpPerIqPoint": 20,
-            "initialAttackSpeed": 150,
-            "initialMovementSpeed": 150,
-            "defensePerHtPoint": 2,
-            "attackPerStPoint": 2,
-            "attackPerDXPoint": 0,
-            "attackPerIQPoint": 1.5
-        }
-    },
-    "shaman": {
-        "common": {
-            "st": 10,
-            "ht": 10,
-            "dx": 5,
-            "iq": 15,
-            "initialHp": 700,
-            "initialMp": 700,
-            "initialStamina": 1000,
-            "hpPerLvl": 100,
-            "hpPerHtPoint": 50,
-            "mpPerLvl": 50,
-            "mpPerIqPoint": 20,
-            "initialAttackSpeed": 150,
-            "initialMovementSpeed": 150,
-            "defensePerHtPoint": 2,
-            "attackPerStPoint": 4,
-            "attackPerDXPoint": 0,
-            "attackPerIQPoint": 1.5
-        }
+  "warrior": {
+    "common": {
+      "st": 15,
+      "ht": 13,
+      "dx": 8,
+      "iq": 4,
+      "initialHp": 700,
+      "initialMp": 500,
+      "initialStamina": 1000,
+      "hpPerLvl": 100,
+      "hpPerHtPoint": 50,
+      "mpPerLvl": 50,
+      "mpPerIqPoint": 20,
+      "initialAttackSpeed": 150,
+      "initialMovementSpeed": 150,
+      "defensePerHtPoint": 2,
+      "attackPerStPoint": 2,
+      "attackPerDXPoint": 0,
+      "attackPerIQPoint": 0
     }
+  },
+  "assassin": {
+    "common": {
+      "st": 13,
+      "ht": 7,
+      "dx": 15,
+      "iq": 5,
+      "initialHp": 700,
+      "initialMp": 500,
+      "initialStamina": 1000,
+      "hpPerLvl": 100,
+      "hpPerHtPoint": 50,
+      "mpPerLvl": 50,
+      "mpPerIqPoint": 20,
+      "initialAttackSpeed": 150,
+      "initialMovementSpeed": 150,
+      "defensePerHtPoint": 2,
+      "attackPerStPoint": 4,
+      "attackPerDXPoint": 1.5,
+      "attackPerIQPoint": 0
+    }
+  },
+  "sura": {
+    "common": {
+      "st": 9,
+      "ht": 7,
+      "dx": 9,
+      "iq": 15,
+      "initialHp": 700,
+      "initialMp": 700,
+      "initialStamina": 1000,
+      "hpPerLvl": 100,
+      "hpPerHtPoint": 50,
+      "mpPerLvl": 50,
+      "mpPerIqPoint": 20,
+      "initialAttackSpeed": 150,
+      "initialMovementSpeed": 150,
+      "defensePerHtPoint": 2,
+      "attackPerStPoint": 2,
+      "attackPerDXPoint": 0,
+      "attackPerIQPoint": 1.5
+    }
+  },
+  "shaman": {
+    "common": {
+      "st": 10,
+      "ht": 10,
+      "dx": 5,
+      "iq": 15,
+      "initialHp": 700,
+      "initialMp": 700,
+      "initialStamina": 1000,
+      "hpPerLvl": 100,
+      "hpPerHtPoint": 50,
+      "mpPerLvl": 50,
+      "mpPerIqPoint": 20,
+      "initialAttackSpeed": 150,
+      "initialMovementSpeed": 150,
+      "defensePerHtPoint": 2,
+      "attackPerStPoint": 4,
+      "attackPerDXPoint": 0,
+      "attackPerIQPoint": 1.5
+    }
+  }
 }

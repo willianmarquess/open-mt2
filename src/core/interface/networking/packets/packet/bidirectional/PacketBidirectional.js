@@ -3,21 +3,21 @@ import BufferWriter from '../../../buffer/BufferWriter.js';
 import Packet from '../Packet.js';
 
 export default class PacketBidirectional extends Packet {
-    #bufferWriter;
-    #bufferReader;
+    private bufferWriter;
+    private bufferReader;
 
     constructor({ header, subHeader, size, name, validator }) {
         super({ header, subHeader, size, name, validator });
-        this.#bufferWriter = new BufferWriter(this.header, this.size);
-        this.#bufferReader = new BufferReader();
+        this.bufferWriter = new BufferWriter(this.header, this.size);
+        this.bufferReader = new BufferReader();
     }
 
     get bufferWriter() {
-        return this.#bufferWriter;
+        return this.bufferWriter;
     }
 
     get bufferReader() {
-        return this.#bufferReader;
+        return this.bufferReader;
     }
 
     pack() {

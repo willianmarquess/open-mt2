@@ -1,14 +1,47 @@
 {
+  "engines": {
+    "node": ">=22.11.0 <=22.11.0"
+  },
+  "lint-staged": {
+    "**/*": "prettier --write"
+  },
+  "devDependencies": {
+    "@eslint/js": "9.2.0",
+    "@types/node": "22.9.0",
+    "c8": "10.1.2",
+    "chai": "5.1.1",
+    "eslint": "9.2.0",
+    "expectations": "1.0.0",
+    "globals": "15.1.0",
+    "husky": "9.0.11",
+    "lint-staged": "15.2.10",
+    "mocha": "10.4.0",
+    "nyc": "17.0.0",
+    "prettier": "3.2.5",
+    "ts-node-dev": "2.0.0",
+    "typescript": "5.6.3",
+    "typescript-eslint": "8.15.0"
+  },
+  "dependencies": {
+    "@types/redis": "4.0.11",
+    "awilix": "10.0.2",
+    "bcrypt": "5.1.1",
+    "cross-env": "7.0.3",
+    "mysql2": "3.9.7",
+    "redis": "4.6.13",
+    "rimraf": "6.0.1",
+    "sinon": "18.0.0",
+    "winston": "3.13.0"
+  },
+  "main": "dist/main.js",
   "name": "mt2-server-javascript",
-  "version": "1.0.0",
-  "description": "",
-  "main": "src/main.js",
-  "type": "module",
   "scripts": {
-    "dev:auth": "node --env-file=.env --watch --experimental-json-modules src/auth/main.js",
+    "build": "tsc",
+    "clean": "rimraf ./dist",
+    "dev:auth": "node --env-file=.env --watch --experimental-json-modules ./dist/auth/main.js",
+    "dev:game": "node --env-file=.env --watch --experimental-json-modules ./dist/game/main.js",
     "auth": "node --experimental-json-modules src/auth/main.js",
     "game": "node --experimental-json-modules src/game/main.js",
-    "dev:game": "node --env-file=.env --watch --experimental-json-modules src/game/main.js",
     "migrate": "cross-env node --env-file=.env --experimental-json-modules tools/database/migrate.js",
     "format": "prettier -w {src,test}/**/*.js",
     "prepare": "husky",
@@ -16,34 +49,9 @@
     "test:unit": "mocha --config test/.mocharc.unit.json --exit",
     "test:integration": "node --env-file=.env --experimental-json-modules node_modules/mocha/bin/mocha --config test/.mocharc.integration.json --exit",
     "test:coverage": "c8 npm run test:unit",
-    "docker:all": "docker-compose -f docker-compose.yml up -d",
-    "docker:dep": "docker-compose -f docker-compose.dep.yml up -d",
+    "docker:all": "docker compose -f docker-compose.yml up -d",
+    "docker:dep": "docker compose -f docker-compose.dep.yml up -d",
     "generate:doc": "node tools/doc/docGenerator.js"
   },
-  "author": "Willian Marques (willian.goncalves4@gmail.com)",
-  "license": "ISC",
-  "devDependencies": {
-    "@eslint/js": "^9.2.0",
-    "c8": "^10.1.2",
-    "chai": "^5.1.1",
-    "eslint": "^9.2.0",
-    "expectations": "^1.0.0",
-    "globals": "^15.1.0",
-    "husky": "^9.0.11",
-    "mocha": "^10.4.0",
-    "nyc": "^17.0.0",
-    "prettier": "^3.2.5"
-  },
-  "dependencies": {
-    "awilix": "^10.0.2",
-    "bcrypt": "^5.1.1",
-    "cross-env": "^7.0.3",
-    "mysql2": "^3.9.7",
-    "redis": "^4.6.13",
-    "sinon": "^18.0.0",
-    "winston": "^3.13.0"
-  },
-  "mocha": {
-    "require": "expectations"
-  }
+  "version": "1.0.0"
 }

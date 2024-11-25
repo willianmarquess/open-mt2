@@ -1,4 +1,4 @@
 export default {
-    IDLE: 0,
-    MOVING: 1,
+  IDLE: 0,
+  MOVING: 1,
 };

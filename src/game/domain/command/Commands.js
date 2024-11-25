@@ -3,7 +3,7 @@ import ExperienceCommandHandler from './command/exp/ExperienceCommandHandler.js'
 import GoldCommand from './command/gold/GoldCommand.js';
 import GoldCommandHandler from './command/gold/GoldCommandHandler.js';
 import GotoCommandHandler from './command/goto/GotoCommandHandler.js';
-import GotoCommand from './command/goto/Gotocommand.js';
+import GotoCommand from './command/goto/GotoCommand.js';
 import InvokeCommand from './command/invoke/InvokeCommand.js';
 import InvokeCommandHandler from './command/invoke/InvokeCommandHandler.js';
 import ItemCommand from './command/item/ItemCommand.js';

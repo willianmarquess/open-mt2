@@ -49,9 +49,9 @@ export default class AnimationManager {
                     const classFolder = JobUtil.getClassNameFromClassId(job);
                     const subTypeFolder = sub;
                     const typeFile = `${type}.json`;
-                    this.#logger.info(
-                        `[ANIMATION_MANAGER] Loading animation: /${genderFolder}/${classFolder}/${subTypeFolder}/${typeFile}`,
-                    );
+                    // this.#logger.info(
+                    //     `[ANIMATION_MANAGER] Loading animation: /${genderFolder}/${classFolder}/${subTypeFolder}/${typeFile}`,
+                    // );
                     const path =
                         DEFAULT_ANIMATIONS_PATH + `/${genderFolder}/${classFolder}/${subTypeFolder}/${typeFile}`;
 

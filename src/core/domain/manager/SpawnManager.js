@@ -53,7 +53,7 @@ export default class SpawnManager {
                 const groupCollectionConfig = this.#groupsCollection.find((g) => g.vnum === spawn.id);
 
                 if (!groupCollectionConfig) {
-                    this.#logger.error(`[SpawnManager] group collection not found with vnum: ${spawn.id}`);
+                    // this.#logger.error(`[SpawnManager] group collection not found with vnum: ${spawn.id}`);
                     break;
                 }
 
@@ -77,7 +77,7 @@ export default class SpawnManager {
                 });
 
                 if (!leader) {
-                    this.#logger.error(`[SpawnManager] monster not found with vnum: ${groupConfig.leaderVnum}`);
+                    // this.#logger.error(`[SpawnManager] monster not found with vnum: ${groupConfig.leaderVnum}`);
                     break;
                 }
 
