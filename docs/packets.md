@@ -35,7 +35,7 @@
 |-------------|------------|----------------|---------------------------|
 | header | `byte` | 1 | Packet header |
 | vid | `int` | 4 | Player identification in game |
-| playerClass | `short` | 2 | Number which indicates the player class |
+| playerClass | `short` | 2 | Number which indicates the player class (See the number of each class in JobEnum) |
 | playerName | `string` | 25 | Name of player (ascii) |
 | positionX | `int` | 4 | Position X of player in game |
 | positionY | `int` | 4 | Position Y of player in game |
@@ -107,7 +107,7 @@
 
 **Size:** 22 bytes
 
-**Description:** Is used to send and update of a point (attribute) to the client. See all points in PointsEnum.
+**Description:** Is used to send and update of a point (attribute) to the client (used to notify all nearby players of an update of a character). See all points in PointsEnum.
 
 **Fields:**
 
@@ -136,7 +136,47 @@
 | Name        | Type       | Size (bytes)   | Description               |
 |-------------|------------|----------------|---------------------------|
 | header | `byte` | 1 | Packet header. |
-| points | `int[4]` | 4 | I this array we send the value of each point. |
+| points | `int[255]` | 4 | In this array we send the value of each point. |
+
+---
+
+### CharactersInfoPacket
+
+**Type:** Out
+
+**Header:** 0x20
+
+**Size:** 329 bytes
+
+**Description:** Is used to send the characters list to client select screen (we need to repeat the characterInfo 4x, guildIds 4x, guildNames 4x).
+
+**Fields:**
+
+| Name        | Type       | Size (bytes)   | Description               |
+|-------------|------------|----------------|---------------------------|
+| header | `byte` | 1 | Packet header. |
+| id | `int` | 4 | Character identification in server. |
+| name | `string` | 25 | Name of character (ascii). |
+| playerClass | `byte` | 1 | Number which indicates the player class (See the number of each class in JobEnum). |
+| level | `byte` | 1 | Number which indicates the player level. |
+| playtime | `int` | 4 | Time the player played with this character in minutes. |
+| st | `byte` | 1 | Number which indicates the st point quantity (strength). |
+| ht | `byte` | 1 | Number which indicates the ht point quantity (vitality). |
+| dx | `byte` | 1 | Number which indicates the dx point quantity (dexterity). |
+| iq | `byte` | 1 | Number which indicates the iq point quantity (intelligence). |
+| bodyPart | `short` | 2 | Number which indicates the id of the body part. |
+| nameChange | `byte` | 1 | Number which indicates if that character need to change name (0 or 1). |
+| hairPart | `short` | 2 | Number which indicates the id of the hair part. |
+| unknown | `int` | 4 | filled with 0. |
+| positionX | `int` | 4 | Position X of player in game |
+| positionY | `int` | 4 | Position Y of player in game |
+| Ip | `int` | 4 | Ip Address to server where the map the player is on is managed (for now we have only one server, but we can add remote maps to increase the quantity of players of our server). |
+| Port | `int` | 4 | Port to server where the map the player is on is managed (for now we have only one server, but we can add remote maps to increase the quantity of players of our server). |
+| skillGroup | `byte` | 1 | Number which indicates the skill group of character (to be implemented). |
+| guildId | `int` | 4 | The guild id of current character |
+| guildName | `string` | 13 | The guild name of current character (ascii). |
+| unknown | `int` | 4 | filled with 0. |
+| unknown | `int` | 4 | filled with 0. |
 
 ---
 

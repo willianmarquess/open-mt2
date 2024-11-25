@@ -10,7 +10,7 @@ import PacketOut from './PacketOut.js';
  * @description Is used to send update of all the points (attributes) of a character to the client. See all points in PointsEnum.
  * @fields
  *   - {byte} header 1 Packet header.
- *   - {int[4]} points 4 In this array we send the value of each point.
+ *   - {int[255]} points 4 In this array we send the value of each point.
  */
 
 export default class CharacterPointsPacket extends PacketOut {

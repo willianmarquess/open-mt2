@@ -1,6 +1,39 @@
 import PacketHeaderEnum from '../../../../../enum/PacketHeaderEnum.js';
 import PacketOut from './PacketOut.js';
 
+/**
+ * @packet
+ * @type Out
+ * @name CharactersInfoPacket
+ * @header 0x20
+ * @size 329
+ * @description Is used to send the characters list to client select screen (we need to repeat the characterInfo 4x, guildIds 4x, guildNames 4x).
+ * @fields
+ *   - {byte} header 1 Packet header.
+ *   - {int} id 4 Character identification in server.
+ *   - {string} name 25 Name of character (ascii).
+ *   - {byte} playerClass 1 Number which indicates the player class (See the number of each class in JobEnum).
+ *   - {byte} level 1 Number which indicates the player level.
+ *   - {int} playtime 4 Time the player played with this character in minutes.
+ *   - {byte} st 1 Number which indicates the st point quantity (strength).
+ *   - {byte} ht 1 Number which indicates the ht point quantity (vitality).
+ *   - {byte} dx 1 Number which indicates the dx point quantity (dexterity).
+ *   - {byte} iq 1 Number which indicates the iq point quantity (intelligence).
+ *   - {short} bodyPart 2 Number which indicates the id of the body part.
+ *   - {byte} nameChange 1 Number which indicates if that character need to change name (0 or 1).
+ *   - {short} hairPart 2 Number which indicates the id of the hair part.
+ *   - {int} unknown 4 filled with 0.
+ *   - {int} positionX 4 Position X of player in game
+ *   - {int} positionY 4 Position Y of player in game
+ *   - {int} Ip 4 Ip Address to server where the map the player is on is managed (for now we have only one server, but we can add remote maps to increase the quantity of players of our server).
+ *   - {int} Port 4 Port to server where the map the player is on is managed (for now we have only one server, but we can add remote maps to increase the quantity of players of our server).
+ *   - {byte} skillGroup 1 Number which indicates the skill group of character (to be implemented).
+ *   - {int} guildId 4 The guild id of current character
+ *   - {string} guildName 13 The guild name of current character (ascii).
+ *   - {int} unknown 4 filled with 0.
+ *   - {int} unknown 4 filled with 0.
+ */
+
 const defaultCharacterInfo = {
     id: 0,
     name: '',

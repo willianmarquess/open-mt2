@@ -11,7 +11,7 @@ import PacketOut from './PacketOut.js';
  * @fields
  *   - {byte} header 1 Packet header
  *   - {int} vid 4 Player identification in game
- *   - {short} playerClass 2 Number which indicates the player class
+ *   - {short} playerClass 2 Number which indicates the player class (See the number of each class in JobEnum)
  *   - {string} playerName 25 Name of player (ascii)
  *   - {int} positionX 4 Position X of player in game
  *   - {int} positionY 4 Position Y of player in game
