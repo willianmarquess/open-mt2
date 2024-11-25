@@ -1,71 +1,71 @@
 import { expect } from 'chai';
 import sinon from 'sinon';
-import fsPromise from 'fs/promises';
-import fs from 'fs';
 import AnimationManager from '../../../../../src/core/domain/manager/AnimationManager.js';
-import JobEnum from '../../../../../src/core/enum/JobEnum.js';
-import AnimationTypeEnum from '../../../../../src/core/enum/AnimationTypeEnum.js';
-import AnimationSubTypeEnum from '../../../../../src/core/enum/AnimationSubTypeEnum.js';
 import Animation from '../../../../../src/core/domain/Animation.js';
 
-describe('AnimationManager', () => {
-    let logger;
+describe('AnimationManager Integration Tests', function () {
     let animationManager;
-    let readFileStub;
-    let existsFileSyncStub;
+    let loggerMock;
+    let configMock;
 
-    beforeEach(() => {
-        logger = { info: sinon.stub(), error: sinon.stub() };
-        animationManager = new AnimationManager({ logger, config: { mobs: [] } });
-        readFileStub = sinon.stub(fsPromise, 'readFile');
-        existsFileSyncStub = sinon.stub(fs, 'existsSync');
+    beforeEach(function () {
+        loggerMock = {
+            info: sinon.spy(),
+        };
+
+        configMock = {
+            animations: [
+                { key: 'job1:type1:sub1', MotionDuration: 500, Accumulation: [1, 2, 3] },
+                { key: 'job2:type2:sub2', MotionDuration: 700, Accumulation: [0, 0, 0] },
+            ],
+        };
+
+        animationManager = new AnimationManager({ logger: loggerMock, config: configMock });
     });
 
-    afterEach(() => {
-        sinon.restore();
-    });
-
-    it('should initialize animations object', () => {
-        expect(animationManager.animations).to.be.an('object');
-    });
-
-    it('should load animations correctly', async () => {
-        const animationData = JSON.stringify({
-            MotionDuration: 100,
-            Accumulation: [1, 2, 3],
-        });
-
-        readFileStub.resolves(animationData);
-        existsFileSyncStub.resolves(true);
-
+    it('should load animations correctly', async function () {
         await animationManager.load();
 
-        for (const job of Object.values(JobEnum)) {
-            for (const type of Object.values(AnimationTypeEnum)) {
-                for (const sub of Object.values(AnimationSubTypeEnum)) {
-                    const animation = animationManager.getAnimation(job, type, sub);
-                    expect(animation).to.be.instanceOf(Animation);
-                    expect(animation.duration).to.equal(100);
-                    expect(animation.accX).to.equal(1);
-                    expect(animation.accY).to.equal(2);
-                    expect(animation.accZ).to.equal(3);
-                }
-            }
-        }
+        expect(animationManager.animations.size).to.equal(2);
+
+        const animation1 = animationManager.getAnimation('job1', 'type1', 'sub1');
+        expect(animation1).to.be.instanceOf(Animation);
+        expect(animation1.duration).to.equal(500);
+        expect(animation1.accX).to.equal(1);
+        expect(animation1.accY).to.equal(2);
+        expect(animation1.accZ).to.equal(3);
+
+        const animation2 = animationManager.getAnimation('job2', 'type2', 'sub2');
+        expect(animation2).to.be.instanceOf(Animation);
+        expect(animation2.duration).to.equal(700);
+        expect(animation2.accX).to.equal(0);
+        expect(animation2.accY).to.equal(0);
+        expect(animation2.accZ).to.equal(0);
+
+        expect(loggerMock.info.calledOnce).to.be.true;
+        expect(loggerMock.info.calledWith('[ANIMATION_MANAGER] Animations loaded with success, total: ', 2)).to.be.true;
     });
 
-    it('should handle error when loading animation data', async () => {
-        readFileStub.rejects(new Error('File not found'));
-
+    it('should return the correct animation using getAnimation', async function () {
         await animationManager.load();
 
-        for (const job of Object.values(JobEnum)) {
-            for (const type of Object.values(AnimationTypeEnum)) {
-                for (const sub of Object.values(AnimationSubTypeEnum)) {
-                    const animation = animationManager.getAnimation(job, type, sub);
-                    expect(animation).to.be.undefined;
-                }
-            }
-        }
+        const animation = animationManager.getAnimation('job1', 'type1', 'sub1');
+        expect(animation).to.be.instanceOf(Animation);
+        expect(animation.duration).to.equal(500);
+    });
+
+    it('should return undefined for a non-existing animation', async function () {
+        await animationManager.load();
+
+        const animation = animationManager.getAnimation('non-existing-job', 'type', 'sub');
+        expect(animation).to.be.undefined;
+    });
+
+    it('should return the animations map', async function () {
+        await animationManager.load();
+        const animations = animationManager.animations;
+
+        expect(animations).to.be.instanceOf(Map);
+        expect(animations.size).to.equal(2);
     });
 });

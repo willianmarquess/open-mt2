@@ -1,6 +1,6 @@
 import { expect } from 'chai';
 import sinon from 'sinon';
-import bcrypt from 'bcrypt';
+import bcryptjs from 'bcryptjs';
 import EncryptionProvider from '../../../../../src/core/infra/encryption/EncryptionProvider.js';
 
 describe('EncryptionProvider', () => {
@@ -10,8 +10,8 @@ describe('EncryptionProvider', () => {
 
     beforeEach(() => {
         encryptionProvider = new EncryptionProvider();
-        hashStub = sinon.stub(bcrypt, 'hash');
-        compareStub = sinon.stub(bcrypt, 'compare');
+        hashStub = sinon.stub(bcryptjs, 'hash');
+        compareStub = sinon.stub(bcryptjs, 'compare');
     });
 
     afterEach(() => {
@@ -19,7 +19,7 @@ describe('EncryptionProvider', () => {
     });
 
     describe('hash', () => {
-        it('should hash the value with bcrypt', async () => {
+        it('should hash the value with bcryptjs', async () => {
             const value = 'testValue';
             const hashedValue = 'hashedValue';
             hashStub.resolves(hashedValue);
@@ -32,7 +32,7 @@ describe('EncryptionProvider', () => {
     });
 
     describe('compare', () => {
-        it('should compare the value with the encrypted value using bcrypt', async () => {
+        it('should compare the value with the encrypted value using bcryptjs', async () => {
             const value = 'testValue';
             const encrypted = 'hashedValue';
             compareStub.resolves(true);
