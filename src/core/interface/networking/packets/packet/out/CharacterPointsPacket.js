@@ -1,6 +1,18 @@
 import PacketHeaderEnum from '../../../../../enum/PacketHeaderEnum.js';
 import PacketOut from './PacketOut.js';
 
+/**
+ * @packet
+ * @type Out
+ * @name CharacterPointsPacket
+ * @header 0x10
+ * @size 1021
+ * @description Is used to send update of all the points (attributes) of a character to the client. See all points in PointsEnum.
+ * @fields
+ *   - {byte} header 1 Packet header.
+ *   - {int[4]} points 4 In this array we send the value of each point.
+ */
+
 export default class CharacterPointsPacket extends PacketOut {
     #points = new Array(255).fill(0);
 

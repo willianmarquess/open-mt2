@@ -9,7 +9,7 @@ export default class SetItemOwnershipPacket extends PacketOut {
         super({
             header: PacketHeaderEnum.SET_ITEM_OWNERSHIP,
             name: 'SetItemOwnershipPacket',
-            size: 5 + ownerName.length,
+            size: 5 + ownerName.length + 1,
         });
         this.#virtualId = virtualId;
         this.#ownerName = ownerName;
@@ -17,7 +17,7 @@ export default class SetItemOwnershipPacket extends PacketOut {
 
     pack() {
         this.bufferWriter.writeUint32LE(this.#virtualId);
-        this.bufferWriter.writeString(this.#ownerName, this.#ownerName.length);
+        this.bufferWriter.writeString(this.#ownerName, this.#ownerName.length + 1);
         return this.bufferWriter.buffer;
     }
 }

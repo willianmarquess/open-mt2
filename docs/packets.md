@@ -72,3 +72,71 @@
 
 ---
 
+### CharacterMoveOutPacket
+
+**Type:** Out
+
+**Header:** 0x03
+
+**Size:** 25 bytes
+
+**Description:** Is used to replicate the movement of a character (player, mobs) to other nearby players.
+
+**Fields:**
+
+| Name        | Type       | Size (bytes)   | Description               |
+|-------------|------------|----------------|---------------------------|
+| header | `byte` | 1 | Packet header |
+| movementType | `byte` | 1 | Number which indicates the movement type (See in MovementTypeEnum) |
+| arg | `byte` | 1 | unknown |
+| rotation | `byte` | 1 | Indicate the rotation of char in degrees |
+| vid | `int` | 4 | Character identification in game |
+| positionX | `int` | 4 | Position X of character in game |
+| positionY | `int` | 4 | Position Y of character in game |
+| time | `int` | 4 | unknown |
+| duration | `int` | 4 | Number which indicates the duration of movement |
+| unknown | `byte` | 1 | filled with 0 |
+
+---
+
+### CharacterPointChangePacket
+
+**Type:** Out
+
+**Header:** 0x11
+
+**Size:** 22 bytes
+
+**Description:** Is used to send and update of a point (attribute) to the client. See all points in PointsEnum.
+
+**Fields:**
+
+| Name        | Type       | Size (bytes)   | Description               |
+|-------------|------------|----------------|---------------------------|
+| header | `byte` | 1 | Packet header. |
+| vid | `int` | 4 | Character identification in game. |
+| type | `byte` | 1 | Number which indicates the point type (See in PointsEnum). |
+| amount | `long` | 8 | Number which indicates the quantity of that point (default is 0). |
+| value | `long` | 8 | Number which indicates the value of that point. |
+
+---
+
+### CharacterPointsPacket
+
+**Type:** Out
+
+**Header:** 0x10
+
+**Size:** 1021 bytes
+
+**Description:** Is used to send update of all the points (attributes) of a character to the client. See all points in PointsEnum.
+
+**Fields:**
+
+| Name        | Type       | Size (bytes)   | Description               |
+|-------------|------------|----------------|---------------------------|
+| header | `byte` | 1 | Packet header. |
+| points | `int[4]` | 4 | I this array we send the value of each point. |
+
+---
+
