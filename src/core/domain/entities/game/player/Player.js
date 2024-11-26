@@ -16,21 +16,16 @@ import LogoutEvent from './events/LogoutEvent.js';
 import JobUtil from '../../../util/JobUtil.js';
 import MathUtil from '../../../util/MathUtil.js';
 import CharacterTeleportedEvent from './events/CharacterTeleportedEvent.js';
-import ItemAddedEvent from './events/ItemAddedEvent.js';
 import Inventory from '../inventory/Inventory.js';
-import WindowTypeEnum from '../../../../enum/WindowTypeEnum.js';
-import ItemRemovedEvent from './events/ItemRemovedEvent.js';
 import ItemAntiFlagEnum from '../../../../enum/ItemAntiFlagEnum.js';
 import CharacterUpdatedEvent from './events/CharacterUpdatedEvent.js';
 import InventoryEventsEnum from '../inventory/events/InventoryEventsEnum.js';
 import ItemEquipmentSlotEnum from '../../../../enum/ItemEquipmentSlotEnum.js';
 import OtherCharacterUpdatedEvent from './events/OtherCharacterUpdatedEvent.js';
 import ApplyTypeEnum from '../../../../enum/ApplyTypeEnum.js';
-import DropItemEvent from './events/DropItemEvent.js';
-import ItemDroppedEvent from './events/ItemDroppedEvent.js';
-import ItemDroppedHideEvent from './events/ItemDroppedHideEvent.js';
 import EntityStateEnum from '../../../../enum/EntityStateEnum.js';
 import DroppedItem from '../item/DroppedItem.js';
+import PlayerInventory from './delegate/PlayerInventory.js';
 
 const REGEN_INTERVAL = 3000;
 
@@ -105,6 +100,9 @@ export default class Player extends GameEntity {
     #lastPlayTime = performance.now();
     #inventory;
     #logger;
+
+    //delegate
+    #playerInventory;
 
     constructor(
         {
@@ -204,6 +202,8 @@ export default class Player extends GameEntity {
         this.#inventory = new Inventory({ config: this.#config, ownerId: this.id });
         this.#inventory.subscribe(InventoryEventsEnum.ITEM_EQUIPPED, this.#onItemEquipped.bind(this));
         this.#inventory.subscribe(InventoryEventsEnum.ITEM_UNEQUIPPED, this.#onItemUnequipped.bind(this));
+
+        this.#playerInventory = new PlayerInventory(this);
 
         this.#init();
     }
@@ -806,136 +806,48 @@ export default class Player extends GameEntity {
     */
 
     sendItemAdded({ window, position, item }) {
-        this.publish(
-            ItemAddedEvent.type,
-            new ItemAddedEvent({
-                window,
-                position,
-                id: item.id,
-                count: item.count ?? 1,
-                flags: item.flags.flag,
-                antiFlags: item.antiFlags.flag,
-                highlight: 0,
-            }),
-        );
+        return this.#playerInventory.sendItemAdded({ window, position, item });
     }
 
     sendItemRemoved({ window, position }) {
-        this.publish(
-            ItemRemovedEvent.type,
-            new ItemRemovedEvent({
-                window,
-                position,
-            }),
-        );
+        return this.#playerInventory.sendItemRemoved({ window, position });
     }
 
     getItem(position) {
-        return this.#inventory.getItem(Number(position));
+        return this.#playerInventory.getItem(position);
     }
 
     isWearable(item) {
-        return (
-            this.level >= item.getLevelLimit() &&
-            item.wearFlags.flag > 0 &&
-            !item.antiFlags.is(this.antiFlagClass) &&
-            !item.antiFlags.is(this.antiFlagGender)
-        );
+        return this.#playerInventory.isWearable(item);
     }
 
     moveItem({ fromWindow, fromPosition, toWindow, toPosition /*_count*/ }) {
-        const item = this.getItem(fromPosition);
-
-        if (!item) return;
-        if (fromWindow !== WindowTypeEnum.INVENTORY || toWindow !== WindowTypeEnum.INVENTORY) return;
-        if (!this.#inventory.isValidPosition(toPosition)) return;
-        if (!this.#inventory.haveAvailablePosition(toPosition, item.size)) return;
-
-        if (this.#inventory.isEquipmentPosition(toPosition)) {
-            if (!this.isWearable(item)) return;
-            if (!this.#inventory.isValidSlot(item, toPosition)) return;
-        }
-
-        this.#inventory.removeItem(fromPosition, item.size);
-        this.#inventory.addItemAt(item, toPosition);
-
-        this.sendItemRemoved({
-            window: fromWindow,
-            position: fromPosition,
-        });
-        this.sendItemAdded({
-            window: toWindow,
-            position: toPosition,
-            item,
-        });
+        return this.#playerInventory.moveItem({ fromWindow, fromPosition, toWindow, toPosition /*_count*/ });
     }
 
     addItem(item) {
-        const position = this.#inventory.addItem(item);
-
-        if (position < 0) {
-            this.say({
-                messageType: ChatMessageTypeEnum.INFO,
-                message: 'Inventory is full',
-            });
-            return false;
-        }
-
-        this.sendItemAdded({
-            window: WindowTypeEnum.INVENTORY,
-            position,
-            item,
-        });
-
-        return true;
+        return this.#playerInventory.addItem(item);
     }
 
     sendInventory() {
-        for (const item of this.#inventory.items.values()) {
-            this.sendItemAdded({
-                window: item.window,
-                position: item.position,
-                item,
-            });
-        }
-        this.updateView();
+        return this.#playerInventory.sendInventory();
     }
 
     dropItem({ item, count }) {
-        this.publish(
-            DropItemEvent.type,
-            new DropItemEvent({
-                item,
-                count,
-                positionX: this.positionX,
-                positionY: this.positionY,
-                ownerName: this.name,
-            }),
-        );
+        return this.#playerInventory.dropItem({ item, count });
     }
 
     showDroppedItem({ virtualId, count, positionX, positionY, ownerName, id }) {
-        this.publish(
-            ItemDroppedEvent.type,
-            new ItemDroppedEvent({
-                virtualId,
-                count,
-                positionX,
-                positionY,
-                ownerName,
-                id,
-            }),
-        );
+        return this.#playerInventory.showDroppedItem({ virtualId, count, positionX, positionY, ownerName, id });
     }
 
     hideDroppedItem({ virtualId }) {
-        this.publish(
-            ItemDroppedHideEvent.type,
-            new ItemDroppedHideEvent({
-                virtualId,
-            }),
-        );
+        return this.#playerInventory.hideDroppedItem({ virtualId });
     }
+
+    /* 
+        AOI MANAGEMENT 
+    */
 
     addNearbyEntity(entity) {
         super.addNearbyEntity(entity);
