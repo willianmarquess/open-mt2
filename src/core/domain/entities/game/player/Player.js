@@ -253,7 +253,7 @@ export default class Player extends GameEntity {
         percent += percent * (this.#healthRegenBonus / 100);
         const amount = this.#maxHealth * (percent / 100);
         this.addHealth(Math.floor(amount));
-        this.say({
+        this.chat({
             messageType: ChatMessageTypeEnum.INFO,
             message: `[HP REGEN] amount: ${Math.floor(amount)} percent: ${percent}`,
         });
@@ -267,7 +267,7 @@ export default class Player extends GameEntity {
         percent += percent * (this.#manaRegenBonus / 100);
         const amount = this.#maxMana * (percent / 100);
         this.addMana(Math.floor(amount));
-        this.say({
+        this.chat({
             messageType: ChatMessageTypeEnum.INFO,
             message: `[MANA REGEN] amount: ${Math.floor(amount)} percent: ${percent}`,
         });
@@ -608,7 +608,7 @@ export default class Player extends GameEntity {
     spawn() {
         this.#lastPlayTime = performance.now();
         this.publish(CharacterSpawnedEvent.type, new CharacterSpawnedEvent());
-        this.say({
+        this.chat({
             messageType: ChatMessageTypeEnum.INFO,
             message: 'Welcome to Metin2 JS - An Open Source Project',
         });
@@ -664,7 +664,7 @@ export default class Player extends GameEntity {
         this.publish(LogoutEvent.type, new LogoutEvent());
     }
 
-    say({ message, messageType }) {
+    chat({ message, messageType }) {
         this.publish(
             ChatEvent.type,
             new ChatEvent({
@@ -677,7 +677,7 @@ export default class Player extends GameEntity {
     sendCommandErrors(errors) {
         errors.forEach(({ errors }) => {
             errors.forEach(({ error }) => {
-                this.say({
+                this.chat({
                     message: error,
                     messageType: ChatMessageTypeEnum.INFO,
                 });

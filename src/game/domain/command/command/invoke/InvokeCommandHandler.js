@@ -28,7 +28,7 @@ export default class InvokeCommandHandler {
         } = invokeCommand;
 
         if (!this.#mobManager.hasMob(vnum)) {
-            player.say({
+            player.chat({
                 message: `Mob: ${vnum} not found.`,
                 messageType: ChatMessageTypeEnum.INFO,
             });

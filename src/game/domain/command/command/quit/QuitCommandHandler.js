@@ -9,11 +9,11 @@ export default class QuitCommandHandler {
 
     async execute(player) {
         this.#logger.info(`[QuitCommandHandler] Quit client. id: ${player.id}`);
-        player.say({
+        player.chat({
             message: `Quitting game`,
             messageType: ChatMessageTypeEnum.INFO,
         });
-        player.say({
+        player.chat({
             message: 'quit',
             messageType: ChatMessageTypeEnum.COMMAND,
         });

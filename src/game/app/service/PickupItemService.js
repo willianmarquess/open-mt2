@@ -30,7 +30,7 @@ export default class PickupItemService {
         const canPickup = ownerName === player.name || !ownerName;
 
         if (!canPickup) {
-            player.say({
+            player.chat({
                 messageType: ChatMessageTypeEnum.INFO,
                 message: 'This item is not yours',
             });

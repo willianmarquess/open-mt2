@@ -16,7 +16,7 @@ export default class CommandManager {
         //validate ban words
         if (message.startsWith('/help')) {
             for (const { command } of this.#commands.values()) {
-                player.say({
+                player.chat({
                     message: `Command: ${command.name} - Description: ${command.description} ${command.example ? ` - Example: ${command.example}` : ''} `,
                     messageType: ChatMessageTypeEnum.INFO,
                 });
@@ -28,7 +28,7 @@ export default class CommandManager {
 
         if (!this.#commands.has(commandName)) {
             this.#logger.info(`[CommandManager] Invalid command: ${commandName}`);
-            player.say({
+            player.chat({
                 message: `Invalid command: ${commandName}`,
                 messageType: ChatMessageTypeEnum.INFO,
             });

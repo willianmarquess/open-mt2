@@ -43,7 +43,7 @@ export default class UseItemService {
 
                 await this.#itemManager.update(item);
             } else {
-                player.say({
+                player.chat({
                     messageType: ChatMessageTypeEnum.INFO,
                     message: 'Inventory is full',
                 });
@@ -85,7 +85,7 @@ export default class UseItemService {
                 } else {
                     player.inventory.addItemAt(item, position);
                     player.inventory.addItemAt(itemEquipped, wearPosition);
-                    player.say({
+                    player.chat({
                         messageType: ChatMessageTypeEnum.INFO,
                         message: 'Inventory is full',
                     });

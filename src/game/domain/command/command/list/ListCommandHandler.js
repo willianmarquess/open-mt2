@@ -25,7 +25,7 @@ export default class ListCommandHandler {
             case 'areas': {
                 for (const area of this.#world.areas.values()) {
                     if (!area.aka) continue;
-                    player.say({
+                    player.chat({
                         message: `name: ${area.name} | aka: ${area.aka} | x: ${area.positionX} | y: ${area.positionY}`,
                         messageType: ChatMessageTypeEnum.INFO,
                     });
@@ -35,7 +35,7 @@ export default class ListCommandHandler {
 
             case 'players': {
                 for (const entity of this.#world.players.values()) {
-                    player.say({
+                    player.chat({
                         message: `name: ${entity.name} | x: ${entity.positionX} | y: ${entity.positionY}`,
                         messageType: ChatMessageTypeEnum.INFO,
                     });

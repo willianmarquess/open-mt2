@@ -29,7 +29,7 @@ describe('PlayerInventory', function () {
             },
             publish: sinon.spy(),
             updateView: sinon.spy(),
-            say: sinon.spy(),
+            chat: sinon.spy(),
         };
 
         playerInventory = new PlayerInventory(playerMock);
@@ -187,7 +187,7 @@ describe('PlayerInventory', function () {
 
             expect(result).to.be.false;
             expect(playerMock.publish.notCalled).to.be.true;
-            expect(playerMock.say.calledOnce).to.be.true;
+            expect(playerMock.chat.calledOnce).to.be.true;
         });
     });
 

@@ -43,7 +43,7 @@ export default class DropItemService {
         const amountValidated = Math.max(0, Number(amount));
 
         if (amountValidated > player.gold) {
-            player.say({
+            player.chat({
                 messageType: ChatMessageTypeEnum.INFO,
                 message: 'You are trying to drop more gold than you have',
             });

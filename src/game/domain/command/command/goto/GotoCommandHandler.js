@@ -28,7 +28,7 @@ export default class GotoCommandHandler {
                 const areaByName = this.#world.getAreaByName(areaName);
 
                 if (!areaByName) {
-                    player.say({
+                    player.chat({
                         message: `Area: ${areaName} not found.`,
                         messageType: ChatMessageTypeEnum.INFO,
                     });
@@ -61,7 +61,7 @@ export default class GotoCommandHandler {
                 const target = this.#world.getPlayerByName(targetName);
 
                 if (!target) {
-                    player.say({
+                    player.chat({
                         message: `Target: ${targetName} not found.`,
                         messageType: ChatMessageTypeEnum.INFO,
                     });
@@ -78,7 +78,7 @@ export default class GotoCommandHandler {
                 const areaByLocation = this.#world.getAreaByCoordinates(x, y);
 
                 if (!areaByLocation) {
-                    player.say({
+                    player.chat({
                         message: `Area in x: ${x} and y: ${y} not found.`,
                         messageType: ChatMessageTypeEnum.INFO,
                     });

@@ -83,7 +83,7 @@ export default class PlayerInventory {
         const position = this.#player.inventory.addItem(item);
 
         if (position < 0) {
-            this.#player.say({
+            this.#player.chat({
                 messageType: ChatMessageTypeEnum.INFO,
                 message: 'Inventory is full',
             });

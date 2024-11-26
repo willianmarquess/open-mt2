@@ -29,7 +29,7 @@ export default class GoldCommandHandler {
         const target = this.#world.getPlayerByName(targetName);
 
         if (!target) {
-            player.say({
+            player.chat({
                 message: `Target: ${targetName} not found.`,
                 messageType: ChatMessageTypeEnum.INFO,
             });

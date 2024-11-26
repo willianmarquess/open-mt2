@@ -9,7 +9,7 @@ export default class LogoutCommandHandler {
 
     async execute(player) {
         this.#logger.info(`[LogoutCommandHandler] Logout account. id: ${player.id}`);
-        player.say({
+        player.chat({
             message: `Logging out`,
             messageType: ChatMessageTypeEnum.INFO,
         });

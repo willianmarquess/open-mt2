@@ -25,7 +25,7 @@ export default class ItemCommandHandler {
         } = itemCommand;
 
         if (!this.#itemManager.hasItem(vnum)) {
-            player.say({
+            player.chat({
                 message: `Item: ${vnum} not found.`,
                 messageType: ChatMessageTypeEnum.INFO,
             });
