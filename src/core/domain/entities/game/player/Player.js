@@ -20,12 +20,11 @@ import Inventory from '../inventory/Inventory.js';
 import ItemAntiFlagEnum from '../../../../enum/ItemAntiFlagEnum.js';
 import CharacterUpdatedEvent from './events/CharacterUpdatedEvent.js';
 import InventoryEventsEnum from '../inventory/events/InventoryEventsEnum.js';
-import ItemEquipmentSlotEnum from '../../../../enum/ItemEquipmentSlotEnum.js';
 import OtherCharacterUpdatedEvent from './events/OtherCharacterUpdatedEvent.js';
-import ApplyTypeEnum from '../../../../enum/ApplyTypeEnum.js';
 import EntityStateEnum from '../../../../enum/EntityStateEnum.js';
 import DroppedItem from '../item/DroppedItem.js';
 import PlayerInventory from './delegate/PlayerInventory.js';
+import PlayerApplies from './delegate/PlayerApplies.js';
 
 const REGEN_INTERVAL = 3000;
 
@@ -45,7 +44,6 @@ export default class Player extends GameEntity {
 
     #appearance;
     #points = {};
-    #applies = {};
 
     #health;
     #baseHealth;
@@ -99,10 +97,10 @@ export default class Player extends GameEntity {
 
     #lastPlayTime = performance.now();
     #inventory;
-    #logger;
 
     //delegate
     #playerInventory;
+    #playerApplies;
 
     constructor(
         {
@@ -169,7 +167,6 @@ export default class Player extends GameEntity {
                 animationManager,
             },
         );
-        this.#logger = logger;
         this.#accountId = accountId;
         this.#playerClass = playerClass;
         this.#skillGroup = skillGroup;
@@ -204,6 +201,7 @@ export default class Player extends GameEntity {
         this.#inventory.subscribe(InventoryEventsEnum.ITEM_UNEQUIPPED, this.#onItemUnequipped.bind(this));
 
         this.#playerInventory = new PlayerInventory(this);
+        this.#playerApplies = new PlayerApplies(this, logger);
 
         this.#init();
     }
@@ -237,11 +235,6 @@ export default class Player extends GameEntity {
         this.#points[PointsEnum.MAGIC_ATT_GRADE] = () => this.#magicAttack;
         this.#points[PointsEnum.MAGIC_DEF_GRADE] = () => this.#magicDefense;
 
-        this.#applies[ApplyTypeEnum.APPLY_ATT_SPEED] = (value) => this.addAttackSpeed(value);
-        this.#applies[ApplyTypeEnum.APPLY_MOV_SPEED] = (value) => this.addMovementSpeed(value);
-        this.#applies[ApplyTypeEnum.APPLY_HP_REGEN] = (value) => this.addHealthRegen(value);
-        this.#applies[ApplyTypeEnum.APPLY_SP_REGEN] = (value) => this.addManaRegen(value);
-
         setInterval(this.#regenHealth.bind(this), REGEN_INTERVAL);
         setInterval(this.#regenMana.bind(this), REGEN_INTERVAL);
     }
@@ -274,32 +267,6 @@ export default class Player extends GameEntity {
         this.#sendPoints();
     }
 
-    #addItemApplies(item) {
-        for (const { type, value } of item.applies) {
-            if (type === ApplyTypeEnum.APPLY_NONE) continue;
-            const applyFunc = this.#applies[type];
-
-            if (applyFunc && typeof applyFunc === 'function') {
-                applyFunc(Number(value));
-            } else {
-                this.#logger.debug(`[PLAYER] Apply not implemented yet: ${type}`);
-            }
-        }
-    }
-
-    #removeItemApplies(item) {
-        for (const { type, value } of item.applies) {
-            if (type === ApplyTypeEnum.APPLY_NONE) continue;
-            const applyFunc = this.#applies[type];
-
-            if (applyFunc && typeof applyFunc === 'function') {
-                applyFunc(-Number(value));
-            } else {
-                this.#logger.debug(`[PLAYER] Apply not implemented yet: ${type}`);
-            }
-        }
-    }
-
     #onEquipmentChange() {
         this.#updateDefense();
         this.#updateMagicDefense();
@@ -311,12 +278,12 @@ export default class Player extends GameEntity {
     }
 
     #onItemEquipped({ item }) {
-        this.#addItemApplies(item);
+        this.#playerApplies.addItemApplies(item);
         this.#onEquipmentChange();
     }
 
     #onItemUnequipped({ item }) {
-        this.#removeItemApplies(item);
+        this.#playerApplies.removeItemApplies(item);
         this.#onEquipmentChange();
     }
 
@@ -722,18 +689,6 @@ export default class Player extends GameEntity {
         );
     }
 
-    getBody() {
-        return this.#inventory.getItemFromSlot(ItemEquipmentSlotEnum.BODY);
-    }
-
-    getWeapon() {
-        return this.#inventory.getItemFromSlot(ItemEquipmentSlotEnum.WEAPON);
-    }
-
-    getHair() {
-        return this.#inventory.getItemFromSlot(ItemEquipmentSlotEnum.COSTUME_HAIR);
-    }
-
     wait({ positionX, positionY, arg, rotation, time, movementType }) {
         super.wait(positionX, positionY);
         this.publish(
@@ -843,6 +798,18 @@ export default class Player extends GameEntity {
 
     hideDroppedItem({ virtualId }) {
         return this.#playerInventory.hideDroppedItem({ virtualId });
+    }
+
+    getBody() {
+        return this.#playerInventory.getBody();
+    }
+
+    getWeapon() {
+        return this.#playerInventory.getWeapon();
+    }
+
+    getHair() {
+        return this.#playerInventory.getHair();
     }
 
     /* 

@@ -1,4 +1,5 @@
 import ChatMessageTypeEnum from '../../../../../enum/ChatMessageTypeEnum.js';
+import ItemEquipmentSlotEnum from '../../../../../enum/ItemEquipmentSlotEnum.js';
 import WindowTypeEnum from '../../../../../enum/WindowTypeEnum.js';
 import ItemAddedEvent from '../events/ItemAddedEvent.js';
 import ItemDroppedEvent from '../events/ItemDroppedEvent.js';
@@ -131,5 +132,17 @@ export default class PlayerInventory {
                 virtualId,
             }),
         );
+    }
+
+    getBody() {
+        return this.#player.inventory.getItemFromSlot(ItemEquipmentSlotEnum.BODY);
+    }
+
+    getWeapon() {
+        return this.#player.inventory.getItemFromSlot(ItemEquipmentSlotEnum.WEAPON);
+    }
+
+    getHair() {
+        return this.#player.inventory.getItemFromSlot(ItemEquipmentSlotEnum.COSTUME_HAIR);
     }
 }

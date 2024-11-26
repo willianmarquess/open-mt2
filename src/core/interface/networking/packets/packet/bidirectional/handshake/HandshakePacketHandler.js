@@ -34,7 +34,7 @@ export default class HandshakePacketHandler {
             return;
         }
 
-        this.#logger.info(`[HANDSHAKE] Is not synchronized enough: ${Math.floor(delta)} ms, sending hadshake again..`);
+        this.#logger.info(`[HANDSHAKE] Is not synchronized enough: ${Math.floor(delta)} ms, sending handshake again..`);
         let newDelta = (currentTime - packet.time) / 2;
 
         if (newDelta < 0) {
