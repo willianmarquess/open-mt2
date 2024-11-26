@@ -9,7 +9,7 @@ import Player from './entities/game/player/Player.js';
 import PlayerEventsEnum from './entities/game/player/events/PlayerEventsEnum.js';
 import MathUtil from './util/MathUtil.js';
 
-const SIZE_QUEUE = 100000;
+const SIZE_QUEUE = 5_000;
 const CHAR_VIEW_SIZE = 9500;
 const SAVE_PLAYERS_INTERVAL = 120000;
 const REMOVE_ITEM_FROM_GROUND = 30000;
