@@ -250,10 +250,10 @@ export default class Area {
             if (entity instanceof GameEntity) {
                 if (entity instanceof Player) {
                     entity.subscribe(PlayerEventsEnum.CHARACTER_MOVED, this.#onCharacterMove.bind(this));
+                    entity.subscribe(PlayerEventsEnum.CHARACTER_LEVEL_UP, this.#onCharacterLevelUp.bind(this));
+                    entity.subscribe(PlayerEventsEnum.DROP_ITEM, this.#onItemDrop.bind(this));
+                    entity.subscribe(PlayerEventsEnum.CHARACTER_UPDATED, this.#onCharacterUpdate.bind(this));
                 }
-                entity.subscribe(PlayerEventsEnum.CHARACTER_LEVEL_UP, this.#onCharacterLevelUp.bind(this));
-                entity.subscribe(PlayerEventsEnum.CHARACTER_UPDATED, this.#onCharacterUpdate.bind(this));
-                entity.subscribe(PlayerEventsEnum.DROP_ITEM, this.#onItemDrop.bind(this));
 
                 if (entity instanceof Monster) {
                     entity.subscribe(MonsterEventsEnum.MONSTER_MOVED, this.#onMonsterMove.bind(this));
