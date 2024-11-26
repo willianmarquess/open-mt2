@@ -3,7 +3,7 @@ import sinon from 'sinon';
 import AnimationManager from '../../../../../src/core/domain/manager/AnimationManager.js';
 import Animation from '../../../../../src/core/domain/Animation.js';
 
-describe('AnimationManager Integration Tests', function () {
+describe('AnimationManager', function () {
     let animationManager;
     let loggerMock;
     let configMock;
