@@ -1,14 +1,15 @@
+import ClassEnum from '../../enum/ClassEnum.js';
 import JobEnum from '../../enum/JobEnum.js';
 
 const jobFromClassId = {
-    [JobEnum.WARRIOR_MALE]: 0,
-    [JobEnum.WARRIOR_FEMALE]: 0,
-    [JobEnum.ASSASSIN_MALE]: 1,
-    [JobEnum.ASSASSIN_FEMALE]: 1,
-    [JobEnum.SURA_MALE]: 2,
-    [JobEnum.SURA_FEMALE]: 2,
-    [JobEnum.SHAMAN_MALE]: 3,
-    [JobEnum.SHAMAN_FEMALE]: 3,
+    [JobEnum.WARRIOR_MALE]: ClassEnum.WARRIOR,
+    [JobEnum.WARRIOR_FEMALE]: ClassEnum.WARRIOR,
+    [JobEnum.ASSASSIN_MALE]: ClassEnum.ASSASSIN,
+    [JobEnum.ASSASSIN_FEMALE]: ClassEnum.ASSASSIN,
+    [JobEnum.SURA_MALE]: ClassEnum.SURA,
+    [JobEnum.SURA_FEMALE]: ClassEnum.SURA,
+    [JobEnum.SHAMAN_MALE]: ClassEnum.SHAMAN,
+    [JobEnum.SHAMAN_FEMALE]: ClassEnum.SHAMAN,
 };
 
 const classNameFromClassId = {
