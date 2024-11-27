@@ -25,6 +25,7 @@ import EntityStateEnum from '../../../../enum/EntityStateEnum.js';
 import DroppedItem from '../item/DroppedItem.js';
 import PlayerInventory from './delegate/PlayerInventory.js';
 import PlayerApplies from './delegate/PlayerApplies.js';
+import PlayerBattle from './delegate/PlayerBattle.js';
 
 const REGEN_INTERVAL = 3000;
 
@@ -101,6 +102,7 @@ export default class Player extends GameEntity {
     //delegate
     #playerInventory;
     #playerApplies;
+    #playerBattle;
 
     constructor(
         {
@@ -202,6 +204,7 @@ export default class Player extends GameEntity {
 
         this.#playerInventory = new PlayerInventory(this);
         this.#playerApplies = new PlayerApplies(this, logger);
+        this.#playerBattle = new PlayerBattle(this, logger);
 
         this.#init();
     }
@@ -237,6 +240,10 @@ export default class Player extends GameEntity {
 
         setInterval(this.#regenHealth.bind(this), REGEN_INTERVAL);
         setInterval(this.#regenMana.bind(this), REGEN_INTERVAL);
+    }
+
+    attack(victim, attackType) {
+        return this.#playerBattle.attack(victim, attackType);
     }
 
     #regenHealth() {
