@@ -21,7 +21,7 @@ export default class GameServer extends Server {
         const packetExists = this.packets.has(header);
 
         if (!packetExists) {
-            this.logger.debug(`[IN][PACKET] Unknow header packet: ${data[0]}`);
+            this.logger.debug(`[IN][PACKET] Unknown header packet: ${data[0]}`);
             return;
         }
 
