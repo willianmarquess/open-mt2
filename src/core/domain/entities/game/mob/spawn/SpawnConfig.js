@@ -71,7 +71,7 @@ export default class SpawnConfig {
 
         if (!match) return DEFAULT_RESPAWN_TIME_IN_MS;
 
-        const [_, value, type] = match;
+        const [, value, type] = match;
 
         switch (type) {
             case 's':

@@ -3,7 +3,7 @@ import PacketOut from './PacketOut.js';
 
 export default class CharacterSpawnPacket extends PacketOut {
     #vid;
-    #angle = 0;
+    #rotation = 0;
     #positionX;
     #positionY;
     #positionZ;
@@ -16,7 +16,7 @@ export default class CharacterSpawnPacket extends PacketOut {
 
     constructor({
         vid,
-        angle,
+        rotation,
         positionX,
         positionY,
         positionZ,
@@ -33,7 +33,7 @@ export default class CharacterSpawnPacket extends PacketOut {
             size: 35,
         });
         this.#vid = vid;
-        this.#angle = angle ?? this.#angle;
+        this.#rotation = rotation ?? this.#rotation;
         this.#positionX = positionX;
         this.#positionY = positionY;
         this.#positionZ = positionZ;
@@ -47,7 +47,7 @@ export default class CharacterSpawnPacket extends PacketOut {
 
     pack() {
         this.bufferWriter.writeUint32LE(this.#vid);
-        this.bufferWriter.writeFloatLE(this.#angle);
+        this.bufferWriter.writeFloatLE(this.#rotation);
         this.bufferWriter.writeUint32LE(this.#positionX);
         this.bufferWriter.writeUint32LE(this.#positionY);
         this.bufferWriter.writeUint32LE(this.#positionZ);

@@ -139,6 +139,8 @@ export default class Monster extends Mob {
     takeDamage(attacker, damage) {
         if (!(attacker instanceof Player)) return;
 
+        this.state = EntityStateEnum.BATTLE;
+
         attacker.sendDamageCaused({
             virtualId: this.virtualId,
             damage,
@@ -153,6 +155,8 @@ export default class Monster extends Mob {
             this.die();
             //TODO: add drop and add exp to player
         }
+
+        this.state = EntityStateEnum.IDLE;
     }
 
     die() {
@@ -169,7 +173,7 @@ export default class Monster extends Mob {
     }
 
     goto(x, y) {
-        const rotation = MathUtil.calcRotation(x - this.positionX, y - this.positionY) / 5;
+        const rotation = MathUtil.calcRotationFromXY(x - this.positionX, y - this.positionY) / 5;
         super.goto(x, y, rotation);
         this.publish(
             MonsterMovedEvent.type,

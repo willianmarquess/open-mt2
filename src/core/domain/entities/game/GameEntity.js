@@ -13,7 +13,6 @@ export default class GameEntity {
     #name;
     #level;
     #empire;
-    #angle;
 
     //movement and animation
     #positionX = 0;
@@ -306,12 +305,6 @@ export default class GameEntity {
     }
     get state() {
         return this.#state;
-    }
-    get angle() {
-        return this.#angle;
-    }
-    set angle(value) {
-        this.#angle = value;
     }
     get isDead() {
         return this.#isDead;

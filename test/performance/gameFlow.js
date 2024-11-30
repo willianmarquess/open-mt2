@@ -217,7 +217,7 @@ export default class GameFlow {
         const x = Math.max(0, Math.min(MathUtil.MAX_UINT, this.#player.positionX + MathUtil.getRandomInt(-1000, 1000)));
         const y = Math.max(0, Math.min(MathUtil.MAX_UINT, this.#player.positionY + MathUtil.getRandomInt(-1000, 1000)));
 
-        const rotation = MathUtil.calcRotation(x - this.#player.positionX, y - this.#player.positionY) / 5;
+        const rotation = MathUtil.calcRotationFromXY(x - this.#player.positionX, y - this.#player.positionY) / 5;
         const movePacket = createCharacterMovePacket(rotation, x, y);
         this.#client.sendMessage(movePacket);
     }

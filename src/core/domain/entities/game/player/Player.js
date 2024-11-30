@@ -632,7 +632,7 @@ export default class Player extends GameEntity {
         empireId,
         level,
         name,
-        angle,
+        rotation,
     }) {
         this.publish(
             OtherCharacterSpawnedEvent.type,
@@ -647,7 +647,7 @@ export default class Player extends GameEntity {
                 empireId,
                 level,
                 name,
-                angle,
+                rotation,
             }),
         );
     }
@@ -891,7 +891,7 @@ export default class Player extends GameEntity {
                 empireId: otherEntity.empireId,
                 level: otherEntity.level,
                 name: otherEntity.name,
-                angle: otherEntity.angle,
+                rotation: otherEntity.rotation,
             });
 
             if (otherEntity instanceof Player) {

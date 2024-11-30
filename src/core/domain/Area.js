@@ -63,7 +63,7 @@ export default class Area {
             entity.virtualId = this.#world.generateVirtualId();
             entity.positionY = this.#positionY + entity.positionY * SPAWN_POSITION_MULTIPLIER;
             entity.positionX = this.#positionX + entity.positionX * SPAWN_POSITION_MULTIPLIER;
-            entity.angle = MathUtil.calcAngle(entity.direction);
+            entity.rotation = MathUtil.calcRotationFromDirection(entity.direction);
             this.spawn(entity);
         });
     }

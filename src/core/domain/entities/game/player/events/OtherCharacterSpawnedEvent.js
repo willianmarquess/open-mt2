@@ -13,7 +13,7 @@ export default class OtherCharacterSpawnedEvent {
     #empireId;
     #level;
     #name;
-    #angle;
+    #rotation;
 
     constructor({
         virtualId,
@@ -26,7 +26,7 @@ export default class OtherCharacterSpawnedEvent {
         empireId,
         level,
         name,
-        angle,
+        rotation,
     }) {
         this.#virtualId = virtualId;
         this.#playerClass = playerClass;
@@ -38,7 +38,7 @@ export default class OtherCharacterSpawnedEvent {
         this.#empireId = empireId;
         this.#level = level;
         this.#name = name;
-        this.#angle = angle;
+        this.#rotation = rotation;
     }
 
     get virtualId() {
@@ -71,8 +71,8 @@ export default class OtherCharacterSpawnedEvent {
     get name() {
         return this.#name;
     }
-    get angle() {
-        return this.#angle;
+    get rotation() {
+        return this.#rotation;
     }
 
     static get type() {

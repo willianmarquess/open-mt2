@@ -19,7 +19,7 @@ export default class MathUtil {
         return Math.sqrt(a * a + b * b);
     }
 
-    static calcAngle(direction) {
+    static calcRotationFromDirection(direction) {
         return direction == 0 ? this.getRandomInt(0, 7) * 45 : (direction - 1) * 45;
     }
 
@@ -41,7 +41,7 @@ export default class MathUtil {
         return adjustedInt;
     }
 
-    static calcRotation(x, y) {
+    static calcRotationFromXY(x, y) {
         const vectorLength = Math.sqrt(x * x + y * y);
 
         const normalizedX = x / vectorLength;
