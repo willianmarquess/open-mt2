@@ -122,6 +122,8 @@ export default class Monster extends Mob {
         this.#health = maxHp;
         this.#maxHealth = maxHp;
         this.#behavior = new Behavior(this);
+
+        setInterval(this.#regenHealth.bind(this), this.regenCycle * 1_000);
     }
 
     get group() {
@@ -130,6 +132,18 @@ export default class Monster extends Mob {
 
     set group(value) {
         this.#group = value;
+    }
+
+    #regenHealth() {
+        if (this.state === EntityStateEnum.DEAD) return;
+        if (this.#health >= this.#maxHealth) return;
+
+        const amount = Math.floor(this.#maxHealth * (this.regenPercent / 100));
+        this.#addHealth(Math.max(1, amount));
+    }
+
+    #addHealth(value) {
+        this.#health = Math.min(this.#health + Math.max(value, 0), this.#maxHealth);
     }
 
     getHealthPercentage() {
@@ -160,7 +174,7 @@ export default class Monster extends Mob {
     }
 
     die() {
-        if (this.isDead) return;
+        if (this.state === EntityStateEnum.DEAD) return;
 
         super.die();
 
@@ -192,9 +206,9 @@ export default class Monster extends Mob {
     }
 
     tick() {
-        super.tick();
+        if (this.state === EntityStateEnum.DEAD) return;
 
-        if (this.isDead) return;
+        super.tick();
 
         if (!this.#behaviorInitialized) {
             this.#behavior.init();
@@ -214,7 +228,7 @@ export default class Monster extends Mob {
 
     reset() {
         this.#behaviorInitialized = false;
-        this.isDead = false;
+        this.state = EntityStateEnum.IDLE;
         this.#health = this.#maxHealth;
         //TODO: spawn at original location
     }

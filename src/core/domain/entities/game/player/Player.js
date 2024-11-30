@@ -284,6 +284,7 @@ export default class Player extends GameEntity {
     }
 
     #regenHealth() {
+        if (this.state === EntityStateEnum.DEAD) return;
         if (this.#health >= this.#maxHealth) return;
 
         let percent = this.state === EntityStateEnum.IDLE ? 5 : 1;
@@ -298,6 +299,7 @@ export default class Player extends GameEntity {
     }
 
     #regenMana() {
+        if (this.state === EntityStateEnum.DEAD) return;
         if (this.#mana >= this.#maxMana) return;
 
         let percent = this.state === EntityStateEnum.IDLE ? 5 : 1;

@@ -40,8 +40,6 @@ export default class GameEntity {
     #target;
     #targetedBy = new Map();
 
-    #isDead = false;
-
     constructor(
         {
             id,
@@ -106,7 +104,7 @@ export default class GameEntity {
     }
 
     die() {
-        this.isDead = true;
+        this.state = EntityStateEnum.DEAD;
     }
 
     setTarget(target) {
@@ -306,11 +304,8 @@ export default class GameEntity {
     get state() {
         return this.#state;
     }
-    get isDead() {
-        return this.#isDead;
-    }
-    set isDead(value) {
-        this.#isDead = value;
+    set state(value) {
+        this.#state = value;
     }
 
     addNearbyEntity(entity) {
