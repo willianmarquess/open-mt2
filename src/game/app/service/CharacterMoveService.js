@@ -16,6 +16,10 @@ export default class CharacterMoveService {
             case MovementTypeEnum.WAIT:
                 player.wait({ positionX, positionY, arg, rotation, time, movementType });
                 break;
+            case MovementTypeEnum.ATTACK:
+            case MovementTypeEnum.COMBO:
+                player.sync({ positionX, positionY, arg, rotation, time, movementType });
+                break;
             default:
                 this.#logger.info(`[CharacterMoveService] Movement type: ${movementType} not implemented`);
                 break;

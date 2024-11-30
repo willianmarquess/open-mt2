@@ -31,6 +31,8 @@ import DropItemService from './app/service/DropItemService.js';
 import ItemRepository from './infra/database/ItemRepository.js';
 import ItemCache from '../core/domain/util/ItemCache.js';
 import SpawnManager from '../core/domain/manager/SpawnManager.js';
+import CharacterAttackService from './app/service/CharacterAttackService.js';
+import CharacterUpdateTargetService from './app/service/CharacterUpdateTargetService.js';
 
 const container = createContainer();
 
@@ -68,6 +70,8 @@ container.register({
     dropItemService: asClass(DropItemService).scoped(),
     itemCache: asClass(ItemCache).singleton(),
     spawnManager: asClass(SpawnManager).singleton(),
+    characterAttackService: asClass(CharacterAttackService).scoped(),
+    characterUpdateTargetService: asClass(CharacterUpdateTargetService).scoped(),
 });
 
 export { container };

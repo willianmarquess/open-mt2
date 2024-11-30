@@ -1,12 +1,10 @@
 export default class MonsterGroup {
     #leader;
     #members = [];
-    #vnum;
+    #spawnConfig;
 
-    constructor({ vnum, leader }) {
-        this.#leader = leader;
-        this.#vnum = vnum;
-        this.addMember(leader);
+    constructor({ spawnConfig }) {
+        this.#spawnConfig = spawnConfig;
     }
 
     set leader(value) {
@@ -25,12 +23,17 @@ export default class MonsterGroup {
         return this.#members;
     }
 
-    set vnum(value) {
-        this.#vnum = value;
+    set spawnConfig(value) {
+        this.#spawnConfig = value;
     }
 
-    get vnum() {
-        return this.#vnum;
+    get spawnConfig() {
+        return this.#spawnConfig;
+    }
+
+    setLeader(leader) {
+        this.addMember(leader);
+        this.#leader = leader;
     }
 
     addMember(monster) {

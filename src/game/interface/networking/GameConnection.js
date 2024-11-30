@@ -2,6 +2,7 @@ import PlayerEventsEnum from '../../../core/domain/entities/game/player/events/P
 import ConnectionStateEnum from '../../../core/enum/ConnectionStateEnum.js';
 import PointsEnum from '../../../core/enum/PointsEnum.js';
 import Connection from '../../../core/interface/networking/Connection.js';
+import CharacterDiedPacket from '../../../core/interface/networking/packets/packet/out/CharacterDiedPacket.js';
 import CharacterInfoPacket from '../../../core/interface/networking/packets/packet/out/CharacterInfoPacket.js';
 import CharacterMoveOutPacket from '../../../core/interface/networking/packets/packet/out/CharacterMoveOutPacket.js';
 import CharacterPointChangePacket from '../../../core/interface/networking/packets/packet/out/CharacterPointChangePacket.js';
@@ -9,10 +10,12 @@ import CharacterPointsPacket from '../../../core/interface/networking/packets/pa
 import CharacterSpawnPacket from '../../../core/interface/networking/packets/packet/out/CharacterSpawnPacket.js';
 import CharacterUpdatePacket from '../../../core/interface/networking/packets/packet/out/CharacterUpdatePacket.js';
 import ChatOutPacket from '../../../core/interface/networking/packets/packet/out/ChatOutPacket.js';
+import DamagePacket from '../../../core/interface/networking/packets/packet/out/DamagePacket.js';
 import ItemDroppedHidePacket from '../../../core/interface/networking/packets/packet/out/ItemDroppedHidePacket.js';
 import ItemDroppedPacket from '../../../core/interface/networking/packets/packet/out/ItemDroppedPacket.js';
 import ItemPacket from '../../../core/interface/networking/packets/packet/out/ItemPacket.js';
 import RemoveCharacterPacket from '../../../core/interface/networking/packets/packet/out/RemoveCharacterPacket.js';
+import TargetUpdatedPacket from '../../../core/interface/networking/packets/packet/out/TargetUpdatePacket.js';
 //import SetItemOwnershipPacket from '../../../core/interface/networking/packets/packet/out/SetItemOwnershipPacket.js';
 import TeleportPacket from '../../../core/interface/networking/packets/packet/out/TeleportPacket.js';
 import Ip from '../../../core/util/Ip.js';
@@ -66,10 +69,40 @@ export default class GameConnection extends Connection {
         this.#player.subscribe(PlayerEventsEnum.ITEM_DROPPED_HIDE, this.#onItemDroppedHide.bind(this));
         this.#player.subscribe(PlayerEventsEnum.CHAT, this.#onChat.bind(this));
         this.#player.subscribe(PlayerEventsEnum.LOGOUT, this.#onLogout.bind(this));
+        this.#player.subscribe(PlayerEventsEnum.DAMAGE_CAUSED, this.#onDamageCaused.bind(this));
+        this.#player.subscribe(PlayerEventsEnum.TARGET_UPDATED, this.#onTargetUpdated.bind(this));
+        this.#player.subscribe(PlayerEventsEnum.OTHER_CHARACTER_DIED, this.#onOtherCharacterDied.bind(this));
     }
 
     get player() {
         return this.#player;
+    }
+
+    #onOtherCharacterDied(otherCharacterDiedEvent) {
+        const { virtualId } = otherCharacterDiedEvent;
+
+        this.send(new CharacterDiedPacket({ virtualId }));
+    }
+
+    #onTargetUpdated(targetUpdatedEvent) {
+        const { virtualId, healthPercentage } = targetUpdatedEvent;
+        this.send(
+            new TargetUpdatedPacket({
+                virtualId,
+                healthPercentage,
+            }),
+        );
+    }
+
+    #onDamageCaused(damageCausedEvent) {
+        const { virtualId, damage, damageFlags } = damageCausedEvent;
+        this.send(
+            new DamagePacket({
+                virtualId,
+                damage,
+                damageFlags,
+            }),
+        );
     }
 
     #onOtherCharacterUpdated(otherCharacterUpdated) {
@@ -294,6 +327,7 @@ export default class GameConnection extends Connection {
                 positionZ: 0,
             }),
         );
+        //TODO: we only need to send this for player, verify if we need to send to NPC too
         this.send(
             new CharacterInfoPacket({
                 vid: this.#player.virtualId,

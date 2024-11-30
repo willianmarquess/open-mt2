@@ -38,6 +38,11 @@ export default class GameEntity {
     #emitter = new EventEmitter();
     #nearbyEntities = new Map();
 
+    #target;
+    #targetedBy = new Map();
+
+    #isDead = false;
+
     constructor(
         {
             id,
@@ -75,6 +80,58 @@ export default class GameEntity {
         this.#empire = empire;
 
         this.#animationManager = animationManager;
+    }
+
+    getAttackRating() {
+        return Math.min(90, this.dx * 4 + (this.level * 2) / 6);
+    }
+
+    getHealthPercentage() {
+        throw new Error('this method must be overwritten');
+    }
+
+    getAttack() {
+        throw new Error('this method must be overwritten');
+    }
+
+    getDefense() {
+        throw new Error('this method must be overwritten');
+    }
+
+    attack() {
+        throw new Error('this method must be overwritten');
+    }
+
+    damage() {
+        throw new Error('this method must be overwritten');
+    }
+
+    die() {
+        this.isDead = true;
+    }
+
+    setTarget(target) {
+        if (target instanceof GameEntity) {
+            if (this.#target) {
+                this.#target.removeTargetedBy(this);
+            }
+            this.#target = target;
+            target.addTargetedBy(this);
+        }
+    }
+
+    removeTargetedBy(entity) {
+        this.#targetedBy.delete(entity.virtualId);
+    }
+
+    addTargetedBy(entity) {
+        this.#targetedBy.set(entity.virtualId, entity);
+    }
+
+    broadcastMyTarget() {
+        for (const entity of this.#targetedBy.values()) {
+            entity.sendTargetUpdated(this);
+        }
     }
 
     tick() {
@@ -152,8 +209,12 @@ export default class GameEntity {
         this.#emitter.on(eventName, callback);
     }
 
-    unsubscribe(eventName) {
-        this.#emitter.off(eventName);
+    unsubscribe(eventName, callback) {
+        this.#emitter.off(eventName, callback);
+    }
+
+    removeAllListeners(eventName) {
+        this.#emitter.removeAllListeners(eventName);
     }
 
     get id() {
@@ -164,6 +225,9 @@ export default class GameEntity {
     }
     get movementDuration() {
         return this.#movementDuration;
+    }
+    set rotation(value) {
+        this.#rotation = value;
     }
     get rotation() {
         return this.#rotation;
@@ -248,6 +312,12 @@ export default class GameEntity {
     }
     set angle(value) {
         this.#angle = value;
+    }
+    get isDead() {
+        return this.#isDead;
+    }
+    set isDead(value) {
+        this.#isDead = value;
     }
 
     addNearbyEntity(entity) {

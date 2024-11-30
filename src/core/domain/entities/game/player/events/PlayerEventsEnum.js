@@ -17,4 +17,7 @@ export default {
     DROP_ITEM: Symbol.for('DROP_ITEM'),
     ITEM_DROPPED: Symbol.for('ITEM_DROPPED'),
     ITEM_DROPPED_HIDE: Symbol.for('ITEM_DROPPED_HIDE'),
+    DAMAGE_CAUSED: Symbol.for('DAMAGE_CAUSED'),
+    TARGET_UPDATED: Symbol.for('TARGET_UPDATED'),
+    OTHER_CHARACTER_DIED: Symbol.for('OTHER_CHARACTER_DIED'),
 };

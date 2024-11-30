@@ -138,6 +138,32 @@ export default class Area {
         this.#entitiesToDespawn.enqueue(entity);
     }
 
+    #onMonsterDied(monsterDiedEvent) {
+        const { entity: monster } = monsterDiedEvent;
+        const players = this.#quadTree.queryAround(
+            monster.positionX,
+            monster.positionY,
+            CHAR_VIEW_SIZE,
+            EntityTypeEnum.PLAYER,
+        );
+
+        for (const player of players.values()) {
+            player.otherEntityDied(monster);
+        }
+
+        this.despawn(monster);
+        const respawnTime = monster.getRespawnTimeInMs();
+
+        if (!respawnTime) return;
+
+        //TODO: verify if all monsters in group are dead.
+
+        setTimeout(() => {
+            monster.reset();
+            this.spawn(monster);
+        }, respawnTime);
+    }
+
     #onMonsterMove(monsterMovedEvent) {
         const {
             entity: monster,
@@ -247,17 +273,16 @@ export default class Area {
 
     tick() {
         for (const entity of this.#entitiesToSpawn.dequeueIterator()) {
-            if (entity instanceof GameEntity) {
-                if (entity instanceof Player) {
-                    entity.subscribe(PlayerEventsEnum.CHARACTER_MOVED, this.#onCharacterMove.bind(this));
-                    entity.subscribe(PlayerEventsEnum.CHARACTER_LEVEL_UP, this.#onCharacterLevelUp.bind(this));
-                    entity.subscribe(PlayerEventsEnum.DROP_ITEM, this.#onItemDrop.bind(this));
-                    entity.subscribe(PlayerEventsEnum.CHARACTER_UPDATED, this.#onCharacterUpdate.bind(this));
-                }
+            if (entity instanceof Player) {
+                entity.subscribe(PlayerEventsEnum.CHARACTER_MOVED, this.#onCharacterMove.bind(this));
+                entity.subscribe(PlayerEventsEnum.CHARACTER_LEVEL_UP, this.#onCharacterLevelUp.bind(this));
+                entity.subscribe(PlayerEventsEnum.DROP_ITEM, this.#onItemDrop.bind(this));
+                entity.subscribe(PlayerEventsEnum.CHARACTER_UPDATED, this.#onCharacterUpdate.bind(this));
+            }
 
-                if (entity instanceof Monster) {
-                    entity.subscribe(MonsterEventsEnum.MONSTER_MOVED, this.#onMonsterMove.bind(this));
-                }
+            if (entity instanceof Monster) {
+                entity.subscribe(MonsterEventsEnum.MONSTER_MOVED, this.#onMonsterMove.bind(this));
+                entity.subscribe(MonsterEventsEnum.MONSTER_DIED, this.#onMonsterDied.bind(this));
             }
             this.#quadTree.insert(entity);
 
@@ -289,6 +314,19 @@ export default class Area {
                 CHAR_VIEW_SIZE,
                 EntityTypeEnum.PLAYER,
             );
+
+            if (entity instanceof Player) {
+                entity.removeAllListeners(PlayerEventsEnum.CHARACTER_MOVED);
+                entity.removeAllListeners(PlayerEventsEnum.CHARACTER_LEVEL_UP);
+                entity.removeAllListeners(PlayerEventsEnum.DROP_ITEM);
+                entity.removeAllListeners(PlayerEventsEnum.CHARACTER_UPDATED);
+            }
+
+            if (entity instanceof Monster) {
+                entity.removeAllListeners(MonsterEventsEnum.MONSTER_MOVED);
+                entity.removeAllListeners(MonsterEventsEnum.MONSTER_DIED);
+            }
+
             for (const otherEntity of entities.values()) {
                 if (entity instanceof GameEntity) {
                     entity.removeNearbyEntity(otherEntity);

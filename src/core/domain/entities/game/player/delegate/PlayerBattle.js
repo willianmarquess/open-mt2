@@ -1,8 +1,8 @@
-import AttackTypeEnum from '../../../../../enum/AttackTypeEnum';
-import ChatMessageTypeEnum from '../../../../../enum/ChatMessageTypeEnum';
-import ItemSubTypeEnum from '../../../../../enum/ItemSubTypeEnum';
-import ItemTypeEnum from '../../../../../enum/ItemTypeEnum';
-import MathUtil from '../../../../util/MathUtil';
+import AttackTypeEnum from '../../../../../enum/AttackTypeEnum.js';
+import ChatMessageTypeEnum from '../../../../../enum/ChatMessageTypeEnum.js';
+import ItemSubTypeEnum from '../../../../../enum/ItemSubTypeEnum.js';
+import ItemTypeEnum from '../../../../../enum/ItemTypeEnum.js';
+import MathUtil from '../../../../util/MathUtil.js';
 
 export default class PlayerBattle {
     #player;
@@ -35,7 +35,7 @@ export default class PlayerBattle {
     }
 
     #meleeAttack(victim) {
-        const MAX_DISTANCE = 300;
+        const MAX_DISTANCE = 500;
         const distance = MathUtil.calcDistance(
             this.#player.positionX,
             this.#player.positionY,
@@ -74,11 +74,21 @@ export default class PlayerBattle {
 
         const basePlayerAttack = this.#player.getAttack();
 
-        let attack = Math.floor(basePlayerAttack * attackRating);
+        const attack = Math.floor(basePlayerAttack * attackRating);
+
+        //apply affects: poison, stun, slow, fire
+        //calculate bonus damage: mob (monster, animals, trees, demons etc)
+        //calculate bonus damage: player (humanoids, races)
+
+        const defense = victim.getDefense();
+
+        const damage = Math.max(0, attack - defense);
 
         this.#player.chat({
-            message: `your damage is: ${attack}`,
+            message: `your damage is: ${damage}`,
             messageType: ChatMessageTypeEnum.NORMAL,
         });
+
+        victim.takeDamage(this.#player, damage);
     }
 }

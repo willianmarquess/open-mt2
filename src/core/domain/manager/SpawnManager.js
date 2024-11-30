@@ -6,6 +6,7 @@ import Mob from '../entities/game/mob/Mob.js';
 import SpawnConfigTypeEnum from '../../enum/SpawnConfigTypeEnum.js';
 import MonsterGroup from '../entities/game/mob/MonsterGroup.js';
 import MathUtil from '../util/MathUtil.js';
+import Monster from '../entities/game/mob/Monster.js';
 
 const DEFAULT_SPAWN_CONFIG_PATH = 'src/core/infra/config/data/spawn';
 
@@ -34,6 +35,7 @@ export default class SpawnManager {
 
     #createMonsters(spawn) {
         const entitiesToSpawn = [];
+        const monsterGroup = new MonsterGroup({ spawnConfig: spawn });
         switch (spawn.type) {
             case SpawnConfigTypeEnum.MONSTER: {
                 const entity = this.#createMonster({
@@ -44,7 +46,8 @@ export default class SpawnManager {
                     rangeX: spawn.rangeX,
                     rangeY: spawn.rangeY,
                 });
-                if (entity && entity instanceof Mob) {
+                if (entity && entity instanceof Monster) {
+                    monsterGroup.addMember(entity);
                     entitiesToSpawn.push(entity);
                 }
                 break;
@@ -81,11 +84,7 @@ export default class SpawnManager {
                     break;
                 }
 
-                const monsterGroup = new MonsterGroup({
-                    vnum: groupVnum,
-                    leader: leader,
-                });
-
+                monsterGroup.setLeader(leader);
                 entitiesToSpawn.push(leader);
 
                 for (const monsterConfig of groupConfig.mobs) {
@@ -98,7 +97,7 @@ export default class SpawnManager {
                         rangeY: spawn.rangeY,
                     });
 
-                    if (monster && monster instanceof Mob) {
+                    if (monster && monster instanceof Monster) {
                         entitiesToSpawn.push(monster);
                         monsterGroup.addMember(monster);
                     }

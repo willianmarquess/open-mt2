@@ -26,6 +26,9 @@ import DroppedItem from '../item/DroppedItem.js';
 import PlayerInventory from './delegate/PlayerInventory.js';
 import PlayerApplies from './delegate/PlayerApplies.js';
 import PlayerBattle from './delegate/PlayerBattle.js';
+import DamageCausedEvent from './events/DamageCausedEvent.js';
+import TargetUpdatedEvent from './events/TargetUpdatedEvent.js';
+import OtherCharacterDiedEvent from './events/OtherCharacterDiedEvent.js';
 
 const REGEN_INTERVAL = 3000;
 
@@ -242,8 +245,42 @@ export default class Player extends GameEntity {
         setInterval(this.#regenMana.bind(this), REGEN_INTERVAL);
     }
 
+    otherEntityDied(entity) {
+        this.publish(OtherCharacterDiedEvent.type, new OtherCharacterDiedEvent({ virtualId: entity.virtualId }));
+    }
+
+    getHealthPercentage() {
+        return Math.round(Math.max(0, Math.min(100, (this.#health * 100) / this.#maxHealth)));
+    }
+
+    setTarget(target) {
+        super.setTarget(target);
+        this.sendTargetUpdated(target);
+    }
+
+    sendTargetUpdated(target) {
+        this.publish(
+            TargetUpdatedEvent.type,
+            new TargetUpdatedEvent({
+                virtualId: target.virtualId,
+                healthPercentage: target.getHealthPercentage(),
+            }),
+        );
+    }
+
     attack(victim, attackType) {
         return this.#playerBattle.attack(victim, attackType);
+    }
+
+    sendDamageCaused({ virtualId, damage, damageFlags }) {
+        this.publish(
+            DamageCausedEvent.type,
+            new DamageCausedEvent({
+                virtualId,
+                damage,
+                damageFlags,
+            }),
+        );
     }
 
     #regenHealth() {
@@ -292,10 +329,6 @@ export default class Player extends GameEntity {
     #onItemUnequipped({ item }) {
         this.#playerApplies.removeItemApplies(item);
         this.#onEquipmentChange();
-    }
-
-    getAttackRating() {
-        return Math.min(90, this.dx * 4 + (this.level * 2) / 6);
     }
 
     getAttack() {
@@ -720,7 +753,19 @@ export default class Player extends GameEntity {
 
     move(x, y) {
         super.move(x, y);
-        //send moveEvent
+    }
+
+    sync({ positionX, positionY, arg, rotation, time, movementType }) {
+        //remove invisible and cancel other things like mining
+        this.rotation = rotation;
+        this.move(positionX, positionY);
+        this.publish(
+            CharacterMovedEvent.type,
+            new CharacterMovedEvent({
+                params: { positionX, positionY, arg, rotation, time, movementType, duration: 0 },
+                entity: this,
+            }),
+        );
     }
 
     #calcPlayTime() {

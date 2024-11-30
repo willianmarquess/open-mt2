@@ -1,6 +1,9 @@
+import EntityStateEnum from '../../../../enum/EntityStateEnum.js';
 import EntityTypeEnum from '../../../../enum/EntityTypeEnum.js';
 import MathUtil from '../../../util/MathUtil.js';
+import Player from '../player/Player.js';
 import Behavior from './Behavior.js';
+import MonsterDiedEvent from './events/MonsterDiedEvent.js';
 import MonsterMovedEvent from './events/MonsterMovedEvent.js';
 import Mob from './Mob.js';
 
@@ -8,6 +11,8 @@ export default class Monster extends Mob {
     #group;
     #behavior;
     #behaviorInitialized = false;
+    #health = 0;
+    #maxHealth = 0;
 
     constructor(
         {
@@ -114,6 +119,8 @@ export default class Monster extends Mob {
             },
             { animationManager },
         );
+        this.#health = maxHp;
+        this.#maxHealth = maxHp;
         this.#behavior = new Behavior(this);
     }
 
@@ -123,6 +130,42 @@ export default class Monster extends Mob {
 
     set group(value) {
         this.#group = value;
+    }
+
+    getHealthPercentage() {
+        return Math.round(Math.max(0, Math.min(100, (this.#health * 100) / this.#maxHealth)));
+    }
+
+    takeDamage(attacker, damage) {
+        if (!(attacker instanceof Player)) return;
+
+        attacker.sendDamageCaused({
+            virtualId: this.virtualId,
+            damage,
+            damageFlags: 1,
+        });
+
+        this.#health -= damage;
+
+        this.broadcastMyTarget();
+
+        if (this.#health <= 0) {
+            this.die();
+            //TODO: add drop and add exp to player
+        }
+    }
+
+    die() {
+        if (this.isDead) return;
+
+        super.die();
+
+        this.publish(
+            MonsterDiedEvent.type,
+            new MonsterDiedEvent({
+                entity: this,
+            }),
+        );
     }
 
     goto(x, y) {
@@ -147,11 +190,28 @@ export default class Monster extends Mob {
     tick() {
         super.tick();
 
+        if (this.isDead) return;
+
         if (!this.#behaviorInitialized) {
             this.#behavior.init();
             this.#behaviorInitialized = true;
         }
 
         this.#behavior.tick();
+    }
+
+    getDefense() {
+        return Math.floor(this.level * 3 + this.st * 4 + this.def);
+    }
+
+    getRespawnTimeInMs() {
+        return this.group?.spawnConfig?.getRespawnTimeInMs();
+    }
+
+    reset() {
+        this.#behaviorInitialized = false;
+        this.isDead = false;
+        this.#health = this.#maxHealth;
+        //TODO: spawn at original location
     }
 }
