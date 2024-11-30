@@ -29,6 +29,10 @@ import ItemDropPacket from './packet/in/itemDrop/ItemDropPacket.js';
 import ItemDropPacketHandler from './packet/in/itemDrop/ItemDropPacketHandler.js';
 import ItemPickupPacket from './packet/in/itemPickup/ItemPickupPacket.js';
 import ItemPickupPacketHandler from './packet/in/itemPickup/ItemPickupPacketHandler.js';
+import AttackPacket from './packet/in/attack/AttackPacket.js';
+import AttackPacketHandler from './packet/in/attack/AttackPacketHandler.js';
+import TargetPacket from './packet/in/target/TargetPacket.js';
+import TargetPacketHandler from './packet/in/target/TargetPacketHandler.js';
 
 export default () =>
     new Map([
@@ -135,6 +139,20 @@ export default () =>
             {
                 createPacket: () => new ItemPickupPacket(),
                 createHandler: (params) => new ItemPickupPacketHandler(params),
+            },
+        ],
+        [
+            PacketHeaderEnum.ATTACK,
+            {
+                createPacket: () => new AttackPacket(),
+                createHandler: (params) => new AttackPacketHandler(params),
+            },
+        ],
+        [
+            PacketHeaderEnum.TARGET,
+            {
+                createPacket: () => new TargetPacket(),
+                createHandler: (params) => new TargetPacketHandler(params),
             },
         ],
     ]);

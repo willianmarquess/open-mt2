@@ -25,12 +25,12 @@ export default class CharacterInfoPacket extends PacketOut {
     #vid;
     #playerName;
     #parts = new Array(4).fill(0);
-    #empireId;
+    #empireId = 0;
     #guildId = 0;
-    #level;
-    #rankPoints;
+    #level = 0;
+    #rankPoints = 0;
     #pkMode;
-    #mountId;
+    #mountId = 0;
 
     constructor({ vid, playerName, parts, empireId, guildId, level, rankPoints, pkMode, mountId }) {
         super({

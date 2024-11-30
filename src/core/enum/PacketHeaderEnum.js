@@ -38,4 +38,8 @@ export default {
     SET_ITEM_OWNERSHIP: 0x1f,
     ITEM_PICKUP: 0x0f,
     ATTACK: 0x02,
+    DAMAGE: 0x87,
+    TARGET: 0x3d,
+    TARGET_UPDATED: 0x3f,
+    CHARACTER_DIED: 0x0e,
 };
