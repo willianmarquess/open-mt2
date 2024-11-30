@@ -45,6 +45,25 @@
 
 ---
 
+### CharacterDiedPacket
+
+**Type:** Out
+
+**Header:** 0x0e
+
+**Size:** 5 bytes
+
+**Description:** Used to notify the client when some entity has died.
+
+**Fields:**
+
+| Name        | Type       | Size (bytes)   | Description               |
+|-------------|------------|----------------|---------------------------|
+| header | `byte` | 1 | Packet header |
+| virtualId | `number` | 4 | virtualId of the dead entity |
+
+---
+
 ### CharacterInfoPacket
 
 **Type:** Out
@@ -177,6 +196,47 @@
 | guildName | `string` | 13 | The guild name of current character (ascii). |
 | unknown | `int` | 4 | filled with 0. |
 | unknown | `int` | 4 | filled with 0. |
+
+---
+
+### DamagePacket
+
+**Type:** Out
+
+**Header:** 0x87
+
+**Size:** 10 bytes
+
+**Description:** Used to send the damage to client.
+
+**Fields:**
+
+| Name        | Type       | Size (bytes)   | Description               |
+|-------------|------------|----------------|---------------------------|
+| header | `byte` | 1 | Packet header |
+| virtualId | `number` | 4 | virtualId of the affected entity |
+| damageFlags | `byte` | 1 | indicates the flags of damage like: critical, pierced etc //TODO |
+| damage | `number` | 4 | the damage number |
+
+---
+
+### TargetUpdatedPacket
+
+**Type:** Out
+
+**Header:** 0x3f
+
+**Size:** 6 bytes
+
+**Description:** Used to send the target to client.
+
+**Fields:**
+
+| Name        | Type       | Size (bytes)   | Description               |
+|-------------|------------|----------------|---------------------------|
+| header | `byte` | 1 | Packet header |
+| virtualId | `number` | 4 | virtualId of the target entity |
+| healthPercentage | `byte` | 1 | indicates the percent of target entity health |
 
 ---
 
