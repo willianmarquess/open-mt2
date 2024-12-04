@@ -2,8 +2,6 @@ import ChatMessageTypeEnum from '../../../../../enum/ChatMessageTypeEnum.js';
 import ItemEquipmentSlotEnum from '../../../../../enum/ItemEquipmentSlotEnum.js';
 import WindowTypeEnum from '../../../../../enum/WindowTypeEnum.js';
 import ItemAddedEvent from '../events/ItemAddedEvent.js';
-import ItemDroppedEvent from '../events/ItemDroppedEvent.js';
-import ItemDroppedHideEvent from '../events/ItemDroppedHideEvent.js';
 import ItemRemovedEvent from '../events/ItemRemovedEvent.js';
 
 export default class PlayerInventory {
@@ -109,29 +107,6 @@ export default class PlayerInventory {
             });
         }
         this.#player.updateView();
-    }
-
-    showDroppedItem({ virtualId, count, positionX, positionY, ownerName, id }) {
-        this.#player.publish(
-            ItemDroppedEvent.type,
-            new ItemDroppedEvent({
-                virtualId,
-                count,
-                positionX,
-                positionY,
-                ownerName,
-                id,
-            }),
-        );
-    }
-
-    hideDroppedItem({ virtualId }) {
-        this.#player.publish(
-            ItemDroppedHideEvent.type,
-            new ItemDroppedHideEvent({
-                virtualId,
-            }),
-        );
     }
 
     getBody() {

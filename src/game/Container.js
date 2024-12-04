@@ -33,6 +33,7 @@ import ItemCache from '../core/domain/util/ItemCache.js';
 import SpawnManager from '../core/domain/manager/SpawnManager.js';
 import CharacterAttackService from './app/service/CharacterAttackService.js';
 import CharacterUpdateTargetService from './app/service/CharacterUpdateTargetService.js';
+import DropManager from '../core/domain/manager/DropManager.js';
 
 const container = createContainer();
 
@@ -72,6 +73,7 @@ container.register({
     spawnManager: asClass(SpawnManager).singleton(),
     characterAttackService: asClass(CharacterAttackService).scoped(),
     characterUpdateTargetService: asClass(CharacterUpdateTargetService).scoped(),
+    dropManager: asClass(DropManager).singleton(),
 });
 
 export { container };

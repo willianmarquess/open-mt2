@@ -24,6 +24,7 @@ export default class PickupItemService {
 
         if (isGold) {
             player.addGold(Number(count));
+            area.despawn(droppedItem);
             return;
         }
 

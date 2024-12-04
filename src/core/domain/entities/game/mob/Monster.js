@@ -14,6 +14,8 @@ export default class Monster extends Mob {
     #health = 0;
     #maxHealth = 0;
 
+    #dropManager;
+
     constructor(
         {
             id,
@@ -64,7 +66,7 @@ export default class Monster extends Mob {
             hpPercentToGetRevive,
             direction,
         },
-        { animationManager },
+        { animationManager, dropManager },
     ) {
         super(
             {
@@ -119,6 +121,7 @@ export default class Monster extends Mob {
             },
             { animationManager },
         );
+        this.#dropManager = dropManager;
         this.#health = maxHp;
         this.#maxHealth = maxHp;
         this.#behavior = new Behavior(this);
@@ -167,10 +170,19 @@ export default class Monster extends Mob {
 
         if (this.#health <= 0) {
             this.die();
+            this.reward(attacker);
             //TODO: add drop and add exp to player
         }
 
         this.state = EntityStateEnum.IDLE;
+    }
+
+    reward(attacker) {
+        const drops = this.#dropManager.getDrops(attacker, this);
+
+        for (const { item, count } of drops) {
+            attacker.dropItem({ item, count });
+        }
     }
 
     die() {

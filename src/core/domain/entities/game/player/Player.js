@@ -29,6 +29,9 @@ import PlayerBattle from './delegate/PlayerBattle.js';
 import DamageCausedEvent from './events/DamageCausedEvent.js';
 import TargetUpdatedEvent from './events/TargetUpdatedEvent.js';
 import OtherCharacterDiedEvent from './events/OtherCharacterDiedEvent.js';
+import DropItemEvent from './events/DropItemEvent.js';
+import ItemDroppedEvent from './events/ItemDroppedEvent.js';
+import ItemDroppedHideEvent from './events/ItemDroppedHideEvent.js';
 
 const REGEN_INTERVAL = 3000;
 
@@ -89,10 +92,10 @@ export default class Player extends GameEntity {
     // #maxAttackDamage;
     // #criticalPercentage;
     // #penetratePercentage;
-    // #itemDropBonus;
+    #itemDropBonus = 0;
     // #attackBonus;
     // #defenseBonus;
-    // #mallItemBonus;
+    #mallItemBonus = 0;
     // #magicAttackBonus;
     // #resistCritical;
     // #resistPenetrate;
@@ -240,6 +243,8 @@ export default class Player extends GameEntity {
         this.#points[PointsEnum.ATTACK_GRADE] = () => this.#attack;
         this.#points[PointsEnum.MAGIC_ATT_GRADE] = () => this.#magicAttack;
         this.#points[PointsEnum.MAGIC_DEF_GRADE] = () => this.#magicDefense;
+        this.#points[PointsEnum.MALL_ITEM_BONUS] = () => this.#mallItemBonus;
+        this.#points[PointsEnum.ITEM_DROP_BONUS] = () => this.#itemDropBonus;
 
         setInterval(this.#regenHealth.bind(this), REGEN_INTERVAL);
         setInterval(this.#regenMana.bind(this), REGEN_INTERVAL);
@@ -843,15 +848,39 @@ export default class Player extends GameEntity {
     }
 
     dropItem({ item, count }) {
-        return this.#playerInventory.dropItem({ item, count });
+        this.publish(
+            DropItemEvent.type,
+            new DropItemEvent({
+                item,
+                count,
+                positionX: this.positionX,
+                positionY: this.positionY,
+                ownerName: this.name,
+            }),
+        );
     }
 
     showDroppedItem({ virtualId, count, positionX, positionY, ownerName, id }) {
-        return this.#playerInventory.showDroppedItem({ virtualId, count, positionX, positionY, ownerName, id });
+        this.publish(
+            ItemDroppedEvent.type,
+            new ItemDroppedEvent({
+                virtualId,
+                count,
+                positionX,
+                positionY,
+                ownerName,
+                id,
+            }),
+        );
     }
 
     hideDroppedItem({ virtualId }) {
-        return this.#playerInventory.hideDroppedItem({ virtualId });
+        this.publish(
+            ItemDroppedHideEvent.type,
+            new ItemDroppedHideEvent({
+                virtualId,
+            }),
+        );
     }
 
     getBody() {
@@ -1100,5 +1129,11 @@ export default class Player extends GameEntity {
     }
     get inventory() {
         return this.#inventory;
+    }
+    get mallItemBonus() {
+        return this.#mallItemBonus;
+    }
+    get itemDropBonus() {
+        return this.#itemDropBonus;
     }
 }

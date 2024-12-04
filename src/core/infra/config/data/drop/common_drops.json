@@ -1,0 +1,1224 @@
+{
+    "PAWN": [
+        {
+            "minLevel": 1,
+            "maxLevel": 15,
+            "percentage": 800,
+            "vnum": 11
+        },
+        {
+            "minLevel": 1,
+            "maxLevel": 15,
+            "percentage": 800,
+            "vnum": 1001
+        },
+        {
+            "minLevel": 1,
+            "maxLevel": 15,
+            "percentage": 2000,
+            "vnum": 2000
+        },
+        {
+            "minLevel": 1,
+            "maxLevel": 15,
+            "percentage": 2000,
+            "vnum": 3000
+        },
+        {
+            "minLevel": 1,
+            "maxLevel": 15,
+            "percentage": 2000,
+            "vnum": 5000
+        },
+        {
+            "minLevel": 1,
+            "maxLevel": 15,
+            "percentage": 800,
+            "vnum": 7001
+        },
+        {
+            "minLevel": 1,
+            "maxLevel": 15,
+            "percentage": 800,
+            "vnum": 11200
+        },
+        {
+            "minLevel": 1,
+            "maxLevel": 15,
+            "percentage": 800,
+            "vnum": 11400
+        },
+        {
+            "minLevel": 1,
+            "maxLevel": 15,
+            "percentage": 800,
+            "vnum": 11600
+        },
+        {
+            "minLevel": 1,
+            "maxLevel": 15,
+            "percentage": 800,
+            "vnum": 11800
+        },
+        {
+            "minLevel": 1,
+            "maxLevel": 20,
+            "percentage": 20000,
+            "vnum": 27001
+        },
+        {
+            "minLevel": 1,
+            "maxLevel": 21,
+            "percentage": 106,
+            "vnum": 12200
+        },
+        {
+            "minLevel": 1,
+            "maxLevel": 120,
+            "percentage": 40,
+            "vnum": 50301
+        },
+        {
+            "minLevel": 5,
+            "maxLevel": 20,
+            "percentage": 60,
+            "vnum": 14000
+        },
+        {
+            "minLevel": 5,
+            "maxLevel": 20,
+            "percentage": 800,
+            "vnum": 15000
+        },
+        {
+            "minLevel": 5,
+            "maxLevel": 20,
+            "percentage": 800,
+            "vnum": 16000
+        },
+        {
+            "minLevel": 5,
+            "maxLevel": 20,
+            "percentage": 800,
+            "vnum": 17000
+        },
+        {
+            "minLevel": 5,
+            "maxLevel": 35,
+            "percentage": 1066,
+            "vnum": 5030
+        },
+        {
+            "minLevel": 10,
+            "maxLevel": 25,
+            "percentage": 500,
+            "vnum": 50318
+        },
+        {
+            "minLevel": 10,
+            "maxLevel": 40,
+            "percentage": 2000,
+            "vnum": 27104
+        },
+        {
+            "minLevel": 10,
+            "maxLevel": 120,
+            "percentage": 40,
+            "vnum": 50311
+        },
+        {
+            "minLevel": 10,
+            "maxLevel": 120,
+            "percentage": 400,
+            "vnum": 70104
+        },
+        {
+            "minLevel": 15,
+            "maxLevel": 35,
+            "percentage": 1066,
+            "vnum": 60
+        },
+        {
+            "minLevel": 15,
+            "maxLevel": 35,
+            "percentage": 1066,
+            "vnum": 2050
+        },
+        {
+            "minLevel": 15,
+            "maxLevel": 35,
+            "percentage": 1066,
+            "vnum": 3050
+        },
+        {
+            "minLevel": 15,
+            "maxLevel": 35,
+            "percentage": 1066,
+            "vnum": 4020
+        },
+        {
+            "minLevel": 15,
+            "maxLevel": 35,
+            "percentage": 1066,
+            "vnum": 7050
+        },
+        {
+            "minLevel": 15,
+            "maxLevel": 40,
+            "percentage": 512,
+            "vnum": 11230
+        },
+        {
+            "minLevel": 15,
+            "maxLevel": 40,
+            "percentage": 512,
+            "vnum": 11430
+        },
+        {
+            "minLevel": 15,
+            "maxLevel": 40,
+            "percentage": 512,
+            "vnum": 11630
+        },
+        {
+            "minLevel": 15,
+            "maxLevel": 40,
+            "percentage": 512,
+            "vnum": 11830
+        },
+        {
+            "minLevel": 15,
+            "maxLevel": 40,
+            "percentage": 19,
+            "vnum": 14080
+        },
+        {
+            "minLevel": 15,
+            "maxLevel": 40,
+            "percentage": 191,
+            "vnum": 15080
+        },
+        {
+            "minLevel": 15,
+            "maxLevel": 40,
+            "percentage": 191,
+            "vnum": 16080
+        },
+        {
+            "minLevel": 15,
+            "maxLevel": 40,
+            "percentage": 191,
+            "vnum": 17080
+        },
+        {
+            "minLevel": 25,
+            "maxLevel": 50,
+            "percentage": 4000,
+            "vnum": 50054
+        },
+        {
+            "minLevel": 120,
+            "maxLevel": 0,
+            "percentage": 503150000,
+            "vnum": 40000
+        },
+        {
+            "minLevel": 30,
+            "maxLevel": 120,
+            "percentage": 40,
+            "vnum": 50600
+        },
+        {
+            "minLevel": 40,
+            "maxLevel": 120,
+            "percentage": 0,
+            "vnum": 50083
+        },
+        {
+            "minLevel": 50,
+            "maxLevel": 120,
+            "percentage": 400,
+            "vnum": 25040
+        },
+        {
+            "minLevel": 120,
+            "maxLevel": 0,
+            "percentage": 503160000,
+            "vnum": 40000
+        },
+        {
+            "minLevel": 75,
+            "maxLevel": 120,
+            "percentage": 62,
+            "vnum": 132
+        },
+        {
+            "minLevel": 120,
+            "maxLevel": 0,
+            "percentage": 1540000,
+            "vnum": 166666
+        },
+        {
+            "minLevel": 120,
+            "maxLevel": 0,
+            "percentage": 2440000,
+            "vnum": 166666
+        },
+        {
+            "minLevel": 120,
+            "maxLevel": 0,
+            "percentage": 11040000,
+            "vnum": 166666
+        },
+        {
+            "minLevel": 120,
+            "maxLevel": 0,
+            "percentage": 21340000,
+            "vnum": 166666
+        },
+        {
+            "minLevel": 120,
+            "maxLevel": 0,
+            "percentage": 31220000,
+            "vnum": 64000
+        },
+        {
+            "minLevel": 120,
+            "maxLevel": 0,
+            "percentage": 31440000,
+            "vnum": 166666
+        },
+        {
+            "minLevel": 120,
+            "maxLevel": 0,
+            "percentage": 50940000,
+            "vnum": 166666
+        },
+        {
+            "minLevel": 120,
+            "maxLevel": 0,
+            "percentage": 71220000,
+            "vnum": 16000
+        },
+        {
+            "minLevel": 50,
+            "maxLevel": 120,
+            "percentage": 400,
+            "vnum": 25040
+        },
+        {
+            "minLevel": 75,
+            "maxLevel": 120,
+            "percentage": 62,
+            "vnum": 132
+        },
+        {
+            "minLevel": 120,
+            "maxLevel": 0,
+            "percentage": 1330000,
+            "vnum": 160000
+        },
+        {
+            "minLevel": 120,
+            "maxLevel": 0,
+            "percentage": 1460000,
+            "vnum": 2500000
+        }
+    ],
+    "S_PAWN": [
+        {
+            "minLevel": 1,
+            "maxLevel": 15,
+            "percentage": 1040,
+            "vnum": 11
+        },
+        {
+            "minLevel": 1,
+            "maxLevel": 15,
+            "percentage": 1040,
+            "vnum": 1001
+        },
+        {
+            "minLevel": 1,
+            "maxLevel": 15,
+            "percentage": 2600,
+            "vnum": 2000
+        },
+        {
+            "minLevel": 1,
+            "maxLevel": 15,
+            "percentage": 2600,
+            "vnum": 3000
+        },
+        {
+            "minLevel": 1,
+            "maxLevel": 15,
+            "percentage": 2600,
+            "vnum": 5000
+        },
+        {
+            "minLevel": 1,
+            "maxLevel": 15,
+            "percentage": 1040,
+            "vnum": 7001
+        },
+        {
+            "minLevel": 1,
+            "maxLevel": 15,
+            "percentage": 1040,
+            "vnum": 11200
+        },
+        {
+            "minLevel": 1,
+            "maxLevel": 15,
+            "percentage": 1040,
+            "vnum": 11400
+        },
+        {
+            "minLevel": 1,
+            "maxLevel": 15,
+            "percentage": 1040,
+            "vnum": 11600
+        },
+        {
+            "minLevel": 1,
+            "maxLevel": 15,
+            "percentage": 1040,
+            "vnum": 11800
+        },
+        {
+            "minLevel": 1,
+            "maxLevel": 20,
+            "percentage": 20000,
+            "vnum": 27001
+        },
+        {
+            "minLevel": 1,
+            "maxLevel": 21,
+            "percentage": 50,
+            "vnum": 12200
+        },
+        {
+            "minLevel": 1,
+            "maxLevel": 120,
+            "percentage": 40,
+            "vnum": 50301
+        },
+        {
+            "minLevel": 5,
+            "maxLevel": 20,
+            "percentage": 31,
+            "vnum": 14000
+        },
+        {
+            "minLevel": 5,
+            "maxLevel": 20,
+            "percentage": 416,
+            "vnum": 15000
+        },
+        {
+            "minLevel": 5,
+            "maxLevel": 20,
+            "percentage": 416,
+            "vnum": 16000
+        },
+        {
+            "minLevel": 5,
+            "maxLevel": 20,
+            "percentage": 416,
+            "vnum": 17000
+        },
+        {
+            "minLevel": 5,
+            "maxLevel": 35,
+            "percentage": 1040,
+            "vnum": 5030
+        },
+        {
+            "minLevel": 10,
+            "maxLevel": 25,
+            "percentage": 650,
+            "vnum": 50318
+        },
+        {
+            "minLevel": 10,
+            "maxLevel": 40,
+            "percentage": 2000,
+            "vnum": 27104
+        },
+        {
+            "minLevel": 10,
+            "maxLevel": 120,
+            "percentage": 40,
+            "vnum": 50311
+        },
+        {
+            "minLevel": 10,
+            "maxLevel": 120,
+            "percentage": 400,
+            "vnum": 70104
+        },
+        {
+            "minLevel": 15,
+            "maxLevel": 35,
+            "percentage": 1040,
+            "vnum": 60
+        },
+        {
+            "minLevel": 15,
+            "maxLevel": 35,
+            "percentage": 1040,
+            "vnum": 2050
+        },
+        {
+            "minLevel": 15,
+            "maxLevel": 35,
+            "percentage": 1040,
+            "vnum": 3050
+        },
+        {
+            "minLevel": 15,
+            "maxLevel": 35,
+            "percentage": 1040,
+            "vnum": 4020
+        },
+        {
+            "minLevel": 15,
+            "maxLevel": 35,
+            "percentage": 1040,
+            "vnum": 7050
+        },
+        {
+            "minLevel": 15,
+            "maxLevel": 40,
+            "percentage": 960,
+            "vnum": 11230
+        },
+        {
+            "minLevel": 15,
+            "maxLevel": 40,
+            "percentage": 960,
+            "vnum": 11430
+        },
+        {
+            "minLevel": 15,
+            "maxLevel": 40,
+            "percentage": 960,
+            "vnum": 11630
+        },
+        {
+            "minLevel": 15,
+            "maxLevel": 40,
+            "percentage": 960,
+            "vnum": 11830
+        },
+        {
+            "minLevel": 15,
+            "maxLevel": 40,
+            "percentage": 23,
+            "vnum": 14080
+        },
+        {
+            "minLevel": 15,
+            "maxLevel": 40,
+            "percentage": 240,
+            "vnum": 15080
+        },
+        {
+            "minLevel": 15,
+            "maxLevel": 40,
+            "percentage": 240,
+            "vnum": 16080
+        },
+        {
+            "minLevel": 15,
+            "maxLevel": 40,
+            "percentage": 240,
+            "vnum": 17080
+        },
+        {
+            "minLevel": 20,
+            "maxLevel": 50,
+            "percentage": 160,
+            "vnum": 17140
+        },
+        {
+            "minLevel": 50,
+            "maxLevel": 0,
+            "percentage": 500540000,
+            "vnum": 1000
+        },
+        {
+            "minLevel": 25,
+            "maxLevel": 120,
+            "percentage": 80,
+            "vnum": 50061
+        },
+        {
+            "minLevel": 30,
+            "maxLevel": 120,
+            "percentage": 40,
+            "vnum": 50600
+        },
+        {
+            "minLevel": 35,
+            "maxLevel": 120,
+            "percentage": 10000,
+            "vnum": 27003
+        },
+        {
+            "minLevel": 45,
+            "maxLevel": 120,
+            "percentage": 250,
+            "vnum": 100
+        },
+        {
+            "minLevel": 120,
+            "maxLevel": 0,
+            "percentage": 1100000,
+            "vnum": 16000
+        },
+        {
+            "minLevel": 120,
+            "maxLevel": 0,
+            "percentage": 1130000,
+            "vnum": 320000
+        },
+        {
+            "minLevel": 120,
+            "maxLevel": 0,
+            "percentage": 10720000,
+            "vnum": 320000
+        },
+        {
+            "minLevel": 120,
+            "maxLevel": 0,
+            "percentage": 21020000,
+            "vnum": 320000
+        },
+        {
+            "minLevel": 120,
+            "maxLevel": 0,
+            "percentage": 31020000,
+            "vnum": 320000
+        },
+        {
+            "minLevel": 120,
+            "maxLevel": 0,
+            "percentage": 141620000,
+            "vnum": 66666666
+        },
+        {
+            "minLevel": 120,
+            "maxLevel": 0,
+            "percentage": 141820000,
+            "vnum": 66666666
+        },
+        {
+            "minLevel": 120,
+            "maxLevel": 0,
+            "percentage": 151820000,
+            "vnum": 1333333
+        },
+        {
+            "minLevel": 120,
+            "maxLevel": 0,
+            "percentage": 161820000,
+            "vnum": 1333333
+        },
+        {
+            "minLevel": 120,
+            "maxLevel": 0,
+            "percentage": 171820000,
+            "vnum": 1333333
+        },
+        {
+            "minLevel": 50,
+            "maxLevel": 120,
+            "percentage": 18,
+            "vnum": 16201
+        },
+        {
+            "minLevel": 50,
+            "maxLevel": 120,
+            "percentage": 5,
+            "vnum": 17202
+        },
+        {
+            "minLevel": 120,
+            "maxLevel": 0,
+            "percentage": 250400000,
+            "vnum": 10000
+        },
+        {
+            "minLevel": 120,
+            "maxLevel": 0,
+            "percentage": 1320000,
+            "vnum": 64000
+        }
+    ],
+    "KNIGHT": [
+        {
+            "minLevel": 1,
+            "maxLevel": 15,
+            "percentage": 1200,
+            "vnum": 11
+        },
+        {
+            "minLevel": 1,
+            "maxLevel": 15,
+            "percentage": 1200,
+            "vnum": 1001
+        },
+        {
+            "minLevel": 1,
+            "maxLevel": 15,
+            "percentage": 3000,
+            "vnum": 2000
+        },
+        {
+            "minLevel": 1,
+            "maxLevel": 15,
+            "percentage": 3000,
+            "vnum": 3000
+        },
+        {
+            "minLevel": 1,
+            "maxLevel": 15,
+            "percentage": 3000,
+            "vnum": 5000
+        },
+        {
+            "minLevel": 1,
+            "maxLevel": 15,
+            "percentage": 1200,
+            "vnum": 7001
+        },
+        {
+            "minLevel": 1,
+            "maxLevel": 15,
+            "percentage": 1200,
+            "vnum": 11200
+        },
+        {
+            "minLevel": 1,
+            "maxLevel": 15,
+            "percentage": 1200,
+            "vnum": 11400
+        },
+        {
+            "minLevel": 1,
+            "maxLevel": 15,
+            "percentage": 1200,
+            "vnum": 11600
+        },
+        {
+            "minLevel": 1,
+            "maxLevel": 15,
+            "percentage": 1200,
+            "vnum": 11800
+        },
+        {
+            "minLevel": 1,
+            "maxLevel": 20,
+            "percentage": 20000,
+            "vnum": 27001
+        },
+        {
+            "minLevel": 1,
+            "maxLevel": 21,
+            "percentage": 80,
+            "vnum": 12200
+        },
+        {
+            "minLevel": 1,
+            "maxLevel": 120,
+            "percentage": 40,
+            "vnum": 50301
+        },
+        {
+            "minLevel": 5,
+            "maxLevel": 20,
+            "percentage": 36,
+            "vnum": 14000
+        },
+        {
+            "minLevel": 5,
+            "maxLevel": 20,
+            "percentage": 480,
+            "vnum": 15000
+        },
+        {
+            "minLevel": 5,
+            "maxLevel": 20,
+            "percentage": 480,
+            "vnum": 16000
+        },
+        {
+            "minLevel": 5,
+            "maxLevel": 20,
+            "percentage": 480,
+            "vnum": 17000
+        },
+        {
+            "minLevel": 5,
+            "maxLevel": 35,
+            "percentage": 1200,
+            "vnum": 5030
+        },
+        {
+            "minLevel": 10,
+            "maxLevel": 25,
+            "percentage": 750,
+            "vnum": 50318
+        },
+        {
+            "minLevel": 10,
+            "maxLevel": 40,
+            "percentage": 2000,
+            "vnum": 27104
+        },
+        {
+            "minLevel": 10,
+            "maxLevel": 120,
+            "percentage": 40,
+            "vnum": 50311
+        },
+        {
+            "minLevel": 10,
+            "maxLevel": 120,
+            "percentage": 400,
+            "vnum": 70104
+        },
+        {
+            "minLevel": 15,
+            "maxLevel": 35,
+            "percentage": 1200,
+            "vnum": 60
+        },
+        {
+            "minLevel": 15,
+            "maxLevel": 35,
+            "percentage": 1200,
+            "vnum": 2050
+        },
+        {
+            "minLevel": 15,
+            "maxLevel": 35,
+            "percentage": 1200,
+            "vnum": 3050
+        },
+        {
+            "minLevel": 15,
+            "maxLevel": 35,
+            "percentage": 1200,
+            "vnum": 4020
+        },
+        {
+            "minLevel": 15,
+            "maxLevel": 35,
+            "percentage": 1200,
+            "vnum": 7050
+        },
+        {
+            "minLevel": 15,
+            "maxLevel": 40,
+            "percentage": 1248,
+            "vnum": 11230
+        },
+        {
+            "minLevel": 15,
+            "maxLevel": 40,
+            "percentage": 1248,
+            "vnum": 11430
+        },
+        {
+            "minLevel": 15,
+            "maxLevel": 40,
+            "percentage": 1248,
+            "vnum": 11630
+        },
+        {
+            "minLevel": 15,
+            "maxLevel": 40,
+            "percentage": 1248,
+            "vnum": 11830
+        },
+        {
+            "minLevel": 15,
+            "maxLevel": 40,
+            "percentage": 23,
+            "vnum": 14080
+        },
+        {
+            "minLevel": 15,
+            "maxLevel": 40,
+            "percentage": 234,
+            "vnum": 15080
+        },
+        {
+            "minLevel": 15,
+            "maxLevel": 40,
+            "percentage": 234,
+            "vnum": 16080
+        },
+        {
+            "minLevel": 15,
+            "maxLevel": 40,
+            "percentage": 234,
+            "vnum": 17080
+        },
+        {
+            "minLevel": 20,
+            "maxLevel": 50,
+            "percentage": 156,
+            "vnum": 17140
+        },
+        {
+            "minLevel": 50,
+            "maxLevel": 0,
+            "percentage": 500540000,
+            "vnum": 1000
+        },
+        {
+            "minLevel": 25,
+            "maxLevel": 120,
+            "percentage": 80,
+            "vnum": 50061
+        },
+        {
+            "minLevel": 30,
+            "maxLevel": 120,
+            "percentage": 40,
+            "vnum": 50600
+        },
+        {
+            "minLevel": 35,
+            "maxLevel": 120,
+            "percentage": 40,
+            "vnum": 12240
+        },
+        {
+            "minLevel": 35,
+            "maxLevel": 120,
+            "percentage": 10000,
+            "vnum": 27003
+        },
+        {
+            "minLevel": 120,
+            "maxLevel": 0,
+            "percentage": 251000000,
+            "vnum": 5000
+        },
+        {
+            "minLevel": 120,
+            "maxLevel": 0,
+            "percentage": 1020000,
+            "vnum": 160000
+        },
+        {
+            "minLevel": 120,
+            "maxLevel": 0,
+            "percentage": 10620000,
+            "vnum": 160000
+        },
+        {
+            "minLevel": 120,
+            "maxLevel": 0,
+            "percentage": 20920000,
+            "vnum": 160000
+        },
+        {
+            "minLevel": 120,
+            "maxLevel": 0,
+            "percentage": 30920000,
+            "vnum": 160000
+        },
+        {
+            "minLevel": 120,
+            "maxLevel": 0,
+            "percentage": 50620000,
+            "vnum": 160000
+        },
+        {
+            "minLevel": 120,
+            "maxLevel": 0,
+            "percentage": 141620000,
+            "vnum": 33333333
+        },
+        {
+            "minLevel": 120,
+            "maxLevel": 0,
+            "percentage": 141820000,
+            "vnum": 33333333
+        },
+        {
+            "minLevel": 120,
+            "maxLevel": 0,
+            "percentage": 151620000,
+            "vnum": 666666
+        },
+        {
+            "minLevel": 120,
+            "maxLevel": 0,
+            "percentage": 161610000,
+            "vnum": 222222
+        },
+        {
+            "minLevel": 50,
+            "maxLevel": 120,
+            "percentage": 45,
+            "vnum": 16201
+        },
+        {
+            "minLevel": 50,
+            "maxLevel": 120,
+            "percentage": 15,
+            "vnum": 17202
+        }
+    ],
+    "S_KNIGHT": [
+        {
+            "minLevel": 1,
+            "maxLevel": 15,
+            "percentage": 3200,
+            "vnum": 11
+        },
+        {
+            "minLevel": 1,
+            "maxLevel": 15,
+            "percentage": 3200,
+            "vnum": 1001
+        },
+        {
+            "minLevel": 1,
+            "maxLevel": 15,
+            "percentage": 8000,
+            "vnum": 2000
+        },
+        {
+            "minLevel": 1,
+            "maxLevel": 15,
+            "percentage": 8000,
+            "vnum": 3000
+        },
+        {
+            "minLevel": 1,
+            "maxLevel": 15,
+            "percentage": 8000,
+            "vnum": 5000
+        },
+        {
+            "minLevel": 1,
+            "maxLevel": 15,
+            "percentage": 3200,
+            "vnum": 7001
+        },
+        {
+            "minLevel": 1,
+            "maxLevel": 15,
+            "percentage": 3200,
+            "vnum": 11200
+        },
+        {
+            "minLevel": 1,
+            "maxLevel": 15,
+            "percentage": 3200,
+            "vnum": 11400
+        },
+        {
+            "minLevel": 1,
+            "maxLevel": 15,
+            "percentage": 3200,
+            "vnum": 11600
+        },
+        {
+            "minLevel": 1,
+            "maxLevel": 15,
+            "percentage": 3200,
+            "vnum": 11800
+        },
+        {
+            "minLevel": 1,
+            "maxLevel": 20,
+            "percentage": 20000,
+            "vnum": 27001
+        },
+        {
+            "minLevel": 1,
+            "maxLevel": 21,
+            "percentage": 200,
+            "vnum": 12200
+        },
+        {
+            "minLevel": 1,
+            "maxLevel": 120,
+            "percentage": 40,
+            "vnum": 50301
+        },
+        {
+            "minLevel": 5,
+            "maxLevel": 20,
+            "percentage": 47,
+            "vnum": 14000
+        },
+        {
+            "minLevel": 5,
+            "maxLevel": 20,
+            "percentage": 640,
+            "vnum": 15000
+        },
+        {
+            "minLevel": 5,
+            "maxLevel": 20,
+            "percentage": 640,
+            "vnum": 16000
+        },
+        {
+            "minLevel": 5,
+            "maxLevel": 20,
+            "percentage": 640,
+            "vnum": 17000
+        },
+        {
+            "minLevel": 5,
+            "maxLevel": 35,
+            "percentage": 1600,
+            "vnum": 5030
+        },
+        {
+            "minLevel": 10,
+            "maxLevel": 25,
+            "percentage": 1000,
+            "vnum": 50318
+        },
+        {
+            "minLevel": 10,
+            "maxLevel": 40,
+            "percentage": 2000,
+            "vnum": 27104
+        },
+        {
+            "minLevel": 10,
+            "maxLevel": 120,
+            "percentage": 40,
+            "vnum": 50311
+        },
+        {
+            "minLevel": 10,
+            "maxLevel": 120,
+            "percentage": 400,
+            "vnum": 70104
+        },
+        {
+            "minLevel": 15,
+            "maxLevel": 35,
+            "percentage": 1600,
+            "vnum": 60
+        },
+        {
+            "minLevel": 15,
+            "maxLevel": 35,
+            "percentage": 1600,
+            "vnum": 2050
+        },
+        {
+            "minLevel": 15,
+            "maxLevel": 35,
+            "percentage": 1600,
+            "vnum": 3050
+        },
+        {
+            "minLevel": 15,
+            "maxLevel": 35,
+            "percentage": 1600,
+            "vnum": 4020
+        },
+        {
+            "minLevel": 15,
+            "maxLevel": 35,
+            "percentage": 1600,
+            "vnum": 7050
+        },
+        {
+            "minLevel": 15,
+            "maxLevel": 40,
+            "percentage": 1920,
+            "vnum": 11230
+        },
+        {
+            "minLevel": 15,
+            "maxLevel": 40,
+            "percentage": 1920,
+            "vnum": 11430
+        },
+        {
+            "minLevel": 15,
+            "maxLevel": 40,
+            "percentage": 1920,
+            "vnum": 11630
+        },
+        {
+            "minLevel": 15,
+            "maxLevel": 40,
+            "percentage": 1920,
+            "vnum": 11830
+        },
+        {
+            "minLevel": 15,
+            "maxLevel": 40,
+            "percentage": 36,
+            "vnum": 14080
+        },
+        {
+            "minLevel": 15,
+            "maxLevel": 40,
+            "percentage": 360,
+            "vnum": 15080
+        },
+        {
+            "minLevel": 15,
+            "maxLevel": 40,
+            "percentage": 360,
+            "vnum": 16080
+        },
+        {
+            "minLevel": 15,
+            "maxLevel": 40,
+            "percentage": 360,
+            "vnum": 17080
+        },
+        {
+            "minLevel": 20,
+            "maxLevel": 50,
+            "percentage": 240,
+            "vnum": 17140
+        },
+        {
+            "minLevel": 25,
+            "maxLevel": 120,
+            "percentage": 80,
+            "vnum": 50061
+        },
+        {
+            "minLevel": 30,
+            "maxLevel": 120,
+            "percentage": 40,
+            "vnum": 50600
+        },
+        {
+            "minLevel": 35,
+            "maxLevel": 120,
+            "percentage": 100,
+            "vnum": 12240
+        },
+        {
+            "minLevel": 35,
+            "maxLevel": 120,
+            "percentage": 10000,
+            "vnum": 27003
+        }
+    ],
+    "BOSS": [],
+    "KING": []
+}

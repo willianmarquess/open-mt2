@@ -4,6 +4,7 @@ import EntityStateEnum from '../../../enum/EntityStateEnum.js';
 import AnimationTypeEnum from '../../../enum/AnimationTypeEnum.js';
 import AnimationSubTypeEnum from '../../../enum/AnimationSubTypeEnum.js';
 import MathUtil from '../../util/MathUtil.js';
+import DroppedItem from './item/DroppedItem.js';
 
 export default class GameEntity {
     #id;
@@ -309,19 +310,19 @@ export default class GameEntity {
     }
 
     addNearbyEntity(entity) {
-        if (entity instanceof GameEntity) {
+        if (entity instanceof GameEntity || entity instanceof DroppedItem) {
             this.#nearbyEntities.set(entity.virtualId, entity);
         }
     }
 
     removeNearbyEntity(entity) {
-        if (entity instanceof GameEntity) {
+        if (entity instanceof GameEntity || entity instanceof DroppedItem) {
             this.#nearbyEntities.delete(entity.virtualId);
         }
     }
 
     isNearby(entity) {
-        if (entity instanceof GameEntity) {
+        if (entity instanceof GameEntity || entity instanceof DroppedItem) {
             return this.#nearbyEntities.has(entity.virtualId);
         }
     }

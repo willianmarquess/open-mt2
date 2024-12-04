@@ -93,10 +93,12 @@ export default class MobManager {
     #config;
     #mobs = new Map();
     #animationManager;
+    #dropManager;
 
-    constructor({ config, animationManager }) {
+    constructor({ config, animationManager, dropManager }) {
         this.#config = config;
         this.#animationManager = animationManager;
+        this.#dropManager = dropManager;
     }
 
     load() {
@@ -165,7 +167,10 @@ export default class MobManager {
                         hpPercentToGetRevive: Number(proto.sp_revive),
                         direction,
                     },
-                    { animationManager: this.#animationManager },
+                    {
+                        animationManager: this.#animationManager,
+                        dropManager: this.#dropManager,
+                    },
                 );
             }
             case 'NPC': {

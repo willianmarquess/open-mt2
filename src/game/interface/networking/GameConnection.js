@@ -16,7 +16,7 @@ import ItemDroppedPacket from '../../../core/interface/networking/packets/packet
 import ItemPacket from '../../../core/interface/networking/packets/packet/out/ItemPacket.js';
 import RemoveCharacterPacket from '../../../core/interface/networking/packets/packet/out/RemoveCharacterPacket.js';
 import TargetUpdatedPacket from '../../../core/interface/networking/packets/packet/out/TargetUpdatePacket.js';
-//import SetItemOwnershipPacket from '../../../core/interface/networking/packets/packet/out/SetItemOwnershipPacket.js';
+import SetItemOwnershipPacket from '../../../core/interface/networking/packets/packet/out/SetItemOwnershipPacket.js';
 import TeleportPacket from '../../../core/interface/networking/packets/packet/out/TeleportPacket.js';
 import Ip from '../../../core/util/Ip.js';
 import Queue from '../../../core/util/Queue.js';
@@ -142,7 +142,7 @@ export default class GameConnection extends Connection {
     }
 
     #onItemDropped(itemDroppedEvent) {
-        const { id, positionX, positionY, virtualId /*ownerName*/ } = itemDroppedEvent;
+        const { id, positionX, positionY, virtualId, ownerName } = itemDroppedEvent;
 
         this.send(
             new ItemDroppedPacket({
@@ -153,10 +153,12 @@ export default class GameConnection extends Connection {
             }),
         );
 
-        // this.send(new SetItemOwnershipPacket({
-        //     ownerName,
-        //     virtualId
-        // }));
+        this.send(
+            new SetItemOwnershipPacket({
+                ownerName,
+                virtualId,
+            }),
+        );
     }
 
     #onItemRemoved(itemRemovedEvent) {

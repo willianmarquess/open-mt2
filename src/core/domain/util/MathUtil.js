@@ -55,4 +55,9 @@ export default class MathUtil {
         if (rotationDegress < 0) rotationDegress += 360;
         return rotationDegress;
     }
+
+    static minMax(min, value, max) {
+        const temp = min > value ? min : value;
+        return max < temp ? max : temp;
+    }
 }

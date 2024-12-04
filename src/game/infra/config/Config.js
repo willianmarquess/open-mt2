@@ -5,6 +5,11 @@ import items from '../../../core/infra/config/data/items.json' with { type: 'jso
 import groups from '../../../core/infra/config/data/spawn/group.json' with { type: 'json' };
 import groupsCollection from '../../../core/infra/config/data/spawn/group_group.json' with { type: 'json' };
 import animations from '../../../core/infra/config/data/animation/animations.json' with { type: 'json' };
+import commonDrops from '../../../core/infra/config/data/drop/common_drops.json' with { type: 'json' };
+import dropDeltaBoss from '../../../core/infra/config/data/drop/dropDeltaBoss.js';
+import dropDeltaLevel from '../../../core/infra/config/data/drop/dropDeltaLevel.js';
+import dropGoldByRank from '../../../core/infra/config/data/drop/dropGoldByRank.js';
+import general from '../../../core/infra/config/data/general.json' with { type: 'json' };
 
 export default () => ({
     ...Config(),
@@ -18,8 +23,9 @@ export default () => ({
     groupsCollection,
     items,
     animations,
-    MAX_LEVEL: 99,
-    POINTS_PER_LEVEL: 3,
-    MAX_POINTS: 150,
-    INVENTORY_PAGES: 2,
+    commonDrops,
+    dropDeltaBoss,
+    dropDeltaLevel,
+    dropGoldByRank,
+    ...general,
 });
