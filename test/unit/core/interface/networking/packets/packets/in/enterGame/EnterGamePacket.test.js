@@ -1,6 +1,6 @@
 import { expect } from 'chai';
-import PacketHeaderEnum from '../../../../../../../../../src/core/enum/PacketHeaderEnum.js';
-import EnterGamePacket from '../../../../../../../../../src/core/interface/networking/packets/packet/in/enterGame/EnterGamePacket.js';
+import PacketHeaderEnum from '../../../../../../../../../src/core/enum/PacketHeaderEnum';
+import EnterGamePacket from '../../../../../../../../../src/core/interface/networking/packets/packet/in/enterGame/EnterGamePacket';
 
 describe('EnterGamePacket', function () {
     let enterGamePacket;

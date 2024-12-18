@@ -1,6 +1,6 @@
 import { expect } from 'chai';
 import sinon from 'sinon';
-import CharacterMovePacketHandler from '../../../../../../../../../src/core/interface/networking/packets/packet/in/characterMove/CharacterMovePacketHandler.js';
+import CharacterMovePacketHandler from '../../../../../../../../../src/core/interface/networking/packets/packet/in/characterMove/CharacterMovePacketHandler';
 
 describe('CharacterMovePacketHandler', () => {
     let loggerMock, characterMoveServiceMock, connectionMock, packetMock;

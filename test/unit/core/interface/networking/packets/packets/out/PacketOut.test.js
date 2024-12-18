@@ -1,6 +1,6 @@
 import { expect } from 'chai';
-import PacketOut from '../../../../../../../../src/core/interface/networking/packets/packet/out/PacketOut.js';
-import BufferWriter from '../../../../../../../../src/core/interface/networking/buffer/BufferWriter.js';
+import PacketOut from '../../../../../../../../src/core/interface/networking/packets/packet/out/PacketOut';
+import BufferWriter from '../../../../../../../../src/core/interface/networking/buffer/BufferWriter';
 
 describe('PacketOut', function () {
     let packetOut;

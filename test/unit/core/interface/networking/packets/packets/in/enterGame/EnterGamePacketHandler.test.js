@@ -1,9 +1,9 @@
 import { expect } from 'chai';
 import sinon from 'sinon';
-import EnterGamePacketHandler from '../../../../../../../../../src/core/interface/networking/packets/packet/in/enterGame/EnterGamePacketHandler.js';
-import ConnectionStateEnum from '../../../../../../../../../src/core/enum/ConnectionStateEnum.js';
-import GameTimePacket from '../../../../../../../../../src/core/interface/networking/packets/packet/out/GameTimePacket.js';
-import ChannelPacket from '../../../../../../../../../src/core/interface/networking/packets/packet/out/ChannelPacket.js';
+import EnterGamePacketHandler from '../../../../../../../../../src/core/interface/networking/packets/packet/in/enterGame/EnterGamePacketHandler';
+import ConnectionStateEnum from '../../../../../../../../../src/core/enum/ConnectionStateEnum';
+import GameTimePacket from '../../../../../../../../../src/core/interface/networking/packets/packet/out/GameTimePacket';
+import ChannelPacket from '../../../../../../../../../src/core/interface/networking/packets/packet/out/ChannelPacket';
 
 describe('EnterGamePacketHandler', function () {
     let enterGamePacketHandler, mockConnection, mockLogger, mockEnterGameService;

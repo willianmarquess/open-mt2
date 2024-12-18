@@ -1,6 +1,6 @@
 import { expect } from 'chai';
-import PacketIn from '../../../../../../../../src/core/interface/networking/packets/packet/in/PacketIn.js';
-import BufferReader from '../../../../../../../../src/core/interface/networking/buffer/BufferReader.js';
+import PacketIn from '../../../../../../../../src/core/interface/networking/packets/packet/in/PacketIn';
+import BufferReader from '../../../../../../../../src/core/interface/networking/buffer/BufferReader';
 
 describe('PacketIn', function () {
     let packetIn;

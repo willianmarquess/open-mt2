@@ -1,5 +1,5 @@
 import { expect } from 'chai';
-import QuadTree from '../../../../src/core/util/QuadTree.js';
+import QuadTree from '../../../../src/core/util/QuadTree';
 
 describe('QuadTree', () => {
     it('should insert entities within its bounds', () => {

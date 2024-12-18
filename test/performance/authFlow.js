@@ -1,9 +1,9 @@
 import assert from 'node:assert';
-import SocketClient from '../support/SocketClient.js';
-import ConnectionStateEnum from '../../src/core/enum/ConnectionStateEnum.js';
-import BufferReader from '../../src/core/interface/networking/buffer/BufferReader.js';
-import BufferWriter from '../../src/core/interface/networking/buffer/BufferWriter.js';
-import PacketHeaderEnum from '../../src/core/enum/PacketHeaderEnum.js';
+import SocketClient from '../support/SocketClient';
+import ConnectionStateEnum from '../../src/core/enum/ConnectionStateEnum';
+import BufferReader from '../../src/core/interface/networking/buffer/BufferReader';
+import BufferWriter from '../../src/core/interface/networking/buffer/BufferWriter';
+import PacketHeaderEnum from '../../src/core/enum/PacketHeaderEnum';
 
 const createLoginPacket = (user, password, key) => {
     const bufferWriter = new BufferWriter(PacketHeaderEnum.LOGIN_REQUEST, 66);

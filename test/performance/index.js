@@ -1,9 +1,9 @@
-import { authFlow } from './authFlow.js';
-import GameFlow from './gameFlow.js';
-import { container } from '../../src/game/Container.js';
+import { authFlow } from './authFlow';
+import GameFlow from './gameFlow';
+import { container } from '../../src/game/Container';
 import regen from '../../src/core/infra/config/data/spawn/metin2_map_c1/regen.json' with { type: 'json' };
 import timers from 'node:timers/promises';
-import MathUtil from '../../src/core/domain/util/MathUtil.js';
+import MathUtil from '../../src/core/domain/util/MathUtil';
 
 const SIGNALS = ['SIGINT', 'SIGTERM'];
 const ERRORS = ['unhandledRejection', 'uncaughtException'];

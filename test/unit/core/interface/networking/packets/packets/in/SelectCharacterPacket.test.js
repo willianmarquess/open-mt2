@@ -1,6 +1,6 @@
 import { expect } from 'chai';
-import PacketHeaderEnum from '../../../../../../../../src/core/enum/PacketHeaderEnum.js';
-import SelectCharacterPacket from '../../../../../../../../src/core/interface/networking/packets/packet/in/selectCharacter/SelectCharacterPacket.js';
+import PacketHeaderEnum from '../../../../../../../../src/core/enum/PacketHeaderEnum';
+import SelectCharacterPacket from '../../../../../../../../src/core/interface/networking/packets/packet/in/selectCharacter/SelectCharacterPacket';
 
 describe('SelectCharacterPacket', function () {
     let selectCharacterPacket;

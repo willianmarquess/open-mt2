@@ -1,5 +1,5 @@
 import { expect } from 'chai';
-import BufferWriter from '../../../../../../src/core/interface/networking/buffer/BufferWriter.js';
+import BufferWriter from '../../../../../../src/core/interface/networking/buffer/BufferWriter';
 
 describe('BufferWriter', function () {
     let bufferWriter;

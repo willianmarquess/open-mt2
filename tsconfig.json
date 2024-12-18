@@ -1,0 +1,28 @@
+{
+    "compilerOptions": {
+      "resolveJsonModule": true,
+      "outDir": "./dist",
+      "module": "CommonJS",
+      "target": "ES6",
+      "esModuleInterop": true,
+      "skipLibCheck": true,
+      "sourceMap": true,
+      "forceConsistentCasingInFileNames": true,
+      "rootDirs": [
+        "src",
+        "test"
+      ],
+      "baseUrl": "src",
+      "paths": {
+        "@/*": [
+          "*"
+        ],
+        "@/test/*": ["../test/*"]
+      }
+    },
+    "include": [
+      "src",
+      "test"
+    ],
+    "exclude": []
+  }

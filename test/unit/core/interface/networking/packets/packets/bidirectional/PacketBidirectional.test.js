@@ -1,7 +1,7 @@
 import { expect } from 'chai';
-import PacketBidirectional from '../../../../../../../../src/core/interface/networking/packets/packet/bidirectional/PacketBidirectional.js';
-import BufferReader from '../../../../../../../../src/core/interface/networking/buffer/BufferReader.js';
-import BufferWriter from '../../../../../../../../src/core/interface/networking/buffer/BufferWriter.js';
+import PacketBidirectional from '../../../../../../../../src/core/interface/networking/packets/packet/bidirectional/PacketBidirectional';
+import BufferReader from '../../../../../../../../src/core/interface/networking/buffer/BufferReader';
+import BufferWriter from '../../../../../../../../src/core/interface/networking/buffer/BufferWriter';
 
 describe('PacketBidirectional', function () {
     let packetBidirectional;

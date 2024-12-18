@@ -16,7 +16,7 @@ function findPacketFiles(dir) {
 
         if (stat && stat.isDirectory()) {
             results = results.concat(findPacketFiles(filePath));
-        } else if (file.includes('Packet') && file.endsWith('.js')) {
+        } else if (file.includes('Packet') && file.endsWith('')) {
             results.push(filePath);
         }
     });

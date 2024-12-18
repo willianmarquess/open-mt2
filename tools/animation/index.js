@@ -1,12 +1,12 @@
 import fsPromise from 'fs/promises';
 import fs from 'fs';
 import path from 'path';
-import JobEnum from '../../src/core/enum/JobEnum.js';
-import AnimationTypeEnum from '../../src/core/enum/AnimationTypeEnum.js';
-import AnimationSubTypeEnum from '../../src/core/enum/AnimationSubTypeEnum.js';
-import JobUtil from '../../src/core/domain/util/JobUtil.js';
+import JobEnum from '../../src/core/enum/JobEnum';
+import AnimationTypeEnum from '../../src/core/enum/AnimationTypeEnum';
+import AnimationSubTypeEnum from '../../src/core/enum/AnimationSubTypeEnum';
+import JobUtil from '../../src/core/domain/util/JobUtil';
 import mobs from '../../src/core/infra/config/data/mobs.json' with { type: 'json' };
-import AnimationUtil from '../../src/core/domain/util/AnimationUtil.js';
+import AnimationUtil from '../../src/core/domain/util/AnimationUtil';
 
 const DEFAULT_ANIMATIONS_PATH = './tools/animation';
 

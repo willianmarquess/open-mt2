@@ -1,5 +1,5 @@
 import { expect } from 'chai';
-import PlayerDTO from '../../../../../src/core/domain/dto/PlayerDTO.js';
+import PlayerDTO from '../../../../../src/core/domain/dto/PlayerDTO';
 
 describe('PlayerDTO', function () {
     it('should create an instance with all properties set correctly', function () {

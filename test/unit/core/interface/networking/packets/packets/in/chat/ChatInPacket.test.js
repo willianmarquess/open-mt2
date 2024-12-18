@@ -1,6 +1,6 @@
 import { expect } from 'chai';
-import ChatInPacket from '../../../../../../../../../src/core/interface/networking/packets/packet/in/chat/ChatInPacket.js';
-import PacketHeaderEnum from '../../../../../../../../../src/core/enum/PacketHeaderEnum.js';
+import ChatInPacket from '../../../../../../../../../src/core/interface/networking/packets/packet/in/chat/ChatInPacket';
+import PacketHeaderEnum from '../../../../../../../../../src/core/enum/PacketHeaderEnum';
 
 describe('ChatInPacket', function () {
     let chatInPacket;

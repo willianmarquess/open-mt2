@@ -1,9 +1,9 @@
 import { expect } from 'chai';
 import sinon from 'sinon';
-import PlayerFactory from '../../../../../src/core/domain/factories/PlayerFactory.js';
-import JobUtil from '../../../../../src/core/domain/util/JobUtil.js';
-import EmpireUtil from '../../../../../src/core/domain/util/EmpireUtil.js';
-import Player from '../../../../../src/core/domain/entities/game/player/Player.js';
+import PlayerFactory from '../../../../../src/core/domain/factories/PlayerFactory';
+import JobUtil from '../../../../../src/core/domain/util/JobUtil';
+import EmpireUtil from '../../../../../src/core/domain/util/EmpireUtil';
+import Player from '../../../../../src/core/domain/entities/game/player/Player';
 
 describe('PlayerFactory', () => {
     let config;

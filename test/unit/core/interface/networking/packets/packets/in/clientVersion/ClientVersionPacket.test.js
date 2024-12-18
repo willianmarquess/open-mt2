@@ -1,6 +1,6 @@
 import { expect } from 'chai';
-import PacketHeaderEnum from '../../../../../../../../../src/core/enum/PacketHeaderEnum.js';
-import ClientVersionPacket from '../../../../../../../../../src/core/interface/networking/packets/packet/in/clientVersion/ClientVersionPacket.js';
+import PacketHeaderEnum from '../../../../../../../../../src/core/enum/PacketHeaderEnum';
+import ClientVersionPacket from '../../../../../../../../../src/core/interface/networking/packets/packet/in/clientVersion/ClientVersionPacket';
 
 describe('ClientVersionPacket', function () {
     let clientVersionPacket;

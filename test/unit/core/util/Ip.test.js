@@ -1,5 +1,5 @@
 import { expect } from 'chai';
-import Ip from '../../../../src/core/util/Ip.js';
+import Ip from '../../../../src/core/util/Ip';
 
 describe('Ip', () => {
     describe('toInt', () => {

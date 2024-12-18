@@ -1,5 +1,5 @@
 import { expect } from 'chai';
-import Result from '../../../../src/core/app/Result.js';
+import Result from '../../../../src/core/app/Result';
 
 describe('Result', () => {
     describe('Constructor', () => {

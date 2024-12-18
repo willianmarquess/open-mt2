@@ -1,9 +1,9 @@
 import { expect } from 'chai';
 import sinon from 'sinon';
-import CreateCharacterPacketHandler from '../../../../../../../../../src/core/interface/networking/packets/packet/in/createCharacter/CreateCharacterPacketHandler.js';
-import ErrorTypesEnum from '../../../../../../../../../src/core/enum/ErrorTypesEnum.js';
-import CreateCharacterFailurePacket from '../../../../../../../../../src/core/interface/networking/packets/packet/out/CreateCharacterFailurePacket.js';
-import CreateCharacterSuccessPacket from '../../../../../../../../../src/core/interface/networking/packets/packet/out/CreateCharacterSuccessPacket.js';
+import CreateCharacterPacketHandler from '../../../../../../../../../src/core/interface/networking/packets/packet/in/createCharacter/CreateCharacterPacketHandler';
+import ErrorTypesEnum from '../../../../../../../../../src/core/enum/ErrorTypesEnum';
+import CreateCharacterFailurePacket from '../../../../../../../../../src/core/interface/networking/packets/packet/out/CreateCharacterFailurePacket';
+import CreateCharacterSuccessPacket from '../../../../../../../../../src/core/interface/networking/packets/packet/out/CreateCharacterSuccessPacket';
 
 describe('CreateCharacterPacketHandler', function () {
     let createCharacterPacketHandler, mockConnection, mockLogger, mockConfig, mockCreateCharacterService;

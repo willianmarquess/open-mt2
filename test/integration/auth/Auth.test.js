@@ -1,10 +1,10 @@
 import { expect } from 'chai';
-import SocketClient from '../../support/SocketClient.js';
-import BufferWriter from '../../../src/core/interface/networking/buffer/BufferWriter.js';
-import PacketHeaderEnum from '../../../src/core/enum/PacketHeaderEnum.js';
-import BufferReader from '../../../src/core/interface/networking/buffer/BufferReader.js';
-import ConnectionStateEnum from '../../../src/core/enum/ConnectionStateEnum.js';
-import LoginStatusEnum from '../../../src/core/enum/LoginStatusEnum.js';
+import SocketClient from '../../support/SocketClient';
+import BufferWriter from '../../../src/core/interface/networking/buffer/BufferWriter';
+import PacketHeaderEnum from '../../../src/core/enum/PacketHeaderEnum';
+import BufferReader from '../../../src/core/interface/networking/buffer/BufferReader';
+import ConnectionStateEnum from '../../../src/core/enum/ConnectionStateEnum';
+import LoginStatusEnum from '../../../src/core/enum/LoginStatusEnum';
 
 const port = process.env.AUTH_SERVER_PORT;
 const host = process.env.AUTH_SERVER_ADDRESS;

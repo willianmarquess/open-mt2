@@ -1,6 +1,6 @@
 import { expect } from 'chai';
 import sinon from 'sinon';
-import MoveItemService from '../../../../../src/game/app/service/MoveItemService.js';
+import MoveItemService from '../../../../../src/game/app/service/MoveItemService';
 
 describe('MoveItemService', function () {
     let loggerMock;

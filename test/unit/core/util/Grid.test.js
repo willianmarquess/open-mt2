@@ -1,5 +1,5 @@
 import { expect } from 'chai';
-import Grid from '../../../../src/core/util/Grid.js';
+import Grid from '../../../../src/core/util/Grid';
 
 describe('Grid', () => {
     let grid;

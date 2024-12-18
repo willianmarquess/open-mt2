@@ -1,6 +1,6 @@
 import { expect } from 'chai';
-import FluentValidator from '../../../../../src/core/infra/validation/FluentValidator.js';
-import RuleBuilder from '../../../../../src/core/infra/validation/RuleBuilder.js';
+import FluentValidator from '../../../../../src/core/infra/validation/FluentValidator';
+import RuleBuilder from '../../../../../src/core/infra/validation/RuleBuilder';
 
 describe('RuleBuilder', () => {
     let validator;

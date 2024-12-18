@@ -1,7 +1,7 @@
 import { expect } from 'chai';
 import sinon from 'sinon';
 import redis from 'redis';
-import CacheProvider from '../../../../../src/core/infra/cache/CacheProvider.js';
+import CacheProvider from '../../../../../src/core/infra/cache/CacheProvider';
 
 describe('CacheProvider', () => {
     let logger;

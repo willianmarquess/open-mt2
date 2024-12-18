@@ -1,7 +1,7 @@
 import { expect } from 'chai';
 import sinon from 'sinon';
-import AnimationManager from '../../../../../src/core/domain/manager/AnimationManager.js';
-import Animation from '../../../../../src/core/domain/Animation.js';
+import AnimationManager from '../../../../../src/core/domain/manager/AnimationManager';
+import Animation from '../../../../../src/core/domain/Animation';
 
 describe('AnimationManager', function () {
     let animationManager;

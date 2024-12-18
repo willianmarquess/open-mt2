@@ -1,7 +1,7 @@
 import { expect } from 'chai';
 import sinon from 'sinon';
 import bcryptjs from 'bcryptjs';
-import EncryptionProvider from '../../../../../src/core/infra/encryption/EncryptionProvider.js';
+import EncryptionProvider from '../../../../../src/core/infra/encryption/EncryptionProvider';
 
 describe('EncryptionProvider', () => {
     let encryptionProvider;

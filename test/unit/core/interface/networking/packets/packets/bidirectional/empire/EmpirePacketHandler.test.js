@@ -1,7 +1,7 @@
 import { expect } from 'chai';
 import sinon from 'sinon';
-import EmpirePacketHandler from '../../../../../../../../../src/core/interface/networking/packets/packet/bidirectional/empire/EmpirePacketHandler.js';
-import ErrorTypesEnum from '../../../../../../../../../src/core/enum/ErrorTypesEnum.js';
+import EmpirePacketHandler from '../../../../../../../../../src/core/interface/networking/packets/packet/bidirectional/empire/EmpirePacketHandler';
+import ErrorTypesEnum from '../../../../../../../../../src/core/enum/ErrorTypesEnum';
 
 describe('EmpirePacketHandler', () => {
     let selectEmpireServiceMock, loggerMock, connectionMock, packetMock, empirePacketHandler;

@@ -3,16 +3,15 @@
   "version": "1.0.0",
   "description": "",
   "main": "src/main.js",
-  "type": "module",
   "scripts": {
-    "dev:auth": "node --env-file=.env --watch --experimental-json-modules src/auth/main.js",
+    "dev:auth": "cross-env LOG_LEVEL=debug tsnd -r tsconfig-paths/register --transpile-only --respawn --ignore-watch node_modules --watch src/auth --env-file=.env src/auth/main.ts",
+    "dev:game": "cross-env LOG_LEVEL=debug tsnd -r tsconfig-paths/register --transpile-only --respawn --ignore-watch node_modules --watch src/game --env-file=.env src/game/main.ts",
     "auth": "node --env-file=.env --experimental-json-modules src/auth/main.js",
     "game": "node --env-file=.env --experimental-json-modules src/game/main.js",
-    "dev:game": "node --env-file=.env --watch --experimental-json-modules src/game/main.js",
     "migrate": "cross-env node --env-file=.env --experimental-json-modules tools/database/migrate.js",
-    "format": "prettier -w {src,test}/**/*.js",
+    "format": "prettier -w {src,test}/**/*.ts",
     "prepare": "husky",
-    "lint:fix": "eslint --fix {src,test}/**/*.js",
+    "lint:fix": "eslint --fix {src,test}/**/*.ts",
     "test:unit": "mocha --config test/.mocharc.unit.json --exit",
     "test:integration": "node --env-file=.env --experimental-json-modules node_modules/mocha/bin/mocha --config test/.mocharc.integration.json --exit",
     "test:performance": "node --env-file=.env --experimental-json-modules test/performance/index.js",
@@ -25,6 +24,8 @@
   "license": "ISC",
   "devDependencies": {
     "@eslint/js": "^9.2.0",
+    "@types/node": "^22.10.2",
+    "@typescript-eslint/eslint-plugin": "^8.18.0",
     "c8": "^10.1.2",
     "chai": "^5.1.1",
     "eslint": "^9.2.0",
@@ -33,7 +34,11 @@
     "husky": "^9.0.11",
     "mocha": "^10.4.0",
     "nyc": "^17.0.0",
-    "prettier": "^3.2.5"
+    "prettier": "^3.2.5",
+    "ts-node-dev": "^2.0.0",
+    "tsc-alias": "^1.8.10",
+    "tsconfig-paths": "^4.2.0",
+    "typescript": "^5.5.4"
   },
   "dependencies": {
     "awilix": "^10.0.2",

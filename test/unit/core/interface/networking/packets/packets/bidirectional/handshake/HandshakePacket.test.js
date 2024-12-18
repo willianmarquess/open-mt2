@@ -1,6 +1,6 @@
 import { expect } from 'chai';
-import PacketHeaderEnum from '../../../../../../../../../src/core/enum/PacketHeaderEnum.js';
-import HandshakePacket from '../../../../../../../../../src/core/interface/networking/packets/packet/bidirectional/handshake/HandshakePacket.js';
+import PacketHeaderEnum from '../../../../../../../../../src/core/enum/PacketHeaderEnum';
+import HandshakePacket from '../../../../../../../../../src/core/interface/networking/packets/packet/bidirectional/handshake/HandshakePacket';
 
 describe('HandshakePacket', function () {
     let handshakePacket;

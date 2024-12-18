@@ -1,6 +1,6 @@
 import { expect } from 'chai';
 import sinon from 'sinon';
-import ClientVersionPacketHandler from '../../../../../../../../../src/core/interface/networking/packets/packet/in/clientVersion/ClientVersionPacketHandler.js';
+import ClientVersionPacketHandler from '../../../../../../../../../src/core/interface/networking/packets/packet/in/clientVersion/ClientVersionPacketHandler';
 
 describe('ClientVersionPacketHandler', () => {
     let loggerMock, connectionMock, packetMock;

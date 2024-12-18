@@ -1,9 +1,9 @@
 import { expect } from 'chai';
 import sinon from 'sinon';
-import AuthTokenPacketHandler from '../../../../../../../../../src/core/interface/networking/packets/packet/in/authToken/AuthTokenPacketHandler.js';
-import EmpirePacket from '../../../../../../../../../src/core/interface/networking/packets/packet/bidirectional/empire/EmpirePacket.js';
-import CharactersInfoPacket from '../../../../../../../../../src/core/interface/networking/packets/packet/out/CharactersInfoPacket.js';
-import ConnectionStateEnum from '../../../../../../../../../src/core/enum/ConnectionStateEnum.js';
+import AuthTokenPacketHandler from '../../../../../../../../../src/core/interface/networking/packets/packet/in/authToken/AuthTokenPacketHandler';
+import EmpirePacket from '../../../../../../../../../src/core/interface/networking/packets/packet/bidirectional/empire/EmpirePacket';
+import CharactersInfoPacket from '../../../../../../../../../src/core/interface/networking/packets/packet/out/CharactersInfoPacket';
+import ConnectionStateEnum from '../../../../../../../../../src/core/enum/ConnectionStateEnum';
 
 describe('AuthTokenPacketHandler', () => {
     let loadCharactersServiceMock, authenticateServiceMock, configMock, loggerMock;

@@ -1,5 +1,5 @@
 import { expect } from 'chai';
-import Queue from '../../../../src/core/util/Queue.js';
+import Queue from '../../../../src/core/util/Queue';
 
 describe('CORE -> DATA STRUCTURE -> Queue', () => {
     context('when queue is empty', () => {

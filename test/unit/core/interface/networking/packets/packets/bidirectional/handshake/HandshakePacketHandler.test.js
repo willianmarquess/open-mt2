@@ -1,7 +1,7 @@
 import { expect } from 'chai';
 import sinon from 'sinon';
-import HandshakePacketHandler from '../../../../../../../../../src/core/interface/networking/packets/packet/bidirectional/handshake/HandshakePacketHandler.js';
-import HandshakePacket from '../../../../../../../../../src/core/interface/networking/packets/packet/bidirectional/handshake/HandshakePacket.js';
+import HandshakePacketHandler from '../../../../../../../../../src/core/interface/networking/packets/packet/bidirectional/handshake/HandshakePacketHandler';
+import HandshakePacket from '../../../../../../../../../src/core/interface/networking/packets/packet/bidirectional/handshake/HandshakePacket';
 
 describe('HandshakePacketHandler', () => {
     let loggerMock, connectionMock, packetMock, handshakePacketHandler;

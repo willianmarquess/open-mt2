@@ -1,7 +1,7 @@
 import { expect } from 'chai';
 import sinon from 'sinon';
-import PlayerApplies from '../../../../../../../../src/core/domain/entities/game/player/delegate/PlayerApplies.js';
-import ApplyTypeEnum from '../../../../../../../../src/core/enum/ApplyTypeEnum.js';
+import PlayerApplies from '../../../../../../../../src/core/domain/entities/game/player/delegate/PlayerApplies';
+import ApplyTypeEnum from '../../../../../../../../src/core/enum/ApplyTypeEnum';
 
 describe('PlayerApplies', function () {
     let playerMock;

@@ -1,8 +1,8 @@
 import { expect } from 'chai';
 import sinon from 'sinon';
-import AccountRepository from '../../../../../src/auth/infra/database/AccountRepository.js';
-import Account from '../../../../../src/core/domain/entities/state/account/Account.js';
-import AccountStatus from '../../../../../src/core/domain/entities/state/account/AccountStatus.js';
+import AccountRepository from '../../../../../src/auth/infra/database/AccountRepository';
+import Account from '../../../../../src/core/domain/entities/state/account/Account';
+import AccountStatus from '../../../../../src/core/domain/entities/state/account/AccountStatus';
 
 describe('AccountRepository', () => {
     let accountRepository;

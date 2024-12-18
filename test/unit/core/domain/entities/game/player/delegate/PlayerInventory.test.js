@@ -1,11 +1,11 @@
 import { expect } from 'chai';
 import sinon from 'sinon';
-import PlayerInventory from '../../../../../../../../src/core/domain/entities/game/player/delegate/PlayerInventory.js';
-import WindowTypeEnum from '../../../../../../../../src/core/enum/WindowTypeEnum.js';
-import ItemAddedEvent from '../../../../../../../../src/core/domain/entities/game/player/events/ItemAddedEvent.js';
-import ItemRemovedEvent from '../../../../../../../../src/core/domain/entities/game/player/events/ItemRemovedEvent.js';
-import ItemDroppedEvent from '../../../../../../../../src/core/domain/entities/game/player/events/ItemDroppedEvent.js';
-import ItemDroppedHideEvent from '../../../../../../../../src/core/domain/entities/game/player/events/ItemDroppedHideEvent.js';
+import PlayerInventory from '../../../../../../../../src/core/domain/entities/game/player/delegate/PlayerInventory';
+import WindowTypeEnum from '../../../../../../../../src/core/enum/WindowTypeEnum';
+import ItemAddedEvent from '../../../../../../../../src/core/domain/entities/game/player/events/ItemAddedEvent';
+import ItemRemovedEvent from '../../../../../../../../src/core/domain/entities/game/player/events/ItemRemovedEvent';
+import ItemDroppedEvent from '../../../../../../../../src/core/domain/entities/game/player/events/ItemDroppedEvent';
+import ItemDroppedHideEvent from '../../../../../../../../src/core/domain/entities/game/player/events/ItemDroppedHideEvent';
 
 describe('PlayerInventory', function () {
     let playerMock;
