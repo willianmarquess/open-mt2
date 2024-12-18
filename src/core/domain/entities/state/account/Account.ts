@@ -10,11 +10,7 @@ export default class Account extends StateEntity {
     private accountStatus: AccountStatus;
 
     constructor({ id, username, password, email, lastLogin, deleteCode, accountStatus, createdAt, updatedAt }) {
-        super({
-            id,
-            createdAt,
-            updatedAt,
-        });
+        super(id, createdAt, updatedAt);
         this.username = username;
         this.password = password;
         this.email = email;

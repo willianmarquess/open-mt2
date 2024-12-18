@@ -8,6 +8,7 @@ import { ItemFlagEnum } from '@/core/enum/ItemFlagEnum';
 import { ItemImmuneFlagEnum } from '@/core/enum/ItemImmuneFlagEnum';
 import { ItemWearFlagEnum } from '@/core/enum/ItemWearFlagEnum';
 import { ApplyTypeEnum } from '@/core/enum/ApplyTypeEnum';
+import ItemState from '../../state/item/ItemState';
 
 const parseFlags = (flags: string, enumType: any) => {
     const bitFlag = new BitFlag();
@@ -479,7 +480,7 @@ export default class Item {
     }
 
     toDatabase() {
-        return {
+        return new ItemState({
             id: this.dbId,
             ownerId: this.ownerId,
             window: this.window,
@@ -503,6 +504,6 @@ export default class Item {
             attributeValue5: this.attributeValue5,
             attributeType6: this.attributeType6,
             attributeValue6: this.attributeValue6,
-        };
+        });
     }
 }

@@ -1,3 +1,4 @@
+import DroppedItem from '@/core/domain/entities/game/item/DroppedItem';
 import Player from '@/core/domain/entities/game/player/Player';
 import World from '@/core/domain/World';
 import { ChatMessageTypeEnum } from '@/core/enum/ChatMessageTypeEnum';
@@ -17,13 +18,15 @@ export default class PickupItemService {
 
         if (!area) return;
 
-        const droppedItem = area.getEntity(virtualId);
+        const droppedItem = area.getEntity(virtualId) as unknown as DroppedItem;
 
         if (!droppedItem) return;
 
-        const { item, count, ownerName } = droppedItem;
+        const item = droppedItem.getItem();
+        const count = droppedItem.getCount();
+        const ownerName = droppedItem.getOwnerName();
 
-        const isGold = item.id === 1;
+        const isGold = item.getId() === 1;
 
         if (isGold) {
             player.addGold(Number(count));

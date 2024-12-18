@@ -1,9 +1,9 @@
 export default class StateEntity {
-    private id: number;
-    private updatedAt: Date;
-    private createdAt: Date;
+    public id: number;
+    public updatedAt: Date;
+    public createdAt: Date;
 
-    constructor({ id, createdAt, updatedAt }) {
+    constructor(id: number, createdAt?: Date, updatedAt?: Date) {
         this.id = id;
         this.createdAt = createdAt;
         this.updatedAt = updatedAt;

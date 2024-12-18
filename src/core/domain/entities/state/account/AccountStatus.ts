@@ -6,11 +6,7 @@ export default class AccountStatus extends StateEntity {
     private description: number;
 
     constructor({ id, clientStatus, allowLogin, description, createdAt, updatedAt }) {
-        super({
-            id,
-            createdAt,
-            updatedAt,
-        });
+        super(id, createdAt, updatedAt);
         this.clientStatus = clientStatus;
         this.allowLogin = allowLogin;
         this.description = description;

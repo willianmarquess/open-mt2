@@ -1,7 +1,7 @@
-import ItemDTO from '@/core/domain/dto/ItemDTO';
+import ItemState from '../entities/state/item/ItemState';
 
 export default class ItemCache {
-    cache: Map<number, { update: Map<number, ItemDTO>; delete: Map<number, ItemDTO> }> = new Map();
+    cache: Map<number, { update: Map<number, ItemState>; delete: Map<number, ItemState> }> = new Map();
 
     private get(ownerId: number) {
         if (!this.cache.has(ownerId)) {
@@ -17,12 +17,12 @@ export default class ItemCache {
         return this.cache.has(ownerId);
     }
 
-    setToUpdate(ownerId: number, item: ItemDTO) {
+    setToUpdate(ownerId: number, item: ItemState) {
         const cache = this.get(ownerId);
         cache.update.set(item.id, item);
     }
 
-    setToDelete(ownerId: number, item: ItemDTO) {
+    setToDelete(ownerId: number, item: ItemState) {
         const cache = this.get(ownerId);
         if (cache.update.has(item.id)) {
             cache.update.delete(item.id);

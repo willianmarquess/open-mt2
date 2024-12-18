@@ -35,8 +35,8 @@ import DropItemEvent from './events/DropItemEvent';
 import ItemDroppedEvent from './events/ItemDroppedEvent';
 import ItemDroppedHideEvent from './events/ItemDroppedHideEvent';
 import DroppedItem from '../item/DroppedItem';
-import PlayerDTO from '@/core/domain/dto/PlayerDTO';
 import { StatsEnum } from '@/core/enum/StatsEnum';
+import PlayerState from '../../state/player/PlayerState';
 
 const REGEN_INTERVAL = 3000;
 
@@ -1060,7 +1060,7 @@ export default class Player extends GameEntity {
     }
 
     toDatabase() {
-        return new PlayerDTO({
+        return new PlayerState({
             id: this.id,
             accountId: this.accountId,
             empire: this.empire,

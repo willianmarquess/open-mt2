@@ -1,4 +1,4 @@
-import ItemDTO from '@/core/domain/dto/ItemDTO';
+import ItemState from '@/core/domain/entities/state/item/ItemState';
 import DatabaseManager from '@/core/infra/database/DatabaseManager';
 import { ResultSetHeader } from 'mysql2';
 
@@ -9,13 +9,13 @@ export default class ItemRepository {
         this.databaseManager = databaseManager;
     }
 
-    async delete(item: ItemDTO) {
+    async delete(item: ItemState) {
         return this.databaseManager
             .getConnection()
             .query('delete from game.item where id = ? and ownerId = ? ', [item.id, item.ownerId]);
     }
 
-    async updatePosition(item: ItemDTO) {
+    async updatePosition(item: ItemState) {
         return this.databaseManager
             .getConnection()
             .query('update game.item set position = ? where id = ? and ownerId = ? ', [
@@ -25,7 +25,7 @@ export default class ItemRepository {
             ]);
     }
 
-    async update(item: ItemDTO) {
+    async update(item: ItemState) {
         return this.databaseManager.getConnection().query(
             `
             update 
@@ -84,7 +84,7 @@ export default class ItemRepository {
         );
     }
 
-    async create(item: ItemDTO) {
+    async create(item: ItemState) {
         const [result] = await this.databaseManager.getConnection().execute<ResultSetHeader>(
             `
         insert into game.item (
@@ -150,6 +150,6 @@ export default class ItemRepository {
             .getConnection()
             .query('select * from game.item where ownerId = ?', [ownerId]);
 
-        return items as Array<ItemDTO>;
+        return items as Array<ItemState>;
     }
 }

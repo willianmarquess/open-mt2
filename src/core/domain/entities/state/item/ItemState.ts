@@ -1,5 +1,6 @@
-export default class ItemDTO {
-    public id: number;
+import StateEntity from '../StateEntity';
+
+export default class ItemState extends StateEntity {
     public ownerId: number;
     public window: number;
     public position: number;
@@ -47,8 +48,10 @@ export default class ItemDTO {
         attributeValue5,
         attributeType6,
         attributeValue6,
+        updatedAt = new Date(),
+        createdAt = new Date(),
     }) {
-        this.id = id;
+        super(id, createdAt, updatedAt);
         this.ownerId = ownerId;
         this.window = window;
         this.position = position;

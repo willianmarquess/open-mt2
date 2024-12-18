@@ -1,5 +1,6 @@
 import DatabaseManager from '@/core/infra/database/DatabaseManager';
-import PlayerDTO from '../../../core/domain/dto/PlayerDTO';
+import { ResultSetHeader } from 'mysql2';
+import PlayerState from '@/core/domain/entities/state/player/PlayerState';
 
 export default class PlayerRepository {
     private readonly databaseManager: DatabaseManager;
@@ -8,8 +9,8 @@ export default class PlayerRepository {
         this.databaseManager = databaseManager;
     }
 
-    async create(player: PlayerDTO) {
-        const [result] = await this.databaseManager.getConnection().query(
+    async create(player: PlayerState) {
+        const [result] = await this.databaseManager.getConnection().execute<ResultSetHeader>(
             `
         insert into game.player (
             accountId, 
@@ -86,7 +87,7 @@ export default class PlayerRepository {
         return !!players[0];
     }
 
-    async update(player: PlayerDTO) {
+    async update(player: PlayerState) {
         return this.databaseManager.getConnection().query(
             `
         UPDATE game.player SET 
@@ -167,10 +168,10 @@ export default class PlayerRepository {
             [accountId],
         );
 
-        return players.map((p) => this.mapToEntity(p));
+        return (players as Array<PlayerState>).map((p) => this.mapToEntity(p));
     }
 
-    async getByAccountIdAndSlot(accountId, slot) {
+    async getByAccountIdAndSlot(accountId: number, slot: number) {
         const [players] = await this.databaseManager.getConnection().query(
             `
         SELECT * FROM game.player WHERE accountId = ? and slot = ?;
@@ -181,7 +182,7 @@ export default class PlayerRepository {
         return this.mapToEntity(players[0]);
     }
 
-    mapToEntity(player: PlayerDTO) {
+    mapToEntity(player: PlayerState) {
         if (!player) return;
 
         const {
@@ -213,7 +214,7 @@ export default class PlayerRepository {
             slot,
         } = player;
 
-        return new PlayerDTO({
+        return new PlayerState({
             id,
             accountId,
             createdAt,

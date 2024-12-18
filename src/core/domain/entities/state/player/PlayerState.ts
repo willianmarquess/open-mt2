@@ -1,7 +1,6 @@
-export default class PlayerDTO {
-    public id: number;
-    public updatedAt?: Date;
-    public createdAt?: Date;
+import StateEntity from '../StateEntity';
+
+export default class PlayerState extends StateEntity {
     public accountId: number;
     public empire: number;
     public playerClass: number;
@@ -54,9 +53,7 @@ export default class PlayerDTO {
         availableStatusPoints = 0,
         slot = 0,
     }) {
-        this.id = id;
-        this.createdAt = createdAt;
-        this.updatedAt = updatedAt;
+        super(id, createdAt, updatedAt);
         this.accountId = accountId;
         this.empire = empire;
         this.playerClass = playerClass;
