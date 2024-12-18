@@ -1,7 +1,7 @@
-import Player from "@/core/domain/entities/game/player/Player";
-import World from "@/core/domain/World";
-import { ChatMessageTypeEnum } from "@/core/enum/ChatMessageTypeEnum";
-import ItemRepository from "@/game/infra/database/ItemRepository";
+import Player from '@/core/domain/entities/game/player/Player';
+import World from '@/core/domain/World';
+import { ChatMessageTypeEnum } from '@/core/enum/ChatMessageTypeEnum';
+import ItemRepository from '@/game/infra/database/ItemRepository';
 
 export default class PickupItemService {
     private readonly world: World;

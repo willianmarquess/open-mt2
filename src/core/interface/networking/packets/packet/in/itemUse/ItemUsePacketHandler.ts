@@ -1,8 +1,8 @@
-import Logger from "@/core/infra/logger/Logger";
-import UseItemService from "@/game/app/service/UseItemService";
-import PacketHandler from "../../PacketHandler";
-import ItemUsePacket from "./ItemUsePacket";
-import GameConnection from "@/game/interface/networking/GameConnection";
+import Logger from '@/core/infra/logger/Logger';
+import UseItemService from '@/game/app/service/UseItemService';
+import PacketHandler from '../../PacketHandler';
+import ItemUsePacket from './ItemUsePacket';
+import GameConnection from '@/game/interface/networking/GameConnection';
 
 export default class ItemUsePacketHandler extends PacketHandler<ItemUsePacket> {
     private readonly logger: Logger;

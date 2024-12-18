@@ -1,5 +1,5 @@
-import Command from "../../Command";
-import GoldCommandValidator from "./GoldCommandValidator";
+import Command from '../../Command';
+import GoldCommandValidator from './GoldCommandValidator';
 
 export default class GoldCommand extends Command {
     constructor({ args }) {

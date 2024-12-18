@@ -5,4 +5,4 @@ export enum MobRankEnum {
     S_KNIGHT = 'S_KNIGHT',
     BOSS = 'BOSS',
     KING = 'KING',
-};
+}

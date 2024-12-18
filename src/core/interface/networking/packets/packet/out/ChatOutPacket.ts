@@ -1,12 +1,12 @@
-import { PacketHeaderEnum } from "@/core/enum/PacketHeaderEnum";
-import PacketOut from "@/core/interface/networking/packets/packet/out/PacketOut"
+import PacketHeaderEnum from '@/core/enum/PacketHeaderEnum';
+import PacketOut from '@/core/interface/networking/packets/packet/out/PacketOut';
 
 type ChatOutPacketParams = {
-    messageType?: number
-    message?: string
-    vid?: number
-    empireId?: number
-}
+    messageType?: number;
+    message?: string;
+    vid?: number;
+    empireId?: number;
+};
 
 export default class ChatOutPacket extends PacketOut {
     private messageType: number;

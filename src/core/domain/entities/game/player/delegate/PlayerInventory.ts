@@ -1,10 +1,10 @@
-import { ChatMessageTypeEnum } from "@/core/enum/ChatMessageTypeEnum";
-import Item from "../../item/Item";
-import ItemAddedEvent from "../events/ItemAddedEvent";
-import ItemRemovedEvent from "../events/ItemRemovedEvent";
-import Player from "../Player";
-import { WindowTypeEnum } from "@/core/enum/WindowTypeEnum";
-import { ItemEquipmentSlotEnum } from "@/core/enum/ItemEquipmentSlotEnum";
+import { ChatMessageTypeEnum } from '@/core/enum/ChatMessageTypeEnum';
+import Item from '../../item/Item';
+import ItemAddedEvent from '../events/ItemAddedEvent';
+import ItemRemovedEvent from '../events/ItemRemovedEvent';
+import Player from '../Player';
+import { WindowTypeEnum } from '@/core/enum/WindowTypeEnum';
+import { ItemEquipmentSlotEnum } from '@/core/enum/ItemEquipmentSlotEnum';
 
 export default class PlayerInventory {
     private player: Player;
@@ -25,7 +25,7 @@ export default class PlayerInventory {
                 antiFlags: item.getAntiFlags().getFlag(),
                 highlight: 0,
                 bonuses: 0,
-                sockets: 0
+                sockets: 0,
             }),
         );
     }
@@ -73,11 +73,7 @@ export default class PlayerInventory {
             window: fromWindow,
             position: fromPosition,
         });
-        this.sendItemAdded(
-            toWindow,
-            toPosition,
-            item,
-        );
+        this.sendItemAdded(toWindow, toPosition, item);
 
         return item;
     }
@@ -93,22 +89,14 @@ export default class PlayerInventory {
             return false;
         }
 
-        this.sendItemAdded(
-            WindowTypeEnum.INVENTORY,
-            position,
-            item,
-        );
+        this.sendItemAdded(WindowTypeEnum.INVENTORY, position, item);
 
         return true;
     }
 
     sendInventory() {
         for (const item of this.player.getInventory().getItems().values()) {
-            this.sendItemAdded(
-                item.getWindow(),
-                item.getPosition(),
-                item,
-            );
+            this.sendItemAdded(item.getWindow(), item.getPosition(), item);
         }
         this.player.updateView();
     }

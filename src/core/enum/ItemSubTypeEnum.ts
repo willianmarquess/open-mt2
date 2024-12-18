@@ -8,4 +8,4 @@ export enum ItemSubTypeEnum {
     ARROW = 'WEAPON_ARROW',
     MOUNT_SPEAR = 'WEAPON_MOUNT_SPEAR',
     NUM_TYPES = 'WEAPON_NUM_TYPES',
-};
+}

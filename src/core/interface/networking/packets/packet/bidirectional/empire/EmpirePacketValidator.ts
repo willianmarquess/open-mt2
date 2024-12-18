@@ -1,5 +1,5 @@
-import PacketValidator from "../../../PacketValidator";
-import EmpirePacket from "./EmpirePacket";
+import PacketValidator from '../../../PacketValidator';
+import EmpirePacket from './EmpirePacket';
 
 export default class EmpirePacketValidator extends PacketValidator<EmpirePacket> {
     build() {

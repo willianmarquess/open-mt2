@@ -1,4 +1,4 @@
-import { ApplyTypeEnum } from "@/core/enum/ApplyTypeEnum";
+import { ApplyTypeEnum } from '@/core/enum/ApplyTypeEnum';
 
 export default class ItemApply {
     public type: ApplyTypeEnum;

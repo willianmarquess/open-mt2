@@ -1,6 +1,6 @@
-import Player from "@/core/domain/entities/game/player/Player";
-import ItemManager from "@/core/domain/manager/ItemManager";
-import PlayerRepository from "@/game/infra/database/PlayerRepository";
+import Player from '@/core/domain/entities/game/player/Player';
+import ItemManager from '@/core/domain/manager/ItemManager';
+import PlayerRepository from '@/game/infra/database/PlayerRepository';
 
 export default class SaveCharacterService {
     private readonly playerRepository: PlayerRepository;

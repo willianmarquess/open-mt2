@@ -1,5 +1,5 @@
-import PacketValidator from "../../../PacketValidator";
-import LoginRequestPacket from "./LoginRequestPacket";
+import PacketValidator from '../../../PacketValidator';
+import LoginRequestPacket from './LoginRequestPacket';
 
 export default class LoginRequestPacketValidator extends PacketValidator<LoginRequestPacket> {
     constructor(loginRequestPacket: LoginRequestPacket) {

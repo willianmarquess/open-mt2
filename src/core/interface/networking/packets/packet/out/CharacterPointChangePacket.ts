@@ -1,13 +1,12 @@
-import { PacketHeaderEnum } from "@/core/enum/PacketHeaderEnum";
-import PacketOut from "@/core/interface/networking/packets/packet/out/PacketOut"
+import PacketHeaderEnum from '@/core/enum/PacketHeaderEnum';
+import PacketOut from '@/core/interface/networking/packets/packet/out/PacketOut';
 
 type CharacterPointChangePacketParams = {
     vid?: number;
     type?: number;
     amount?: number;
     value?: number;
-}
-
+};
 
 /**
  * @packet

@@ -1,5 +1,5 @@
-import Command from "../../Command";
-import InvokeCommandValidator from "./InvokeCommandValidator";
+import Command from '../../Command';
+import InvokeCommandValidator from './InvokeCommandValidator';
 
 export default class InvokeCommand extends Command {
     constructor({ args }) {

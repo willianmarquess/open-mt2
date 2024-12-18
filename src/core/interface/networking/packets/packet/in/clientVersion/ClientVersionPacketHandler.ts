@@ -1,7 +1,7 @@
-import Logger from "@/core/infra/logger/Logger";
-import PacketHandler from "../../PacketHandler";
-import ClientVersionPacket from "./ClientVersionPacket";
-import GameConnection from "@/game/interface/networking/GameConnection";
+import Logger from '@/core/infra/logger/Logger';
+import PacketHandler from '../../PacketHandler';
+import ClientVersionPacket from './ClientVersionPacket';
+import GameConnection from '@/game/interface/networking/GameConnection';
 
 export default class ClientVersionPacketHandler extends PacketHandler<ClientVersionPacket> {
     private readonly logger: Logger;

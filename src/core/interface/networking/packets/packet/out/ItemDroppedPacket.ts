@@ -1,13 +1,13 @@
-import { PacketHeaderEnum } from "@/core/enum/PacketHeaderEnum";
-import PacketOut from "@/core/interface/networking/packets/packet/out/PacketOut"
+import PacketHeaderEnum from '@/core/enum/PacketHeaderEnum';
+import PacketOut from '@/core/interface/networking/packets/packet/out/PacketOut';
 
 type ItemDroppedPacketParams = {
-    positionX?: number,
-    positionY?: number,
-    positionZ?: number,
-    virtualId?: number,
-    id?: number,
-}
+    positionX?: number;
+    positionY?: number;
+    positionZ?: number;
+    virtualId?: number;
+    id?: number;
+};
 
 export default class ItemDroppedPacket extends PacketOut {
     private positionX: number;

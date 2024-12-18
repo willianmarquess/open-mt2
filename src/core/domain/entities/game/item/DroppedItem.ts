@@ -1,4 +1,4 @@
-import Item from "@/core/domain/entities/game/item/Item";
+import Item from '@/core/domain/entities/game/item/Item';
 
 export default class DroppedItem {
     private item: Item;

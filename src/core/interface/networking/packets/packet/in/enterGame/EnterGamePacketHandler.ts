@@ -1,11 +1,11 @@
-import Logger from "@/core/infra/logger/Logger";
-import EnterGameService from "@/game/app/service/EnterGameService";
-import PacketHandler from "../../PacketHandler";
-import EnterGamePacket from "./EnterGamePacket";
-import GameConnection from "@/game/interface/networking/GameConnection";
-import { ConnectionStateEnum } from "@/core/enum/ConnectionStateEnum";
-import GameTimePacket from "../../out/GameTimePacket";
-import ChannelPacket from "../../out/ChannelPacket";
+import Logger from '@/core/infra/logger/Logger';
+import EnterGameService from '@/game/app/service/EnterGameService';
+import PacketHandler from '../../PacketHandler';
+import EnterGamePacket from './EnterGamePacket';
+import GameConnection from '@/game/interface/networking/GameConnection';
+import { ConnectionStateEnum } from '@/core/enum/ConnectionStateEnum';
+import GameTimePacket from '../../out/GameTimePacket';
+import ChannelPacket from '../../out/ChannelPacket';
 
 export default class EnterGamePacketHandler extends PacketHandler<EnterGamePacket> {
     private readonly enterGameService: EnterGameService;

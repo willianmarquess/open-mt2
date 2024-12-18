@@ -1,16 +1,16 @@
-import Logger from "@/core/infra/logger/Logger";
-import CommandHandler from "../../CommandHandler";
-import LevelCommand from "./LevelCommand";
-import World from "@/core/domain/World";
-import Player from "@/core/domain/entities/game/player/Player";
-import { ChatMessageTypeEnum } from "@/core/enum/ChatMessageTypeEnum";
+import Logger from '@/core/infra/logger/Logger';
+import CommandHandler from '../../CommandHandler';
+import LevelCommand from './LevelCommand';
+import World from '@/core/domain/World';
+import Player from '@/core/domain/entities/game/player/Player';
+import { ChatMessageTypeEnum } from '@/core/enum/ChatMessageTypeEnum';
 
 export default class LevelCommandHandler extends CommandHandler<LevelCommand> {
     private readonly logger: Logger;
     private readonly world: World;
 
     constructor({ logger, world }) {
-        super()
+        super();
         this.logger = logger;
         this.world = world;
     }

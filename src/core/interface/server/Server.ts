@@ -1,8 +1,7 @@
-import { createServer,Server as SocketServer, Socket } from 'node:net';
+import { createServer, Server as SocketServer, Socket } from 'node:net';
 import GameConnection from '../../../game/interface/networking/GameConnection';
 import Connection from '@/core/interface/networking/Connection';
 import Logger from '@/core/infra/logger/Logger';
-import { PacketHeaderEnum } from '@/core/enum/PacketHeaderEnum';
 import { PacketMapValue } from '@/core/interface/networking/packets/Packets';
 import { GameConfig } from '@/game/infra/config/GameConfig';
 
@@ -12,10 +11,10 @@ export default abstract class Server {
     protected readonly logger: Logger;
     protected readonly config: GameConfig;
     protected readonly container: any;
-    protected readonly packets: Map<PacketHeaderEnum, PacketMapValue<any>>;
+    protected readonly packets: Map<number, PacketMapValue<any>>;
     protected isShuttingDown = false;
 
-    constructor(container: { logger: Logger; config: any; packets: any; }) {
+    constructor(container: { logger: Logger; config: GameConfig; packets: Map<number, PacketMapValue<any>> }) {
         this.logger = container.logger;
         this.config = container.config;
         this.container = container;

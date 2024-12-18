@@ -1,5 +1,5 @@
-import { PacketHeaderEnum } from "@/core/enum/PacketHeaderEnum";
-import PacketOut from "@/core/interface/networking/packets/packet/out/PacketOut"
+import PacketHeaderEnum from '@/core/enum/PacketHeaderEnum';
+import PacketOut from '@/core/interface/networking/packets/packet/out/PacketOut';
 
 class ItemBonus {
     public id: number;
@@ -11,16 +11,16 @@ class ItemBonus {
 }
 
 type ItemPacketParams = {
-    window?: number,
-    position?: number,
-    id?: number,
-    count?: number,
-    flags?: number,
-    antiFlags?: number,
-    highlight?: number,
-    sockets?: Array<number>,
-    bonuses?: Array<ItemBonus>
-}
+    window?: number;
+    position?: number;
+    id?: number;
+    count?: number;
+    flags?: number;
+    antiFlags?: number;
+    highlight?: number;
+    sockets?: Array<number>;
+    bonuses?: Array<ItemBonus>;
+};
 
 export default class ItemPacket extends PacketOut {
     private window: number;
@@ -60,14 +60,14 @@ export default class ItemPacket extends PacketOut {
         this.antiFlags = 0;
         this.highlight = 0;
         this.sockets = new Array(3).fill(0);
-        this.bonuses = new Array(
+        this.bonuses = [
             new ItemBonus({}),
             new ItemBonus({}),
             new ItemBonus({}),
             new ItemBonus({}),
             new ItemBonus({}),
             new ItemBonus({}),
-        );
+        ];
     }
 
     pack() {

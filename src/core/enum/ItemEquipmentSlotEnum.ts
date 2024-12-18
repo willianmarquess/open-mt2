@@ -23,4 +23,4 @@ export enum ItemEquipmentSlotEnum {
     RING1 = 21,
     RING2 = 22,
     BELT = 23,
-};
+}

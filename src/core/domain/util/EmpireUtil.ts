@@ -2,7 +2,7 @@ enum EmpireEnum {
     RED = 1,
     YELLOW = 2,
     BLUE = 3,
-};
+}
 
 const empireIdToEmpireName = {
     [EmpireEnum.RED]: 'red',

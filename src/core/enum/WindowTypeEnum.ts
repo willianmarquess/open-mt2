@@ -8,4 +8,4 @@ export enum WindowTypeEnum {
     BELT_INVENTORY = 6,
     AUCTION = 7,
     GROUND = 8,
-};
+}

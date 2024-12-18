@@ -9,10 +9,10 @@ import LogoutService from '@/game/app/service/LogoutService';
 const INCOMING_MESSAGES_QUEUE_SIZE = 5_000;
 
 type InMessage = {
-    packet: Packet,
-    handler: PacketHandler<Packet>,
-    connection: GameConnection
-}
+    packet: Packet;
+    handler: PacketHandler<Packet>;
+    connection: GameConnection;
+};
 
 export default class GameServer extends Server {
     #incomingMessages = new Queue<InMessage>(INCOMING_MESSAGES_QUEUE_SIZE);

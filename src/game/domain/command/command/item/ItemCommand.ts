@@ -1,5 +1,5 @@
-import Command from "../../Command";
-import ItemCommandValidator from "./ItemCommandValidator";
+import Command from '../../Command';
+import ItemCommandValidator from './ItemCommandValidator';
 
 export default class ItemCommand extends Command {
     constructor({ args }) {

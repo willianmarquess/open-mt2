@@ -1,7 +1,7 @@
-import { AttackTypeEnum } from "@/core/enum/AttackTypeEnum";
-import PacketIn from "../PacketIn";
-import { PacketHeaderEnum } from "@/core/enum/PacketHeaderEnum";
-import AttackPacketValidator from "./AttackPacketValidator";
+import { AttackTypeEnum } from '@/core/enum/AttackTypeEnum';
+import PacketIn from '../PacketIn';
+import PacketHeaderEnum from '@/core/enum/PacketHeaderEnum';
+import AttackPacketValidator from './AttackPacketValidator';
 
 export default class AttackPacket extends PacketIn {
     private attackType: AttackTypeEnum;

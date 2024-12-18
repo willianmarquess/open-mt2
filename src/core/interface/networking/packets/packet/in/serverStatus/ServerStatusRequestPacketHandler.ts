@@ -1,9 +1,9 @@
-import { GameConfig } from "@/game/infra/config/GameConfig";
-import GameConnection from "@/game/interface/networking/GameConnection";
-import ServerStatusPacket from "../../out/ServerStatusPacket";
-import PacketHandler from "../../PacketHandler";
+import { GameConfig } from '@/game/infra/config/GameConfig';
+import GameConnection from '@/game/interface/networking/GameConnection';
+import ServerStatusPacket from '../../out/ServerStatusPacket';
+import PacketHandler from '../../PacketHandler';
 
-export default class ServerStatusRequestPacketHandler extends PacketHandler<ServerStatusPacket>{
+export default class ServerStatusRequestPacketHandler extends PacketHandler<ServerStatusPacket> {
     private readonly config: GameConfig;
 
     constructor({ config }) {

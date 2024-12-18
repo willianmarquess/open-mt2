@@ -1,5 +1,5 @@
-import Command from "../../Command";
-import LevelCommandValidator from "./LevelCommandValidator";
+import Command from '../../Command';
+import LevelCommandValidator from './LevelCommandValidator';
 
 export default class LevelCommand extends Command {
     constructor({ args }) {

@@ -1,6 +1,6 @@
-import { PacketHeaderEnum } from "@/core/enum/PacketHeaderEnum";
-import PacketBidirectional from "../PacketBidirectional";
-import HandshakePacketValidator from "./HandshakePacketValidator";
+import PacketHeaderEnum from '@/core/enum/PacketHeaderEnum';
+import PacketBidirectional from '../PacketBidirectional';
+import HandshakePacketValidator from './HandshakePacketValidator';
 
 export default class HandshakePacket extends PacketBidirectional {
     private id: number;

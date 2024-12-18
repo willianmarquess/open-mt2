@@ -1,25 +1,25 @@
-import { PacketHeaderEnum } from "@/core/enum/PacketHeaderEnum";
-import PacketOut from "@/core/interface/networking/packets/packet/out/PacketOut"
+import PacketHeaderEnum from '@/core/enum/PacketHeaderEnum';
+import PacketOut from '@/core/interface/networking/packets/packet/out/PacketOut';
 
 type CharacterInfoParams = {
-    id: number,
-    name: string,
-    playerClass: number,
-    level: number,
-    playTime: number,
-    st: number,
-    ht: number,
-    dx: number,
-    iq: number,
-    bodyPart: number,
-    nameChange: number,
-    hairPart: number,
-    positionX: number,
-    positionY: number,
-    ip: number,
-    port: number,
-    skillGroup: number,
-}
+    id: number;
+    name: string;
+    playerClass: number;
+    level: number;
+    playTime: number;
+    st: number;
+    ht: number;
+    dx: number;
+    iq: number;
+    bodyPart: number;
+    nameChange: number;
+    hairPart: number;
+    positionX: number;
+    positionY: number;
+    ip: number;
+    port: number;
+    skillGroup: number;
+};
 
 /**
  * @packet

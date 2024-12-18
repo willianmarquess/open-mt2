@@ -1,4 +1,4 @@
-import { ItemLimitTypeEnum } from "@/core/enum/ItemLimitTypeEnum";
+import { ItemLimitTypeEnum } from '@/core/enum/ItemLimitTypeEnum';
 
 export default class ItemLimit {
     public type: ItemLimitTypeEnum;

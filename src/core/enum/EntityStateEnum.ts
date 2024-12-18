@@ -3,4 +3,4 @@ export enum EntityStateEnum {
     MOVING = 1,
     BATTLE = 2,
     DEAD = 3,
-};
+}

@@ -1,14 +1,14 @@
-import SelectCharacterService from "@/game/app/service/SelectCharacterService";
-import PacketHandler from "../../PacketHandler";
-import SelectCharacterPacket from "./SelectCharacterPacket";
-import Logger from "@/core/infra/logger/Logger";
-import GameConnection from "@/game/interface/networking/GameConnection";
-import { ConnectionStateEnum } from "@/core/enum/ConnectionStateEnum";
-import CharacterDetailsPacket from "../../out/CharacterDetailsPacket";
-import CharacterPointsPacket from "../../out/CharacterPointsPacket";
-import { PointsEnum } from "@/core/enum/PointsEnum";
+import SelectCharacterService from '@/game/app/service/SelectCharacterService';
+import PacketHandler from '../../PacketHandler';
+import SelectCharacterPacket from './SelectCharacterPacket';
+import Logger from '@/core/infra/logger/Logger';
+import GameConnection from '@/game/interface/networking/GameConnection';
+import { ConnectionStateEnum } from '@/core/enum/ConnectionStateEnum';
+import CharacterDetailsPacket from '../../out/CharacterDetailsPacket';
+import CharacterPointsPacket from '../../out/CharacterPointsPacket';
+import { PointsEnum } from '@/core/enum/PointsEnum';
 
-export default class SelectCharacterPacketHandler extends PacketHandler<SelectCharacterPacket>{
+export default class SelectCharacterPacketHandler extends PacketHandler<SelectCharacterPacket> {
     private readonly selectCharacterService: SelectCharacterService;
     private readonly logger: Logger;
 
@@ -27,7 +27,7 @@ export default class SelectCharacterPacketHandler extends PacketHandler<SelectCh
         }
 
         const accountId = connection.getAccountId();
-        
+
         if (!accountId) {
             this.logger.info(
                 `[SelectCharacterPacketHandler] The connection does not have an accountId, this cannot happen`,

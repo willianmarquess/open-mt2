@@ -6,4 +6,4 @@ export enum ConnectionStateEnum {
     LOADING = 4,
     GAME = 5,
     AUTH = 10,
-};
+}

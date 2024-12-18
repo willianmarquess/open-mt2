@@ -1,6 +1,6 @@
-import { ChatMessageTypeEnum } from "@/core/enum/ChatMessageTypeEnum";
-import PacketValidator from "../../../PacketValidator";
-import ChatInPacket from "./ChatInPacket";
+import { ChatMessageTypeEnum } from '@/core/enum/ChatMessageTypeEnum';
+import PacketValidator from '../../../PacketValidator';
+import ChatInPacket from './ChatInPacket';
 
 export default class ChatInPacketValidator extends PacketValidator<ChatInPacket> {
     build() {

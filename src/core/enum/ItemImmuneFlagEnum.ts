@@ -6,4 +6,4 @@ export enum ItemImmuneFlagEnum {
     SLOW = 1 << 4,
     POISON = 1 << 5,
     TERROR = 1 << 6,
-};
+}

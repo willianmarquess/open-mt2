@@ -1,11 +1,11 @@
-import Logger from "@/core/infra/logger/Logger";
-import Player from "../Player";
-import GameEntity from "../../GameEntity";
-import { AttackTypeEnum } from "@/core/enum/AttackTypeEnum";
-import MathUtil from "@/core/domain/util/MathUtil";
-import { ItemTypeEnum } from "@/core/enum/ItemTypeEnum";
-import { ItemSubTypeEnum } from "@/core/enum/ItemSubTypeEnum";
-import { ChatMessageTypeEnum } from "@/core/enum/ChatMessageTypeEnum";
+import Logger from '@/core/infra/logger/Logger';
+import Player from '../Player';
+import GameEntity from '../../GameEntity';
+import { AttackTypeEnum } from '@/core/enum/AttackTypeEnum';
+import MathUtil from '@/core/domain/util/MathUtil';
+import { ItemTypeEnum } from '@/core/enum/ItemTypeEnum';
+import { ItemSubTypeEnum } from '@/core/enum/ItemSubTypeEnum';
+import { ChatMessageTypeEnum } from '@/core/enum/ChatMessageTypeEnum';
 
 export default class PlayerBattle {
     private player: Player;

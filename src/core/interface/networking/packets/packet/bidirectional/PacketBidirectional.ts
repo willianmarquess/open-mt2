@@ -1,6 +1,6 @@
-import BufferReader from "../../../buffer/BufferReader";
-import BufferWriter from "../../../buffer/BufferWriter";
-import Packet from "../Packet";
+import BufferReader from '../../../buffer/BufferReader';
+import BufferWriter from '../../../buffer/BufferWriter';
+import Packet from '../Packet';
 
 export default abstract class PacketBidirectional extends Packet {
     protected readonly bufferWriter: BufferWriter;

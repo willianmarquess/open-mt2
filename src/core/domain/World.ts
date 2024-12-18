@@ -28,7 +28,7 @@ export default class World {
 
     virtualId = 0;
 
-    deltas = new Array();
+    deltas = [];
 
     areas = new Map<string, Area>();
     width = 0;
@@ -138,8 +138,8 @@ export default class World {
         for (const area of this.areas.values()) {
             const realPositionX = getAbsolutePosition(area.getPositionX());
             const realPositionY = getAbsolutePosition(area.getPositionY());
-            for (var x = realPositionX; x < realPositionX + area.getWidth(); x++) {
-                for (var y = realPositionY; y < realPositionY + area.getHeight(); y++) {
+            for (let x = realPositionX; x < realPositionX + area.getWidth(); x++) {
+                for (let y = realPositionY; y < realPositionY + area.getHeight(); y++) {
                     this.grid.setValue(x, y, area);
                 }
             }

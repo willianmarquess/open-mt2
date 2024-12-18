@@ -40,4 +40,4 @@ export enum PointsEnum {
     RESIST_PENETRATE = 137,
     MIN_WEAPON_DAMAGE = 200,
     MAX_WEAPON_DAMAGE = 201,
-};
+}

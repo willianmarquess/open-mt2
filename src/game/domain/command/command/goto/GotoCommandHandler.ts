@@ -1,12 +1,12 @@
-import Logger from "@/core/infra/logger/Logger";
-import CommandHandler from "../../CommandHandler";
-import GotoCommand from "./GotoCommand";
-import World from "@/core/domain/World";
-import Player from "@/core/domain/entities/game/player/Player";
-import { ChatMessageTypeEnum } from "@/core/enum/ChatMessageTypeEnum";
-import EmpireUtil from "@/core/domain/util/EmpireUtil";
+import Logger from '@/core/infra/logger/Logger';
+import CommandHandler from '../../CommandHandler';
+import GotoCommand from './GotoCommand';
+import World from '@/core/domain/World';
+import Player from '@/core/domain/entities/game/player/Player';
+import { ChatMessageTypeEnum } from '@/core/enum/ChatMessageTypeEnum';
+import EmpireUtil from '@/core/domain/util/EmpireUtil';
 
-export default class GotoCommandHandler extends CommandHandler<GotoCommand>{
+export default class GotoCommandHandler extends CommandHandler<GotoCommand> {
     private readonly logger: Logger;
     private readonly world: World;
 

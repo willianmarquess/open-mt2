@@ -18,4 +18,4 @@ export enum ItemAntiFlagEnum {
     ANTI_MYSHOP = 1 << 16,
     ANTI_SAFEBOX = 1 << 17,
     ANTI_WOLFMAN = 1 << 18,
-};
+}

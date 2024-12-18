@@ -34,4 +34,4 @@ export enum ItemTypeEnum {
     SECONDARY_COIN = 'ITEM_SECONDARY_COIN',
     RING = 'ITEM_RING',
     BELT = 'ITEM_BELT',
-};
+}

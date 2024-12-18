@@ -1,21 +1,21 @@
-import Result from "@/core/app/Result";
-import Player from "@/core/domain/entities/game/player/Player";
-import PlayerFactory from "@/core/domain/factories/PlayerFactory";
-import { ErrorTypesEnum } from "@/core/enum/ErrorTypesEnum";
-import CacheProvider from "@/core/infra/cache/CacheProvider";
-import Logger from "@/core/infra/logger/Logger";
-import CacheKeyGenerator from "@/core/util/CacheKeyGenerator";
-import PlayerRepository from "@/game/infra/database/PlayerRepository";
+import Result from '@/core/app/Result';
+import Player from '@/core/domain/entities/game/player/Player';
+import PlayerFactory from '@/core/domain/factories/PlayerFactory';
+import { ErrorTypesEnum } from '@/core/enum/ErrorTypesEnum';
+import CacheProvider from '@/core/infra/cache/CacheProvider';
+import Logger from '@/core/infra/logger/Logger';
+import CacheKeyGenerator from '@/core/util/CacheKeyGenerator';
+import PlayerRepository from '@/game/infra/database/PlayerRepository';
 
 const MAX_PLAYERS_PER_ACCOUNT = 4;
 
 type CreateCharacterServiceParams = {
-    playerName: string, 
-    playerClass: number, 
-    appearance: number, 
-    slot: number, 
-    accountId: number
-}
+    playerName: string;
+    playerClass: number;
+    appearance: number;
+    slot: number;
+    accountId: number;
+};
 
 export default class CreateCharacterService {
     private readonly logger: Logger;
@@ -30,7 +30,13 @@ export default class CreateCharacterService {
         this.playerFactory = playerFactory;
     }
 
-    async execute({ playerName, playerClass, appearance, slot, accountId }: CreateCharacterServiceParams): Promise<Result<Player, ErrorTypesEnum>> {
+    async execute({
+        playerName,
+        playerClass,
+        appearance,
+        slot,
+        accountId,
+    }: CreateCharacterServiceParams): Promise<Result<Player, ErrorTypesEnum>> {
         const nameAlreadyExists = await this.playerRepository.nameAlreadyExists(playerName);
 
         if (nameAlreadyExists) {

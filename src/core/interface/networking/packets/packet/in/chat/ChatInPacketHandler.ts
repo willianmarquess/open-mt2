@@ -1,8 +1,8 @@
-import Logger from "@/core/infra/logger/Logger";
-import PacketHandler from "../../PacketHandler";
-import ChatInPacket from "./ChatInPacket";
-import GameConnection from "@/game/interface/networking/GameConnection";
-import { ChatMessageTypeEnum } from "@/core/enum/ChatMessageTypeEnum";
+import Logger from '@/core/infra/logger/Logger';
+import PacketHandler from '../../PacketHandler';
+import ChatInPacket from './ChatInPacket';
+import GameConnection from '@/game/interface/networking/GameConnection';
+import { ChatMessageTypeEnum } from '@/core/enum/ChatMessageTypeEnum';
 
 export default class ChatInPacketHandler extends PacketHandler<ChatInPacket> {
     private logger: Logger;
@@ -25,9 +25,7 @@ export default class ChatInPacketHandler extends PacketHandler<ChatInPacket> {
         const player = connection.getPlayer();
 
         if (!player) {
-            this.logger.info(
-                `[ChatInPacketHandler] The connection does not have an player select, this cannot happen`,
-            );
+            this.logger.info(`[ChatInPacketHandler] The connection does not have an player select, this cannot happen`);
             connection.close();
             return;
         }

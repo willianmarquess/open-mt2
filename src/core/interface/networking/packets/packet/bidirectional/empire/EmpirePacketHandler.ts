@@ -1,9 +1,9 @@
-import Logger from "@/core/infra/logger/Logger";
-import SelectEmpireService from "@/game/app/service/SelectEmpireService";
-import GameConnection from "@/game/interface/networking/GameConnection";
-import PacketHandler from "../../PacketHandler";
-import EmpirePacket from "./EmpirePacket";
-import { ErrorTypesEnum } from "@/core/enum/ErrorTypesEnum";
+import Logger from '@/core/infra/logger/Logger';
+import SelectEmpireService from '@/game/app/service/SelectEmpireService';
+import GameConnection from '@/game/interface/networking/GameConnection';
+import PacketHandler from '../../PacketHandler';
+import EmpirePacket from './EmpirePacket';
+import { ErrorTypesEnum } from '@/core/enum/ErrorTypesEnum';
 
 export default class EmpirePacketHandler extends PacketHandler<EmpirePacket> {
     private readonly selectEmpireService: SelectEmpireService;
@@ -15,7 +15,7 @@ export default class EmpirePacketHandler extends PacketHandler<EmpirePacket> {
         this.logger = logger;
     }
 
-    async execute(connection: GameConnection, packet:EmpirePacket) {
+    async execute(connection: GameConnection, packet: EmpirePacket) {
         if (!packet.isValid()) {
             this.logger.error(`[AuthTokenPacketHandler] Packet invalid`);
             this.logger.error(packet.getErrorMessage());

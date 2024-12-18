@@ -7,33 +7,33 @@ import EmpireUtil from '@/core/domain/util/EmpireUtil';
 import Player from '../entities/game/player/Player';
 
 type PlayerFactoryParams = {
-    playerClass: number,
-    accountId: number,
-    appearance: number,
-    slot: number,
-    virtualId?: number,
-    id?: number,
-    empire: number,
-    skillGroup?: number,
-    playTime?: number,
-    level?: number,
-    experience?: number,
-    gold?: number,
-    st?: number,
-    ht?: number,
-    dx?: number,
-    iq?: number,
-    positionX?: number,
-    positionY?: number,
-    health?: number,
-    mana?: number,
-    stamina?: number,
-    bodyPart?: number,
-    hairPart?: number,
-    name: string,
-    givenStatusPoints?: number,
-    availableStatusPoints?: number,
-}
+    playerClass: number;
+    accountId: number;
+    appearance: number;
+    slot: number;
+    virtualId?: number;
+    id?: number;
+    empire: number;
+    skillGroup?: number;
+    playTime?: number;
+    level?: number;
+    experience?: number;
+    gold?: number;
+    st?: number;
+    ht?: number;
+    dx?: number;
+    iq?: number;
+    positionX?: number;
+    positionY?: number;
+    health?: number;
+    mana?: number;
+    stamina?: number;
+    bodyPart?: number;
+    hairPart?: number;
+    name: string;
+    givenStatusPoints?: number;
+    availableStatusPoints?: number;
+};
 
 export default class PlayerFactory {
     private config: GameConfig;

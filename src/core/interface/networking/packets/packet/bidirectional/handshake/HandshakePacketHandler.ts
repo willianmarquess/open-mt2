@@ -1,7 +1,7 @@
-import Logger from "@/core/infra/logger/Logger";
-import PacketHandler from "../../PacketHandler";
-import HandshakePacket from "./HandshakePacket";
-import GameConnection from "@/game/interface/networking/GameConnection";
+import Logger from '@/core/infra/logger/Logger';
+import PacketHandler from '../../PacketHandler';
+import HandshakePacket from './HandshakePacket';
+import GameConnection from '@/game/interface/networking/GameConnection';
 
 export default class HandshakePacketHandler extends PacketHandler<HandshakePacket> {
     private readonly logger: Logger;

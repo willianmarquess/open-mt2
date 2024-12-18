@@ -1,8 +1,8 @@
-import Logger from "@/core/infra/logger/Logger";
-import PacketHandler from "../../PacketHandler";
-import ItemDropPacket from "./ItemDropPacket";
-import DropItemService from "@/game/app/service/DropItemService";
-import GameConnection from "@/game/interface/networking/GameConnection";
+import Logger from '@/core/infra/logger/Logger';
+import PacketHandler from '../../PacketHandler';
+import ItemDropPacket from './ItemDropPacket';
+import DropItemService from '@/game/app/service/DropItemService';
+import GameConnection from '@/game/interface/networking/GameConnection';
 
 export default class ItemDropPacketHandler extends PacketHandler<ItemDropPacket> {
     private readonly logger: Logger;
@@ -27,7 +27,7 @@ export default class ItemDropPacketHandler extends PacketHandler<ItemDropPacket>
             window: packet.getWindow(),
             position: packet.getPosition(),
             gold: packet.getGold(),
-            count: packet.getCount()
+            count: packet.getCount(),
         });
     }
 }

@@ -1,5 +1,5 @@
-import PacketValidator from "../../../PacketValidator";
-import AttackPacket from "./AttackPacket";
+import PacketValidator from '../../../PacketValidator';
+import AttackPacket from './AttackPacket';
 
 export default class AttackPacketValidator extends PacketValidator<AttackPacket> {
     constructor(attackPacket: AttackPacket) {
@@ -7,7 +7,11 @@ export default class AttackPacketValidator extends PacketValidator<AttackPacket>
     }
 
     build() {
-        this.createRule(this.packet.getAttackType(), 'attackType').isRequired().isNumber().isGreaterThanOrEqual(0).build();
+        this.createRule(this.packet.getAttackType(), 'attackType')
+            .isRequired()
+            .isNumber()
+            .isGreaterThanOrEqual(0)
+            .build();
         this.createRule(this.packet.getVictimVirtualId(), 'victimVirtualId')
             .isRequired()
             .isNumber()

@@ -1,15 +1,15 @@
-import Player from "@/core/domain/entities/game/player/Player";
-import ItemManager from "@/core/domain/manager/ItemManager";
-import { ChatMessageTypeEnum } from "@/core/enum/ChatMessageTypeEnum";
-import Logger from "@/core/infra/logger/Logger";
+import Player from '@/core/domain/entities/game/player/Player';
+import ItemManager from '@/core/domain/manager/ItemManager';
+import { ChatMessageTypeEnum } from '@/core/enum/ChatMessageTypeEnum';
+import Logger from '@/core/infra/logger/Logger';
 
 type DropItemServiceParams = {
-    window: number, 
-    position: number, 
-    gold: number, 
-    count: number, 
-    player: Player
-}
+    window: number;
+    position: number;
+    gold: number;
+    count: number;
+    player: Player;
+};
 
 export default class DropItemService {
     private readonly logger: Logger;

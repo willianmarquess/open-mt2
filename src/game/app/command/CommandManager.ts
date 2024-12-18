@@ -1,7 +1,7 @@
-import { ChatMessageTypeEnum } from "@/core/enum/ChatMessageTypeEnum";
-import Logger from "@/core/infra/logger/Logger";
-import Command from "@/game/domain/command/Command";
-import { CommandMapValue } from "@/game/domain/command/Commands";
+import { ChatMessageTypeEnum } from '@/core/enum/ChatMessageTypeEnum';
+import Logger from '@/core/infra/logger/Logger';
+import Command from '@/game/domain/command/Command';
+import { CommandMapValue } from '@/game/domain/command/Commands';
 
 export default class CommandManager {
     private readonly logger: Logger;

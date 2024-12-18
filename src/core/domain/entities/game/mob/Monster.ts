@@ -7,8 +7,6 @@ import MonsterMovedEvent from './events/MonsterMovedEvent';
 import Mob from './Mob';
 import { EntityTypeEnum } from '@/core/enum/EntityTypeEnum';
 import { EntityStateEnum } from '@/core/enum/EntityStateEnum';
-import { AttackTypeEnum } from '@/core/enum/AttackTypeEnum';
-import GameEntity from '../GameEntity';
 
 export default class Monster extends Mob {
     private readonly behavior: Behavior;
@@ -243,7 +241,7 @@ export default class Monster extends Mob {
         throw new Error('Method not implemented.');
     }
 
-    attack(victim: GameEntity, attackType: AttackTypeEnum): void {
+    attack(): void {
         throw new Error('Method not implemented.');
     }
 

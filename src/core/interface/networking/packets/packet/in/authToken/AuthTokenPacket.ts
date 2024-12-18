@@ -1,6 +1,6 @@
-import { PacketHeaderEnum } from "@/core/enum/PacketHeaderEnum";
-import PacketIn from "../PacketIn";
-import AuthTokenPacketValidator from "./AuthTokenPacketValidator";
+import PacketHeaderEnum from '@/core/enum/PacketHeaderEnum';
+import PacketIn from '../PacketIn';
+import AuthTokenPacketValidator from './AuthTokenPacketValidator';
 
 export default class AuthTokenPacket extends PacketIn {
     private username: string;

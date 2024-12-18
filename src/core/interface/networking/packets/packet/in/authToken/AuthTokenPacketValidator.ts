@@ -1,5 +1,5 @@
-import PacketValidator from "../../../PacketValidator";
-import AuthTokenPacket from "./AuthTokenPacket";
+import PacketValidator from '../../../PacketValidator';
+import AuthTokenPacket from './AuthTokenPacket';
 
 export default class AuthTokenPacketValidator extends PacketValidator<AuthTokenPacket> {
     constructor(authTokenPacket: AuthTokenPacket) {

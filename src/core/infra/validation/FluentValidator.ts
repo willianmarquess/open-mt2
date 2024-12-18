@@ -1,17 +1,17 @@
 import RuleBuilder from '@/core/infra/validation/RuleBuilder';
 
 export default class FluentValidator {
-    private rules: Array<RuleBuilder>;
+    private rules: Array<RuleBuilder<any>>;
 
     constructor() {
         this.rules = [];
     }
 
-    createRule(value: any, name: string) {
+    createRule<T>(value: T, name: string) {
         return new RuleBuilder(this, value, name);
     }
 
-    addRule(rule: RuleBuilder) {
+    addRule<T>(rule: RuleBuilder<T>) {
         this.rules.push(rule);
     }
 
@@ -31,7 +31,7 @@ export default class FluentValidator {
     getFormattedErrorMessage() {
         const errors = this.getErrors();
         return errors.reduce((prev, curr) => {
-            const fieldErrors = curr.errors.reduce((msg, err) => msg += ` | ${err.error}`, `field: ${curr.name}`)
+            const fieldErrors = curr.errors.reduce((msg, err) => (msg += ` | ${err.error}`), `field: ${curr.name}`);
             return prev + fieldErrors + '\n';
         }, '');
     }

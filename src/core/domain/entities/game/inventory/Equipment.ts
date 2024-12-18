@@ -3,9 +3,9 @@ import { ItemWearFlagEnum } from '../../../../enum/ItemWearFlagEnum';
 import Item from '../item/Item';
 
 type ItemSlotInfo = {
-    set: (value: Item) => void,
-    get: () => Item
-}
+    set: (value: Item) => void;
+    get: () => Item;
+};
 
 export default class Equipment {
     private slots: Map<ItemEquipmentSlotEnum, ItemSlotInfo> = new Map<ItemEquipmentSlotEnum, ItemSlotInfo>();

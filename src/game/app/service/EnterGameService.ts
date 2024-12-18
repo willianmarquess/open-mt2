@@ -1,5 +1,5 @@
-import Player from "@/core/domain/entities/game/player/Player";
-import World from "@/core/domain/World";
+import Player from '@/core/domain/entities/game/player/Player';
+import World from '@/core/domain/World';
 
 export default class EnterGameService {
     private readonly world: World;

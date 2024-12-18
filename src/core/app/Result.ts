@@ -2,7 +2,7 @@ export default class Result<T, E> {
     private data?: T;
     private error?: E;
 
-    private constructor({ data, error }: { data?: any, error?: any }) {
+    private constructor({ data, error }: { data?: any; error?: any }) {
         this.data = data;
         this.error = error;
     }

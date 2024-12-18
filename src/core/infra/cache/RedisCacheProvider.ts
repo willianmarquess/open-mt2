@@ -2,7 +2,7 @@ import { createClient, RedisClientType } from 'redis';
 import Logger from '@/core/infra/logger/Logger';
 import CacheProvider from '@/core/infra/cache/CacheProvider';
 
-export default class RedisCacheProvider implements CacheProvider{
+export default class RedisCacheProvider implements CacheProvider {
     private readonly client: RedisClientType;
     private readonly logger: Logger;
 

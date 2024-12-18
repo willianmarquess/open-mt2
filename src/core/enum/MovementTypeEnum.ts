@@ -6,4 +6,4 @@ export enum MovementTypeEnum {
     MOB_SKILL = 4,
     MAX = 5,
     SKILL = 0x80,
-};
+}

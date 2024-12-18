@@ -1,5 +1,5 @@
-import FluentValidator from "@/core/infra/validation/FluentValidator";
-import Packet from "@/core/interface/networking/packets/packet/Packet";
+import FluentValidator from '@/core/infra/validation/FluentValidator';
+import Packet from '@/core/interface/networking/packets/packet/Packet';
 
 export default class PacketValidator<T extends Packet> extends FluentValidator {
     protected packet: T;

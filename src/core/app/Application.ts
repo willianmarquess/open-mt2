@@ -1,5 +1,5 @@
-import Logger from "@/core/infra/logger/Logger";
-import Server from "@/core/interface/server/Server";
+import Logger from '@/core/infra/logger/Logger';
+import Server from '@/core/interface/server/Server';
 
 export default class Application {
     protected readonly logger: Logger;

@@ -1,5 +1,5 @@
-import GameApplication from "./app/GameApplication";
-import { container } from "./Container";
+import GameApplication from './app/GameApplication';
+import { container } from './Container';
 
 const app = new GameApplication(container.cradle);
 

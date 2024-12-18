@@ -1,12 +1,12 @@
-import { GameConfig } from "@/game/infra/config/GameConfig";
-import Item from "@/core/domain/entities/game/item/Item";
-import Monster from "@/core/domain/entities/game/mob/Monster";
-import MathUtil from "@/core/domain/util/MathUtil";
-import { MobRankEnum } from "@/core/enum/MobRankEnum";
-import { ChatMessageTypeEnum } from "@/core/enum/ChatMessageTypeEnum";
-import { SpecialItemEnum } from "@/core/enum/SpecialItemEnum";
-import ItemManager from "./ItemManager";
-import Player from "../entities/game/player/Player";
+import { GameConfig } from '@/game/infra/config/GameConfig';
+import Item from '@/core/domain/entities/game/item/Item';
+import Monster from '@/core/domain/entities/game/mob/Monster';
+import MathUtil from '@/core/domain/util/MathUtil';
+import { MobRankEnum } from '@/core/enum/MobRankEnum';
+import { ChatMessageTypeEnum } from '@/core/enum/ChatMessageTypeEnum';
+import { SpecialItemEnum } from '@/core/enum/SpecialItemEnum';
+import ItemManager from './ItemManager';
+import Player from '../entities/game/player/Player';
 
 class DropItem {
     public item: Item;
@@ -105,7 +105,8 @@ export default class DropManager {
     }
 
     getGoldDrop(player: Player, monster: Monster) {
-        const goldPercent = this.config.dropGoldByRank[monster.getRank()] || this.config.dropGoldByRank[MobRankEnum.PAWN];
+        const goldPercent =
+            this.config.dropGoldByRank[monster.getRank()] || this.config.dropGoldByRank[MobRankEnum.PAWN];
         let percent = 0;
         let goldMult = 1;
         const levelDelta = monster.getLevel() + 15 - player.getLevel();

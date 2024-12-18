@@ -1,9 +1,9 @@
-import { PacketHeaderEnum } from "@/core/enum/PacketHeaderEnum";
-import PacketOut from "@/core/interface/networking/packets/packet/out/PacketOut"
+import PacketHeaderEnum from '@/core/enum/PacketHeaderEnum';
+import PacketOut from '@/core/interface/networking/packets/packet/out/PacketOut';
 
 type LoginFailedPacketParams = {
-    status?: string
-}
+    status?: string;
+};
 
 export default class LoginFailedPacket extends PacketOut {
     private status: string;

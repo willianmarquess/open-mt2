@@ -1,6 +1,6 @@
-import { PacketHeaderEnum } from "@/core/enum/PacketHeaderEnum";
-import PacketIn from "../PacketIn";
-import LoginRequestPacketValidator from "./LoginRequestPacketValidator";
+import PacketHeaderEnum from '@/core/enum/PacketHeaderEnum';
+import PacketIn from '../PacketIn';
+import LoginRequestPacketValidator from './LoginRequestPacketValidator';
 
 export default class LoginRequestPacket extends PacketIn {
     private username: string;

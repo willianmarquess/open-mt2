@@ -1,10 +1,10 @@
-import Logger from "@/core/infra/logger/Logger";
-import Player from "../Player";
-import { ApplyTypeEnum } from "@/core/enum/ApplyTypeEnum";
-import Item from "../../item/Item";
+import Logger from '@/core/infra/logger/Logger';
+import Player from '../Player';
+import { ApplyTypeEnum } from '@/core/enum/ApplyTypeEnum';
+import Item from '../../item/Item';
 
 export default class PlayerApplies {
-    private applies: Map<ApplyTypeEnum, Function> = new Map();
+    private applies: Map<ApplyTypeEnum, (value: any) => void> = new Map();
     private player: Player;
     private logger: Logger;
 

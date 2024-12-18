@@ -5,9 +5,9 @@ import CacheKeyGenerator from '@/core/util/CacheKeyGenerator';
 import Result from '@/core/app/Result';
 
 type Token = {
-    username: string,
-    accountId: number,
-}
+    username: string;
+    accountId: number;
+};
 
 export default class AuthenticateService {
     private logger: Logger;

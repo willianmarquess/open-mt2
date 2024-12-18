@@ -1,9 +1,9 @@
-import Logger from "@/core/infra/logger/Logger";
-import CommandHandler from "../../CommandHandler";
-import GoldCommand from "./GoldCommand";
-import World from "@/core/domain/World";
-import Player from "@/core/domain/entities/game/player/Player";
-import { ChatMessageTypeEnum } from "@/core/enum/ChatMessageTypeEnum";
+import Logger from '@/core/infra/logger/Logger';
+import CommandHandler from '../../CommandHandler';
+import GoldCommand from './GoldCommand';
+import World from '@/core/domain/World';
+import Player from '@/core/domain/entities/game/player/Player';
+import { ChatMessageTypeEnum } from '@/core/enum/ChatMessageTypeEnum';
 
 export default class GoldCommandHandler extends CommandHandler<GoldCommand> {
     private readonly logger: Logger;

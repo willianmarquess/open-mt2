@@ -1,10 +1,10 @@
-import { PacketHeaderEnum } from "@/core/enum/PacketHeaderEnum";
-import PacketOut from "@/core/interface/networking/packets/packet/out/PacketOut"
+import PacketHeaderEnum from '@/core/enum/PacketHeaderEnum';
+import PacketOut from '@/core/interface/networking/packets/packet/out/PacketOut';
 
 type LoginSuccessPacketParams = {
-    key?: number,
-    result?: number
-}
+    key?: number;
+    result?: number;
+};
 
 export default class LoginSuccessPacket extends PacketOut {
     private key: number;

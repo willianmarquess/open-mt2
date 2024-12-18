@@ -1,8 +1,8 @@
-import Logger from "@/core/infra/logger/Logger";
-import CharacterMoveService from "@/game/app/service/CharacterMoveService";
-import GameConnection from "@/game/interface/networking/GameConnection";
-import CharacterMovePacket from "./CharacterMovePacket";
-import PacketHandler from "../../PacketHandler";
+import Logger from '@/core/infra/logger/Logger';
+import CharacterMoveService from '@/game/app/service/CharacterMoveService';
+import GameConnection from '@/game/interface/networking/GameConnection';
+import CharacterMovePacket from './CharacterMovePacket';
+import PacketHandler from '../../PacketHandler';
 
 export default class CharacterMovePacketHandler extends PacketHandler<CharacterMovePacket> {
     private readonly logger: Logger;
@@ -39,7 +39,7 @@ export default class CharacterMovePacketHandler extends PacketHandler<CharacterM
             positionY: packet.getPositionY(),
             arg: packet.getArg(),
             rotation: packet.getRotation(),
-            time: packet.getTime()
+            time: packet.getTime(),
         });
     }
 }

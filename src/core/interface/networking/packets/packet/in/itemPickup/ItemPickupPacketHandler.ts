@@ -1,8 +1,8 @@
-import Logger from "@/core/infra/logger/Logger";
-import PickupItemService from "@/game/app/service/PickupItemService";
-import PacketHandler from "../../PacketHandler";
-import ItemPickupPacket from "./ItemPickupPacket";
-import GameConnection from "@/game/interface/networking/GameConnection";
+import Logger from '@/core/infra/logger/Logger';
+import PickupItemService from '@/game/app/service/PickupItemService';
+import PacketHandler from '../../PacketHandler';
+import ItemPickupPacket from './ItemPickupPacket';
+import GameConnection from '@/game/interface/networking/GameConnection';
 
 export default class ItemPickupPacketHandler extends PacketHandler<ItemPickupPacket> {
     private readonly logger: Logger;

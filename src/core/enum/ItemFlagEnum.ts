@@ -18,4 +18,4 @@ export enum ItemFlagEnum {
     REFINEABLE = 1 << 16,
     IRREMOVABLE = 1 << 17,
     ITEM_APPLICABLE = 1 << 18,
-};
+}

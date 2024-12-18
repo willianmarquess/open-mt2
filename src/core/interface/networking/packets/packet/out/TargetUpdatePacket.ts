@@ -1,5 +1,5 @@
-import { PacketHeaderEnum } from "@/core/enum/PacketHeaderEnum";
-import PacketOut from "@/core/interface/networking/packets/packet/out/PacketOut"
+import PacketHeaderEnum from '@/core/enum/PacketHeaderEnum';
+import PacketOut from '@/core/interface/networking/packets/packet/out/PacketOut';
 
 /**
  * @packet
@@ -15,9 +15,9 @@ import PacketOut from "@/core/interface/networking/packets/packet/out/PacketOut"
  */
 
 type TargetUpdatedPacketParams = {
-    virtualId?: number,
-    healthPercentage?: number
-}
+    virtualId?: number;
+    healthPercentage?: number;
+};
 
 export default class TargetUpdatedPacket extends PacketOut {
     private virtualId: number;

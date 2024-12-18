@@ -1,12 +1,12 @@
-import GameEntity from "../GameEntity";
-import MonsterGroup from "./MonsterGroup";
+import GameEntity from '../GameEntity';
+import MonsterGroup from './MonsterGroup';
 
 enum MobSizeEnum {
     RESERVED = 0,
     SMALL = 1,
     MEDIUM = 2,
     BIG = 3,
-};
+}
 
 enum MobResistTypeEnum {
     SWORD = 1,
@@ -88,7 +88,7 @@ export default abstract class Mob extends GameEntity {
     protected dropItem: number;
     protected resurrectionId: number;
     protected direction: number;
- 
+
     protected resists = [];
     protected enchants = [];
     protected skills = [];

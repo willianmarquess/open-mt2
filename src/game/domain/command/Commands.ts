@@ -1,8 +1,36 @@
-import Command from "./Command";
+import Command from './Command';
+import ExperienceCommand from './command/exp/ExperienceCommand';
+import ExperienceCommandHandler from './command/exp/ExperienceCommandHandler';
+import GoldCommand from './command/gold/GoldCommand';
+import GoldCommandHandler from './command/gold/GoldCommandHandler';
+import GotoCommand from './command/goto/GotoCommand';
+import GotoCommandHandler from './command/goto/GotoCommandHandler';
+import InvokeCommand from './command/invoke/InvokeCommand';
+import InvokeCommandHandler from './command/invoke/InvokeCommandHandler';
+import ItemCommand from './command/item/ItemCommand';
+import ItemCommandHandler from './command/item/ItemCommandHandler';
+import ListCommand from './command/list/ListCommand';
+import ListCommandHandler from './command/list/ListCommandHandler';
+import LogoutCommand from './command/logout/LogoutCommand';
+import LogoutCommandHandler from './command/logout/LogoutCommandHandler';
+import LevelCommand from './command/lvl/LevelCommand';
+import LevelCommandHandler from './command/lvl/LevelCommandHandler';
+import QuitCommand from './command/quit/QuitCommand';
+import QuitCommandHandler from './command/quit/QuitCommandHandler';
+import StatCommand from './command/stat/StatCommand';
+import StatCommandHandler from './command/stat/StatCommandHandler';
+import CommandHandler from './CommandHandler';
+
+export type CommandConstructor<T extends Command> = {
+    new (args?: any): T;
+    getName(): string;
+    getDescription(): string;
+    example?: string;
+};
 
 export type CommandMapValue<T extends Command> = {
-    command: () => new (args?: any) => T;
-    createHandler: (params: any) => Command;
+    command: CommandConstructor<T>;
+    createHandler: (params: any) => CommandHandler<T>;
 };
 
 export default () =>

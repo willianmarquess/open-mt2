@@ -47,4 +47,4 @@ export enum AnimationTypeEnum {
     WALK1 = 'walk1',
     FRONT_STANDUP1 = 'front_standup1',
     FRONT_KNOCKDOWN1 = 'front_knockdown1',
-};
+}

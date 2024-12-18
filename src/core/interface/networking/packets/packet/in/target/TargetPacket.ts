@@ -1,6 +1,6 @@
-import { PacketHeaderEnum } from "@/core/enum/PacketHeaderEnum";
-import PacketIn from "../PacketIn";
-import TargetPacketValidator from "./TargetPacketValidator";
+import PacketHeaderEnum from '@/core/enum/PacketHeaderEnum';
+import PacketIn from '../PacketIn';
+import TargetPacketValidator from './TargetPacketValidator';
 
 export default class TargetPacket extends PacketIn {
     private targetVirtualId: number;

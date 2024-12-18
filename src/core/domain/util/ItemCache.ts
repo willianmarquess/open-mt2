@@ -1,7 +1,7 @@
-import ItemDTO from "@/core/domain/dto/ItemDTO";
+import ItemDTO from '@/core/domain/dto/ItemDTO';
 
 export default class ItemCache {
-    cache: Map<number, { update: Map<number, ItemDTO>, delete: Map<number, ItemDTO> }> = new Map();
+    cache: Map<number, { update: Map<number, ItemDTO>; delete: Map<number, ItemDTO> }> = new Map();
 
     private get(ownerId: number) {
         if (!this.cache.has(ownerId)) {

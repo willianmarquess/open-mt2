@@ -1,6 +1,6 @@
-import Player from "@/core/domain/entities/game/player/Player";
-import World from "@/core/domain/World";
-import Logger from "@/core/infra/logger/Logger";
+import Player from '@/core/domain/entities/game/player/Player';
+import World from '@/core/domain/World';
+import Logger from '@/core/infra/logger/Logger';
 
 export default class CharacterUpdateTargetService {
     private readonly logger: Logger;

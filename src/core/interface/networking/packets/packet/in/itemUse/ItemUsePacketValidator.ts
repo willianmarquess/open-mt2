@@ -1,5 +1,5 @@
-import PacketValidator from "../../../PacketValidator";
-import ItemUsePacket from "./ItemUsePacket";
+import PacketValidator from '../../../PacketValidator';
+import ItemUsePacket from './ItemUsePacket';
 
 export default class ItemUsePacketValidator extends PacketValidator<ItemUsePacket> {
     build() {

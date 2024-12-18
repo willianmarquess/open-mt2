@@ -50,7 +50,7 @@ export default class Inventory {
         for (let i = 0; i < this.pages.length; i++) {
             const page = this.pages[i];
 
-            var position = page.addItem(item);
+            const position = page.addItem(item);
             if (position != -1) {
                 const realPosition = Math.floor(position + i * this.width * this.height);
                 item.position = realPosition;
@@ -82,7 +82,9 @@ export default class Inventory {
         if (this.pages[page].addItemAt(item, pagePosition)) {
             item.setPosition(pagePosition);
             item.setOwnerId(this.ownerId);
-            item.setWindow(this.isEquipmentPosition(pagePosition) ? WindowTypeEnum.EQUIPMENT : WindowTypeEnum.INVENTORY);
+            item.setWindow(
+                this.isEquipmentPosition(pagePosition) ? WindowTypeEnum.EQUIPMENT : WindowTypeEnum.INVENTORY,
+            );
             this.items.set(item.getDbId(), item);
         }
     }

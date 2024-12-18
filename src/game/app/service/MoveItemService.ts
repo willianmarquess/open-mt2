@@ -1,15 +1,15 @@
-import Player from "@/core/domain/entities/game/player/Player";
-import ItemManager from "@/core/domain/manager/ItemManager";
-import Logger from "@/core/infra/logger/Logger";
+import Player from '@/core/domain/entities/game/player/Player';
+import ItemManager from '@/core/domain/manager/ItemManager';
+import Logger from '@/core/infra/logger/Logger';
 
 type MoveItemServiceParams = {
-    player: Player,
-    fromWindow: number,
-    fromPosition: number,
-    toWindow: number,
-    toPosition: number,
+    player: Player;
+    fromWindow: number;
+    fromPosition: number;
+    toWindow: number;
+    toPosition: number;
     /*count*/
-}
+};
 
 export default class MoveItemService {
     private readonly logger: Logger;

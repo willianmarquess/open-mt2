@@ -1,4 +1,4 @@
-import CommandValidator from "../../CommandValidator";
+import CommandValidator from '../../CommandValidator';
 
 export default class InvokeCommandValidator extends CommandValidator {
     build() {

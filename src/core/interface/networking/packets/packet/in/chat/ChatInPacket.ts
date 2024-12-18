@@ -1,6 +1,6 @@
-import { PacketHeaderEnum } from "@/core/enum/PacketHeaderEnum";
-import PacketIn from "../PacketIn";
-import ChatInPacketValidator from "./ChatInPacketValidator";
+import PacketHeaderEnum from '@/core/enum/PacketHeaderEnum';
+import PacketIn from '../PacketIn';
+import ChatInPacketValidator from './ChatInPacketValidator';
 
 export default class ChatInPacket extends PacketIn {
     private messageType: number;

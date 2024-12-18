@@ -11,4 +11,4 @@ export enum ItemWearFlagEnum {
     WEAR_ARROW = 1 << 9,
     WEAR_HAIR = 1 << 10,
     WEAR_ABILITY = 1 << 11,
-};
+}

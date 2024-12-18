@@ -1,5 +1,5 @@
-import { PacketHeaderEnum } from "@/core/enum/PacketHeaderEnum";
-import PacketIn from "../PacketIn";
+import PacketHeaderEnum from '@/core/enum/PacketHeaderEnum';
+import PacketIn from '../PacketIn';
 
 export default class ServerStatusRequestPacket extends PacketIn {
     constructor() {
@@ -10,5 +10,7 @@ export default class ServerStatusRequestPacket extends PacketIn {
         });
     }
 
-    unpack() { return this; }
+    unpack() {
+        return this;
+    }
 }

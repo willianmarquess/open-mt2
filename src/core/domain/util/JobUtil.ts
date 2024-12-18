@@ -1,4 +1,4 @@
-import { JobEnum } from "@/core/enum/JobEnum";
+import { JobEnum } from '@/core/enum/JobEnum';
 
 const jobFromClassId = {
     [JobEnum.WARRIOR_MALE]: 0,

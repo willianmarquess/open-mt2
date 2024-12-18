@@ -1,5 +1,5 @@
-import Grid from "@/core/util/Grid";
-import Item from "../item/Item";
+import Grid from '@/core/util/Grid';
+import Item from '../item/Item';
 
 export default class Page {
     private grid: Grid<Item>;

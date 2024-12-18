@@ -3,4 +3,4 @@ export enum EntityTypeEnum {
     NPC = 1,
     METIN_STONE = 2,
     PLAYER = 6,
-};
+}

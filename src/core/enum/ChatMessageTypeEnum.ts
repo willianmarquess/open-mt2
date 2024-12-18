@@ -5,4 +5,4 @@ export enum ChatMessageTypeEnum {
     GUILD = 4,
     COMMAND = 5,
     SHOUT = 6,
-};
+}

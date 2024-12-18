@@ -1,9 +1,9 @@
-import { PacketHeaderEnum } from "@/core/enum/PacketHeaderEnum";
-import PacketOut from "@/core/interface/networking/packets/packet/out/PacketOut"
+import PacketHeaderEnum from '@/core/enum/PacketHeaderEnum';
+import PacketOut from '@/core/interface/networking/packets/packet/out/PacketOut';
 
 type RemoveCharacterPacketParams = {
-    vid?: number
-}
+    vid?: number;
+};
 
 export default class RemoveCharacterPacket extends PacketOut {
     private vid: number;

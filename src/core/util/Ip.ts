@@ -1,7 +1,7 @@
 export default class Ip {
     static toInt(ip: string) {
-        var parts = ip.split('.');
-        var res = 0;
+        const parts = ip.split('.');
+        let res = 0;
 
         res += parseInt(parts[3], 10) << 24;
         res += parseInt(parts[2], 10) << 16;

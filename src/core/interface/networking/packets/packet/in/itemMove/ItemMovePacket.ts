@@ -1,6 +1,6 @@
-import { PacketHeaderEnum } from "@/core/enum/PacketHeaderEnum";
-import PacketIn from "../PacketIn";
-import ItemMovePacketValidator from "./ItemMovePacketValidator";
+import PacketHeaderEnum from '@/core/enum/PacketHeaderEnum';
+import PacketIn from '../PacketIn';
+import ItemMovePacketValidator from './ItemMovePacketValidator';
 
 export default class ItemMovePacket extends PacketIn {
     private fromWindow: number;

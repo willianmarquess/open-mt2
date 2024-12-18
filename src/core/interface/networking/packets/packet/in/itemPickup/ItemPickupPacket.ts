@@ -1,6 +1,6 @@
-import { PacketHeaderEnum } from "@/core/enum/PacketHeaderEnum";
-import PacketIn from "../PacketIn";
-import ItemPickupPacketValidator from "./ItemPickupPacketValidator";
+import PacketHeaderEnum from '@/core/enum/PacketHeaderEnum';
+import PacketIn from '../PacketIn';
+import ItemPickupPacketValidator from './ItemPickupPacketValidator';
 
 export default class ItemPickupPacket extends PacketIn {
     private virtualId: number;

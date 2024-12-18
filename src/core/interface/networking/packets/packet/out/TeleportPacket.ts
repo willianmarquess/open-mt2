@@ -1,12 +1,12 @@
-import { PacketHeaderEnum } from "@/core/enum/PacketHeaderEnum";
-import PacketOut from "@/core/interface/networking/packets/packet/out/PacketOut";
+import PacketHeaderEnum from '@/core/enum/PacketHeaderEnum';
+import PacketOut from '@/core/interface/networking/packets/packet/out/PacketOut';
 
 type TeleportPacketParams = {
-    positionX?: number, 
-    positionY?: number, 
-    address?: number, 
-    port?: number
-}
+    positionX?: number;
+    positionY?: number;
+    address?: number;
+    port?: number;
+};
 
 export default class TeleportPacket extends PacketOut {
     private positionX: number;

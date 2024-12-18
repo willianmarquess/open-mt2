@@ -1,9 +1,9 @@
-import { PacketHeaderEnum } from "@/core/enum/PacketHeaderEnum";
-import PacketOut from "@/core/interface/networking/packets/packet/out/PacketOut"
+import PacketHeaderEnum from '@/core/enum/PacketHeaderEnum';
+import PacketOut from '@/core/interface/networking/packets/packet/out/PacketOut';
 
 type ItemDroppedHidePacketParams = {
-    virtualId?: number
-}
+    virtualId?: number;
+};
 
 export default class ItemDroppedHidePacket extends PacketOut {
     private virtualId: number;

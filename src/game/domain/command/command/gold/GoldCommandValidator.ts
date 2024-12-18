@@ -1,5 +1,5 @@
-import MathUtil from "@/core/domain/util/MathUtil";
-import CommandValidator from "../../CommandValidator";
+import MathUtil from '@/core/domain/util/MathUtil';
+import CommandValidator from '../../CommandValidator';
 
 export default class GoldCommandValidator extends CommandValidator {
     build() {

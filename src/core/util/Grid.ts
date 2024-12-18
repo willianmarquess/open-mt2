@@ -35,7 +35,7 @@ export default class Grid<T> {
 
     printGrid() {
         for (let y = 0; y < this.height; y++) {
-            let row = [];
+            const row = [];
             for (let x = 0; x < this.width; x++) {
                 row.push(this.grid[x][y]);
             }

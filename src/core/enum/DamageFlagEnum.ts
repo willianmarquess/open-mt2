@@ -5,4 +5,4 @@ export enum DamageFlagEnum {
     BLOCK = 1 << 3,
     PENETRATE = 1 << 4,
     CRITICAL = 1 << 5,
-};
+}

@@ -1,8 +1,8 @@
-import Result from "@/core/app/Result";
-import { ErrorTypesEnum } from "@/core/enum/ErrorTypesEnum";
-import CacheProvider from "@/core/infra/cache/CacheProvider";
-import Logger from "@/core/infra/logger/Logger";
-import CacheKeyGenerator from "@/core/util/CacheKeyGenerator";
+import Result from '@/core/app/Result';
+import { ErrorTypesEnum } from '@/core/enum/ErrorTypesEnum';
+import CacheProvider from '@/core/infra/cache/CacheProvider';
+import Logger from '@/core/infra/logger/Logger';
+import CacheKeyGenerator from '@/core/util/CacheKeyGenerator';
 
 export default class SelectEmpireService {
     private readonly logger: Logger;

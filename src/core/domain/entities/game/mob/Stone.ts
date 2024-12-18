@@ -1,12 +1,7 @@
-import { AttackTypeEnum } from '@/core/enum/AttackTypeEnum';
-import GameEntity from '../GameEntity';
-import Player from '../player/Player';
 import Mob from './Mob';
-import Monster from './Monster';
 import { EntityTypeEnum } from '@/core/enum/EntityTypeEnum';
 
 export default class Stone extends Mob {
-
     constructor(
         {
             id,
@@ -123,13 +118,13 @@ export default class Stone extends Mob {
     getDefense(): number {
         throw new Error('Method not implemented.');
     }
-    attack(victim: GameEntity, attackType: AttackTypeEnum): void {
+    attack(): void {
         throw new Error('Method not implemented.');
     }
     damage(): number {
         throw new Error('Method not implemented.');
     }
-    takeDamage(attacker: Player | Monster, damage: number): void {
+    takeDamage(): void {
         throw new Error('Method not implemented.');
     }
 }

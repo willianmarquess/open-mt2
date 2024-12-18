@@ -1,4 +1,4 @@
-import Animation from "@/core/domain/Animation";
+import Animation from '@/core/domain/Animation';
 
 export default class AnimationUtil {
     static calcAnimationDuration(animation: Animation, movementSpeed: number, distance: number) {

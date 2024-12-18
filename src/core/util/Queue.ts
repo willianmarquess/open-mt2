@@ -1,6 +1,6 @@
 export default class Queue<T = any> {
     private maxSize: number;
-    private items: Object;
+    private items: object;
     private frontPos: number;
     private rearPos: number;
     private length: number;
@@ -13,7 +13,7 @@ export default class Queue<T = any> {
         this.length = 0;
     }
 
-    dequeue(): T{
+    dequeue(): T {
         if (this.isEmpty()) return;
         const dequeued = this.front();
         delete this.items[(this.frontPos %= this.maxSize)];

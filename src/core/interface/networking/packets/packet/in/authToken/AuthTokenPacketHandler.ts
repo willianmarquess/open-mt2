@@ -1,14 +1,14 @@
-import Logger from "@/core/infra/logger/Logger";
-import LoadCharactersService from "@/game/app/service/LoadCharactersService";
-import AuthenticateService from "@/game/domain/service/AuthenticateService";
-import { GameConfig } from "@/game/infra/config/GameConfig";
-import PacketHandler from "../../PacketHandler";
-import AuthTokenPacket from "./AuthTokenPacket";
-import GameConnection from "@/game/interface/networking/GameConnection";
-import EmpirePacket from "../../bidirectional/empire/EmpirePacket";
-import CharactersInfoPacket from "../../out/CharactersInfoPacket";
-import Ip from "@/core/util/Ip";
-import { ConnectionStateEnum } from "@/core/enum/ConnectionStateEnum";
+import Logger from '@/core/infra/logger/Logger';
+import LoadCharactersService from '@/game/app/service/LoadCharactersService';
+import AuthenticateService from '@/game/domain/service/AuthenticateService';
+import { GameConfig } from '@/game/infra/config/GameConfig';
+import PacketHandler from '../../PacketHandler';
+import AuthTokenPacket from './AuthTokenPacket';
+import GameConnection from '@/game/interface/networking/GameConnection';
+import EmpirePacket from '../../bidirectional/empire/EmpirePacket';
+import CharactersInfoPacket from '../../out/CharactersInfoPacket';
+import Ip from '@/core/util/Ip';
+import { ConnectionStateEnum } from '@/core/enum/ConnectionStateEnum';
 
 export default class AuthTokenPacketHandler extends PacketHandler<AuthTokenPacket> {
     private readonly loadCharactersService: LoadCharactersService;
@@ -35,10 +35,7 @@ export default class AuthTokenPacketHandler extends PacketHandler<AuthTokenPacke
         const key = packet.getKey();
         const username = packet.getUsername();
 
-        const authResult = await this.authenticateService.execute(
-            key,
-            username,
-        );
+        const authResult = await this.authenticateService.execute(key, username);
 
         if (authResult.hasError()) {
             connection.close();

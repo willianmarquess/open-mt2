@@ -21,46 +21,46 @@ const parseFlags = (flags: string, enumType: any) => {
 };
 
 type ItemParams = {
-    id?: number,
-    name?: string,
-    type?: string,
-    subType?: string,
-    size?: number,
-    antiFlags?: BitFlag,
-    flags?: BitFlag,
-    wearFlags?: BitFlag,
-    immuneFlags?: BitFlag,
-    gold?: number,
-    shopPrice?: number,
-    refineId?: number,
-    refineSet?: number,
-    magicPercent?: number,
-    limits?: Array<ItemLimit>,
-    applies?: Array<ItemApply>,
-    values?: Array<number>,
-    specular?: number,
-    socket?: number,
-    addon?: number,
-    count?: number,
-    socket0?: number,
-    socket1?: number,
-    socket2?: number,
-    attributeType0?: number,
-    attributeValue0?: number,
-    attributeType1?: number,
-    attributeValue1?: number,
-    attributeType2?: number,
-    attributeValue2?: number,
-    attributeType3?: number,
-    attributeValue3?: number,
-    attributeType4?: number,
-    attributeValue4?: number,
-    attributeType5?: number,
-    attributeValue5?: number,
-    attributeType6?: number,
-    attributeValue6?: number,
-    dbId?: number,
-}
+    id?: number;
+    name?: string;
+    type?: string;
+    subType?: string;
+    size?: number;
+    antiFlags?: BitFlag;
+    flags?: BitFlag;
+    wearFlags?: BitFlag;
+    immuneFlags?: BitFlag;
+    gold?: number;
+    shopPrice?: number;
+    refineId?: number;
+    refineSet?: number;
+    magicPercent?: number;
+    limits?: Array<ItemLimit>;
+    applies?: Array<ItemApply>;
+    values?: Array<number>;
+    specular?: number;
+    socket?: number;
+    addon?: number;
+    count?: number;
+    socket0?: number;
+    socket1?: number;
+    socket2?: number;
+    attributeType0?: number;
+    attributeValue0?: number;
+    attributeType1?: number;
+    attributeValue1?: number;
+    attributeType2?: number;
+    attributeValue2?: number;
+    attributeType3?: number;
+    attributeValue3?: number;
+    attributeType4?: number;
+    attributeValue4?: number;
+    attributeType5?: number;
+    attributeValue5?: number;
+    attributeType6?: number;
+    attributeValue6?: number;
+    dbId?: number;
+};
 
 export default class Item {
     private id: number;
@@ -423,7 +423,6 @@ export default class Item {
                 Number(proto.value5),
             ],
             count: flagsBitFlag.is(ItemFlagEnum.ITEM_STACKABLE) ? count : 1,
-
         });
     }
 

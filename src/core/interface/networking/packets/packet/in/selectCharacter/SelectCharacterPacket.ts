@@ -1,6 +1,6 @@
-import { PacketHeaderEnum } from "@/core/enum/PacketHeaderEnum";
-import PacketIn from "../PacketIn";
-import SelectCharacterPacketValidator from "./SelectCharacterPacketValidator";
+import PacketHeaderEnum from '@/core/enum/PacketHeaderEnum';
+import PacketIn from '../PacketIn';
+import SelectCharacterPacketValidator from './SelectCharacterPacketValidator';
 
 export default class SelectCharacterPacket extends PacketIn {
     private slot: number;

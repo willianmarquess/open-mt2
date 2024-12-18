@@ -1,10 +1,10 @@
-import Logger from "@/core/infra/logger/Logger";
-import CommandHandler from "../../CommandHandler";
-import StatCommand from "./StatCommand";
-import Player from "@/core/domain/entities/game/player/Player";
-import { StatsEnum } from "@/core/enum/StatsEnum";
+import Logger from '@/core/infra/logger/Logger';
+import CommandHandler from '../../CommandHandler';
+import StatCommand from './StatCommand';
+import Player from '@/core/domain/entities/game/player/Player';
+import { StatsEnum } from '@/core/enum/StatsEnum';
 
-export default class StatCommandHandler extends CommandHandler<StatCommand>{
+export default class StatCommandHandler extends CommandHandler<StatCommand> {
     private readonly logger: Logger;
 
     constructor({ logger }) {

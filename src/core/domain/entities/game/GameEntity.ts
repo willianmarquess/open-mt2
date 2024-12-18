@@ -119,7 +119,7 @@ export default abstract class GameEntity {
 
     broadcastMyTarget() {
         for (const entity of this.targetedBy.values()) {
-            if(entity instanceof Player) {
+            if (entity instanceof Player) {
                 entity.sendTargetUpdated(this);
             }
         }

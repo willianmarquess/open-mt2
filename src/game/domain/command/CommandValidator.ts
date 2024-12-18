@@ -10,8 +10,7 @@ export default abstract class CommandValidator extends FluentValidator {
     }
 
     setCommand(value: Command) {
-        if (!(value instanceof Command)) 
-            throw new Error('Command must be an instance of Command base class');
+        if (!(value instanceof Command)) throw new Error('Command must be an instance of Command base class');
         this.command = value;
     }
 

@@ -1,11 +1,11 @@
-import { PacketHeaderEnum } from "@/core/enum/PacketHeaderEnum";
-import PacketOut from "@/core/interface/networking/packets/packet/out/PacketOut"
+import PacketHeaderEnum from '@/core/enum/PacketHeaderEnum';
+import PacketOut from '@/core/interface/networking/packets/packet/out/PacketOut';
 
 type DamagePacketParams = {
-    virtualId?: number,
-    damageFlags?: number,
-    damage?: number,
-}
+    virtualId?: number;
+    damageFlags?: number;
+    damage?: number;
+};
 
 /**
  * @packet

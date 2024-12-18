@@ -1,8 +1,8 @@
-import Logger from "@/core/infra/logger/Logger";
-import PacketHandler from "../../PacketHandler";
-import AttackPacket from "./AttackPacket";
-import CharacterAttackService from "@/game/app/service/CharacterAttackService";
-import GameConnection from "@/game/interface/networking/GameConnection";
+import Logger from '@/core/infra/logger/Logger';
+import PacketHandler from '../../PacketHandler';
+import AttackPacket from './AttackPacket';
+import CharacterAttackService from '@/game/app/service/CharacterAttackService';
+import GameConnection from '@/game/interface/networking/GameConnection';
 
 export default class AttackPacketHandler extends PacketHandler<AttackPacket> {
     private readonly logger: Logger;

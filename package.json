@@ -23,14 +23,15 @@
   "author": "Willian Marques (willian.goncalves4@gmail.com)",
   "license": "ISC",
   "devDependencies": {
-    "@eslint/js": "^9.2.0",
+    "@eslint/js": "^9.17.0",
     "@types/node": "^22.10.2",
     "@typescript-eslint/eslint-plugin": "^8.18.0",
+    "@typescript-eslint/parser": "^8.18.1",
     "c8": "^10.1.2",
     "chai": "^5.1.1",
-    "eslint": "^9.2.0",
+    "eslint": "^9.17.0",
     "expectations": "^1.0.0",
-    "globals": "^15.1.0",
+    "globals": "^15.13.0",
     "husky": "^9.0.11",
     "mocha": "^10.4.0",
     "nyc": "^17.0.0",
@@ -38,7 +39,8 @@
     "ts-node-dev": "^2.0.0",
     "tsc-alias": "^1.8.10",
     "tsconfig-paths": "^4.2.0",
-    "typescript": "^5.5.4"
+    "typescript": "^5.5.4",
+    "typescript-eslint": "^8.18.1"
   },
   "dependencies": {
     "awilix": "^10.0.2",

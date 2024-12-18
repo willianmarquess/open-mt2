@@ -1,6 +1,6 @@
-import { PacketHeaderEnum } from "@/core/enum/PacketHeaderEnum";
-import PacketIn from "../PacketIn";
-import CharacterMovePacketValidator from "./CharacterMovePacketValidator";
+import PacketHeaderEnum from '@/core/enum/PacketHeaderEnum';
+import PacketIn from '../PacketIn';
+import CharacterMovePacketValidator from './CharacterMovePacketValidator';
 
 export default class CharacterMovePacket extends PacketIn {
     private movementType: number;

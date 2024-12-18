@@ -24,7 +24,7 @@ export default class DatabaseManager {
             dbPass: this.config.DB_ROOT_PASSWORD,
             dbUser: this.config.DB_USER,
             dbPort: this.config.DB_PORT,
-        })
+        });
         this.connection = MySqlConnection.getConnection({
             dbHost: this.config.DB_HOST,
             dbName: this.config.DB_DATABASE_NAME,

@@ -1,5 +1,5 @@
-import SpawnConfig from "@/core/domain/entities/game/mob/spawn/SpawnConfig";
-import Mob from "@/core/domain/entities/game/mob/Mob";
+import SpawnConfig from '@/core/domain/entities/game/mob/spawn/SpawnConfig';
+import Mob from '@/core/domain/entities/game/mob/Mob';
 
 export default class MonsterGroup {
     private leader: Mob;

@@ -1,9 +1,9 @@
-import { PacketHeaderEnum } from "@/core/enum/PacketHeaderEnum";
-import PacketOut from "@/core/interface/networking/packets/packet/out/PacketOut"
+import PacketHeaderEnum from '@/core/enum/PacketHeaderEnum';
+import PacketOut from '@/core/interface/networking/packets/packet/out/PacketOut';
 
 type CreateCharacterFailurePacketParams = {
-    reason?: number
-}
+    reason?: number;
+};
 
 export default class CreateCharacterFailurePacket extends PacketOut {
     private reason: number;

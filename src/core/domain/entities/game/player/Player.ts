@@ -1,43 +1,42 @@
-import GameEntity from "@/core/domain/entities/game/GameEntity";
-import ExperienceManager from "@/core/domain/manager/ExperienceManager";
-import { EntityTypeEnum } from "@/core/enum/EntityTypeEnum";
-import { GameConfig } from "@/game/infra/config/GameConfig";
-import Inventory from "../inventory/Inventory";
-import InventoryEventsEnum from "../inventory/events/InventoryEventsEnum";
-import { PointsEnum } from "@/core/enum/PointsEnum";
-import OtherCharacterDiedEvent from "./events/OtherCharacterDiedEvent";
-import TargetUpdatedEvent from "./events/TargetUpdatedEvent";
-import PlayerBattle from "./delegate/PlayerBattle";
-import PlayerApplies from "./delegate/PlayerApplies";
-import PlayerInventory from "./delegate/PlayerInventory";
-import { AttackTypeEnum } from "@/core/enum/AttackTypeEnum";
-import DamageCausedEvent from "./events/DamageCausedEvent";
-import { EntityStateEnum } from "@/core/enum/EntityStateEnum";
-import { ChatMessageTypeEnum } from "@/core/enum/ChatMessageTypeEnum";
-import MathUtil from "@/core/domain/util/MathUtil";
-import CharacterTeleportedEvent from "./events/CharacterTeleportedEvent";
-import CharacterLevelUpEvent from "./events/CharacterLevelUpEvent";
-import JobUtil from "@/core/domain/util/JobUtil";
-import CharacterSpawnedEvent from "./events/CharacterSpawnedEvent";
-import OtherCharacterSpawnedEvent from "./events/OtherCharacterSpawnedEvent";
-import OtherCharacterLeftGameEvent from "./events/OtherCharacterLeftGameEvent";
-import OtherCharacterLevelUpEvent from "./events/OtherCharacterLevelUpEvent";
-import OtherCharacterUpdatedEvent from "./events/OtherCharacterUpdatedEvent";
-import LogoutEvent from "./events/LogoutEvent";
-import ChatEvent from "./events/ChatEvent";
-import CharacterPointsUpdatedEvent from "./events/CharacterPointsUpdatedEvent";
-import OtherCharacterMovedEvent from "./events/OtherCharacterMovedEvent";
-import CharacterUpdatedEvent from "./events/CharacterUpdatedEvent";
-import CharacterMovedEvent from "./events/CharacterMovedEvent";
-import { ItemAntiFlagEnum } from "@/core/enum/ItemAntiFlagEnum";
-import Item from "../item/Item";
-import DropItemEvent from "./events/DropItemEvent";
-import ItemDroppedEvent from "./events/ItemDroppedEvent";
-import ItemDroppedHideEvent from "./events/ItemDroppedHideEvent";
-import DroppedItem from "../item/DroppedItem";
-import PlayerDTO from "@/core/domain/dto/PlayerDTO";
-import Monster from "../mob/Monster";
-import { StatsEnum } from "@/core/enum/StatsEnum";
+import GameEntity from '@/core/domain/entities/game/GameEntity';
+import ExperienceManager from '@/core/domain/manager/ExperienceManager';
+import { EntityTypeEnum } from '@/core/enum/EntityTypeEnum';
+import { GameConfig } from '@/game/infra/config/GameConfig';
+import Inventory from '../inventory/Inventory';
+import InventoryEventsEnum from '../inventory/events/InventoryEventsEnum';
+import { PointsEnum } from '@/core/enum/PointsEnum';
+import OtherCharacterDiedEvent from './events/OtherCharacterDiedEvent';
+import TargetUpdatedEvent from './events/TargetUpdatedEvent';
+import PlayerBattle from './delegate/PlayerBattle';
+import PlayerApplies from './delegate/PlayerApplies';
+import PlayerInventory from './delegate/PlayerInventory';
+import { AttackTypeEnum } from '@/core/enum/AttackTypeEnum';
+import DamageCausedEvent from './events/DamageCausedEvent';
+import { EntityStateEnum } from '@/core/enum/EntityStateEnum';
+import { ChatMessageTypeEnum } from '@/core/enum/ChatMessageTypeEnum';
+import MathUtil from '@/core/domain/util/MathUtil';
+import CharacterTeleportedEvent from './events/CharacterTeleportedEvent';
+import CharacterLevelUpEvent from './events/CharacterLevelUpEvent';
+import JobUtil from '@/core/domain/util/JobUtil';
+import CharacterSpawnedEvent from './events/CharacterSpawnedEvent';
+import OtherCharacterSpawnedEvent from './events/OtherCharacterSpawnedEvent';
+import OtherCharacterLeftGameEvent from './events/OtherCharacterLeftGameEvent';
+import OtherCharacterLevelUpEvent from './events/OtherCharacterLevelUpEvent';
+import OtherCharacterUpdatedEvent from './events/OtherCharacterUpdatedEvent';
+import LogoutEvent from './events/LogoutEvent';
+import ChatEvent from './events/ChatEvent';
+import CharacterPointsUpdatedEvent from './events/CharacterPointsUpdatedEvent';
+import OtherCharacterMovedEvent from './events/OtherCharacterMovedEvent';
+import CharacterUpdatedEvent from './events/CharacterUpdatedEvent';
+import CharacterMovedEvent from './events/CharacterMovedEvent';
+import { ItemAntiFlagEnum } from '@/core/enum/ItemAntiFlagEnum';
+import Item from '../item/Item';
+import DropItemEvent from './events/DropItemEvent';
+import ItemDroppedEvent from './events/ItemDroppedEvent';
+import ItemDroppedHideEvent from './events/ItemDroppedHideEvent';
+import DroppedItem from '../item/DroppedItem';
+import PlayerDTO from '@/core/domain/dto/PlayerDTO';
+import { StatsEnum } from '@/core/enum/StatsEnum';
 
 const REGEN_INTERVAL = 3000;
 
@@ -257,10 +256,10 @@ export default class Player extends GameEntity {
     }
 
     damage(): number {
-        throw new Error("Method not implemented.");
+        throw new Error('Method not implemented.');
     }
-    takeDamage(attacker: Player | Monster, damage: number): number {
-        throw new Error("Method not implemented.");
+    takeDamage(): number {
+        throw new Error('Method not implemented.');
     }
 
     otherEntityDied(entity: GameEntity) {

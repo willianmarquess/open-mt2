@@ -1,5 +1,5 @@
-import Command from "../../Command";
-import GotoCommandValidator from "./GotoCommandValidator";
+import Command from '../../Command';
+import GotoCommandValidator from './GotoCommandValidator';
 
 export default class GotoCommand extends Command {
     constructor({ args }) {

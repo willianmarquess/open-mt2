@@ -1,16 +1,16 @@
-import { PacketHeaderEnum } from "@/core/enum/PacketHeaderEnum";
-import PacketOut from "@/core/interface/networking/packets/packet/out/PacketOut"
+import PacketHeaderEnum from '@/core/enum/PacketHeaderEnum';
+import PacketOut from '@/core/interface/networking/packets/packet/out/PacketOut';
 
 type CharacterMoveOutPacketParams = {
-    vid?: number,
-    movementType?: number,
-    arg?: number,
-    rotation?: number,
-    positionX?: number,
-    positionY?: number,
-    time?: number,
-    duration?: number,
-}
+    vid?: number;
+    movementType?: number;
+    arg?: number;
+    rotation?: number;
+    positionX?: number;
+    positionY?: number;
+    time?: number;
+    duration?: number;
+};
 
 /**
  * @packet
@@ -42,7 +42,16 @@ export default class CharacterMoveOutPacket extends PacketOut {
     private time: number;
     private duration: number;
 
-    constructor({ vid, movementType, arg, rotation, positionX, positionY, time, duration }: CharacterMoveOutPacketParams) {
+    constructor({
+        vid,
+        movementType,
+        arg,
+        rotation,
+        positionX,
+        positionY,
+        time,
+        duration,
+    }: CharacterMoveOutPacketParams) {
         super({
             header: PacketHeaderEnum.CHARACTER_MOVE_OUT,
             name: 'CharacterMoveOutPacket',

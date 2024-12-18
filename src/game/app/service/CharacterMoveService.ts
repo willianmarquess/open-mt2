@@ -3,14 +3,14 @@ import { MovementTypeEnum } from '@/core/enum/MovementTypeEnum';
 import Logger from '@/core/infra/logger/Logger';
 
 type CharacterMoveServiceParams = {
-    player: Player, 
-    movementType: MovementTypeEnum, 
-    positionX: number, 
-    positionY: number, 
-    arg: number, 
-    rotation: number, 
-    time: number
-}
+    player: Player;
+    movementType: MovementTypeEnum;
+    positionX: number;
+    positionY: number;
+    arg: number;
+    rotation: number;
+    time: number;
+};
 
 export default class CharacterMoveService {
     private readonly logger: Logger;

@@ -1,12 +1,12 @@
-import LoginService from "@/auth/app/service/LoginService";
-import Logger from "@/core/infra/logger/Logger";
-import PacketHandler from "../../PacketHandler";
-import LoginRequestPacket from "./LoginRequestPacket";
-import GameConnection from "@/game/interface/networking/GameConnection";
-import { ErrorTypesEnum } from "@/core/enum/ErrorTypesEnum";
-import LoginFailedPacket from "../../out/LoginFailedPacket";
-import LoginStatusEnum from "@/core/enum/LoginStatusEnum";
-import LoginSuccessPacket from "../../out/LoginSuccessPacket";
+import LoginService from '@/auth/app/service/LoginService';
+import Logger from '@/core/infra/logger/Logger';
+import PacketHandler from '../../PacketHandler';
+import LoginRequestPacket from './LoginRequestPacket';
+import GameConnection from '@/game/interface/networking/GameConnection';
+import { ErrorTypesEnum } from '@/core/enum/ErrorTypesEnum';
+import LoginFailedPacket from '../../out/LoginFailedPacket';
+import LoginStatusEnum from '@/core/enum/LoginStatusEnum';
+import LoginSuccessPacket from '../../out/LoginSuccessPacket';
 
 const LOGIN_SUCCESS_RESULT = 1;
 

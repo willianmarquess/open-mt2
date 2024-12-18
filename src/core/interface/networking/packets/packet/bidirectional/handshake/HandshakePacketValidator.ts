@@ -1,5 +1,5 @@
-import PacketValidator from "../../../PacketValidator";
-import HandshakePacket from "./HandshakePacket";
+import PacketValidator from '../../../PacketValidator';
+import HandshakePacket from './HandshakePacket';
 
 export default class HandshakePacketValidator extends PacketValidator<HandshakePacket> {
     build() {

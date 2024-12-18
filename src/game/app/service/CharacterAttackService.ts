@@ -1,7 +1,7 @@
-import Player from "@/core/domain/entities/game/player/Player";
-import World from "@/core/domain/World";
-import { AttackTypeEnum } from "@/core/enum/AttackTypeEnum";
-import Logger from "@/core/infra/logger/Logger";
+import Player from '@/core/domain/entities/game/player/Player';
+import World from '@/core/domain/World';
+import { AttackTypeEnum } from '@/core/enum/AttackTypeEnum';
+import Logger from '@/core/infra/logger/Logger';
 
 export default class CharacterAttackService {
     private readonly logger: Logger;

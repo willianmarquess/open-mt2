@@ -1,10 +1,10 @@
-import Logger from "@/core/infra/logger/Logger";
-import CommandHandler from "../../CommandHandler";
-import QuitCommand from "./QuitCommand";
-import Player from "@/core/domain/entities/game/player/Player";
-import { ChatMessageTypeEnum } from "@/core/enum/ChatMessageTypeEnum";
+import Logger from '@/core/infra/logger/Logger';
+import CommandHandler from '../../CommandHandler';
+import QuitCommand from './QuitCommand';
+import Player from '@/core/domain/entities/game/player/Player';
+import { ChatMessageTypeEnum } from '@/core/enum/ChatMessageTypeEnum';
 
-export default class QuitCommandHandler extends CommandHandler<QuitCommand>{
+export default class QuitCommandHandler extends CommandHandler<QuitCommand> {
     private readonly logger: Logger;
 
     constructor({ logger }) {

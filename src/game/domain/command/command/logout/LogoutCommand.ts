@@ -1,4 +1,4 @@
-import Command from "../../Command";
+import Command from '../../Command';
 
 export default class LogoutCommand extends Command {
     static getName() {

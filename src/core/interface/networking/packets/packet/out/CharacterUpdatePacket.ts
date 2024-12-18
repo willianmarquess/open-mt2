@@ -1,18 +1,18 @@
-import { PacketHeaderEnum } from "@/core/enum/PacketHeaderEnum";
-import PacketOut from "@/core/interface/networking/packets/packet/out/PacketOut"
+import PacketHeaderEnum from '@/core/enum/PacketHeaderEnum';
+import PacketOut from '@/core/interface/networking/packets/packet/out/PacketOut';
 
 type CharacterUpdatePacketParams = {
-    vid?: number,
-    parts?: Array<number>,
-    moveSpeed?: number,
-    attackSpeed?: number,
-    state?: number,
-    affects?: Array<number>,
-    guildId?: number,
-    rankPoints?: number,
-    pkMode?: number,
-    mountVnum?: number,
-}
+    vid?: number;
+    parts?: Array<number>;
+    moveSpeed?: number;
+    attackSpeed?: number;
+    state?: number;
+    affects?: Array<number>;
+    guildId?: number;
+    rankPoints?: number;
+    pkMode?: number;
+    mountVnum?: number;
+};
 
 export default class CharacterUpdatePacket extends PacketOut {
     private vid: number;
@@ -26,7 +26,18 @@ export default class CharacterUpdatePacket extends PacketOut {
     private pkMode: number = 0;
     private mountVnum: number = 0;
 
-    constructor({ vid, parts, moveSpeed, attackSpeed, state, affects, guildId, rankPoints, pkMode, mountVnum }: CharacterUpdatePacketParams = {}) {
+    constructor({
+        vid,
+        parts,
+        moveSpeed,
+        attackSpeed,
+        state,
+        affects,
+        guildId,
+        rankPoints,
+        pkMode,
+        mountVnum,
+    }: CharacterUpdatePacketParams = {}) {
         super({
             header: PacketHeaderEnum.CHARACTER_UPDATE,
             name: 'CharacterUpdatePacket',

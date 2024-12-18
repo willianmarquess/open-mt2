@@ -1,9 +1,9 @@
-import { PacketHeaderEnum } from "@/core/enum/PacketHeaderEnum";
-import PacketOut from "@/core/interface/networking/packets/packet/out/PacketOut"
+import PacketHeaderEnum from '@/core/enum/PacketHeaderEnum';
+import PacketOut from '@/core/interface/networking/packets/packet/out/PacketOut';
 
 type ConnectionStatePacketParams = {
-    state?: number
-}
+    state?: number;
+};
 
 export default class ConnectionStatePacket extends PacketOut {
     state;

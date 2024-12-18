@@ -1,18 +1,18 @@
-import { PacketHeaderEnum } from "@/core/enum/PacketHeaderEnum";
-import PacketOut from "@/core/interface/networking/packets/packet/out/PacketOut"
+import PacketHeaderEnum from '@/core/enum/PacketHeaderEnum';
+import PacketOut from '@/core/interface/networking/packets/packet/out/PacketOut';
 
 type ServerStatusPacketParams = {
     status?: Array<{
-        port: number,
-        status: number
-    }>,
-    isSuccess?: boolean
-}
+        port: number;
+        status: number;
+    }>;
+    isSuccess?: boolean;
+};
 
 export default class ServerStatusPacket extends PacketOut {
     private status: Array<{
-        port: number,
-        status: number
+        port: number;
+        status: number;
     }>;
     private isSuccess: number;
 

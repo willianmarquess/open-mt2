@@ -313,7 +313,7 @@ export default class GameConnection extends Connection {
                 mountId: 0, //todo
                 pkMode: 0, //todo
                 rankPoints: 0, //todo
-                parts: []
+                parts: [],
             }),
         );
     }
@@ -342,7 +342,7 @@ export default class GameConnection extends Connection {
                 mountId: 0, //todo
                 pkMode: 0, //todo
                 rankPoints: 0, //todo
-                parts: []
+                parts: [],
             }),
         );
     }

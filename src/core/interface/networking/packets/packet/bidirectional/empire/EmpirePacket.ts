@@ -1,6 +1,6 @@
-import { PacketHeaderEnum } from "@/core/enum/PacketHeaderEnum";
-import PacketBidirectional from "../PacketBidirectional";
-import EmpirePacketValidator from "./EmpirePacketValidator";
+import PacketHeaderEnum from '@/core/enum/PacketHeaderEnum';
+import PacketBidirectional from '../PacketBidirectional';
+import EmpirePacketValidator from './EmpirePacketValidator';
 
 export default class EmpirePacket extends PacketBidirectional {
     private empireId: number;

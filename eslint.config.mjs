@@ -1,27 +1,18 @@
 import globals from "globals";
 import pluginJs from "@eslint/js";
+import tseslint from "typescript-eslint";
 
+/** @type {import('eslint').Linter.Config[]} */
 export default [
-  {
-    ignores: ["src/core/infra/config/*", "test/performance/*", "src/game/infra/config/*"]
-  },
-  {
-    languageOptions: { globals: globals.node },
-  },
+  { files: ["**/*.{js,mjs,cjs,ts}"] },
+  { files: ["**/*.js"], languageOptions: { sourceType: "commonjs" } },
+  { languageOptions: { globals: globals.browser } },
   pluginJs.configs.recommended,
+  ...tseslint.configs.recommended,
   {
     rules: {
-      'no-control-regex': 'off'
-    }
+      "@typescript-eslint/no-explicit-any": "off",
+      "@typescript-eslint/no-unused-expressions": "off"
+    },
   },
-  {
-    files: [
-      "test/**"
-    ],
-    languageOptions: {
-      globals: {
-        ...globals.mocha
-      }
-    }
-  }
 ];

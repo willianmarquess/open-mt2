@@ -1,10 +1,10 @@
-import GameConnection from "@/game/interface/networking/GameConnection";
-import PacketHandler from "../../PacketHandler";
-import TargetPacket from "./TargetPacket";
-import Logger from "@/core/infra/logger/Logger";
-import CharacterUpdateTargetService from "@/game/app/service/CharacterUpdateTargetService";
+import GameConnection from '@/game/interface/networking/GameConnection';
+import PacketHandler from '../../PacketHandler';
+import TargetPacket from './TargetPacket';
+import Logger from '@/core/infra/logger/Logger';
+import CharacterUpdateTargetService from '@/game/app/service/CharacterUpdateTargetService';
 
-export default class TargetPacketHandler extends PacketHandler<TargetPacket>{
+export default class TargetPacketHandler extends PacketHandler<TargetPacket> {
     private logger: Logger;
     private characterUpdateTargetService: CharacterUpdateTargetService;
 
