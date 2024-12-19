@@ -18,13 +18,6 @@ export default class DatabaseManager {
         if (this.connection) {
             return this.connection;
         }
-        console.log({
-            dbHost: this.config.DB_HOST,
-            dbName: this.config.DB_DATABASE_NAME,
-            dbPass: this.config.DB_ROOT_PASSWORD,
-            dbUser: this.config.DB_USER,
-            dbPort: this.config.DB_PORT,
-        });
         this.connection = MySqlConnection.getConnection({
             dbHost: this.config.DB_HOST,
             dbName: this.config.DB_DATABASE_NAME,
