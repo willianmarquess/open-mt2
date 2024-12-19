@@ -9,7 +9,7 @@ import Player from '../entities/game/player/Player';
 type PlayerFactoryParams = {
     playerClass: number;
     accountId: number;
-    appearance: number;
+    appearance?: number;
     slot: number;
     virtualId?: number;
     id?: number;

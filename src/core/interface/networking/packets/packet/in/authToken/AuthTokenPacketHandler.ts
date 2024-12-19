@@ -54,30 +54,30 @@ export default class AuthTokenPacketHandler extends PacketHandler<AuthTokenPacke
             if (players?.length > 0) {
                 connection.send(
                     new EmpirePacket({
-                        empireId: players[0].getEmpire(),
+                        empireId: players[0].empire,
                     }),
                 );
 
                 const characterInfoPacket = new CharactersInfoPacket();
                 players.forEach((player) => {
-                    characterInfoPacket.addCharacter(player.getSlot(), {
-                        name: player.getName(),
-                        playerClass: player.getPlayerClass(),
-                        bodyPart: player.getBodyPart(),
-                        hairPart: player.getHairPart(),
-                        level: player.getLevel(),
-                        skillGroup: player.getSkillGroup(),
-                        playTime: player.getPlayTime(),
+                    characterInfoPacket.addCharacter(player.slot, {
+                        name: player.name,
+                        playerClass: player.playerClass,
+                        bodyPart: player.bodyPart,
+                        hairPart: player.hairPart,
+                        level: player.level,
+                        skillGroup: player.skillGroup,
+                        playTime: player.playTime,
                         port: Number(this.config.SERVER_PORT),
                         ip: Ip.toInt(this.config.REAL_SERVER_ADDRESS || this.config.SERVER_ADDRESS),
                         id: player.getId(),
                         nameChange: 0,
-                        positionX: player.getPositionX(),
-                        positionY: player.getPositionY(),
-                        ht: player.getHt(), //vit
-                        st: player.getSt(), //str
-                        dx: player.getDx(), //des
-                        iq: player.getIq(), //int
+                        positionX: player.positionX,
+                        positionY: player.positionY,
+                        ht: player.ht, //vit
+                        st: player.st, //str
+                        dx: player.dx, //des
+                        iq: player.iq, //int
                     });
                 });
                 connection.send(characterInfoPacket);

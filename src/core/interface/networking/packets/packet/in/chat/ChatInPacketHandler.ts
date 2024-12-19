@@ -3,6 +3,7 @@ import PacketHandler from '../../PacketHandler';
 import ChatInPacket from './ChatInPacket';
 import GameConnection from '@/game/interface/networking/GameConnection';
 import { ChatMessageTypeEnum } from '@/core/enum/ChatMessageTypeEnum';
+import CommandManager from '@/game/app/command/CommandManager';
 
 export default class ChatInPacketHandler extends PacketHandler<ChatInPacket> {
     private logger: Logger;

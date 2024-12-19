@@ -43,7 +43,7 @@ export default class DatabaseManager {
 
     async init() {
         this.logger.info('[DBMANAGER] Connecting with database');
-        await this.executeScripts();
+        await this.getConnection();
         this.logger.info('[DBMANAGER] Connected with success');
     }
 

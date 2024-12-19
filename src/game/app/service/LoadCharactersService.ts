@@ -1,5 +1,5 @@
 import Result from '@/core/app/Result';
-import Player from '@/core/domain/entities/game/player/Player';
+import PlayerState from '@/core/domain/entities/state/player/PlayerState';
 import PlayerRepository from '@/game/infra/database/PlayerRepository';
 
 export default class LoadCharactersService {
@@ -9,7 +9,7 @@ export default class LoadCharactersService {
         this.playerRepository = playerRepository;
     }
 
-    async execute({ accountId }): Promise<Result<Array<Player>, void>> {
+    async execute({ accountId }): Promise<Result<Array<PlayerState>, void>> {
         const players = await this.playerRepository.getByAccountId(accountId);
         return Result.ok(players);
     }

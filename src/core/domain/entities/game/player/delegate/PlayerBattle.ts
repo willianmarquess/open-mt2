@@ -1,11 +1,11 @@
 import Logger from '@/core/infra/logger/Logger';
 import Player from '../Player';
-import GameEntity from '../../GameEntity';
 import { AttackTypeEnum } from '@/core/enum/AttackTypeEnum';
 import MathUtil from '@/core/domain/util/MathUtil';
 import { ItemTypeEnum } from '@/core/enum/ItemTypeEnum';
 import { ItemSubTypeEnum } from '@/core/enum/ItemSubTypeEnum';
 import { ChatMessageTypeEnum } from '@/core/enum/ChatMessageTypeEnum';
+import Character from '../../Character';
 
 export default class PlayerBattle {
     private player: Player;
@@ -16,7 +16,7 @@ export default class PlayerBattle {
         this.logger = logger;
     }
 
-    attack(victim: GameEntity, attackType: AttackTypeEnum) {
+    attack(victim: Character, attackType: AttackTypeEnum) {
         switch (attackType) {
             case AttackTypeEnum.NORMAL:
                 //we need to verify the battle type before to do this
@@ -29,7 +29,7 @@ export default class PlayerBattle {
         }
     }
 
-    calcAttackRating(victim: GameEntity) {
+    calcAttackRating(victim: Character) {
         const attackerRating = this.player.getAttackRating();
         const victimRating = victim.getAttackRating();
         const attackRating =
@@ -37,7 +37,7 @@ export default class PlayerBattle {
         return attackRating;
     }
 
-    meleeAttack(victim: GameEntity) {
+    meleeAttack(victim: Character) {
         const MAX_DISTANCE = 500;
         const distance = MathUtil.calcDistance(
             this.player.getPositionX(),

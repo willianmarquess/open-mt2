@@ -6,8 +6,8 @@
   "scripts": {
     "dev:auth": "cross-env LOG_LEVEL=debug tsnd -r tsconfig-paths/register --transpile-only --respawn --ignore-watch node_modules --watch src/auth --env-file=.env src/auth/main.ts",
     "dev:game": "cross-env LOG_LEVEL=debug tsnd -r tsconfig-paths/register --transpile-only --respawn --ignore-watch node_modules --watch src/game --env-file=.env src/game/main.ts",
-    "auth": "node --env-file=.env --experimental-json-modules src/auth/main.js",
-    "game": "node --env-file=.env --experimental-json-modules src/game/main.js",
+    "auth": "node --env-file=.env dist/auth/main.js",
+    "game": "node --env-file=.env dist/game/main.js",
     "migrate": "cross-env node --env-file=.env --experimental-json-modules tools/database/migrate.js",
     "format": "prettier -w {src,test}/**/*.ts",
     "prepare": "husky",
@@ -18,7 +18,8 @@
     "test:coverage": "c8 npm run test:unit",
     "docker:all": "docker-compose -f docker-compose.yml up -d",
     "docker:dep": "docker-compose -f docker-compose.dep.yml up -d",
-    "generate:doc": "node tools/doc/docGenerator.js"
+    "generate:doc": "node tools/doc/docGenerator.js",
+    "build": "tsc -p tsconfig.build.json && tsc-alias"
   },
   "author": "Willian Marques (willian.goncalves4@gmail.com)",
   "license": "ISC",

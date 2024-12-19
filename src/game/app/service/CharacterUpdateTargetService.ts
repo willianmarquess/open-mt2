@@ -1,3 +1,4 @@
+import Character from '@/core/domain/entities/game/Character';
 import Player from '@/core/domain/entities/game/player/Player';
 import World from '@/core/domain/World';
 import Logger from '@/core/infra/logger/Logger';
@@ -21,7 +22,7 @@ export default class CharacterUpdateTargetService {
             return;
         }
 
-        const target = area.getEntity(targetVirtualId);
+        const target = area.getEntity(targetVirtualId) as Character;
 
         if (!target) {
             this.logger.info(`[CharacterUpdateTargetService] Target not found with virtualId ${targetVirtualId}`);
