@@ -25,24 +25,29 @@ const REMOVE_ITEM_FROM_GROUND = 30000;
 const SPAWN_POSITION_MULTIPLIER = 100;
 
 export default class Area {
-    private name: string;
-    private positionX: number;
-    private positionY: number;
-    private width: number;
-    private height: number;
-    private aka: string;
-    private goto: any;
+    private readonly name: string;
+    private readonly positionX: number;
+    private readonly positionY: number;
+    private readonly width: number;
+    private readonly height: number;
+    private readonly aka: string;
+    private readonly goto?: {
+        red: Array<number>;
+        yellow: Array<number>;
+        blue: Array<number>;
+        default: Array<number>;
+    };
 
-    entities = new Map<number, GameEntity>();
-    entitiesToSpawn = new Queue<GameEntity>(SIZE_QUEUE);
-    entitiesToDespawn = new Queue<GameEntity>(SIZE_QUEUE);
-    quadTree: QuadTree;
+    private readonly entities = new Map<number, GameEntity>();
+    private readonly entitiesToSpawn = new Queue<GameEntity>(SIZE_QUEUE);
+    private readonly entitiesToDespawn = new Queue<GameEntity>(SIZE_QUEUE);
+    private readonly quadTree: QuadTree;
 
-    saveCharacterService: SaveCharacterService;
-    logger: Logger;
+    private readonly saveCharacterService: SaveCharacterService;
+    private readonly logger: Logger;
 
-    world: World;
-    spawnManager: SpawnManager;
+    private readonly world: World;
+    private readonly spawnManager: SpawnManager;
 
     constructor(
         { name, positionX, positionY, width, height, aka, goto },
@@ -69,10 +74,10 @@ export default class Area {
     async load() {
         const entitiesToSpawn = await this.spawnManager.getEntities(this.name);
         entitiesToSpawn.forEach((entity) => {
-            entity.virtualId = this.world.generateVirtualId();
-            entity.positionY = this.positionY + entity.positionY * SPAWN_POSITION_MULTIPLIER;
-            entity.positionX = this.positionX + entity.positionX * SPAWN_POSITION_MULTIPLIER;
-            entity.rotation = MathUtil.calcRotationFromDirection(entity.direction);
+            entity.setVirtualId(this.world.generateVirtualId());
+            entity.setPositionY(this.positionY + entity.getPositionY() * SPAWN_POSITION_MULTIPLIER);
+            entity.setPositionX(this.positionX + entity.getPositionX() * SPAWN_POSITION_MULTIPLIER);
+            entity.setRotation(MathUtil.calcRotationFromDirection(entity.getDirection()));
             this.spawn(entity);
         });
     }
@@ -329,7 +334,7 @@ export default class Area {
                 entity.getPositionY(),
                 CHAR_VIEW_SIZE,
                 EntityTypeEnum.PLAYER,
-            );
+            ) as Map<number, Player>;
 
             if (entity instanceof Player) {
                 entity.removeAllListeners(CharacterMovedEvent);

@@ -46,7 +46,7 @@ export default abstract class GameEntity {
         }
     }
 
-    isNearby(entity: any) {
+    isNearby(entity: GameEntity) {
         if (entity instanceof GameEntity) {
             return this.nearbyEntities.has(entity.getVirtualId());
         }

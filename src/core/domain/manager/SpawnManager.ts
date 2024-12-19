@@ -15,6 +15,20 @@ const DEFAULT_SPAWN_CONFIG_PATH = 'src/core/infra/config/data/spawn';
 
 const spawnFiles = ['regen', 'npc', 'boss', 'stone'];
 
+type SpawnFile = {
+    type: string;
+    x: string;
+    y: string;
+    rangeX: string;
+    rangeY: string;
+    z: string;
+    direction: string;
+    spawnTime: string;
+    percent: string;
+    count: string;
+    vnum: string;
+};
+
 export default class SpawnManager {
     private readonly logger: Logger;
     private readonly mobManager: MobManager;
@@ -28,16 +42,30 @@ export default class SpawnManager {
         this.groupsCollection = config.groupsCollection;
     }
 
-    private createMonster({ id, x, y, rangeX, rangeY, direction }) {
+    private createMonster({
+        id,
+        x,
+        y,
+        rangeX,
+        rangeY,
+        direction,
+    }: {
+        id: number;
+        x: number;
+        y: number;
+        rangeX: number;
+        rangeY: number;
+        direction: number;
+    }) {
         const realX = MathUtil.getRandomInt(Number(x) - Number(rangeX), Number(x) + Number(rangeX));
         const realY = MathUtil.getRandomInt(Number(y) - Number(rangeY), Number(y) + Number(rangeY));
 
-        const monster = this.mobManager.getMob(id, realX, realY, direction);
+        const monster = this.mobManager.getMob(Number(id), realX, realY, direction);
         return monster;
     }
 
     private createMonsters(spawn: SpawnConfig) {
-        const entitiesToSpawn = [];
+        const entitiesToSpawn: Array<Mob> = [];
         const monsterGroup = new MonsterGroup({ spawnConfig: spawn });
         switch (spawn.getType()) {
             case SpawnConfigTypeEnum.MONSTER: {
@@ -74,7 +102,7 @@ export default class SpawnManager {
                     break;
                 }
                 const leader = this.createMonster({
-                    id: groupConfig.leaderVnum,
+                    id: Number(groupConfig.leaderVnum),
                     x: spawn.getX(),
                     y: spawn.getY(),
                     direction: spawn.getDirection(),
@@ -92,7 +120,7 @@ export default class SpawnManager {
 
                 for (const monsterConfig of groupConfig.mobs) {
                     const monster = this.createMonster({
-                        id: monsterConfig.vnum,
+                        id: Number(monsterConfig.vnum),
                         x: spawn.getX(),
                         y: spawn.getY(),
                         direction: spawn.getDirection(),
@@ -100,7 +128,7 @@ export default class SpawnManager {
                         rangeY: spawn.getRangeY(),
                     });
 
-                    if (monster && monster instanceof Monster) {
+                    if (monster instanceof Monster) {
                         entitiesToSpawn.push(monster);
                         monsterGroup.addMember(monster);
                     }
@@ -119,11 +147,10 @@ export default class SpawnManager {
 
     async getEntities(areaName: string) {
         const spawns = await this.loadFromArea(areaName);
-
-        const entitiesToSpawn = [];
+        const entitiesToSpawn: Array<Mob> = [];
 
         for (const spawn of spawns.npc) {
-            const entity = this.mobManager.getMob(spawn.id, spawn.x, spawn.y, spawn.direction);
+            const entity = this.mobManager.getMob(spawn.getId(), spawn.getX(), spawn.getY(), spawn.getDirection());
             if (entity && entity instanceof Mob) {
                 entitiesToSpawn.push(entity);
             }
@@ -158,10 +185,10 @@ export default class SpawnManager {
         const currentDir = process.cwd();
 
         const spawns = {
-            regen: [],
-            npc: [],
-            boss: [],
-            stone: [],
+            regen: Array<SpawnConfig>(),
+            npc: Array<SpawnConfig>(),
+            boss: Array<SpawnConfig>(),
+            stone: Array<SpawnConfig>(),
         };
 
         for (const file of spawnFiles) {
@@ -170,19 +197,19 @@ export default class SpawnManager {
             try {
                 if (fsSync.existsSync(absoluteFilePath)) {
                     const fileContent = await fs.readFile(absoluteFilePath, 'utf8');
-                    const spawnsData = JSON.parse(fileContent || '');
+                    const spawnsData: Array<SpawnFile> = JSON.parse(fileContent || '');
 
                     spawns[file] = spawnsData.map((spawnData) => {
                         return SpawnConfig.create({
                             type: spawnData.type,
-                            x: spawnData.x,
-                            y: spawnData.y,
-                            rangeX: spawnData.rangeX,
-                            rangeY: spawnData.rangeY,
-                            direction: spawnData.direction,
+                            x: Number(spawnData.x),
+                            y: Number(spawnData.y),
+                            rangeX: Number(spawnData.rangeX),
+                            rangeY: Number(spawnData.rangeY),
+                            direction: Number(spawnData.direction),
                             respawnTime: spawnData.spawnTime,
-                            id: spawnData.vnum,
-                            count: spawnData.count,
+                            id: Number(spawnData.vnum),
+                            count: Number(spawnData.count),
                         });
                     });
                 }

@@ -28,8 +28,8 @@ export default class MathUtil {
         return isValidNumber ? Number(value) : 0;
     }
 
-    static toNumber(value: any) {
-        const isValidNumber = !isNaN(parseFloat(value)) && isFinite(Number(value));
+    static toNumber(value: string | number) {
+        const isValidNumber = !isNaN(parseFloat(String(value))) && isFinite(Number(value));
         return isValidNumber ? Number(value) : 0;
     }
 

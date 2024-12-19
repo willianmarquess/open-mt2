@@ -64,14 +64,14 @@ export default class QuadTree {
         return this._nw.insert(entity) || this._ne.insert(entity) || this._sw.insert(entity) || this._se.insert(entity);
     }
 
-    remove(entity) {
+    remove(entity: GameEntity) {
         if (this.subdivided) {
             return (
                 this._nw.remove(entity) || this._ne.remove(entity) || this._sw.remove(entity) || this._se.remove(entity)
             );
         }
 
-        return this.entities.delete(entity.virtualId);
+        return this.entities.delete(entity.getVirtualId());
     }
 
     queryAround(x: number, y: number, radius: number, filter: number = null) {
@@ -147,7 +147,7 @@ export default class QuadTree {
         this.entities.clear();
     }
 
-    updatePosition(entity: any) {
+    updatePosition(entity: GameEntity) {
         this.remove(entity);
         this.insert(entity);
     }

@@ -48,7 +48,7 @@ export default class RuleBuilder<T> {
         return this.abstractValidator;
     }
 
-    private validateNumber(value: any): boolean {
+    private validateNumber(value: T): boolean {
         return (typeof value === 'number' && !isNaN(value)) || (typeof value === 'string' && !isNaN(parseFloat(value)));
     }
 

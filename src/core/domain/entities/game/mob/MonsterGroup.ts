@@ -3,7 +3,7 @@ import Mob from '@/core/domain/entities/game/mob/Mob';
 
 export default class MonsterGroup {
     private leader: Mob;
-    private members: Array<Mob>;
+    private members: Array<Mob> = [];
     private spawnConfig: SpawnConfig;
 
     constructor({ spawnConfig }) {

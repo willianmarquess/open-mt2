@@ -83,7 +83,27 @@ export default class SpawnConfig {
         }
     }
 
-    static create({ type, x, y, rangeX, rangeY, direction, respawnTime, id, count }) {
+    static create({
+        type,
+        x,
+        y,
+        rangeX,
+        rangeY,
+        direction,
+        respawnTime,
+        id,
+        count,
+    }: {
+        type: string;
+        x: number;
+        y: number;
+        rangeX: number;
+        rangeY: number;
+        direction: number;
+        respawnTime: string;
+        id: number;
+        count: number;
+    }) {
         return new SpawnConfig({
             type: SpawnConfigMap[type] || SpawnConfigMap.m,
             x,
