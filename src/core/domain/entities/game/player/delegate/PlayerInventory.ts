@@ -15,7 +15,6 @@ export default class PlayerInventory {
 
     sendItemAdded(window: number, position: number, item: Item) {
         this.player.publish(
-            ItemAddedEvent.type,
             new ItemAddedEvent({
                 window,
                 position,
@@ -24,15 +23,14 @@ export default class PlayerInventory {
                 flags: item.getFlags().getFlag(),
                 antiFlags: item.getAntiFlags().getFlag(),
                 highlight: 0,
-                bonuses: 0,
-                sockets: 0,
+                bonuses: [],
+                sockets: [],
             }),
         );
     }
 
     sendItemRemoved({ window, position }) {
         this.player.publish(
-            ItemRemovedEvent.type,
             new ItemRemovedEvent({
                 window,
                 position,

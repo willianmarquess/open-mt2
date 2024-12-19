@@ -1,3 +1,5 @@
+import GameEntity from '../domain/entities/game/GameEntity';
+
 class Rectangle {
     private readonly x: number;
     private readonly y: number;
@@ -24,7 +26,7 @@ export default class QuadTree {
     private capacity: number;
     private bounds: Rectangle;
     private subdivided: boolean;
-    private entities: Map<string, any>;
+    private entities: Map<number, GameEntity>;
     private _nw: QuadTree;
     private _ne: QuadTree;
     private _sw: QuadTree;
@@ -73,12 +75,18 @@ export default class QuadTree {
     }
 
     queryAround(x: number, y: number, radius: number, filter: number = null) {
-        const entities = new Map();
+        const entities = new Map<number, GameEntity>();
         this.queryAroundInternal(entities, x, y, radius, filter);
         return entities;
     }
 
-    queryAroundInternal(entities: Map<string, any>, x: number, y: number, radius: number, filter: number = null) {
+    queryAroundInternal(
+        entities: Map<number, GameEntity>,
+        x: number,
+        y: number,
+        radius: number,
+        filter: number = null,
+    ) {
         if (!this.circleIntersects(x, y, radius)) {
             return;
         }
@@ -90,14 +98,14 @@ export default class QuadTree {
             this._sw.queryAroundInternal(entities, x, y, radius, filter);
         } else {
             for (const entity of this.entities.values()) {
-                if (filter !== null && entity.entityType !== filter) {
+                if (filter !== null && entity.getEntityType() !== filter) {
                     continue;
                 }
 
-                const dx = entity.positionX - x;
-                const dy = entity.positionY - y;
+                const dx = entity.getPositionX() - x;
+                const dy = entity.getPositionY() - y;
                 if (dx * dx + dy * dy <= radius * radius) {
-                    entities.set(entity.virtualId, entity);
+                    entities.set(entity.getVirtualId(), entity);
                 }
             }
         }

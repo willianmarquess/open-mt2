@@ -9,8 +9,8 @@ export default class ItemAddedEvent {
     public readonly flags: number;
     public readonly antiFlags: number;
     public readonly highlight: number;
-    public readonly sockets: number;
-    public readonly bonuses: number;
+    public readonly sockets: number[];
+    public readonly bonuses: number[];
 
     constructor({ window, position, id, count, flags, antiFlags, highlight, sockets, bonuses }) {
         this.window = window;

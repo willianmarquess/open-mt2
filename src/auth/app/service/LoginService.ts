@@ -30,7 +30,7 @@ export default class LoginService {
             return Result.error(ErrorTypesEnum.INVALID_USERNAME);
         }
 
-        const isPasswordValid = await this.encryptionProvider.compare(password, account.password);
+        const isPasswordValid = await this.encryptionProvider.compare(password, account.getPassword());
 
         if (!isPasswordValid) {
             this.logger.info(`[LoginService] Invalid password for username ${username}`);

@@ -183,7 +183,6 @@ export default class Monster extends Mob {
         super.die();
 
         this.publish(
-            MonsterDiedEvent.type,
             new MonsterDiedEvent({
                 entity: this,
             }),
@@ -194,7 +193,6 @@ export default class Monster extends Mob {
         const rotation = MathUtil.calcRotationFromXY(x - this.positionX, y - this.positionY) / 5;
         super.gotoInternal(x, y, rotation);
         this.publish(
-            MonsterMovedEvent.type,
             new MonsterMovedEvent({
                 params: {
                     positionX: x,

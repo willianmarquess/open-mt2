@@ -1,4 +1,3 @@
-import PlayerEventsEnum from '../../../core/domain/entities/game/player/events/PlayerEventsEnum';
 import { ConnectionStateEnum } from '../../../core/enum/ConnectionStateEnum';
 import { PointsEnum } from '../../../core/enum/PointsEnum';
 import Connection from '../../../core/interface/networking/Connection';
@@ -23,6 +22,24 @@ import Queue from '../../../core/util/Queue';
 import Player from '@/core/domain/entities/game/player/Player';
 import { GameConfig } from '@/game/infra/config/GameConfig';
 import LogoutService from '@/game/app/service/LogoutService';
+import OtherCharacterSpawnedEvent from '@/core/domain/entities/game/player/events/OtherCharacterSpawnedEvent';
+import OtherCharacterMovedEvent from '@/core/domain/entities/game/player/events/OtherCharacterMovedEvent';
+import OtherCharacterLevelUpEvent from '@/core/domain/entities/game/player/events/OtherCharacterLevelUpEvent';
+import OtherCharacterLeftGameEvent from '@/core/domain/entities/game/player/events/OtherCharacterLeftGameEvent';
+import OtherCharacterUpdatedEvent from '@/core/domain/entities/game/player/events/OtherCharacterUpdatedEvent';
+import CharacterSpawnedEvent from '@/core/domain/entities/game/player/events/CharacterSpawnedEvent';
+import CharacterPointsUpdatedEvent from '@/core/domain/entities/game/player/events/CharacterPointsUpdatedEvent';
+import CharacterTeleportedEvent from '@/core/domain/entities/game/player/events/CharacterTeleportedEvent';
+import CharacterUpdatedEvent from '@/core/domain/entities/game/player/events/CharacterUpdatedEvent';
+import ItemAddedEvent from '@/core/domain/entities/game/player/events/ItemAddedEvent';
+import ItemRemovedEvent from '@/core/domain/entities/game/player/events/ItemRemovedEvent';
+import ItemDroppedEvent from '@/core/domain/entities/game/player/events/ItemDroppedEvent';
+import ItemDroppedHideEvent from '@/core/domain/entities/game/player/events/ItemDroppedHideEvent';
+import ChatEvent from '@/core/domain/entities/game/player/events/ChatEvent';
+import LogoutEvent from '@/core/domain/entities/game/player/events/LogoutEvent';
+import DamageCausedEvent from '@/core/domain/entities/game/player/events/DamageCausedEvent';
+import TargetUpdatedEvent from '@/core/domain/entities/game/player/events/TargetUpdatedEvent';
+import OtherCharacterDiedEvent from '@/core/domain/entities/game/player/events/OtherCharacterDiedEvent';
 
 const OUTGOING_MESSAGES_PER_CON_QUEUE_SIZE = 5_000;
 
@@ -57,37 +74,37 @@ export default class GameConnection extends Connection {
 
     setPlayer(newPlayer: Player) {
         this.player = newPlayer;
-        this.player.subscribe(PlayerEventsEnum.OTHER_CHARACTER_SPAWNED, this.onOtherCharacterSpawned.bind(this));
-        this.player.subscribe(PlayerEventsEnum.OTHER_CHARACTER_MOVED, this.onOtherCharacterMoved.bind(this));
-        this.player.subscribe(PlayerEventsEnum.OTHER_CHARACTER_LEVEL_UP, this.onOtherCharacterLevelUp.bind(this));
-        this.player.subscribe(PlayerEventsEnum.OTHER_CHARACTER_LEFT_GAME, this.onOtherCharacterLeftGame.bind(this));
-        this.player.subscribe(PlayerEventsEnum.OTHER_CHARACTER_UPDATED, this.onOtherCharacterUpdated.bind(this));
-        this.player.subscribe(PlayerEventsEnum.CHARACTER_SPAWNED, this.onCharacterSpawned.bind(this));
-        this.player.subscribe(PlayerEventsEnum.CHARACTER_POINTS_UPDATED, this.onCharacterPointsUpdated.bind(this));
-        this.player.subscribe(PlayerEventsEnum.CHARACTER_TELEPORTED, this.onCharacterTeleported.bind(this));
-        this.player.subscribe(PlayerEventsEnum.CHARACTER_UPDATED, this.onCharacterUpdated.bind(this));
-        this.player.subscribe(PlayerEventsEnum.ITEM_ADDED, this.onItemAdded.bind(this));
-        this.player.subscribe(PlayerEventsEnum.ITEM_REMOVED, this.onItemRemoved.bind(this));
-        this.player.subscribe(PlayerEventsEnum.ITEM_DROPPED, this.onItemDropped.bind(this));
-        this.player.subscribe(PlayerEventsEnum.ITEM_DROPPED_HIDE, this.onItemDroppedHide.bind(this));
-        this.player.subscribe(PlayerEventsEnum.CHAT, this.onChat.bind(this));
-        this.player.subscribe(PlayerEventsEnum.LOGOUT, this.onLogout.bind(this));
-        this.player.subscribe(PlayerEventsEnum.DAMAGE_CAUSED, this.onDamageCaused.bind(this));
-        this.player.subscribe(PlayerEventsEnum.TARGET_UPDATED, this.onTargetUpdated.bind(this));
-        this.player.subscribe(PlayerEventsEnum.OTHER_CHARACTER_DIED, this.onOtherCharacterDied.bind(this));
+        this.player.subscribe(OtherCharacterSpawnedEvent, this.onOtherCharacterSpawned.bind(this));
+        this.player.subscribe(OtherCharacterMovedEvent, this.onOtherCharacterMoved.bind(this));
+        this.player.subscribe(OtherCharacterLevelUpEvent, this.onOtherCharacterLevelUp.bind(this));
+        this.player.subscribe(OtherCharacterLeftGameEvent, this.onOtherCharacterLeftGame.bind(this));
+        this.player.subscribe(OtherCharacterUpdatedEvent, this.onOtherCharacterUpdated.bind(this));
+        this.player.subscribe(CharacterSpawnedEvent, this.onCharacterSpawned.bind(this));
+        this.player.subscribe(CharacterPointsUpdatedEvent, this.onCharacterPointsUpdated.bind(this));
+        this.player.subscribe(CharacterTeleportedEvent, this.onCharacterTeleported.bind(this));
+        this.player.subscribe(CharacterUpdatedEvent, this.onCharacterUpdated.bind(this));
+        this.player.subscribe(ItemAddedEvent, this.onItemAdded.bind(this));
+        this.player.subscribe(ItemRemovedEvent, this.onItemRemoved.bind(this));
+        this.player.subscribe(ItemDroppedEvent, this.onItemDropped.bind(this));
+        this.player.subscribe(ItemDroppedHideEvent, this.onItemDroppedHide.bind(this));
+        this.player.subscribe(ChatEvent, this.onChat.bind(this));
+        this.player.subscribe(LogoutEvent, this.onLogout.bind(this));
+        this.player.subscribe(DamageCausedEvent, this.onDamageCaused.bind(this));
+        this.player.subscribe(TargetUpdatedEvent, this.onTargetUpdated.bind(this));
+        this.player.subscribe(OtherCharacterDiedEvent, this.onOtherCharacterDied.bind(this));
     }
 
     getPlayer() {
         return this.player;
     }
 
-    onOtherCharacterDied(otherCharacterDiedEvent) {
+    onOtherCharacterDied(otherCharacterDiedEvent: OtherCharacterDiedEvent) {
         const { virtualId } = otherCharacterDiedEvent;
 
         this.send(new CharacterDiedPacket({ virtualId }));
     }
 
-    onTargetUpdated(targetUpdatedEvent) {
+    onTargetUpdated(targetUpdatedEvent: TargetUpdatedEvent) {
         const { virtualId, healthPercentage } = targetUpdatedEvent;
         this.send(
             new TargetUpdatedPacket({
@@ -97,7 +114,7 @@ export default class GameConnection extends Connection {
         );
     }
 
-    onDamageCaused(damageCausedEvent) {
+    onDamageCaused(damageCausedEvent: DamageCausedEvent) {
         const { virtualId, damage, damageFlags } = damageCausedEvent;
         this.send(
             new DamagePacket({
@@ -108,7 +125,7 @@ export default class GameConnection extends Connection {
         );
     }
 
-    onOtherCharacterUpdated(otherCharacterUpdated) {
+    onOtherCharacterUpdated(otherCharacterUpdated: OtherCharacterUpdatedEvent) {
         const { attackSpeed, moveSpeed, vid, bodyId, weaponId, hairId } = otherCharacterUpdated;
 
         this.send(
@@ -121,7 +138,7 @@ export default class GameConnection extends Connection {
         );
     }
 
-    onCharacterUpdated(characterUpdatedEvent) {
+    onCharacterUpdated(characterUpdatedEvent: CharacterUpdatedEvent) {
         const { attackSpeed, moveSpeed, vid, bodyId, weaponId, hairId } = characterUpdatedEvent;
 
         this.send(
@@ -134,7 +151,7 @@ export default class GameConnection extends Connection {
         );
     }
 
-    onItemDroppedHide(itemDroppedHideEvent) {
+    onItemDroppedHide(itemDroppedHideEvent: ItemDroppedHideEvent) {
         const { virtualId } = itemDroppedHideEvent;
 
         this.send(
@@ -144,7 +161,7 @@ export default class GameConnection extends Connection {
         );
     }
 
-    onItemDropped(itemDroppedEvent) {
+    onItemDropped(itemDroppedEvent: ItemDroppedEvent) {
         const { id, positionX, positionY, virtualId, ownerName } = itemDroppedEvent;
 
         this.send(
@@ -164,7 +181,7 @@ export default class GameConnection extends Connection {
         );
     }
 
-    onItemRemoved(itemRemovedEvent) {
+    onItemRemoved(itemRemovedEvent: ItemRemovedEvent) {
         const { window, position } = itemRemovedEvent;
 
         this.send(
@@ -180,8 +197,8 @@ export default class GameConnection extends Connection {
         );
     }
 
-    onItemAdded(itemAddedEvent) {
-        const { window, position, id, count, flags, antiFlags, highlight, sockets, bonuses } = itemAddedEvent;
+    onItemAdded(itemAddedEvent: ItemAddedEvent) {
+        const { window, position, id, count, flags, antiFlags, highlight, sockets } = itemAddedEvent;
 
         this.send(
             new ItemPacket({
@@ -193,7 +210,6 @@ export default class GameConnection extends Connection {
                 antiFlags,
                 highlight,
                 sockets,
-                bonuses,
             }),
         );
     }
@@ -213,7 +229,7 @@ export default class GameConnection extends Connection {
         this.close();
     }
 
-    onChat(chatEvent) {
+    onChat(chatEvent: ChatEvent) {
         const { messageType, message } = chatEvent;
         this.send(
             new ChatOutPacket({
@@ -225,7 +241,7 @@ export default class GameConnection extends Connection {
         );
     }
 
-    onOtherCharacterLevelUp(otherCharacterLevelUpEvent) {
+    onOtherCharacterLevelUp(otherCharacterLevelUpEvent: OtherCharacterLevelUpEvent) {
         const { virtualId, level } = otherCharacterLevelUpEvent;
 
         this.send(
@@ -246,7 +262,7 @@ export default class GameConnection extends Connection {
         this.send(characterPointsPacket);
     }
 
-    onOtherCharacterMoved(otherCharacterMovedEvent) {
+    onOtherCharacterMoved(otherCharacterMovedEvent: OtherCharacterMovedEvent) {
         const { virtualId, arg, duration, movementType, time, rotation, positionX, positionY } =
             otherCharacterMovedEvent;
 
@@ -264,7 +280,7 @@ export default class GameConnection extends Connection {
         );
     }
 
-    onOtherCharacterLeftGame(otherCharacterLeftGameEvent) {
+    onOtherCharacterLeftGame(otherCharacterLeftGameEvent: OtherCharacterLeftGameEvent) {
         const { virtualId } = otherCharacterLeftGameEvent;
 
         this.send(
@@ -274,7 +290,7 @@ export default class GameConnection extends Connection {
         );
     }
 
-    onOtherCharacterSpawned(OtherCharacterSpawnedEvent) {
+    onOtherCharacterSpawned(otherCharacterSpawnedEvent: OtherCharacterSpawnedEvent) {
         const {
             virtualId,
             playerClass,
@@ -287,7 +303,7 @@ export default class GameConnection extends Connection {
             level,
             name,
             rotation,
-        } = OtherCharacterSpawnedEvent;
+        } = otherCharacterSpawnedEvent;
 
         this.send(
             new CharacterSpawnPacket({

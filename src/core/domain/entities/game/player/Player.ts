@@ -37,10 +37,11 @@ import ItemDroppedHideEvent from './events/ItemDroppedHideEvent';
 import DroppedItem from '../item/DroppedItem';
 import { StatsEnum } from '@/core/enum/StatsEnum';
 import PlayerState from '../../state/player/PlayerState';
+import Character from '../Character';
 
 const REGEN_INTERVAL = 3000;
 
-export default class Player extends GameEntity {
+export default class Player extends Character {
     private accountId: number;
     private playerClass: number;
     private skillGroup: number;
@@ -263,21 +264,20 @@ export default class Player extends GameEntity {
     }
 
     otherEntityDied(entity: GameEntity) {
-        this.publish(OtherCharacterDiedEvent.type, new OtherCharacterDiedEvent({ virtualId: entity.getVirtualId() }));
+        this.publish(new OtherCharacterDiedEvent({ virtualId: entity.getVirtualId() }));
     }
 
     getHealthPercentage() {
         return Math.round(Math.max(0, Math.min(100, (this.health * 100) / this.maxHealth)));
     }
 
-    setTarget(target) {
+    setTarget(target: Character) {
         super.setTarget(target);
         this.sendTargetUpdated(target);
     }
 
-    sendTargetUpdated(target: GameEntity) {
+    sendTargetUpdated(target: Character) {
         this.publish(
-            TargetUpdatedEvent.type,
             new TargetUpdatedEvent({
                 virtualId: target.getVirtualId(),
                 healthPercentage: target.getHealthPercentage(),
@@ -285,13 +285,12 @@ export default class Player extends GameEntity {
         );
     }
 
-    attack(victim: GameEntity, attackType: AttackTypeEnum): void {
+    attack(victim: Character, attackType: AttackTypeEnum): void {
         return this.playerBattle.attack(victim, attackType);
     }
 
     sendDamageCaused({ virtualId, damage, damageFlags }) {
         this.publish(
-            DamageCausedEvent.type,
             new DamageCausedEvent({
                 virtualId,
                 damage,
@@ -467,7 +466,7 @@ export default class Player extends GameEntity {
         this.move(x, y);
         this.stop();
 
-        this.publish(CharacterTeleportedEvent.type, new CharacterTeleportedEvent());
+        this.publish(new CharacterTeleportedEvent());
     }
 
     addGold(value: number = 1) {
@@ -535,7 +534,7 @@ export default class Player extends GameEntity {
         this.sendPoints();
 
         //verify if we really need to send this
-        this.publish(CharacterLevelUpEvent.type, new CharacterLevelUpEvent({ entity: this }));
+        this.publish(new CharacterLevelUpEvent({ entity: this }));
     }
 
     setLevel(value: number = 1) {
@@ -565,7 +564,7 @@ export default class Player extends GameEntity {
 
         //add skill point
         //verify if we really need to send this
-        this.publish(CharacterLevelUpEvent.type, new CharacterLevelUpEvent({ entity: this }));
+        this.publish(new CharacterLevelUpEvent({ entity: this }));
     }
 
     addHealthRegen(value: number) {
@@ -633,7 +632,7 @@ export default class Player extends GameEntity {
 
     spawn() {
         this.lastPlayTime = performance.now();
-        this.publish(CharacterSpawnedEvent.type, new CharacterSpawnedEvent());
+        this.publish(new CharacterSpawnedEvent());
         this.chat({
             messageType: ChatMessageTypeEnum.INFO,
             message: 'Welcome to Metin2 JS - An Open Source Project',
@@ -654,7 +653,6 @@ export default class Player extends GameEntity {
         rotation,
     }) {
         this.publish(
-            OtherCharacterSpawnedEvent.type,
             new OtherCharacterSpawnedEvent({
                 virtualId,
                 playerClass,
@@ -672,27 +670,23 @@ export default class Player extends GameEntity {
     }
 
     hideOtherEntity({ virtualId }) {
-        this.publish(OtherCharacterLeftGameEvent.type, new OtherCharacterLeftGameEvent({ virtualId }));
+        this.publish(new OtherCharacterLeftGameEvent({ virtualId }));
     }
 
     otherEntityLevelUp({ virtualId, level }) {
-        this.publish(OtherCharacterLevelUpEvent.type, new OtherCharacterLevelUpEvent({ virtualId, level }));
+        this.publish(new OtherCharacterLevelUpEvent({ virtualId, level }));
     }
 
     otherEntityUpdated({ vid, attackSpeed, moveSpeed, bodyId, weaponId, hairId }) {
-        this.publish(
-            OtherCharacterUpdatedEvent.type,
-            new OtherCharacterUpdatedEvent({ vid, attackSpeed, moveSpeed, bodyId, weaponId, hairId }),
-        );
+        this.publish(new OtherCharacterUpdatedEvent({ vid, attackSpeed, moveSpeed, bodyId, weaponId, hairId }));
     }
 
     logout() {
-        this.publish(LogoutEvent.type, new LogoutEvent());
+        this.publish(new LogoutEvent());
     }
 
     chat({ message, messageType }) {
         this.publish(
-            ChatEvent.type,
             new ChatEvent({
                 message,
                 messageType,
@@ -712,12 +706,11 @@ export default class Player extends GameEntity {
     }
 
     sendPoints() {
-        this.publish(CharacterPointsUpdatedEvent.type, new CharacterPointsUpdatedEvent());
+        this.publish(new CharacterPointsUpdatedEvent());
     }
 
     updateOtherEntity({ virtualId, arg, movementType, time, rotation, positionX, positionY, duration }) {
         this.publish(
-            OtherCharacterMovedEvent.type,
             new OtherCharacterMovedEvent({
                 virtualId,
                 arg,
@@ -733,7 +726,6 @@ export default class Player extends GameEntity {
 
     updateView() {
         this.publish(
-            CharacterUpdatedEvent.type,
             new CharacterUpdatedEvent({
                 name: this.name,
                 attackSpeed: this.attackSpeed,
@@ -751,7 +743,6 @@ export default class Player extends GameEntity {
     wait({ positionX, positionY, arg, rotation, time, movementType }) {
         super.waitInternal(positionX, positionY);
         this.publish(
-            CharacterMovedEvent.type,
             new CharacterMovedEvent({
                 params: { positionX, positionY, arg, rotation, time, movementType, duration: 0 },
                 entity: this,
@@ -762,7 +753,6 @@ export default class Player extends GameEntity {
     goto({ positionX, positionY, arg, rotation, time, movementType }) {
         super.gotoInternal(positionX, positionY, rotation);
         this.publish(
-            CharacterMovedEvent.type,
             new CharacterMovedEvent({
                 params: { positionX, positionY, arg, rotation, time, movementType, duration: this.movementDuration },
                 entity: this,
@@ -779,7 +769,6 @@ export default class Player extends GameEntity {
         this.rotation = rotation;
         this.move(positionX, positionY);
         this.publish(
-            CharacterMovedEvent.type,
             new CharacterMovedEvent({
                 params: { positionX, positionY, arg, rotation, time, movementType, duration: 0 },
                 entity: this,
@@ -861,7 +850,6 @@ export default class Player extends GameEntity {
 
     dropItem({ item, count }) {
         this.publish(
-            DropItemEvent.type,
             new DropItemEvent({
                 item,
                 count,
@@ -874,7 +862,6 @@ export default class Player extends GameEntity {
 
     showDroppedItem({ virtualId, count, positionX, positionY, ownerName, id }) {
         this.publish(
-            ItemDroppedEvent.type,
             new ItemDroppedEvent({
                 virtualId,
                 count,
@@ -888,7 +875,6 @@ export default class Player extends GameEntity {
 
     hideDroppedItem({ virtualId }) {
         this.publish(
-            ItemDroppedHideEvent.type,
             new ItemDroppedHideEvent({
                 virtualId,
             }),
@@ -916,13 +902,13 @@ export default class Player extends GameEntity {
         this.onNearbyEntityAdded(entity);
     }
 
-    removeNearbyEntity(entity) {
+    removeNearbyEntity(entity: GameEntity) {
         super.removeNearbyEntity(entity);
         this.onNearbyEntityRemoved(entity);
     }
 
-    onNearbyEntityAdded(otherEntity: any) {
-        if (otherEntity instanceof GameEntity) {
+    onNearbyEntityAdded(otherEntity: GameEntity) {
+        if (otherEntity instanceof Character) {
             this.showOtherEntity({
                 virtualId: otherEntity.getVirtualId(),
                 playerClass: otherEntity.getClassId(),
@@ -961,8 +947,8 @@ export default class Player extends GameEntity {
         }
     }
 
-    onNearbyEntityRemoved(otherEntity) {
-        if (otherEntity instanceof GameEntity) {
+    onNearbyEntityRemoved(otherEntity: GameEntity) {
+        if (otherEntity instanceof Character) {
             this.hideOtherEntity({ virtualId: otherEntity.getVirtualId() });
         }
 

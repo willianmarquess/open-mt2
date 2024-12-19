@@ -1,4 +1,4 @@
-import GameEntity from '../GameEntity';
+import Character from '../Character';
 import MonsterGroup from './MonsterGroup';
 
 enum MobSizeEnum {
@@ -22,6 +22,15 @@ enum MobResistTypeEnum {
     POISON = 11,
 }
 
+enum MobEnchantTypeEnum {
+    CURSE = 1,
+    SLOW = 2,
+    POISON = 3,
+    STUN = 4,
+    CRITICAL = 5,
+    PENETRATE = 6,
+}
+
 class MobResist {
     private type: MobResistTypeEnum;
 
@@ -35,7 +44,7 @@ class MobResist {
 }
 
 class MobEnchant {
-    private type;
+    private type: MobEnchantTypeEnum;
 
     constructor({ type }) {
         this.type = type;
@@ -47,8 +56,8 @@ class MobEnchant {
 }
 
 class MobSkill {
-    private id;
-    private level;
+    private id: number;
+    private level: number;
 
     constructor({ id, level }) {
         this.id = id;
@@ -63,7 +72,7 @@ class MobSkill {
     }
 }
 
-export default abstract class Mob extends GameEntity {
+export default abstract class Mob extends Character {
     protected rank: string;
     protected battleType: string;
     protected size: MobSizeEnum = MobSizeEnum.MEDIUM;
@@ -216,15 +225,15 @@ export default abstract class Mob extends GameEntity {
         this.direction = direction;
     }
 
-    addResist(type) {
+    addResist(type: MobResistTypeEnum) {
         this.resists.push(new MobResist({ type }));
     }
 
-    addEnchant(type) {
+    addEnchant(type: MobEnchantTypeEnum) {
         this.enchants.push(new MobEnchant({ type }));
     }
 
-    addSkill(id, level) {
+    addSkill(id: number, level: number) {
         this.skills.push(new MobSkill({ id, level }));
     }
 
