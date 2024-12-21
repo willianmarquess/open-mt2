@@ -10,19 +10,22 @@
       "forceConsistentCasingInFileNames": true,
       "rootDirs": [
         "src",
-        "test"
+        "test",
+        "tools"
       ],
       "baseUrl": "src",
       "paths": {
         "@/*": [
           "*"
         ],
-        "@/test/*": ["../test/*"]
+        "@/test/*": ["../test/*"],
+        "@/tools/*": ["../tools/*"],
       }
     },
     "include": [
       "src",
-      "test"
+      "test",
+      "tools"
     ],
     "exclude": []
   }

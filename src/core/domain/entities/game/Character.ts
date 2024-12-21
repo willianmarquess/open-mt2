@@ -18,8 +18,6 @@ export default abstract class Character extends GameEntity {
     protected empire: number;
 
     //movement and animation
-    protected positionX: number = 0;
-    protected positionY: number = 0;
     protected rotation: number = 0;
     protected targetPositionX: number = 0;
     protected targetPositionY: number = 0;
@@ -233,27 +231,6 @@ export default abstract class Character extends GameEntity {
     }
     setAttackSpeed(value) {
         this.attackSpeed = value;
-    }
-    getVirtualId() {
-        return this.virtualId;
-    }
-    setVirtualId(value) {
-        this.virtualId = value;
-    }
-    getEntityType() {
-        return this.entityType;
-    }
-    getPositionX() {
-        return this.positionX;
-    }
-    setPositionX(value) {
-        this.positionX = value;
-    }
-    getPositionY() {
-        return this.positionY;
-    }
-    setPositionY(value) {
-        this.positionY = value;
     }
     getSt() {
         return this.st;

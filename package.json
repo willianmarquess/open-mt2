@@ -8,7 +8,7 @@
     "dev:game": "cross-env LOG_LEVEL=debug tsnd -r tsconfig-paths/register --transpile-only --respawn --ignore-watch node_modules --watch src/game --env-file=.env src/game/main.ts",
     "auth": "node --env-file=.env dist/auth/main.js",
     "game": "node --env-file=.env dist/game/main.js",
-    "migrate": "cross-env node --env-file=.env --experimental-json-modules tools/database/migrate.js",
+    "migrate": "cross-env tsnd -r tsconfig-paths/register --env-file=.env tools/database/migrate.ts",
     "format": "prettier -w {src,test}/**/*.ts",
     "prepare": "husky",
     "lint:fix": "eslint --fix {src,test}/**/*.ts",

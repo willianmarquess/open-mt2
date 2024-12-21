@@ -144,11 +144,11 @@ export default class Area {
         );
     }
 
-    spawn(entity) {
+    spawn(entity: GameEntity) {
         this.entitiesToSpawn.enqueue(entity);
     }
 
-    despawn(entity) {
+    despawn(entity: GameEntity) {
         this.entitiesToDespawn.enqueue(entity);
     }
 

@@ -1,6 +1,8 @@
+import { EntityTypeEnum } from '@/core/enum/EntityTypeEnum';
+
 export default abstract class GameEntity {
     protected virtualId: number;
-    protected entityType: number;
+    protected entityType: EntityTypeEnum;
     protected positionX: number = 0;
     protected positionY: number = 0;
     protected nearbyEntities = new Map<number, GameEntity>();

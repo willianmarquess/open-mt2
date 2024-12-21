@@ -5,7 +5,7 @@ import PacketOut from '@/core/interface/networking/packets/packet/out/PacketOut'
 export default class AuthConnection extends Connection {
     onHandshakeSuccess() {
         this.logger.info('[HANDSHAKE] Finished');
-        this.state = ConnectionStateEnum.AUTH;
+        this.setState(ConnectionStateEnum.AUTH);
     }
 
     send(packet: PacketOut) {

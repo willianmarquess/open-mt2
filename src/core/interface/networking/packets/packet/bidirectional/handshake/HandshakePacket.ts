@@ -32,7 +32,9 @@ export default class HandshakePacket extends PacketBidirectional {
     }
 
     pack() {
-        this.bufferWriter.writeUint32LE(this.id).writeUint32LE(this.time).writeUint32LE(this.delta);
+        this.bufferWriter.writeUint32LE(this.id);
+        this.bufferWriter.writeUint32LE(this.time);
+        this.bufferWriter.writeUint32LE(this.delta);
         return this.bufferWriter.getBuffer();
     }
 

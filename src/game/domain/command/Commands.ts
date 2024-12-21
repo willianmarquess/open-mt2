@@ -36,70 +36,70 @@ export type CommandMapValue<T extends Command> = {
 export default () =>
     new Map<string, CommandMapValue<any>>([
         [
-            StatCommand.name,
+            StatCommand.getName(),
             {
                 command: StatCommand,
                 createHandler: (params) => new StatCommandHandler(params),
             },
         ],
         [
-            LogoutCommand.name,
+            LogoutCommand.getName(),
             {
                 command: LogoutCommand,
                 createHandler: (params) => new LogoutCommandHandler(params),
             },
         ],
         [
-            QuitCommand.name,
+            QuitCommand.getName(),
             {
                 command: QuitCommand,
                 createHandler: (params) => new QuitCommandHandler(params),
             },
         ],
         [
-            ExperienceCommand.name,
+            ExperienceCommand.getName(),
             {
                 command: ExperienceCommand,
                 createHandler: (params) => new ExperienceCommandHandler(params),
             },
         ],
         [
-            LevelCommand.name,
+            LevelCommand.getName(),
             {
                 command: LevelCommand,
                 createHandler: (params) => new LevelCommandHandler(params),
             },
         ],
         [
-            GoldCommand.name,
+            GoldCommand.getName(),
             {
                 command: GoldCommand,
                 createHandler: (params) => new GoldCommandHandler(params),
             },
         ],
         [
-            GotoCommand.name,
+            GotoCommand.getName(),
             {
                 command: GotoCommand,
                 createHandler: (params) => new GotoCommandHandler(params),
             },
         ],
         [
-            ListCommand.name,
+            ListCommand.getName(),
             {
                 command: ListCommand,
                 createHandler: (params) => new ListCommandHandler(params),
             },
         ],
         [
-            InvokeCommand.name,
+            InvokeCommand.getName(),
             {
                 command: InvokeCommand,
                 createHandler: (params) => new InvokeCommandHandler(params),
             },
         ],
         [
-            ItemCommand.name,
+            ItemCommand.getName(),
             {
                 command: ItemCommand,
                 createHandler: (params) => new ItemCommandHandler(params),

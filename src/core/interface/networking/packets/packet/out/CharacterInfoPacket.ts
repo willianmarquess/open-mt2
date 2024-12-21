@@ -32,7 +32,17 @@ export default class CharacterInfoPacket extends PacketOut {
     private pkMode: number;
     private mountId: number = 0;
 
-    constructor({ vid, playerName, parts, empireId, guildId, level, rankPoints, pkMode, mountId }) {
+    constructor({
+        vid,
+        playerName,
+        parts = new Array(4).fill(0),
+        empireId,
+        guildId,
+        level,
+        rankPoints,
+        pkMode,
+        mountId,
+    }) {
         super({
             header: PacketHeaderEnum.CHARACTER_INFO,
             name: 'CharacterInfoPacket',

@@ -40,6 +40,8 @@ import LogoutEvent from '@/core/domain/entities/game/player/events/LogoutEvent';
 import DamageCausedEvent from '@/core/domain/entities/game/player/events/DamageCausedEvent';
 import TargetUpdatedEvent from '@/core/domain/entities/game/player/events/TargetUpdatedEvent';
 import OtherCharacterDiedEvent from '@/core/domain/entities/game/player/events/OtherCharacterDiedEvent';
+import PacketOut from '@/core/interface/networking/packets/packet/out/PacketOut';
+import PacketBidirectional from '@/core/interface/networking/packets/packet/bidirectional/PacketBidirectional';
 
 const OUTGOING_MESSAGES_PER_CON_QUEUE_SIZE = 5_000;
 
@@ -329,7 +331,6 @@ export default class GameConnection extends Connection {
                 mountId: 0, //todo
                 pkMode: 0, //todo
                 rankPoints: 0, //todo
-                parts: [],
             }),
         );
     }
@@ -358,17 +359,16 @@ export default class GameConnection extends Connection {
                 mountId: 0, //todo
                 pkMode: 0, //todo
                 rankPoints: 0, //todo
-                parts: [],
             }),
         );
     }
 
     onHandshakeSuccess() {
         this.logger.info('[HANDSHAKE] Finished');
-        this.state = ConnectionStateEnum.LOGIN;
+        this.setState(ConnectionStateEnum.LOGIN);
     }
 
-    send(packet) {
+    send(packet: PacketOut | PacketBidirectional) {
         this.outgoingMessages.enqueue(packet.pack());
     }
 

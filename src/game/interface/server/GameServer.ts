@@ -36,7 +36,7 @@ export default class GameServer extends Server {
         }
 
         const { createPacket, createHandler } = this.packets.get(header);
-        const packet = createPacket();
+        const packet = createPacket({});
         const handler = createHandler(this.container);
         const message: InMessage = {
             packet: packet.unpack(data),

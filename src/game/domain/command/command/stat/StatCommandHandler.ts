@@ -20,7 +20,7 @@ export default class StatCommandHandler extends CommandHandler<StatCommand> {
             return;
         }
 
-        const [stat, value] = statCommand.getArgs();
+        const [stat, value = 1] = statCommand.getArgs();
         player.addStat(stat as StatsEnum, Number(value));
     }
 }

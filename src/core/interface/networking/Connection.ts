@@ -43,7 +43,7 @@ export default abstract class Connection {
     }
 
     startHandShake() {
-        this.state = ConnectionStateEnum.HANDSHAKE;
+        this.setState(ConnectionStateEnum.HANDSHAKE);
         const id = randomBytes(4).readUInt32LE();
         const handshake = new HandshakePacket({
             id,
