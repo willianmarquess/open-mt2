@@ -1,9 +1,9 @@
 import { authFlow } from './authFlow';
 import GameFlow from './gameFlow';
-import { container } from '../../src/game/Container';
-import regen from '../../src/core/infra/config/data/spawn/metin2_map_c1/regen.json' with { type: 'json' };
+import regen from '@/core/infra/config/data/spawn/metin2_map_c1/regen.json';
 import timers from 'node:timers/promises';
-import MathUtil from '../../src/core/domain/util/MathUtil';
+import { container } from '@/game/Container';
+import MathUtil from '@/core/domain/util/MathUtil';
 
 const SIGNALS = ['SIGINT', 'SIGTERM'];
 const ERRORS = ['unhandledRejection', 'uncaughtException'];
@@ -44,15 +44,17 @@ async function createData(db, i, positionX, positionY) {
     const hashedPassword = '$2b$05$KXeREc2TNuUR6IcgzUiX4.WA/0i3Yd3WpUHMtAcQi1ojWRdeQ9ExS';
 
     try {
-        await db.connection.query('DELETE FROM auth.account WHERE username = ?', [user]);
-        const [result] = await db.connection.query(
-            `INSERT INTO auth.account (deleteCode, email, password, accountStatusId, username) VALUES (?, ?, ?, ?, ?)`,
-            ['1234567', 'admin@test.com', hashedPassword, 1, user],
-        );
+        await db.getConnection().query('DELETE FROM auth.account WHERE username = ?', [user]);
+        const [result] = await db
+            .getConnection()
+            .query(
+                `INSERT INTO auth.account (deleteCode, email, password, accountStatusId, username) VALUES (?, ?, ?, ?, ?)`,
+                ['1234567', 'admin@test.com', hashedPassword, 1, user],
+            );
 
         const accountId = result.insertId;
-        await db.connection.query('DELETE FROM game.player WHERE name = ?', [user]);
-        await db.connection.query(
+        await db.getConnection().query('DELETE FROM game.player WHERE name = ?', [user]);
+        await db.getConnection().query(
             `INSERT INTO game.player (
                 accountId, empire, playerClass, skillGroup, playTime, level, experience,
                 gold, st, ht, dx, iq, positionX, positionY, health, mana, stamina, bodyPart,
@@ -72,8 +74,8 @@ async function clearData(db) {
     for (const user of users) {
         console.log('Removing user:', user);
         try {
-            await db.connection.query('DELETE FROM auth.account WHERE username = ?', [user]);
-            await db.connection.query('DELETE FROM game.player WHERE name = ?', [user]);
+            await db.getConnection().query('DELETE FROM auth.account WHERE username = ?', [user]);
+            await db.getConnection().query('DELETE FROM game.player WHERE name = ?', [user]);
         } catch (error) {
             console.error('Error removing user:', user, error);
         }
@@ -83,7 +85,7 @@ async function clearData(db) {
 async function createFakePlayers() {
     let i = 0;
 
-    for (const { x, y } of regen) {
+    for (const { x, y } of regen as any) {
         if (i >= MAX_FAKE_PLAYERS) break;
 
         const positionX = 921600 + x * 100;

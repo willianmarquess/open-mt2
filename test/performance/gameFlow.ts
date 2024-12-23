@@ -1,12 +1,12 @@
 import assert from 'node:assert';
 import SocketClient from '../support/SocketClient';
-import ConnectionStateEnum from '../../src/core/enum/ConnectionStateEnum';
-import BufferReader from '../../src/core/interface/networking/buffer/BufferReader';
-import BufferWriter from '../../src/core/interface/networking/buffer/BufferWriter';
-import PacketHeaderEnum from '../../src/core/enum/PacketHeaderEnum';
-import EmpirePacket from '../../src/core/interface/networking/packets/packet/bidirectional/empire/EmpirePacket';
-import MathUtil from '../../src/core/domain/util/MathUtil';
-import MovementTypeEnum from '../../src/core/enum/MovementTypeEnum';
+import BufferReader from '@/core/interface/networking/buffer/BufferReader';
+import BufferWriter from '@/core/interface/networking/buffer/BufferWriter';
+import PacketHeaderEnum from '@/core/enum/PacketHeaderEnum';
+import EmpirePacket from '@/core/interface/networking/packets/packet/bidirectional/empire/EmpirePacket';
+import { MovementTypeEnum } from '@/core/enum/MovementTypeEnum';
+import { ConnectionStateEnum } from '@/core/enum/ConnectionStateEnum';
+import MathUtil from '@/core/domain/util/MathUtil';
 
 const port = process.env.GAME_SERVER_PORT;
 const host = process.env.GAME_SERVER_ADDRESS;
@@ -48,7 +48,7 @@ const unpackHandshakePacket = (buffer) => {
 const createHandshakePacket = (id, time, delta) => {
     const bufferWriter = new BufferWriter(PacketHeaderEnum.HANDSHAKE, 13);
     bufferWriter.writeUint32LE(id).writeUint32LE(time).writeUint32LE(delta);
-    return bufferWriter.buffer;
+    return bufferWriter.getBuffer();
 };
 
 const unpackCharactersInfoPacket = (buffer) => {
@@ -103,17 +103,19 @@ const createAuthPacket = (user, token) => {
     bufferWriter.writeUint32LE(0);
     bufferWriter.writeUint32LE(0);
     bufferWriter.writeUint32LE(0);
-    return bufferWriter.buffer;
+    return bufferWriter.getBuffer();
 };
 
 const unpackEmpirePacket = (buffer) => {
-    return new EmpirePacket().unpack(buffer);
+    return new EmpirePacket({
+        empireId: 0,
+    }).unpack(buffer);
 };
 
 const createSelectCharacterPacket = () => {
     const bufferWriter = new BufferWriter(PacketHeaderEnum.SELECT_CHARACTER, 2);
     bufferWriter.writeUint8(0);
-    return bufferWriter.buffer;
+    return bufferWriter.getBuffer();
 };
 
 const unpackCharacterDetailPacket = (buffer) => {
@@ -143,7 +145,7 @@ const unpackCharacterDetailPacket = (buffer) => {
 
 const createEnterGamePacket = () => {
     const bufferWriter = new BufferWriter(PacketHeaderEnum.ENTER_GAME, 1);
-    return bufferWriter.buffer;
+    return bufferWriter.getBuffer();
 };
 
 const createCharacterMovePacket = (rotation, positionX, positionY) => {
@@ -154,7 +156,7 @@ const createCharacterMovePacket = (rotation, positionX, positionY) => {
     bufferWriter.writeUint32LE(positionX);
     bufferWriter.writeUint32LE(positionY);
     bufferWriter.writeUint32LE(performance.now());
-    return bufferWriter.buffer;
+    return bufferWriter.getBuffer();
 };
 
 export default class GameFlow {
@@ -191,7 +193,7 @@ export default class GameFlow {
         this.#client.sendMessage(authPacket);
 
         const empirePacket = await this.#client.nextMessage(3);
-        const { empireId } = unpackEmpirePacket(empirePacket);
+        const empireId = unpackEmpirePacket(empirePacket).getEmpireId();
 
         assert.deepStrictEqual(empireId, 2);
 

@@ -14,7 +14,7 @@
     "lint:fix": "eslint --fix {src,test}/**/*.ts",
     "test:unit": "mocha -r tsconfig-paths/register --config test/.mocharc.unit.json --exit",
     "test:integration": "node --env-file=.env --experimental-json-modules node_modules/mocha/bin/mocha --config test/.mocharc.integration.json --exit",
-    "test:performance": "node --env-file=.env --experimental-json-modules test/performance/index.js",
+    "test:performance": "tsnd -r tsconfig-paths/register --transpile-only --respawn --ignore-watch node_modules --watch src/auth --env-file=.env test/performance/index.ts",
     "test:coverage": "c8 npm run test:unit",
     "docker:all": "docker-compose -f docker-compose.yml up -d",
     "docker:dep": "docker-compose -f docker-compose.dep.yml up -d",

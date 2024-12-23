@@ -1,16 +1,16 @@
 import assert from 'node:assert';
 import SocketClient from '../support/SocketClient';
-import ConnectionStateEnum from '../../src/core/enum/ConnectionStateEnum';
-import BufferReader from '../../src/core/interface/networking/buffer/BufferReader';
-import BufferWriter from '../../src/core/interface/networking/buffer/BufferWriter';
-import PacketHeaderEnum from '../../src/core/enum/PacketHeaderEnum';
+import BufferWriter from '@/core/interface/networking/buffer/BufferWriter';
+import PacketHeaderEnum from '@/core/enum/PacketHeaderEnum';
+import BufferReader from '@/core/interface/networking/buffer/BufferReader';
+import { ConnectionStateEnum } from '@/core/enum/ConnectionStateEnum';
 
 const createLoginPacket = (user, password, key) => {
     const bufferWriter = new BufferWriter(PacketHeaderEnum.LOGIN_REQUEST, 66);
     bufferWriter.writeString(user, 31);
     bufferWriter.writeString(password, 16);
     bufferWriter.writeUint32LE(key);
-    return bufferWriter.buffer;
+    return bufferWriter.getBuffer();
 };
 
 const unpackStatePacket = (buffer) => {
@@ -38,7 +38,7 @@ const unpackHandshakePacket = (buffer) => {
 const createHandshakePacket = (id, time, delta) => {
     const bufferWriter = new BufferWriter(PacketHeaderEnum.HANDSHAKE, 13);
     bufferWriter.writeUint32LE(id).writeUint32LE(time).writeUint32LE(delta);
-    return bufferWriter.buffer;
+    return bufferWriter.getBuffer();
 };
 
 const receiveAndValidateState = async (client, expectedState) => {
