@@ -1,16 +1,20 @@
+import { ErrorTypesEnum } from '@/core/enum/ErrorTypesEnum';
+import CreateCharacterPacketHandler from '@/core/interface/networking/packets/packet/in/createCharacter/CreateCharacterPacketHandler';
+import CreateCharacterFailurePacket from '@/core/interface/networking/packets/packet/out/CreateCharacterFailurePacket';
+import CreateCharacterSuccessPacket from '@/core/interface/networking/packets/packet/out/CreateCharacterSuccessPacket';
 import { expect } from 'chai';
 import sinon from 'sinon';
-import CreateCharacterPacketHandler from '../../../../../../../../../src/core/interface/networking/packets/packet/in/createCharacter/CreateCharacterPacketHandler';
-import ErrorTypesEnum from '../../../../../../../../../src/core/enum/ErrorTypesEnum';
-import CreateCharacterFailurePacket from '../../../../../../../../../src/core/interface/networking/packets/packet/out/CreateCharacterFailurePacket';
-import CreateCharacterSuccessPacket from '../../../../../../../../../src/core/interface/networking/packets/packet/out/CreateCharacterSuccessPacket';
 
 describe('CreateCharacterPacketHandler', function () {
-    let createCharacterPacketHandler, mockConnection, mockLogger, mockConfig, mockCreateCharacterService;
+    let createCharacterPacketHandler: CreateCharacterPacketHandler,
+        mockConnection,
+        mockLogger,
+        mockConfig,
+        mockCreateCharacterService;
 
     beforeEach(function () {
         mockLogger = { error: sinon.spy(), info: sinon.spy() };
-        mockConnection = { send: sinon.spy(), close: sinon.spy(), accountId: 123 };
+        mockConnection = { send: sinon.spy(), close: sinon.spy(), getAccountId: () => 123 };
         mockConfig = { SERVER_PORT: 8080, SERVER_ADDRESS: '127.0.0.1' };
         mockCreateCharacterService = { execute: sinon.stub() };
 
@@ -26,7 +30,7 @@ describe('CreateCharacterPacketHandler', function () {
     });
 
     it('should close connection if packet is invalid', async function () {
-        const invalidPacket = { isValid: () => false, errors: () => ['Invalid data'] };
+        const invalidPacket = { isValid: () => false, getErrorMessage: () => ['Invalid data'] } as any;
         await createCharacterPacketHandler.execute(mockConnection, invalidPacket);
 
         expect(mockConnection.close.calledOnce).to.be.true;
@@ -36,15 +40,15 @@ describe('CreateCharacterPacketHandler', function () {
     it('should send CreateCharacterFailurePacket if name already exists', async function () {
         const validPacket = {
             isValid: () => true,
-            playerName: 'test',
-            playerClass: 1,
-            appearance: 'appearance',
-            slot: 0,
-        };
+            getPlayerName: () => 'test',
+            getPlayerClass: () => 1,
+            getAppearance: () => 'appearance',
+            getSlot: () => 0,
+        } as any;
 
         mockCreateCharacterService.execute.resolves({
             hasError: () => true,
-            error: ErrorTypesEnum.NAME_ALREADY_EXISTS,
+            getError: () => ErrorTypesEnum.NAME_ALREADY_EXISTS,
         });
 
         await createCharacterPacketHandler.execute(mockConnection, validPacket);
@@ -57,15 +61,15 @@ describe('CreateCharacterPacketHandler', function () {
     it('should close connection if account is full', async function () {
         const validPacket = {
             isValid: () => true,
-            playerName: 'test',
-            playerClass: 1,
-            appearance: 'appearance',
-            slot: 0,
-        };
+            getPlayerName: () => 'test',
+            getPlayerClass: () => 1,
+            getAppearance: () => 'appearance',
+            getSlot: () => 0,
+        } as any;
 
         mockCreateCharacterService.execute.resolves({
             hasError: () => true,
-            error: ErrorTypesEnum.ACCOUNT_FULL,
+            getError: () => ErrorTypesEnum.ACCOUNT_FULL,
         });
 
         await createCharacterPacketHandler.execute(mockConnection, validPacket);
@@ -76,32 +80,32 @@ describe('CreateCharacterPacketHandler', function () {
     it('should send CreateCharacterSuccessPacket with correct data on success', async function () {
         const validPacket = {
             isValid: () => true,
-            playerName: 'test',
-            playerClass: 1,
-            appearance: 'appearance',
-            slot: 0,
-        };
+            getPlayerName: () => 'test',
+            getPlayerClass: () => 1,
+            getAppearance: () => 'appearance',
+            getSlot: () => 0,
+        } as any;
 
         const mockPlayer = {
-            name: 'test',
-            playerClass: 1,
-            bodyPart: 'body',
-            hairPart: 'hair',
-            level: 1,
-            skillGroup: 'skills',
-            playTime: 100,
-            id: 1,
-            positionX: 100,
-            positionY: 200,
-            ht: 10,
-            st: 10,
-            dx: 10,
-            iq: 10,
+            getName: () => 'test',
+            getPlayerClass: () => 1,
+            getBodyPart: () => 'body',
+            getHairPart: () => 'hair',
+            getLevel: () => 1,
+            getSkillGroup: () => 'skills',
+            getPlayTime: () => 100,
+            getId: () => 1,
+            getPositionX: () => 100,
+            getPositionY: () => 200,
+            getHt: () => 10,
+            getSt: () => 10,
+            getDx: () => 10,
+            getIq: () => 10,
         };
 
         mockCreateCharacterService.execute.resolves({
             hasError: () => false,
-            data: mockPlayer,
+            getData: () => mockPlayer,
         });
 
         await createCharacterPacketHandler.execute(mockConnection, validPacket);

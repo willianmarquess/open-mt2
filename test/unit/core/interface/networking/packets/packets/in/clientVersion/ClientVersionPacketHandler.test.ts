@@ -1,10 +1,10 @@
 import { expect } from 'chai';
 import sinon from 'sinon';
-import ClientVersionPacketHandler from '../../../../../../../../../src/core/interface/networking/packets/packet/in/clientVersion/ClientVersionPacketHandler';
+import ClientVersionPacketHandler from '@/core/interface/networking/packets/packet/in/clientVersion/ClientVersionPacketHandler';
 
 describe('ClientVersionPacketHandler', () => {
     let loggerMock, connectionMock, packetMock;
-    let clientVersionPacketHandler;
+    let clientVersionPacketHandler: ClientVersionPacketHandler;
 
     beforeEach(() => {
         loggerMock = {
@@ -12,12 +12,12 @@ describe('ClientVersionPacketHandler', () => {
         };
 
         connectionMock = {
-            id: 'test-connection-id',
+            getId: () => 'test-connection-id',
         };
 
         packetMock = {
-            clientName: 'TestClient',
-            timeStamp: 123456789,
+            getClientName: () => 'TestClient',
+            getTimeStamp: () => 123456789,
         };
 
         clientVersionPacketHandler = new ClientVersionPacketHandler({ logger: loggerMock });

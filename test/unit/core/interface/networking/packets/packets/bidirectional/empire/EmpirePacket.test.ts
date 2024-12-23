@@ -1,22 +1,22 @@
+import PacketHeaderEnum from '@/core/enum/PacketHeaderEnum';
+import EmpirePacket from '@/core/interface/networking/packets/packet/bidirectional/empire/EmpirePacket';
 import { expect } from 'chai';
-import PacketHeaderEnum from '../../../../../../../../../src/core/enum/PacketHeaderEnum';
-import EmpirePacket from '../../../../../../../../../src/core/interface/networking/packets/packet/bidirectional/empire/EmpirePacket';
 
 describe('EmpirePacket', function () {
-    let empirePacket;
+    let empirePacket: EmpirePacket;
 
     beforeEach(function () {
         empirePacket = new EmpirePacket({ empireId: 1 });
     });
 
     it('should initialize with correct header, name, and size', function () {
-        expect(empirePacket.header).to.equal(PacketHeaderEnum.EMPIRE);
-        expect(empirePacket.name).to.equal('EmpirePacket');
-        expect(empirePacket.size).to.equal(3);
+        expect(empirePacket.getHeader()).to.equal(PacketHeaderEnum.EMPIRE);
+        expect(empirePacket.getName()).to.equal('EmpirePacket');
+        expect(empirePacket.getSize()).to.equal(3);
     });
 
     it('should initialize empireId correctly', function () {
-        expect(empirePacket.empireId).to.equal(1);
+        expect(empirePacket.getEmpireId()).to.equal(1);
     });
 
     it('should pack data correctly', function () {
@@ -27,8 +27,10 @@ describe('EmpirePacket', function () {
 
     it('should unpack data correctly', function () {
         const buffer = Buffer.from([PacketHeaderEnum.EMPIRE, 1, 0]);
-        const unpackedPacket = new EmpirePacket();
+        const unpackedPacket = new EmpirePacket({
+            empireId: 1,
+        });
         unpackedPacket.unpack(buffer);
-        expect(unpackedPacket.empireId).to.equal(1);
+        expect(unpackedPacket.getEmpireId()).to.equal(1);
     });
 });

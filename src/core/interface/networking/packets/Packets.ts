@@ -45,14 +45,14 @@ const packets: Map<number, PacketMapValue<any>> = new Map<number, PacketMapValue
     [
         PacketHeaderEnum.HANDSHAKE,
         {
-            createPacket: (params) => new HandshakePacket(params),
+            createPacket: (params = {}) => new HandshakePacket(params),
             createHandler: (params) => new HandshakePacketHandler(params),
         },
     ],
     [
         PacketHeaderEnum.LOGIN_REQUEST,
         {
-            createPacket: (params) => new LoginRequestPacket(params),
+            createPacket: (params = {}) => new LoginRequestPacket(params),
             createHandler: (params) => new LoginRequestPacketHandler(params),
         },
     ],
@@ -66,35 +66,35 @@ const packets: Map<number, PacketMapValue<any>> = new Map<number, PacketMapValue
     [
         PacketHeaderEnum.TOKEN,
         {
-            createPacket: (params) => new AuthTokenPacket(params),
+            createPacket: (params = {}) => new AuthTokenPacket(params),
             createHandler: (params) => new AuthTokenPacketHandler(params),
         },
     ],
     [
         PacketHeaderEnum.EMPIRE,
         {
-            createPacket: (params) => new EmpirePacket(params),
+            createPacket: (params = {}) => new EmpirePacket(params),
             createHandler: (params) => new EmpirePacketHandler(params),
         },
     ],
     [
         PacketHeaderEnum.CREATE_CHARACTER,
         {
-            createPacket: (params) => new CreateCharacterPacket(params),
+            createPacket: (params = {}) => new CreateCharacterPacket(params),
             createHandler: (params) => new CreateCharacterPacketHandler(params),
         },
     ],
     [
         PacketHeaderEnum.SELECT_CHARACTER,
         {
-            createPacket: (params) => new SelectCharacterPacket(params),
+            createPacket: (params = {}) => new SelectCharacterPacket(params),
             createHandler: (params) => new SelectCharacterPacketHandler(params),
         },
     ],
     [
         PacketHeaderEnum.CLIENT_VERSION,
         {
-            createPacket: (params) => new ClientVersionPacket(params),
+            createPacket: (params = {}) => new ClientVersionPacket(params),
             createHandler: (params) => new ClientVersionPacketHandler(params),
         },
     ],
@@ -108,56 +108,56 @@ const packets: Map<number, PacketMapValue<any>> = new Map<number, PacketMapValue
     [
         PacketHeaderEnum.CHARACTER_MOVE,
         {
-            createPacket: (params) => new CharacterMovePacket(params),
+            createPacket: (params = {}) => new CharacterMovePacket(params),
             createHandler: (params) => new CharacterMovePacketHandler(params),
         },
     ],
     [
         PacketHeaderEnum.CHAT_IN,
         {
-            createPacket: (params) => new ChatInPacket(params),
+            createPacket: (params = {}) => new ChatInPacket(params),
             createHandler: (params) => new ChatInPacketHandler(params),
         },
     ],
     [
         PacketHeaderEnum.ITEM_USE,
         {
-            createPacket: (params) => new ItemUsePacket(params),
+            createPacket: (params = {}) => new ItemUsePacket(params),
             createHandler: (params) => new ItemUsePacketHandler(params),
         },
     ],
     [
         PacketHeaderEnum.ITEM_MOVE,
         {
-            createPacket: (params) => new ItemMovePacket(params),
+            createPacket: (params = {}) => new ItemMovePacket(params),
             createHandler: (params) => new ItemMovePacketHandler(params),
         },
     ],
     [
         PacketHeaderEnum.ITEM_DROP,
         {
-            createPacket: (params) => new ItemDropPacket(params),
+            createPacket: (params = {}) => new ItemDropPacket(params),
             createHandler: (params) => new ItemDropPacketHandler(params),
         },
     ],
     [
         PacketHeaderEnum.ITEM_PICKUP,
         {
-            createPacket: (params) => new ItemPickupPacket(params),
+            createPacket: (params = {}) => new ItemPickupPacket(params),
             createHandler: (params) => new ItemPickupPacketHandler(params),
         },
     ],
     [
         PacketHeaderEnum.ATTACK,
         {
-            createPacket: (params) => new AttackPacket(params),
+            createPacket: (params = {}) => new AttackPacket(params),
             createHandler: (params) => new AttackPacketHandler(params),
         },
     ],
     [
         PacketHeaderEnum.TARGET,
         {
-            createPacket: (params) => new TargetPacket(params),
+            createPacket: (params = {}) => new TargetPacket(params),
             createHandler: (params) => new TargetPacketHandler(params),
         },
     ],

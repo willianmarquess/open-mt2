@@ -1,16 +1,26 @@
 import { expect } from 'chai';
 import sinon from 'sinon';
-import EnterGamePacketHandler from '../../../../../../../../../src/core/interface/networking/packets/packet/in/enterGame/EnterGamePacketHandler';
-import ConnectionStateEnum from '../../../../../../../../../src/core/enum/ConnectionStateEnum';
-import GameTimePacket from '../../../../../../../../../src/core/interface/networking/packets/packet/out/GameTimePacket';
-import ChannelPacket from '../../../../../../../../../src/core/interface/networking/packets/packet/out/ChannelPacket';
+import { ConnectionStateEnum } from '@/core/enum/ConnectionStateEnum';
+import EnterGamePacketHandler from '@/core/interface/networking/packets/packet/in/enterGame/EnterGamePacketHandler';
+import ChannelPacket from '@/core/interface/networking/packets/packet/out/ChannelPacket';
+import GameTimePacket from '@/core/interface/networking/packets/packet/out/GameTimePacket';
 
 describe('EnterGamePacketHandler', function () {
-    let enterGamePacketHandler, mockConnection, mockLogger, mockEnterGameService;
+    let enterGamePacketHandler: EnterGamePacketHandler, mockConnection, mockLogger, mockEnterGameService;
 
     beforeEach(function () {
         mockLogger = { debug: sinon.spy(), info: sinon.spy() };
-        mockConnection = { send: sinon.spy(), close: sinon.spy(), id: 1, state: null, player: { id: 1 } };
+        mockConnection = {
+            state: 0,
+            send: sinon.spy(),
+            close: sinon.spy(),
+            getId: () => 1,
+            getState: () => this.state,
+            getPlayer: () => ({ id: 1 }),
+            setState: (value) => {
+                this.state = value;
+            },
+        };
         mockEnterGameService = { execute: sinon.stub().resolves() };
 
         enterGamePacketHandler = new EnterGamePacketHandler({
@@ -24,7 +34,7 @@ describe('EnterGamePacketHandler', function () {
     });
 
     it('should log and close connection if player is not selected', async function () {
-        mockConnection.player = null;
+        mockConnection.getPlayer = () => null;
 
         await enterGamePacketHandler.execute(mockConnection);
 
@@ -39,7 +49,7 @@ describe('EnterGamePacketHandler', function () {
     it('should set connection state to GAME', async function () {
         await enterGamePacketHandler.execute(mockConnection);
 
-        expect(mockConnection.state).to.equal(ConnectionStateEnum.GAME);
+        expect(mockConnection.getState()).to.equal(ConnectionStateEnum.GAME);
     });
 
     it('should send GameTimePacket with current time', async function () {
@@ -56,7 +66,6 @@ describe('EnterGamePacketHandler', function () {
 
     it('should call enterGameService.execute with the player', async function () {
         await enterGamePacketHandler.execute(mockConnection);
-
-        expect(mockEnterGameService.execute.calledOnceWith({ player: mockConnection.player })).to.be.true;
+        expect(mockEnterGameService.execute.calledOnceWith(mockConnection.getPlayer())).to.be.true;
     });
 });

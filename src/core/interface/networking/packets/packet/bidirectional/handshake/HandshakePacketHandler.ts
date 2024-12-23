@@ -19,7 +19,7 @@ export default class HandshakePacketHandler extends PacketHandler<HandshakePacke
             return;
         }
 
-        if (packet.getId() !== connection.getLasthandshake().getId()) {
+        if (packet.getId() !== connection.getLastHandshake().getId()) {
             this.logger.info(`[HANDSHAKE] A different package was received than the one sent..`);
             this.logger.info(`[HANDSHAKE] Send close connection..`);
             connection.close();
@@ -43,9 +43,9 @@ export default class HandshakePacketHandler extends PacketHandler<HandshakePacke
 
         if (newDelta < 0) {
             this.logger.info(
-                `[HANDSHAKE] Is too low ${Math.floor(delta)}, calculating new delta using this value: ${connection.getLasthandshake().getTime()}`,
+                `[HANDSHAKE] Is too low ${Math.floor(delta)}, calculating new delta using this value: ${connection.getLastHandshake().getTime()}`,
             );
-            newDelta = (currentTime - connection.getLasthandshake().getTime()) / 2;
+            newDelta = (currentTime - connection.getLastHandshake().getTime()) / 2;
         }
 
         const handshake = new HandshakePacket({
@@ -53,7 +53,7 @@ export default class HandshakePacketHandler extends PacketHandler<HandshakePacke
             time: currentTime,
             delta: newDelta,
         });
-        connection.setLasthandshake(handshake);
+        connection.setLastHandshake(handshake);
         connection.send(handshake);
     }
 }

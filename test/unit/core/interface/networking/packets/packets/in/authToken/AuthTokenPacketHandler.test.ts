@@ -1,13 +1,13 @@
+import { ConnectionStateEnum } from '@/core/enum/ConnectionStateEnum';
+import EmpirePacket from '@/core/interface/networking/packets/packet/bidirectional/empire/EmpirePacket';
+import AuthTokenPacketHandler from '@/core/interface/networking/packets/packet/in/authToken/AuthTokenPacketHandler';
+import CharactersInfoPacket from '@/core/interface/networking/packets/packet/out/CharactersInfoPacket';
 import { expect } from 'chai';
 import sinon from 'sinon';
-import AuthTokenPacketHandler from '../../../../../../../../../src/core/interface/networking/packets/packet/in/authToken/AuthTokenPacketHandler';
-import EmpirePacket from '../../../../../../../../../src/core/interface/networking/packets/packet/bidirectional/empire/EmpirePacket';
-import CharactersInfoPacket from '../../../../../../../../../src/core/interface/networking/packets/packet/out/CharactersInfoPacket';
-import ConnectionStateEnum from '../../../../../../../../../src/core/enum/ConnectionStateEnum';
 
 describe('AuthTokenPacketHandler', () => {
     let loadCharactersServiceMock, authenticateServiceMock, configMock, loggerMock;
-    let connectionMock, packetMock, authTokenPacketHandler;
+    let connectionMock, packetMock, authTokenPacketHandler: AuthTokenPacketHandler;
 
     beforeEach(() => {
         loadCharactersServiceMock = { execute: sinon.stub() };
@@ -18,15 +18,20 @@ describe('AuthTokenPacketHandler', () => {
         connectionMock = {
             close: sinon.spy(),
             send: sinon.spy(),
-            accountId: null,
+            getAccountId: () => 1,
             state: null,
+            getState: () => connectionMock.state,
+            setState: (value) => {
+                connectionMock.state = value;
+            },
+            setAccountId: () => {},
         };
 
         packetMock = {
             isValid: sinon.stub(),
-            errors: sinon.stub(),
-            key: 'test-key',
-            username: 'test-user',
+            getErrorMessage: sinon.stub(),
+            getKey: () => 'test-key',
+            getUsername: () => 'test-user',
         };
 
         authTokenPacketHandler = new AuthTokenPacketHandler({
@@ -43,7 +48,7 @@ describe('AuthTokenPacketHandler', () => {
 
     it('should close connection and log error if packet is invalid', async () => {
         packetMock.isValid.returns(false);
-        packetMock.errors.returns(['Invalid packet data']);
+        packetMock.getErrorMessage.returns(['Invalid packet data']);
 
         await authTokenPacketHandler.execute(connectionMock, packetMock);
 
@@ -65,7 +70,7 @@ describe('AuthTokenPacketHandler', () => {
         packetMock.isValid.returns(true);
         authenticateServiceMock.execute.resolves({
             hasError: () => false,
-            data: { accountId: 1 },
+            getData: () => ({ accountId: 1 }),
         });
 
         const charactersData = [
@@ -91,12 +96,12 @@ describe('AuthTokenPacketHandler', () => {
 
         loadCharactersServiceMock.execute.resolves({
             isOk: () => true,
-            data: charactersData,
+            getData: () => charactersData,
         });
 
         await authTokenPacketHandler.execute(connectionMock, packetMock);
 
-        expect(connectionMock.accountId).to.equal(1);
+        expect(connectionMock.getAccountId()).to.equal(1);
         expect(connectionMock.send.calledTwice).to.be.true;
 
         // Check EmpirePacket was sent
@@ -122,7 +127,7 @@ describe('AuthTokenPacketHandler', () => {
         packetMock.isValid.returns(true);
         authenticateServiceMock.execute.resolves({
             hasError: () => false,
-            data: { accountId: 1 },
+            getData: () => ({ accountId: 1 }),
         });
 
         loadCharactersServiceMock.execute.resolves({

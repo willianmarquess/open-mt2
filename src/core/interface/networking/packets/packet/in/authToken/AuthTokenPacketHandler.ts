@@ -70,7 +70,7 @@ export default class AuthTokenPacketHandler extends PacketHandler<AuthTokenPacke
                         playTime: player.playTime,
                         port: Number(this.config.SERVER_PORT),
                         ip: Ip.toInt(this.config.REAL_SERVER_ADDRESS || this.config.SERVER_ADDRESS),
-                        id: player.getId(),
+                        id: player.id,
                         nameChange: 0,
                         positionX: player.positionX,
                         positionY: player.positionY,

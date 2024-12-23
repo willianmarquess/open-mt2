@@ -1,32 +1,32 @@
+import PacketHeaderEnum from '@/core/enum/PacketHeaderEnum';
+import EmpirePacket from '@/core/interface/networking/packets/packet/bidirectional/empire/EmpirePacket';
+import EmpirePacketHandler from '@/core/interface/networking/packets/packet/bidirectional/empire/EmpirePacketHandler';
+import HandshakePacket from '@/core/interface/networking/packets/packet/bidirectional/handshake/HandshakePacket';
+import HandshakePacketHandler from '@/core/interface/networking/packets/packet/bidirectional/handshake/HandshakePacketHandler';
+import AuthTokenPacket from '@/core/interface/networking/packets/packet/in/authToken/AuthTokenPacket';
+import AuthTokenPacketHandler from '@/core/interface/networking/packets/packet/in/authToken/AuthTokenPacketHandler';
+import CharacterMovePacket from '@/core/interface/networking/packets/packet/in/characterMove/CharacterMovePacket';
+import CharacterMovePacketHandler from '@/core/interface/networking/packets/packet/in/characterMove/CharacterMovePacketHandler';
+import ClientVersionPacket from '@/core/interface/networking/packets/packet/in/clientVersion/ClientVersionPacket';
+import ClientVersionPacketHandler from '@/core/interface/networking/packets/packet/in/clientVersion/ClientVersionPacketHandler';
+import CreateCharacterPacket from '@/core/interface/networking/packets/packet/in/createCharacter/CreateCharacterPacket';
+import CreateCharacterPacketHandler from '@/core/interface/networking/packets/packet/in/createCharacter/CreateCharacterPacketHandler';
+import EnterGamePacket from '@/core/interface/networking/packets/packet/in/enterGame/EnterGamePacket';
+import EnterGamePacketHandler from '@/core/interface/networking/packets/packet/in/enterGame/EnterGamePacketHandler';
+import LoginRequestPacket from '@/core/interface/networking/packets/packet/in/loginRequest/LoginRequestPacket';
+import LoginRequestPacketHandler from '@/core/interface/networking/packets/packet/in/loginRequest/LoginRequestPacketHandler';
+import SelectCharacterPacket from '@/core/interface/networking/packets/packet/in/selectCharacter/SelectCharacterPacket';
+import SelectCharacterPacketHandler from '@/core/interface/networking/packets/packet/in/selectCharacter/SelectCharacterPacketHandler';
+import ServerStatusRequestPacket from '@/core/interface/networking/packets/packet/in/serverStatus/ServerStatusRequestPacket';
+import ServerStatusRequestPacketHandler from '@/core/interface/networking/packets/packet/in/serverStatus/ServerStatusRequestPacketHandler';
+import { makePackets, PacketMapValue } from '@/core/interface/networking/packets/Packets';
 import { expect } from 'chai';
-import HandshakePacket from '../../../../../../src/core/interface/networking/packets/packet/bidirectional/handshake/HandshakePacket';
-import HandshakePacketHandler from '../../../../../../src/core/interface/networking/packets/packet/bidirectional/handshake/HandshakePacketHandler';
-import LoginRequestPacket from '../../../../../../src/core/interface/networking/packets/packet/in/loginRequest/LoginRequestPacket';
-import LoginRequestPacketHandler from '../../../../../../src/core/interface/networking/packets/packet/in/loginRequest/LoginRequestPacketHandler';
-import PacketHeaderEnum from '../../../../../../src/core/enum/PacketHeaderEnum';
-import ServerStatusRequestPacket from '../../../../../../src/core/interface/networking/packets/packet/in/serverStatus/ServerStatusRequestPacket';
-import ServerStatusRequestPacketHandler from '../../../../../../src/core/interface/networking/packets/packet/in/serverStatus/ServerStatusRequestPacketHandler';
-import AuthTokenPacket from '../../../../../../src/core/interface/networking/packets/packet/in/authToken/AuthTokenPacket';
-import AuthTokenPacketHandler from '../../../../../../src/core/interface/networking/packets/packet/in/authToken/AuthTokenPacketHandler';
-import EmpirePacket from '../../../../../../src/core/interface/networking/packets/packet/bidirectional/empire/EmpirePacket';
-import EmpirePacketHandler from '../../../../../../src/core/interface/networking/packets/packet/bidirectional/empire/EmpirePacketHandler';
-import CreateCharacterPacket from '../../../../../../src/core/interface/networking/packets/packet/in/createCharacter/CreateCharacterPacket';
-import CreateCharacterPacketHandler from '../../../../../../src/core/interface/networking/packets/packet/in/createCharacter/CreateCharacterPacketHandler';
-import SelectCharacterPacket from '../../../../../../src/core/interface/networking/packets/packet/in/selectCharacter/SelectCharacterPacket';
-import SelectCharacterPacketHandler from '../../../../../../src/core/interface/networking/packets/packet/in/selectCharacter/SelectCharacterPacketHandler';
-import ClientVersionPacket from '../../../../../../src/core/interface/networking/packets/packet/in/clientVersion/ClientVersionPacket';
-import ClientVersionPacketHandler from '../../../../../../src/core/interface/networking/packets/packet/in/clientVersion/ClientVersionPacketHandler';
-import EnterGamePacket from '../../../../../../src/core/interface/networking/packets/packet/in/enterGame/EnterGamePacket';
-import EnterGamePacketHandler from '../../../../../../src/core/interface/networking/packets/packet/in/enterGame/EnterGamePacketHandler';
-import CharacterMovePacketHandler from '../../../../../../src/core/interface/networking/packets/packet/in/characterMove/CharacterMovePacketHandler';
-import CharacterMovePacket from '../../../../../../src/core/interface/networking/packets/packet/in/characterMove/CharacterMovePacket';
-import Packets from '../../../../../../src/core/interface/networking/packets/Packets';
 
 describe('PacketHandlerMap', function () {
-    let packetHandlerMap;
+    let packetHandlerMap: Map<number, PacketMapValue<any>>;
 
     beforeEach(function () {
-        packetHandlerMap = Packets();
+        packetHandlerMap = makePackets();
     });
 
     it('should create a map with correct handlers and packets for HANDSHAKE', function () {
@@ -95,7 +95,7 @@ describe('PacketHandlerMap', function () {
     it('should create a map with correct handlers and packets for CHARACTER_MOVE', function () {
         const handlerFactory = packetHandlerMap.get(PacketHeaderEnum.CHARACTER_MOVE);
         expect(handlerFactory).to.exist;
-        expect(handlerFactory.createPacket()).to.be.instanceOf(CharacterMovePacket);
+        expect(handlerFactory.createPacket({})).to.be.instanceOf(CharacterMovePacket);
         expect(handlerFactory.createHandler({})).to.be.instanceOf(CharacterMovePacketHandler);
     });
 });

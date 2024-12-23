@@ -1,10 +1,10 @@
 import { expect } from 'chai';
 import sinon from 'sinon';
-import CharacterMovePacketHandler from '../../../../../../../../../src/core/interface/networking/packets/packet/in/characterMove/CharacterMovePacketHandler';
+import CharacterMovePacketHandler from '@/core/interface/networking/packets/packet/in/characterMove/CharacterMovePacketHandler';
 
 describe('CharacterMovePacketHandler', () => {
     let loggerMock, characterMoveServiceMock, connectionMock, packetMock;
-    let characterMovePacketHandler;
+    let characterMovePacketHandler: CharacterMovePacketHandler;
 
     beforeEach(() => {
         loggerMock = {
@@ -18,18 +18,18 @@ describe('CharacterMovePacketHandler', () => {
 
         connectionMock = {
             close: sinon.spy(),
-            player: { id: 1, name: 'TestPlayer' },
+            getPlayer: () => ({ id: 1, name: 'TestPlayer' }),
         };
 
         packetMock = {
             isValid: sinon.stub(),
-            errors: sinon.stub(),
-            movementType: 'RUN',
-            positionX: 100,
-            positionY: 200,
-            arg: 1,
-            rotation: 0.5,
-            time: 123456789,
+            getErrorMessage: () => sinon.stub(),
+            getMovementType: () => 'RUN',
+            getPositionX: () => 100,
+            getPositionY: () => 200,
+            getArg: () => 1,
+            getRotation: () => 0.5,
+            getTime: () => 123456789,
         };
 
         characterMovePacketHandler = new CharacterMovePacketHandler({
@@ -44,7 +44,7 @@ describe('CharacterMovePacketHandler', () => {
 
     it('should log an error and close the connection if the packet is invalid', async () => {
         packetMock.isValid.returns(false);
-        packetMock.errors.returns(['Invalid packet format']);
+        packetMock.getErrorMessage = () => ['Invalid packet format'];
 
         await characterMovePacketHandler.execute(connectionMock, packetMock);
 
@@ -55,7 +55,7 @@ describe('CharacterMovePacketHandler', () => {
 
     it('should log an info message and close the connection if there is no player in the connection', async () => {
         packetMock.isValid.returns(true);
-        connectionMock.player = null;
+        connectionMock.getPlayer = () => null;
 
         await characterMovePacketHandler.execute(connectionMock, packetMock);
 
@@ -75,7 +75,7 @@ describe('CharacterMovePacketHandler', () => {
         expect(characterMoveServiceMock.execute.calledOnce).to.be.true;
         expect(
             characterMoveServiceMock.execute.calledWith({
-                player: connectionMock.player,
+                player: connectionMock.getPlayer(),
                 movementType: 'RUN',
                 positionX: 100,
                 positionY: 200,

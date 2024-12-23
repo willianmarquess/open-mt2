@@ -20,11 +20,11 @@ export default abstract class Connection {
         this.logger = logger;
     }
 
-    setLasthandshake(value: HandshakePacket) {
+    setLastHandshake(value: HandshakePacket) {
         this.lastHandshake = value;
     }
 
-    getLasthandshake() {
+    getLastHandshake() {
         return this.lastHandshake;
     }
 

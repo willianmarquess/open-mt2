@@ -1,6 +1,6 @@
 import { expect } from 'chai';
-import PacketHeaderEnum from '../../../../../../../../../src/core/enum/PacketHeaderEnum';
-import HandshakePacket from '../../../../../../../../../src/core/interface/networking/packets/packet/bidirectional/handshake/HandshakePacket';
+import PacketHeaderEnum from '@/core/enum/PacketHeaderEnum';
+import HandshakePacket from '@/core/interface/networking/packets/packet/bidirectional/handshake/HandshakePacket';
 
 describe('HandshakePacket', function () {
     let handshakePacket;
@@ -23,9 +23,9 @@ describe('HandshakePacket', function () {
 
     it('should pack data correctly', function () {
         const packedBuffer = handshakePacket.pack();
-        expect(packedBuffer.readUInt32LE(1)).to.equal(1); // id
-        expect(packedBuffer.readUInt32LE(5)).to.equal(123456789); // time
-        expect(packedBuffer.readUInt32LE(9)).to.equal(500); // delta
+        expect(packedBuffer.readUInt32LE(1)).to.equal(1);
+        expect(packedBuffer.readUInt32LE(5)).to.equal(123456789);
+        expect(packedBuffer.readUInt32LE(9)).to.equal(500);
     });
 
     it('should unpack data correctly', function () {
@@ -35,11 +35,11 @@ describe('HandshakePacket', function () {
         buffer.writeUInt32LE(123456789, 5);
         buffer.writeUInt32LE(500, 9);
 
-        const unpackedPacket = new HandshakePacket();
+        const unpackedPacket = new HandshakePacket({ id: 0, time: 0, delta: 0 });
         unpackedPacket.unpack(buffer);
 
-        expect(unpackedPacket.id).to.equal(1);
-        expect(unpackedPacket.time).to.equal(123456789);
-        expect(unpackedPacket.delta).to.equal(500);
+        expect(unpackedPacket.getId()).to.equal(1);
+        expect(unpackedPacket.getTime()).to.equal(123456789);
+        expect(unpackedPacket.getDelta()).to.equal(500);
     });
 });
