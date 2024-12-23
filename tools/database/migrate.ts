@@ -1,4 +1,4 @@
-import DatabaseManager from "../../src/core/infra/database/DatabaseManager.js";
+import DatabaseManager from "@/core/infra/database/DatabaseManager";
 
 const databaseManager = new DatabaseManager({
     logger: console,
@@ -15,6 +15,7 @@ const databaseManager = new DatabaseManager({
 databaseManager.init()
     .then(async () => {
         console.log('Database scripts ran successfully');
+        await databaseManager.executeScripts();
         await databaseManager.close();
     })
     .catch(err => {

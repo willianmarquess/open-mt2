@@ -16,7 +16,7 @@ export default class AuthServer extends Server {
         }
 
         const { createPacket, createHandler } = this.packets.get(header);
-        const packet = createPacket();
+        const packet = createPacket({});
         const handler = createHandler(this.container);
         this.logger.debug(`[IN][PACKET] name: ${handler.constructor.name}`);
         handler.execute(connection, packet.unpack(data)).catch((err) => this.logger.error(err));

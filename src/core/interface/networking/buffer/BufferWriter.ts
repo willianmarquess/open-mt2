@@ -3,9 +3,8 @@ export default class BufferWriter {
     private lastPos: number = 1;
 
     constructor(header: number, size: number) {
-        this.buffer = Buffer.alloc(size + 3);
+        this.buffer = Buffer.alloc(size);
         this.buffer[0] = header;
-        this.writeUint16LE(size);
     }
 
     getBuffer(): Buffer {
