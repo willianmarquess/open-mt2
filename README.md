@@ -4,7 +4,7 @@
 ![GitHub language count](https://img.shields.io/github/languages/count/willianmarquess/mt2-server-javascript?style=for-the-badge)
 ![GitHub forks](https://img.shields.io/github/forks/willianmarquess/mt2-server-javascript?style=for-the-badge)
 
-Metin2 JS is an open source implementation of MMORPG Metin2 server using Nodejs with Javascript language.
+Metin2 JS is an open source implementation of MMORPG Metin2 server using Nodejs with Typescript language.
 
 This project will be developed for fun and study only.
 
