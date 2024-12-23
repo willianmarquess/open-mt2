@@ -1,21 +1,12 @@
+import AccountRepository from '@/auth/infra/database/AccountRepository';
+import Account from '@/core/domain/entities/state/account/Account';
+import AccountStatus from '@/core/domain/entities/state/account/AccountStatus';
 import { expect } from 'chai';
 import sinon from 'sinon';
-import AccountRepository from '../../../../../src/auth/infra/database/AccountRepository';
-import Account from '../../../../../src/core/domain/entities/state/account/Account';
-import AccountStatus from '../../../../../src/core/domain/entities/state/account/AccountStatus';
 
 describe('AccountRepository', () => {
-    let accountRepository;
-    let databaseManagerMock;
-
-    beforeEach(() => {
-        databaseManagerMock = {
-            connection: {
-                query: sinon.stub(),
-            },
-        };
-        accountRepository = new AccountRepository({ databaseManager: databaseManagerMock });
-    });
+    let accountRepository: AccountRepository;
+    let databaseManagerMock = {};
 
     afterEach(() => {
         sinon.restore();
@@ -42,19 +33,31 @@ describe('AccountRepository', () => {
                 },
             ];
 
-            databaseManagerMock.connection.query.resolves([mockAccountData]);
+            databaseManagerMock = {
+                getConnection: sinon.stub().returns({
+                    query: sinon.stub().resolves([mockAccountData]),
+                }),
+            };
+
+            accountRepository = new AccountRepository({ databaseManager: databaseManagerMock });
 
             const result = await accountRepository.findByUsername('testuser');
 
             expect(result).to.be.an.instanceOf(Account);
             expect(result).to.have.property('username', 'testuser');
             expect(result).to.have.property('email', 'testuser@example.com');
-            expect(result.accountStatus).to.be.an.instanceOf(AccountStatus);
-            expect(result.accountStatus).to.have.property('description', 'Active');
+            expect(result.getAccountStatus()).to.be.an.instanceOf(AccountStatus);
+            expect(result.getAccountStatus()).to.have.property('description', 'Active');
         });
 
         it('should return undefined if account not found', async () => {
-            databaseManagerMock.connection.query.resolves([[]]);
+            databaseManagerMock = {
+                getConnection: sinon.stub().returns({
+                    query: sinon.stub().resolves([[]]),
+                }),
+            };
+
+            accountRepository = new AccountRepository({ databaseManager: databaseManagerMock });
 
             const result = await accountRepository.findByUsername('nonexistentuser');
             expect(result).to.be.undefined;

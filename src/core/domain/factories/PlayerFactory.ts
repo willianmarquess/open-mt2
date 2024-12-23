@@ -75,7 +75,7 @@ export default class PlayerFactory {
         name,
         givenStatusPoints,
         availableStatusPoints,
-    }: PlayerFactoryParams) {
+    }: PlayerFactoryParams): Player {
         const className = JobUtil.getClassNameFromClassId(playerClass);
         const empireName = EmpireUtil.getEmpireName(empire);
 

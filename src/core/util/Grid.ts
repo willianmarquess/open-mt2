@@ -3,7 +3,7 @@ export default class Grid<T> {
     private height: number;
     private grid: Array<Array<T>>;
 
-    constructor(width: number, height: number, defaultValue: number = 0) {
+    constructor(width: number, height: number, defaultValue: string | number = 0) {
         this.width = width;
         this.height = height;
         this.grid = Array.from({ length: width }, () => Array(height).fill(defaultValue));

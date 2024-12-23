@@ -1,13 +1,13 @@
 import { expect } from 'chai';
 import sinon from 'sinon';
-import redis from 'redis';
-import CacheProvider from '../../../../../src/core/infra/cache/CacheProvider';
+import * as redis from 'redis';
+import RedisCacheProvider from '@/core/infra/cache/RedisCacheProvider';
 
-describe('CacheProvider', () => {
+describe('RedisCacheProvider', () => {
     let logger;
     let config;
     let redisClient;
-    let cacheProvider;
+    let cacheProvider: RedisCacheProvider;
 
     beforeEach(() => {
         logger = {
@@ -29,8 +29,9 @@ describe('CacheProvider', () => {
             expire: sinon.stub().resolves(),
             exists: sinon.stub().resolves(),
         };
+
         sinon.stub(redis, 'createClient').returns(redisClient);
-        cacheProvider = new CacheProvider({ logger, config });
+        cacheProvider = new RedisCacheProvider({ logger, config });
     });
 
     afterEach(() => {
@@ -85,6 +86,6 @@ describe('CacheProvider', () => {
         redisClient.exists.resolves(1);
         const exists = await cacheProvider.exists('key');
         expect(redisClient.exists.calledWith('key')).to.be.true;
-        expect(exists).to.equal(1);
+        expect(exists).to.be.true;
     });
 });

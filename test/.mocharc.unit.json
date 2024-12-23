@@ -1,5 +1,11 @@
 {
-    "extension": ["js"],
-    "spec": "test/unit/**/*.test.js",
-    "color": true
+    "extension": [
+        "ts"
+    ],
+    "spec": "test/unit/**/*.test.ts",
+    "color": true,
+    "require": [
+        "ts-node/register"
+    ],
+    "recursive": true
 }

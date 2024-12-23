@@ -18,8 +18,6 @@ export default abstract class Character extends GameEntity {
     protected empire: number;
 
     //movement and animation
-    protected positionX: number = 0;
-    protected positionY: number = 0;
     protected rotation: number = 0;
     protected targetPositionX: number = 0;
     protected targetPositionY: number = 0;

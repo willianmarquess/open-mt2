@@ -47,13 +47,21 @@ export default class QuadTree {
         this._se = null;
     }
 
-    insert(entity) {
-        if (!this.bounds.contains(entity.positionX, entity.positionY)) {
+    getEntities() {
+        return this.entities;
+    }
+
+    isSubdivided() {
+        return this.subdivided;
+    }
+
+    insert(entity: GameEntity) {
+        if (!this.bounds.contains(entity.getPositionX(), entity.getPositionY())) {
             return false;
         }
 
         if (this.entities.size < this.capacity && !this.subdivided) {
-            this.entities.set(entity.virtualId, entity);
+            this.entities.set(entity.getVirtualId(), entity);
             return true;
         }
 

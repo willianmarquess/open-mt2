@@ -1,8 +1,8 @@
+import BufferReader from '@/core/interface/networking/buffer/BufferReader';
 import { expect } from 'chai';
-import BufferReader from '../../../../../../src/core/interface/networking/buffer/BufferReader';
 
 describe('BufferReader', function () {
-    let bufferReader;
+    let bufferReader: BufferReader;
 
     beforeEach(function () {
         bufferReader = new BufferReader();

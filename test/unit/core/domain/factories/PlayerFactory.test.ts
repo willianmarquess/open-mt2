@@ -1,16 +1,13 @@
+import Player from '@/core/domain/entities/game/player/Player';
+import PlayerFactory from '@/core/domain/factories/PlayerFactory';
 import { expect } from 'chai';
-import sinon from 'sinon';
-import PlayerFactory from '../../../../../src/core/domain/factories/PlayerFactory';
-import JobUtil from '../../../../../src/core/domain/util/JobUtil';
-import EmpireUtil from '../../../../../src/core/domain/util/EmpireUtil';
-import Player from '../../../../../src/core/domain/entities/game/player/Player';
 
 describe('PlayerFactory', () => {
     let config;
     let animationManager;
-    let playerFactory;
-    sinon.stub(JobUtil, 'getClassNameFromClassId').returns('ClassName');
-    sinon.stub(EmpireUtil, 'getEmpireName').returns('EmpireName');
+    let playerFactory: PlayerFactory;
+    let experienceManager;
+    let logger;
 
     beforeEach(() => {
         config = {
@@ -41,19 +38,24 @@ describe('PlayerFactory', () => {
             },
         };
         animationManager = {};
-        playerFactory = new PlayerFactory({ config, animationManager });
+        playerFactory = new PlayerFactory({
+            config,
+            animationManager,
+            experienceManager,
+            logger,
+        });
     });
 
     it('should create a player with default values', () => {
         const params = {
             playerClass: 1,
-            accountId: 'accountId',
-            appearance: 'appearance',
+            accountId: 1,
+            appearance: 1,
             slot: 1,
-            virtualId: 'virtualId',
-            id: 'id',
+            virtualId: 1,
+            id: 1,
             empire: 1,
-            skillGroup: 'skillGroup',
+            skillGroup: 1,
             playTime: 1000,
             level: 1,
             experience: 0,
@@ -67,8 +69,8 @@ describe('PlayerFactory', () => {
             health: 200,
             mana: 100,
             stamina: 50,
-            bodyPart: 'bodyPart',
-            hairPart: 'hairPart',
+            bodyPart: 1,
+            hairPart: 1,
             name: 'name',
             givenStatusPoints: 0,
             availableStatusPoints: 0,
@@ -78,44 +80,44 @@ describe('PlayerFactory', () => {
 
         expect(player).to.be.an.instanceof(Player);
 
-        expect(player.accountId).to.be.equal('accountId');
-        expect(player.name).to.be.equal('name');
-        expect(player.empire).to.be.equal(1);
-        expect(player.playerClass).to.be.equal(1);
-        expect(player.appearance).to.be.equal('appearance');
-        expect(player.slot).to.be.equal(1);
-        expect(player.positionX).to.be.equal(300);
-        expect(player.positionY).to.be.equal(400);
-        expect(player.st).to.be.equal(10);
-        expect(player.ht).to.be.equal(10);
-        expect(player.dx).to.be.equal(10);
-        expect(player.iq).to.be.equal(10);
-        expect(player.health).to.be.equal(130);
-        expect(player.mana).to.be.equal(65);
-        expect(player.stamina).to.be.equal(50);
-        expect(player.virtualId).to.be.equal('virtualId');
-        expect(player.bodyPart).to.be.equal('bodyPart');
-        expect(player.hairPart).to.be.equal('hairPart');
-        expect(player.givenStatusPoints).to.be.equal(0);
-        expect(player.availableStatusPoints).to.be.equal(0);
-        expect(player.id).to.be.equal('id');
-        expect(player.skillGroup).to.be.equal('skillGroup');
-        expect(player.playTime).to.be.equal(1000);
-        expect(player.level).to.be.equal(1);
-        expect(player.experience).to.be.equal(0);
-        expect(player.gold).to.be.equal(100);
+        expect(player.getAccountId()).to.be.equal(1);
+        expect(player.getName()).to.be.equal('name');
+        expect(player.getEmpire()).to.be.equal(1);
+        expect(player.getPlayerClass()).to.be.equal(1);
+        expect(player.getAppearance()).to.be.equal(1);
+        expect(player.getSlot()).to.be.equal(1);
+        expect(player.getPositionX()).to.be.equal(300);
+        expect(player.getPositionY()).to.be.equal(400);
+        expect(player.getSt()).to.be.equal(10);
+        expect(player.getHt()).to.be.equal(10);
+        expect(player.getDx()).to.be.equal(10);
+        expect(player.getIq()).to.be.equal(10);
+        expect(player.getHealth()).to.be.equal(130);
+        expect(player.getMana()).to.be.equal(65);
+        expect(player.getStamina()).to.be.equal(50);
+        expect(player.getVirtualId()).to.be.equal(1);
+        expect(player.getBodyPart()).to.be.equal(1);
+        expect(player.getHairPart()).to.be.equal(1);
+        expect(player.getGivenStatusPoints()).to.be.equal(0);
+        expect(player.getAvailableStatusPoints()).to.be.equal(0);
+        expect(player.getId()).to.be.equal(1);
+        expect(player.getSkillGroup()).to.be.equal(1);
+        expect(player.getPlayTime()).to.be.equal(1000);
+        expect(player.getLevel()).to.be.equal(1);
+        expect(player.getExperience()).to.be.equal(0);
+        expect(player.getGold()).to.be.equal(100);
     });
 
     it('should create a player with config default values when params are missing', () => {
         const params = {
             playerClass: 1,
-            accountId: 'accountId',
-            appearance: 'appearance',
+            accountId: 1,
+            appearance: 1,
             slot: 1,
-            virtualId: 'virtualId',
-            id: 'id',
+            virtualId: 1,
+            id: 1,
             empire: 1,
-            skillGroup: 'skillGroup',
+            skillGroup: 1,
             playTime: 1000,
             level: 1,
             experience: 0,
@@ -130,11 +132,11 @@ describe('PlayerFactory', () => {
         expect(player).to.be.an.instanceof(Player);
 
         expect(player).to.include({
-            accountId: 'accountId',
+            accountId: 1,
             name: 'name',
             empire: 1,
             playerClass: 1,
-            appearance: 'appearance',
+            appearance: 1,
             slot: 1,
             positionX: 100,
             positionY: 200,
@@ -145,13 +147,13 @@ describe('PlayerFactory', () => {
             health: 130,
             mana: 65,
             stamina: 30,
-            virtualId: 'virtualId',
+            virtualId: 1,
             bodyPart: 0,
             hairPart: 0,
             givenStatusPoints: 0,
             availableStatusPoints: 0,
-            id: 'id',
-            skillGroup: 'skillGroup',
+            id: 1,
+            skillGroup: 1,
             playTime: 1000,
             level: 1,
             experience: 0,

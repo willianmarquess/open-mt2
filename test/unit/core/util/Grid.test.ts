@@ -1,8 +1,8 @@
+import Grid from '@/core/util/Grid';
 import { expect } from 'chai';
-import Grid from '../../../../src/core/util/Grid';
 
 describe('Grid', () => {
-    let grid;
+    let grid: Grid<string>;
     const defaultValue = 'empty';
 
     beforeEach(() => {
@@ -10,8 +10,8 @@ describe('Grid', () => {
     });
 
     it('should initialize with the correct dimensions', () => {
-        expect(grid.width).to.equal(3);
-        expect(grid.height).to.equal(3);
+        expect(grid.getWidth()).to.equal(3);
+        expect(grid.getHeight()).to.equal(3);
     });
 
     it('should initialize with the default value', () => {

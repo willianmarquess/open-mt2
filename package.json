@@ -12,7 +12,7 @@
     "format": "prettier -w {src,test}/**/*.ts",
     "prepare": "husky",
     "lint:fix": "eslint --fix {src,test}/**/*.ts",
-    "test:unit": "mocha --config test/.mocharc.unit.json --exit",
+    "test:unit": "mocha -r tsconfig-paths/register --config test/.mocharc.unit.json --exit",
     "test:integration": "node --env-file=.env --experimental-json-modules node_modules/mocha/bin/mocha --config test/.mocharc.integration.json --exit",
     "test:performance": "node --env-file=.env --experimental-json-modules test/performance/index.js",
     "test:coverage": "c8 npm run test:unit",
@@ -25,7 +25,10 @@
   "license": "ISC",
   "devDependencies": {
     "@eslint/js": "^9.17.0",
+    "@types/chai": "^5.0.1",
+    "@types/mocha": "^10.0.10",
     "@types/node": "^22.10.2",
+    "@types/sinon": "^17.0.3",
     "@typescript-eslint/eslint-plugin": "^8.18.0",
     "@typescript-eslint/parser": "^8.18.1",
     "c8": "^10.1.2",
@@ -48,7 +51,7 @@
     "bcryptjs": "^2.4.3",
     "cross-env": "^7.0.3",
     "mysql2": "^3.9.7",
-    "redis": "^4.6.13",
+    "redis": "^4.7.0",
     "sinon": "^18.0.0",
     "winston": "^3.13.0"
   },

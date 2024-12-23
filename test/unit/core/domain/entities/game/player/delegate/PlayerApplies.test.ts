@@ -1,12 +1,13 @@
+import Item from '@/core/domain/entities/game/item/Item';
+import PlayerApplies from '@/core/domain/entities/game/player/delegate/PlayerApplies';
+import { ApplyTypeEnum } from '@/core/enum/ApplyTypeEnum';
 import { expect } from 'chai';
 import sinon from 'sinon';
-import PlayerApplies from '../../../../../../../../src/core/domain/entities/game/player/delegate/PlayerApplies';
-import ApplyTypeEnum from '../../../../../../../../src/core/enum/ApplyTypeEnum';
 
 describe('PlayerApplies', function () {
     let playerMock;
     let loggerMock;
-    let playerApplies;
+    let playerApplies: PlayerApplies;
 
     beforeEach(function () {
         playerMock = {
@@ -26,11 +27,11 @@ describe('PlayerApplies', function () {
     describe('addItemApplies', function () {
         it('should apply valid item effects to the player', function () {
             const item = {
-                applies: [
+                getApplies: () => [
                     { type: ApplyTypeEnum.APPLY_ATT_SPEED, value: 10 },
                     { type: ApplyTypeEnum.APPLY_MOV_SPEED, value: 5 },
                 ],
-            };
+            } as unknown as Item;
 
             playerApplies.addItemApplies(item);
 
@@ -40,8 +41,8 @@ describe('PlayerApplies', function () {
 
         it('should log debug message for unimplemented applies', function () {
             const item = {
-                applies: [{ type: 'UNKNOWN_TYPE', value: 15 }],
-            };
+                getApplies: () => [{ type: 'UNKNOWN_TYPE', value: 15 }],
+            } as unknown as Item;
 
             playerApplies.addItemApplies(item);
 
@@ -53,11 +54,11 @@ describe('PlayerApplies', function () {
     describe('removeItemApplies', function () {
         it('should remove valid item effects from the player', function () {
             const item = {
-                applies: [
+                getApplies: () => [
                     { type: ApplyTypeEnum.APPLY_HP_REGEN, value: 8 },
                     { type: ApplyTypeEnum.APPLY_SP_REGEN, value: 12 },
                 ],
-            };
+            } as unknown as Item;
 
             playerApplies.removeItemApplies(item);
 
@@ -67,8 +68,8 @@ describe('PlayerApplies', function () {
 
         it('should log debug message for unimplemented applies', function () {
             const item = {
-                applies: [{ type: 'UNKNOWN_TYPE', value: 20 }],
-            };
+                getApplies: () => [{ type: 'UNKNOWN_TYPE', value: 20 }],
+            } as unknown as Item;
 
             playerApplies.removeItemApplies(item);
 

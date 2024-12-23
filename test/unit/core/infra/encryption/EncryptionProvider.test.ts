@@ -1,15 +1,15 @@
 import { expect } from 'chai';
 import sinon from 'sinon';
 import bcryptjs from 'bcryptjs';
-import EncryptionProvider from '../../../../../src/core/infra/encryption/EncryptionProvider';
+import BcryptEncryptionProvider from '@/core/infra/encryption/BcryptEncryptionProvider';
 
 describe('EncryptionProvider', () => {
-    let encryptionProvider;
+    let encryptionProvider: BcryptEncryptionProvider;
     let hashStub;
     let compareStub;
 
     beforeEach(() => {
-        encryptionProvider = new EncryptionProvider();
+        encryptionProvider = new BcryptEncryptionProvider();
         hashStub = sinon.stub(bcryptjs, 'hash');
         compareStub = sinon.stub(bcryptjs, 'compare');
     });

@@ -1,8 +1,8 @@
+import LoginService from '@/auth/app/service/LoginService';
+import Result from '@/core/app/Result';
+import { ErrorTypesEnum } from '@/core/enum/ErrorTypesEnum';
 import { expect } from 'chai';
 import sinon from 'sinon';
-import LoginService from '../../../../../src/auth/app/service/LoginService';
-import Result from '../../../../../src/core/app/Result';
-import ErrorTypesEnum from '../../../../../src/core/enum/ErrorTypesEnum';
 
 describe('LoginService', function () {
     let accountRepository, logger, cacheProvider, encryptionProvider, loginService;
@@ -33,7 +33,7 @@ describe('LoginService', function () {
     });
 
     it('should return an error if password is invalid', async function () {
-        const account = { id: 1, username: 'user', password: 'hashedPassword' };
+        const account = { getId: () => 1, getUsername: () => 'user', getPassword: () => 'hashedPassword' };
         accountRepository.findByUsername.resolves(account);
         encryptionProvider.compare.resolves(false);
 
@@ -44,7 +44,7 @@ describe('LoginService', function () {
     });
 
     it('should return a key and cache the token if credentials are valid', async function () {
-        const account = { id: 1, username: 'user', password: 'hashedPassword' };
+        const account = { getId: () => 1, getUsername: () => 'user', getPassword: () => 'hashedPassword' };
         accountRepository.findByUsername.resolves(account);
         encryptionProvider.compare.resolves(true);
 

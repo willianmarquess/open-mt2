@@ -1,5 +1,5 @@
+import Ip from '@/core/util/Ip';
 import { expect } from 'chai';
-import Ip from '../../../../src/core/util/Ip';
 
 describe('Ip', () => {
     describe('toInt', () => {

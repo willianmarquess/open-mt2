@@ -1,9 +1,9 @@
+import Queue from '@/core/util/Queue';
 import { expect } from 'chai';
-import Queue from '../../../../src/core/util/Queue';
 
 describe('CORE -> DATA STRUCTURE -> Queue', () => {
     context('when queue is empty', () => {
-        let queue;
+        let queue: Queue<number>;
 
         beforeEach(() => {
             queue = new Queue();
@@ -28,7 +28,7 @@ describe('CORE -> DATA STRUCTURE -> Queue', () => {
     });
 
     context('when queue is full', () => {
-        let queue;
+        let queue: Queue<number>;
 
         beforeEach(() => {
             queue = new Queue(3);
@@ -52,7 +52,7 @@ describe('CORE -> DATA STRUCTURE -> Queue', () => {
     });
 
     context('when queue is not empty', () => {
-        let queue;
+        let queue: Queue<number>;
 
         beforeEach(() => {
             queue = new Queue();
