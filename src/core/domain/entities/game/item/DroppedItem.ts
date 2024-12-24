@@ -3,9 +3,9 @@ import GameEntity from '../GameEntity';
 import { EntityTypeEnum } from '@/core/enum/EntityTypeEnum';
 
 export default class DroppedItem extends GameEntity {
-    private item: Item;
-    private count: number;
-    private ownerName: string;
+    private readonly item: Item;
+    private readonly count: number;
+    private readonly ownerName: string;
 
     constructor({ item, count, ownerName, virtualId, positionX, positionY }) {
         super({

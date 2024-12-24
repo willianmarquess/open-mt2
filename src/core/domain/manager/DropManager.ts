@@ -9,8 +9,8 @@ import ItemManager from './ItemManager';
 import Player from '../entities/game/player/Player';
 
 class DropItem {
-    public item: Item;
-    public count: number;
+    public readonly item: Item;
+    public readonly count: number;
 
     constructor(item: Item, count: number) {
         this.item = item;
@@ -19,9 +19,9 @@ class DropItem {
 }
 
 export default class DropManager {
-    private commonDrops = new Map();
-    private config: GameConfig;
-    private itemManager: ItemManager;
+    private readonly commonDrops = new Map();
+    private readonly config: GameConfig;
+    private readonly itemManager: ItemManager;
 
     constructor({ config, itemManager }) {
         this.config = config;

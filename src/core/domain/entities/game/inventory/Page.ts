@@ -2,7 +2,7 @@ import Grid from '@/core/util/Grid';
 import Item from '../item/Item';
 
 export default class Page {
-    private grid: Grid<Item>;
+    private readonly grid: Grid<Item>;
 
     constructor(width: number, height: number) {
         this.grid = new Grid(width, height, 0);

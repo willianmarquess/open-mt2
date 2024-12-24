@@ -1,6 +1,6 @@
 export default class Result<T, E> {
-    private data?: T;
-    private error?: E;
+    private readonly data?: T;
+    private readonly error?: E;
 
     private constructor({ data, error }: { data?: T; error?: E }) {
         this.data = data;

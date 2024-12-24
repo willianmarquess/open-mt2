@@ -5,11 +5,11 @@ import ItemCache from '@/core/domain/util/ItemCache';
 import Item from '@/core/domain/entities/game/item/Item';
 
 export default class ItemManager {
-    private config: GameConfig;
-    private items: Map<number, ItemProto> = new Map<number, ItemProto>();
-    private itemRepository: ItemRepository;
-    private logger: Logger;
-    private itemCache: ItemCache;
+    private readonly config: GameConfig;
+    private readonly items: Map<number, ItemProto> = new Map<number, ItemProto>();
+    private readonly itemRepository: ItemRepository;
+    private readonly logger: Logger;
+    private readonly itemCache: ItemCache;
 
     constructor({ config, itemRepository, logger, itemCache }) {
         this.config = config;

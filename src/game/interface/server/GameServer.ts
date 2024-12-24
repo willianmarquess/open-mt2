@@ -15,12 +15,12 @@ type InMessage = {
 };
 
 export default class GameServer extends Server {
-    #incomingMessages = new Queue<InMessage>(INCOMING_MESSAGES_QUEUE_SIZE);
-    #logoutService: LogoutService;
+    private readonly incomingMessages = new Queue<InMessage>(INCOMING_MESSAGES_QUEUE_SIZE);
+    private readonly logoutService: LogoutService;
 
     constructor(container) {
         super(container);
-        this.#logoutService = container.logoutService;
+        this.logoutService = container.logoutService;
     }
 
     async onData(connection: GameConnection, data: Buffer) {
@@ -43,11 +43,11 @@ export default class GameServer extends Server {
             handler,
             connection,
         };
-        this.#incomingMessages.enqueue(message);
+        this.incomingMessages.enqueue(message);
     }
 
     processMessages() {
-        for (const { packet, handler, connection } of this.#incomingMessages.dequeueIterator()) {
+        for (const { packet, handler, connection } of this.incomingMessages.dequeueIterator()) {
             this.logger.debug(`[IN][PACKET] processing packet: ${handler.constructor.name}`);
             handler.execute(connection, packet).catch((err) => this.logger.error(err));
         }
@@ -63,7 +63,7 @@ export default class GameServer extends Server {
         return new GameConnection({
             socket,
             logger: this.logger,
-            logoutService: this.#logoutService,
+            logoutService: this.logoutService,
             config: this.config,
         });
     }

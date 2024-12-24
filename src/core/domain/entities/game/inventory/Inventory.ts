@@ -11,14 +11,13 @@ const DEFAULT_INVENTORY_WIDTH = 5;
 const DEFAULT_INVENTORY_HEIGHT = 9;
 
 export default class Inventory {
-    private pages: Array<Page> = [];
-    private width = DEFAULT_INVENTORY_WIDTH;
-    private height = DEFAULT_INVENTORY_HEIGHT;
-    private equipment: Equipment;
-    private emitter = new EventEmitter();
-
-    private items: Map<number, Item>;
-    private ownerId: number;
+    private readonly pages: Array<Page> = [];
+    private readonly width = DEFAULT_INVENTORY_WIDTH;
+    private readonly height = DEFAULT_INVENTORY_HEIGHT;
+    private readonly equipment: Equipment;
+    private readonly emitter = new EventEmitter();
+    private readonly items: Map<number, Item>;
+    private readonly ownerId: number;
 
     constructor({ config, ownerId }) {
         for (let i = 0; i < config.INVENTORY_PAGES; i++) {

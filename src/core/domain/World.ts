@@ -19,21 +19,21 @@ function calculateTickDelay(delta: number = 0) {
 const getAbsolutePosition = (pos: number) => (pos > AREA_UNIT ? Math.floor(pos / AREA_UNIT) : 0);
 
 export default class World {
-    private players = new Map<string, Player>();
+    private readonly players = new Map<string, Player>();
     private server: GameServer;
-    private logger: Logger;
-    private config: GameConfig;
-    private saveCharacterService: SaveCharacterService;
-    private spawnManager: SpawnManager;
+    private readonly logger: Logger;
+    private readonly config: GameConfig;
+    private readonly saveCharacterService: SaveCharacterService;
+    private readonly spawnManager: SpawnManager;
 
-    virtualId = 0;
+    private virtualId = 0;
 
-    deltas = [];
+    private deltas = [];
 
-    areas = new Map<string, Area>();
-    width = 0;
-    height = 0;
-    grid: Grid<Area>;
+    private readonly areas = new Map<string, Area>();
+    private width = 0;
+    private height = 0;
+    private grid: Grid<Area>;
 
     constructor({ logger, config, saveCharacterService, spawnManager }) {
         this.logger = logger;

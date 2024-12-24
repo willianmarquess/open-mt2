@@ -42,10 +42,10 @@ import Character from '../Character';
 const REGEN_INTERVAL = 3000;
 
 export default class Player extends Character {
-    private accountId: number;
-    private playerClass: number;
+    private readonly accountId: number;
+    private readonly playerClass: number;
     private skillGroup: number;
-    private playTime: number;
+    private readonly playTime: number;
     private experience: number;
     private gold: number;
     private stamina: number;

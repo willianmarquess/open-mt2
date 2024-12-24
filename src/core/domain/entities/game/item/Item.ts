@@ -64,26 +64,26 @@ type ItemParams = {
 };
 
 export default class Item {
-    private id: number;
-    private name: string;
-    private type: string;
-    private subType: string;
-    private size: number;
-    private antiFlags: BitFlag;
-    private flags: BitFlag;
-    private wearFlags: BitFlag;
-    private immuneFlags: BitFlag;
-    private gold: number;
-    private shopPrice: number;
-    private refineId: number;
-    private refineSet: number;
-    private magicPercent: number;
-    private limits: Array<ItemLimit> = [];
-    private applies: Array<ItemApply> = [];
-    private values: Array<number> = [];
-    private specular: number;
-    private socket: number;
-    private addon: number;
+    private readonly id: number;
+    private readonly name: string;
+    private readonly type: string;
+    private readonly subType: string;
+    private readonly size: number;
+    private readonly antiFlags: BitFlag;
+    private readonly flags: BitFlag;
+    private readonly wearFlags: BitFlag;
+    private readonly immuneFlags: BitFlag;
+    private readonly gold: number;
+    private readonly shopPrice: number;
+    private readonly refineId: number;
+    private readonly refineSet: number;
+    private readonly magicPercent: number;
+    private readonly limits: Array<ItemLimit> = [];
+    private readonly applies: Array<ItemApply> = [];
+    private readonly values: Array<number> = [];
+    private readonly specular: number;
+    private readonly socket: number;
+    private readonly addon: number;
     private count: number;
 
     private dbId: number;

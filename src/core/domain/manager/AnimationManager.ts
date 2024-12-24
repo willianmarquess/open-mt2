@@ -4,9 +4,9 @@ import AnimationUtil from '@/core/domain/util/AnimationUtil';
 import { GameConfig } from '@/game/infra/config/GameConfig';
 
 export default class AnimationManager {
-    private animations: Map<string, Animation> = new Map<string, Animation>();
-    private logger: Logger;
-    private config: GameConfig;
+    private readonly animations: Map<string, Animation> = new Map<string, Animation>();
+    private readonly logger: Logger;
+    private readonly config: GameConfig;
 
     constructor({ logger, config }) {
         this.logger = logger;

@@ -36,10 +36,10 @@ type PlayerFactoryParams = {
 };
 
 export default class PlayerFactory {
-    private config: GameConfig;
-    private animationManager: AnimationManager;
-    private experienceManager: ExperienceManager;
-    private logger: Logger;
+    private readonly config: GameConfig;
+    private readonly animationManager: AnimationManager;
+    private readonly experienceManager: ExperienceManager;
+    private readonly logger: Logger;
 
     constructor({ config, animationManager, experienceManager, logger }) {
         this.config = config;

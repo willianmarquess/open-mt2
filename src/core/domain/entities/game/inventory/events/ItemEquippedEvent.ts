@@ -8,8 +8,8 @@ export default class ItemEquippedEvent {
         return this.type;
     }
 
-    private item: Item;
-    private slot: ItemEquipmentSlotEnum;
+    private readonly item: Item;
+    private readonly slot: ItemEquipmentSlotEnum;
 
     constructor({ item, slot }) {
         this.item = item;

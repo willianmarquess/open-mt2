@@ -4,9 +4,9 @@ import { ApplyTypeEnum } from '@/core/enum/ApplyTypeEnum';
 import Item from '../../item/Item';
 
 export default class PlayerApplies {
-    private applies: Map<ApplyTypeEnum, (value: any) => void> = new Map();
-    private player: Player;
-    private logger: Logger;
+    private readonly applies: Map<ApplyTypeEnum, (value: any) => void> = new Map();
+    private readonly player: Player;
+    private readonly logger: Logger;
 
     constructor(player: Player, logger: Logger) {
         this.player = player;

@@ -3,7 +3,7 @@ import Account from '../../../core/domain/entities/state/account/Account';
 import AccountStatus from '../../../core/domain/entities/state/account/AccountStatus';
 
 export default class AccountRepository {
-    private databaseManager: DatabaseManager;
+    private readonly databaseManager: DatabaseManager;
 
     constructor({ databaseManager }) {
         this.databaseManager = databaseManager;

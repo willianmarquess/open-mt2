@@ -2,12 +2,12 @@ import StateEntity from '@/core/domain/entities/state/StateEntity';
 import AccountStatus from '@/core/domain/entities/state/account/AccountStatus';
 
 export default class Account extends StateEntity {
-    private username: string;
-    private password: string;
-    private email: string;
-    private lastLogin: Date;
-    private deleteCode: string;
-    private accountStatus: AccountStatus;
+    private readonly username: string;
+    private readonly password: string;
+    private readonly email: string;
+    private readonly lastLogin: Date;
+    private readonly deleteCode: string;
+    private readonly accountStatus: AccountStatus;
 
     constructor({ id, username, password, email, lastLogin, deleteCode, accountStatus, createdAt, updatedAt }) {
         super(id, createdAt, updatedAt);

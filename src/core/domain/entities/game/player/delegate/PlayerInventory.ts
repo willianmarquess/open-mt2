@@ -7,7 +7,7 @@ import { WindowTypeEnum } from '@/core/enum/WindowTypeEnum';
 import { ItemEquipmentSlotEnum } from '@/core/enum/ItemEquipmentSlotEnum';
 
 export default class PlayerInventory {
-    private player: Player;
+    private readonly player: Player;
 
     constructor(player: Player) {
         this.player = player;

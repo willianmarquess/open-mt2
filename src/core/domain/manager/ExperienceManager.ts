@@ -2,8 +2,8 @@ import { GameConfig } from '@/game/infra/config/GameConfig';
 import exp from '@/core/infra/config/data/exp';
 
 export default class ExperienceManager {
-    private expTable: Array<number> = exp;
-    private config: GameConfig;
+    private readonly expTable: Array<number> = exp;
+    private readonly config: GameConfig;
 
     constructor({ config }) {
         this.config = config;

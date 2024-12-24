@@ -8,7 +8,7 @@ type ItemSlotInfo = {
 };
 
 export default class Equipment {
-    private slots: Map<ItemEquipmentSlotEnum, ItemSlotInfo> = new Map<ItemEquipmentSlotEnum, ItemSlotInfo>();
+    private readonly slots: Map<ItemEquipmentSlotEnum, ItemSlotInfo> = new Map<ItemEquipmentSlotEnum, ItemSlotInfo>();
     private weapon: Item;
     private head: Item;
     private body: Item;
@@ -34,7 +34,7 @@ export default class Equipment {
     private ring2: Item;
     private belt: Item;
 
-    private offset: number;
+    private readonly offset: number;
 
     constructor(offset: number) {
         this.offset = offset;

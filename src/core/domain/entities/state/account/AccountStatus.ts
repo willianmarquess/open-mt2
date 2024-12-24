@@ -1,9 +1,9 @@
 import StateEntity from '../StateEntity';
 
 export default class AccountStatus extends StateEntity {
-    private clientStatus: string;
-    private allowLogin: boolean;
-    private description: number;
+    private readonly clientStatus: string;
+    private readonly allowLogin: boolean;
+    private readonly description: number;
 
     constructor({ id, clientStatus, allowLogin, description, createdAt, updatedAt }) {
         super(id, createdAt, updatedAt);

@@ -32,7 +32,7 @@ enum MobEnchantTypeEnum {
 }
 
 class MobResist {
-    private type: MobResistTypeEnum;
+    private readonly type: MobResistTypeEnum;
 
     constructor({ type }) {
         this.type = type;
@@ -44,7 +44,7 @@ class MobResist {
 }
 
 class MobEnchant {
-    private type: MobEnchantTypeEnum;
+    private readonly type: MobEnchantTypeEnum;
 
     constructor({ type }) {
         this.type = type;
@@ -56,8 +56,8 @@ class MobEnchant {
 }
 
 class MobSkill {
-    private id: number;
-    private level: number;
+    private readonly id: number;
+    private readonly level: number;
 
     constructor({ id, level }) {
         this.id = id;
@@ -73,46 +73,46 @@ class MobSkill {
 }
 
 export default abstract class Mob extends Character {
-    protected rank: string;
-    protected battleType: string;
-    protected size: MobSizeEnum = MobSizeEnum.MEDIUM;
-    protected aiFlag: string;
-    protected mountCapacity: number;
-    protected raceFlag: string;
-    protected immuneFlag: string;
-    protected folder: string;
-    protected onClick: number;
-    protected damageMin: number;
-    protected damageMax: number;
-    protected maxHp: number;
-    protected regenCycle: number;
-    protected regenPercent: number;
-    protected goldMin: number;
-    protected goldMax: number;
-    protected exp: number;
-    protected def: number;
-    protected aggressiveHpPct: number;
-    protected aggressiveSight: number;
-    protected attackRange: number;
-    protected dropItem: number;
-    protected resurrectionId: number;
-    protected direction: number;
+    protected readonly rank: string;
+    protected readonly battleType: string;
+    protected readonly size: MobSizeEnum = MobSizeEnum.MEDIUM;
+    protected readonly aiFlag: string;
+    protected readonly mountCapacity: number;
+    protected readonly raceFlag: string;
+    protected readonly immuneFlag: string;
+    protected readonly folder: string;
+    protected readonly onClick: number;
+    protected readonly damageMin: number;
+    protected readonly damageMax: number;
+    protected readonly maxHp: number;
+    protected readonly regenCycle: number;
+    protected readonly regenPercent: number;
+    protected readonly goldMin: number;
+    protected readonly goldMax: number;
+    protected readonly exp: number;
+    protected readonly def: number;
+    protected readonly aggressiveHpPct: number;
+    protected readonly aggressiveSight: number;
+    protected readonly attackRange: number;
+    protected readonly dropItem: number;
+    protected readonly resurrectionId: number;
+    protected readonly direction: number;
 
-    protected resists = [];
-    protected enchants = [];
-    protected skills = [];
+    protected readonly resists = [];
+    protected readonly enchants = [];
+    protected readonly skills = [];
 
-    protected damMultiply: number;
-    protected summon: number;
-    protected drainSp: number;
-    protected mobColor: number;
-    protected polymorphItem: number;
+    protected readonly damMultiply: number;
+    protected readonly summon: number;
+    protected readonly drainSp: number;
+    protected readonly mobColor: number;
+    protected readonly polymorphItem: number;
 
-    protected hpPercentToGetBerserk: number;
-    protected hpPercentToGetStoneSkin: number;
-    protected hpPercentToGetGodspeed: number;
-    protected hpPercentToGetDeathblow: number;
-    protected hpPercentToGetRevive: number;
+    protected readonly hpPercentToGetBerserk: number;
+    protected readonly hpPercentToGetStoneSkin: number;
+    protected readonly hpPercentToGetGodspeed: number;
+    protected readonly hpPercentToGetDeathblow: number;
+    protected readonly hpPercentToGetRevive: number;
 
     protected group: MonsterGroup;
 

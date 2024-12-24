@@ -92,10 +92,10 @@ import DropManager from './DropManager';
 // };
 
 export default class MobManager {
-    config: GameConfig;
-    mobs = new Map<number, MobsProto>(); //todo
-    animationManager: AnimationManager;
-    dropManager: DropManager;
+    private readonly config: GameConfig;
+    private readonly mobs = new Map<number, MobsProto>(); //todo
+    private readonly animationManager: AnimationManager;
+    private readonly dropManager: DropManager;
 
     constructor({ config, animationManager, dropManager }) {
         this.config = config;

@@ -8,8 +8,8 @@ import { ChatMessageTypeEnum } from '@/core/enum/ChatMessageTypeEnum';
 import Character from '../../Character';
 
 export default class PlayerBattle {
-    private player: Player;
-    private logger: Logger;
+    private readonly player: Player;
+    private readonly logger: Logger;
 
     constructor(player: Player, logger: Logger) {
         this.player = player;

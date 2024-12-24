@@ -14,15 +14,15 @@ const MINUTE_IN_MS = SECOND_IN_MS * 60;
 const HOUR_IN_MS = MINUTE_IN_MS * 60;
 
 export default class SpawnConfig {
-    private type: SpawnConfigTypeEnum;
-    private x: number;
-    private y: number;
-    private rangeX: number;
-    private rangeY: number;
-    private direction: number;
-    private respawnTime: string;
-    private id: number;
-    private count: number;
+    private readonly type: SpawnConfigTypeEnum;
+    private readonly x: number;
+    private readonly y: number;
+    private readonly rangeX: number;
+    private readonly rangeY: number;
+    private readonly direction: number;
+    private readonly respawnTime: string;
+    private readonly id: number;
+    private readonly count: number;
 
     constructor({ type, x, y, rangeX, rangeY, direction, respawnTime, id, count }) {
         this.type = type;
