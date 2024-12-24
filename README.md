@@ -4,6 +4,10 @@
 ![GitHub language count](https://img.shields.io/github/languages/count/willianmarquess/mt2-server-javascript?style=for-the-badge)
 ![GitHub forks](https://img.shields.io/github/forks/willianmarquess/mt2-server-javascript?style=for-the-badge)
 
+[![SonarQube Cloud](https://sonarcloud.io/images/project_badges/sonarcloud-light.svg)](https://sonarcloud.io/summary/new_code?id=willianmarquess_open-mt2)
+[![Quality gate](https://sonarcloud.io/api/project_badges/quality_gate?project=willianmarquess_open-mt2)](https://sonarcloud.io/summary/new_code?id=willianmarquess_open-mt2)
+[![Quality Gate Status](https://sonarcloud.io/api/project_badges/measure?project=willianmarquess_open-mt2&metric=alert_status)](https://sonarcloud.io/summary/new_code?id=willianmarquess_open-mt2)
+
 Metin2 JS is an open source implementation of MMORPG Metin2 server using Nodejs with Typescript language.
 
 This project will be developed for fun and study only.
