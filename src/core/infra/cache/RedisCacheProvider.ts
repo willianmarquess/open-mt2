@@ -3,7 +3,7 @@ import Logger from '@/core/infra/logger/Logger';
 import CacheProvider from '@/core/infra/cache/CacheProvider';
 
 export default class RedisCacheProvider implements CacheProvider {
-    private readonly client: any; //redis.RedisClientType;
+    private readonly client: redis.RedisClientType;
     private readonly logger: Logger;
 
     constructor({ logger, config }) {
