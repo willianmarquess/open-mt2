@@ -31,7 +31,7 @@ jobs:
         run: npm run lint:fix
 
       - name: Run Tests with Coverage
-        run: npm test:coverage
+        run: npm run test:coverage
 
       - name: Upload Coverage Report
         if: success()
