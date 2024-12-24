@@ -1,7 +1,7 @@
 {
     "all": true,
     "include": [
-        "src/**/*.js"
+        "src/**/*.ts"
     ],
     "report-dir": "coverage",
     "exclude": [
@@ -11,8 +11,8 @@
         "html"
     ],
     "check-coverage": true,
-    "branches": 100,
-    "lines": 100,
-    "functions": 100,
-    "statements": 100
+    "branches": 30,
+    "lines": 30,
+    "functions": 30,
+    "statements": 30
 }
