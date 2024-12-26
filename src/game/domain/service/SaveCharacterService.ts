@@ -1,9 +1,9 @@
 import Player from '@/core/domain/entities/game/player/Player';
 import ItemManager from '@/core/domain/manager/ItemManager';
-import PlayerRepository from '@/game/infra/database/PlayerRepository';
+import { IPlayerRepository } from '../../../core/domain/repository/IPlayerRepository';
 
 export default class SaveCharacterService {
-    private readonly playerRepository: PlayerRepository;
+    private readonly playerRepository: IPlayerRepository;
     private readonly itemManager: ItemManager;
 
     constructor({ playerRepository, itemManager }) {

@@ -1,8 +1,9 @@
 import DatabaseManager from '@/core/infra/database/DatabaseManager';
 import Account from '../../../core/domain/entities/state/account/Account';
 import AccountStatus from '../../../core/domain/entities/state/account/AccountStatus';
+import { IAccountRepository } from './IAccountRepository';
 
-export default class AccountRepository {
+export default class AccountRepository implements IAccountRepository {
     private readonly databaseManager: DatabaseManager;
 
     constructor({ databaseManager }) {

@@ -1,5 +1,5 @@
 import LoginService from '@/auth/app/service/LoginService';
-import Result from '@/core/app/Result';
+import Result from '@/core/domain/util/Result';
 import { ErrorTypesEnum } from '@/core/enum/ErrorTypesEnum';
 import { expect } from 'chai';
 import sinon from 'sinon';

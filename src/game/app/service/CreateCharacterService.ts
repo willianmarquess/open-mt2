@@ -1,11 +1,11 @@
-import Result from '@/core/app/Result';
+import Result from '@/core/domain/util/Result';
 import Player from '@/core/domain/entities/game/player/Player';
 import PlayerFactory from '@/core/domain/factories/PlayerFactory';
 import { ErrorTypesEnum } from '@/core/enum/ErrorTypesEnum';
 import CacheProvider from '@/core/infra/cache/CacheProvider';
 import Logger from '@/core/infra/logger/Logger';
 import CacheKeyGenerator from '@/core/util/CacheKeyGenerator';
-import PlayerRepository from '@/game/infra/database/PlayerRepository';
+import { IPlayerRepository } from '@/core/domain/repository/IPlayerRepository';
 
 const MAX_PLAYERS_PER_ACCOUNT = 4;
 
@@ -20,7 +20,7 @@ type CreateCharacterServiceParams = {
 export default class CreateCharacterService {
     private readonly logger: Logger;
     private readonly cacheProvider: CacheProvider;
-    private readonly playerRepository: PlayerRepository;
+    private readonly playerRepository: IPlayerRepository;
     private readonly playerFactory: PlayerFactory;
 
     constructor({ logger, cacheProvider, playerRepository, playerFactory }) {

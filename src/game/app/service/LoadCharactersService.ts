@@ -1,9 +1,9 @@
-import Result from '@/core/app/Result';
+import Result from '@/core/domain/util/Result';
 import PlayerState from '@/core/domain/entities/state/player/PlayerState';
-import PlayerRepository from '@/game/infra/database/PlayerRepository';
+import { IPlayerRepository } from '@/core/domain/repository/IPlayerRepository';
 
 export default class LoadCharactersService {
-    private readonly playerRepository: PlayerRepository;
+    private readonly playerRepository: IPlayerRepository;
 
     constructor({ playerRepository }) {
         this.playerRepository = playerRepository;

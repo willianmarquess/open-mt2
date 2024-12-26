@@ -1,15 +1,15 @@
-import Result from '@/core/app/Result';
+import Result from '@/core/domain/util/Result';
 import Player from '@/core/domain/entities/game/player/Player';
 import PlayerFactory from '@/core/domain/factories/PlayerFactory';
 import ItemManager from '@/core/domain/manager/ItemManager';
 import World from '@/core/domain/World';
 import { ErrorTypesEnum } from '@/core/enum/ErrorTypesEnum';
 import Logger from '@/core/infra/logger/Logger';
-import PlayerRepository from '@/game/infra/database/PlayerRepository';
+import { IPlayerRepository } from '@/core/domain/repository/IPlayerRepository';
 
 export default class SelectCharacterService {
     private readonly logger: Logger;
-    private readonly playerRepository: PlayerRepository;
+    private readonly playerRepository: IPlayerRepository;
     private readonly playerFactory: PlayerFactory;
     private readonly world: World;
     private readonly itemManager: ItemManager;

@@ -2,11 +2,11 @@ import DroppedItem from '@/core/domain/entities/game/item/DroppedItem';
 import Player from '@/core/domain/entities/game/player/Player';
 import World from '@/core/domain/World';
 import { ChatMessageTypeEnum } from '@/core/enum/ChatMessageTypeEnum';
-import ItemRepository from '@/game/infra/database/ItemRepository';
+import { IItemRepository } from '@/core/domain/repository/IItemRepository';
 
 export default class PickupItemService {
     private readonly world: World;
-    private readonly itemRepository: ItemRepository;
+    private readonly itemRepository: IItemRepository;
 
     constructor({ world, itemRepository }) {
         this.world = world;

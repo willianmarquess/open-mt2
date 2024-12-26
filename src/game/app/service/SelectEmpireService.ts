@@ -1,4 +1,4 @@
-import Result from '@/core/app/Result';
+import Result from '@/core/domain/util/Result';
 import { ErrorTypesEnum } from '@/core/enum/ErrorTypesEnum';
 import CacheProvider from '@/core/infra/cache/CacheProvider';
 import Logger from '@/core/infra/logger/Logger';

@@ -2,7 +2,7 @@ import Logger from '@/core/infra/logger/Logger';
 import CacheProvider from '@/core/infra/cache/CacheProvider';
 import { ErrorTypesEnum } from '@/core/enum/ErrorTypesEnum';
 import CacheKeyGenerator from '@/core/util/CacheKeyGenerator';
-import Result from '@/core/app/Result';
+import Result from '@/core/domain/util/Result';
 
 type Token = {
     username: string;

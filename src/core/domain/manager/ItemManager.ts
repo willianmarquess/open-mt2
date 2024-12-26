@@ -1,13 +1,13 @@
 import Logger from '@/core/infra/logger/Logger';
 import { GameConfig, ItemProto } from '@/game/infra/config/GameConfig';
-import ItemRepository from '@/game/infra/database/ItemRepository';
 import ItemCache from '@/core/domain/util/ItemCache';
 import Item from '@/core/domain/entities/game/item/Item';
+import { IItemRepository } from '@/core/domain/repository/IItemRepository';
 
 export default class ItemManager {
     private readonly config: GameConfig;
     private readonly items: Map<number, ItemProto> = new Map<number, ItemProto>();
-    private readonly itemRepository: ItemRepository;
+    private readonly itemRepository: IItemRepository;
     private readonly logger: Logger;
     private readonly itemCache: ItemCache;
 

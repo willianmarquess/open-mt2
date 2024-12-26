@@ -2,15 +2,15 @@ import Logger from '@/core/infra/logger/Logger';
 import CommandHandler from '../../CommandHandler';
 import ItemCommand from './ItemCommand';
 import ItemManager from '@/core/domain/manager/ItemManager';
-import ItemRepository from '@/game/infra/database/ItemRepository';
 import Player from '@/core/domain/entities/game/player/Player';
 import { ChatMessageTypeEnum } from '@/core/enum/ChatMessageTypeEnum';
 import MathUtil from '@/core/domain/util/MathUtil';
+import { IItemRepository } from '@/core/domain/repository/IItemRepository';
 
 export default class ItemCommandHandler extends CommandHandler<ItemCommand> {
     private readonly logger: Logger;
     private readonly itemManager: ItemManager;
-    private readonly itemRepository: ItemRepository;
+    private readonly itemRepository: IItemRepository;
 
     constructor({ logger, itemManager, itemRepository }) {
         super();

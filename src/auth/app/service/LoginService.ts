@@ -1,16 +1,16 @@
 import { randomBytes } from 'crypto';
 import CacheKeyGenerator from '../../../core/util/CacheKeyGenerator';
-import Result from '../../../core/app/Result';
-import AccountRepository from '@/auth/infra/database/AccountRepository';
 import Logger from '@/core/infra/logger/Logger';
 import { ErrorTypesEnum } from '@/core/enum/ErrorTypesEnum';
 import CacheProvider from '@/core/infra/cache/CacheProvider';
 import { EncryptionProvider } from '@/core/infra/encryption/EncryptionProvider';
+import { IAccountRepository } from '@/auth/infra/database/IAccountRepository';
+import Result from '@/core/domain/util/Result';
 
 const TOKEN_EXPIRATION_SECS = 60 * 60 * 24;
 
 export default class LoginService {
-    private readonly accountRepository: AccountRepository;
+    private readonly accountRepository: IAccountRepository;
     private readonly logger: Logger;
     private readonly cacheProvider: CacheProvider;
     private readonly encryptionProvider: EncryptionProvider;

@@ -1,4 +1,4 @@
-import Result from '@/core/app/Result';
+import Result from '@/core/domain/util/Result';
 import { expect } from 'chai';
 
 describe('Result', () => {

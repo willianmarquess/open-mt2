@@ -1,8 +1,9 @@
 import ItemState from '@/core/domain/entities/state/item/ItemState';
 import DatabaseManager from '@/core/infra/database/DatabaseManager';
 import { ResultSetHeader } from 'mysql2';
+import { IItemRepository } from '../../../core/domain/repository/IItemRepository';
 
-export default class ItemRepository {
+export default class ItemRepository implements IItemRepository {
     private readonly databaseManager: DatabaseManager;
 
     constructor({ databaseManager }) {
@@ -10,7 +11,7 @@ export default class ItemRepository {
     }
 
     async delete(item: ItemState) {
-        return this.databaseManager
+        await this.databaseManager
             .getConnection()
             .query('delete from game.item where id = ? and ownerId = ? ', [item.id, item.ownerId]);
     }
@@ -26,7 +27,7 @@ export default class ItemRepository {
     }
 
     async update(item: ItemState) {
-        return this.databaseManager.getConnection().query(
+        await this.databaseManager.getConnection().query(
             `
             update 
                 item 

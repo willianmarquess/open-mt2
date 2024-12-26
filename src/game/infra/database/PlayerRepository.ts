@@ -1,8 +1,9 @@
 import DatabaseManager from '@/core/infra/database/DatabaseManager';
 import { ResultSetHeader } from 'mysql2';
 import PlayerState from '@/core/domain/entities/state/player/PlayerState';
+import { IPlayerRepository } from '@/core/domain/repository/IPlayerRepository';
 
-export default class PlayerRepository {
+export default class PlayerRepository implements IPlayerRepository {
     private readonly databaseManager: DatabaseManager;
 
     constructor({ databaseManager }) {
@@ -88,7 +89,7 @@ export default class PlayerRepository {
     }
 
     async update(player: PlayerState) {
-        return this.databaseManager.getConnection().query(
+        await this.databaseManager.getConnection().query(
             `
         UPDATE game.player SET 
             accountId = ?, 
@@ -182,7 +183,7 @@ export default class PlayerRepository {
         return this.mapToEntity(players[0]);
     }
 
-    mapToEntity(player: PlayerState) {
+    private mapToEntity(player: PlayerState) {
         if (!player) return;
 
         const {
