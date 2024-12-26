@@ -42,6 +42,16 @@ export default class World {
         this.spawnManager = spawnManager;
     }
 
+    getWidth() {
+        return this.width;
+    }
+    getHeight() {
+        return this.height;
+    }
+    getGrid() {
+        return this.grid;
+    }
+
     generateVirtualId() {
         return ++this.virtualId;
     }

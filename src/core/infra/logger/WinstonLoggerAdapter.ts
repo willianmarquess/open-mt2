@@ -1,29 +1,29 @@
-import { createLogger, format, transports, Logger as WinstonLogger } from 'winston';
+import winston from 'winston';
 import Logger from '@/core/infra/logger/Logger';
 
 export default class WinstonLoggerAdapter implements Logger {
-    private logger: WinstonLogger;
+    private logger: winston.Logger;
 
     constructor() {
-        this.logger = createLogger({
+        this.logger = winston.createLogger({
             level: process.env.LOG_LEVEL || 'info',
-            format: format.combine(
-                format.timestamp(),
-                format.errors({
+            format: winston.format.combine(
+                winston.format.timestamp(),
+                winston.format.errors({
                     stack: true,
                 }),
-                format.json(),
+                winston.format.json(),
             ),
             transports: [
-                new transports.File({
+                new winston.transports.File({
                     filename: 'logs/error.log',
                     level: 'error',
                 }),
-                new transports.File({
+                new winston.transports.File({
                     filename: 'logs/info.log',
                     level: 'info',
                 }),
-                new transports.Console(),
+                new winston.transports.Console(),
             ],
         });
     }
@@ -34,6 +34,7 @@ export default class WinstonLoggerAdapter implements Logger {
     error(param: Error | string, ...params: any): void {
         if (param instanceof Error) {
             this.logger.error(param);
+            return;
         }
 
         this.logger.error(param as string, params);

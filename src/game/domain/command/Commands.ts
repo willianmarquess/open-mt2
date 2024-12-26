@@ -25,7 +25,7 @@ export type CommandConstructor<T extends Command> = {
     new (args?: any): T;
     getName(): string;
     getDescription(): string;
-    example?: string;
+    getExample(): string;
 };
 
 export type CommandMapValue<T extends Command> = {

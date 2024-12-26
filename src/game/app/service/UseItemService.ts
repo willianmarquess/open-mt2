@@ -28,7 +28,7 @@ export default class UseItemService {
         }
     }
 
-    async useWearableItem(player: Player, item: Item, position: number, window: number) {
+    private async useWearableItem(player: Player, item: Item, position: number, window: number) {
         if (player.getInventory().isEquipmentPosition(position)) {
             player.getInventory().removeItem(position, item.getSize());
             const addedPosition = player.getInventory().addItem(item);
@@ -112,7 +112,7 @@ export default class UseItemService {
         }
     }
 
-    async useNonWearableItem() {
+    private async useNonWearableItem() {
         //TODO
     }
 }
