@@ -4,8 +4,8 @@ import Logger from '@/core/infra/logger/Logger';
 import { ErrorTypesEnum } from '@/core/enum/ErrorTypesEnum';
 import CacheProvider from '@/core/infra/cache/CacheProvider';
 import { EncryptionProvider } from '@/core/infra/encryption/EncryptionProvider';
-import { IAccountRepository } from '@/auth/infra/database/IAccountRepository';
 import Result from '@/core/domain/util/Result';
+import { IAccountRepository } from '@/core/domain/repository/IAccountRepository';
 
 const TOKEN_EXPIRATION_SECS = 60 * 60 * 24;
 
