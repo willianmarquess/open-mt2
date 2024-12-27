@@ -7,6 +7,7 @@ import GameEntity from './entities/game/GameEntity';
 import { GameConfig } from '@/game/infra/config/GameConfig';
 import SpawnManager from './manager/SpawnManager';
 import SaveCharacterService from '@/game/domain/service/SaveCharacterService';
+import { PrivilegeManager } from './manager/PrivilegeManager';
 
 const TICKS_PER_SECONDS = 15;
 const AREA_UNIT = 25600;
@@ -25,6 +26,7 @@ export default class World {
     private readonly config: GameConfig;
     private readonly saveCharacterService: SaveCharacterService;
     private readonly spawnManager: SpawnManager;
+    private readonly privilegeManager: PrivilegeManager;
 
     private virtualId = 0;
 
@@ -35,11 +37,12 @@ export default class World {
     private height = 0;
     private grid: Grid<Area>;
 
-    constructor({ logger, config, saveCharacterService, spawnManager }) {
+    constructor({ logger, config, saveCharacterService, spawnManager, privilegeManager }) {
         this.logger = logger;
         this.config = config;
         this.saveCharacterService = saveCharacterService;
         this.spawnManager = spawnManager;
+        this.privilegeManager = privilegeManager;
     }
 
     getWidth() {
@@ -206,6 +209,8 @@ export default class World {
         for (const area of this.areas.values()) {
             area.tick();
         }
+
+        this.privilegeManager.tick();
 
         this.server.sendPendingMessages();
 

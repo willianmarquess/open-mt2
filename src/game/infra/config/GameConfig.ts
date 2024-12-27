@@ -162,7 +162,7 @@ type Animation = {
     }>;
 };
 
-type CommonDrop = {
+export type CommonDrop = {
     minLevel?: number;
     maxLevel?: number;
     percentage?: number;

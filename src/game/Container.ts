@@ -34,6 +34,7 @@ import GameServer from './interface/server/GameServer';
 import { makeGameConfig } from './infra/config/GameConfig';
 import WinstonLoggerAdapter from '@/core/infra/logger/WinstonLoggerAdapter';
 import RedisCacheProvider from '@/core/infra/cache/RedisCacheProvider';
+import { PrivilegeManager } from '@/core/domain/manager/PrivilegeManager';
 
 const container = createContainer();
 
@@ -74,6 +75,7 @@ container.register({
     characterAttackService: asClass(CharacterAttackService).scoped(),
     characterUpdateTargetService: asClass(CharacterUpdateTargetService).scoped(),
     dropManager: asClass(DropManager).singleton(),
+    privilegeManager: asClass(PrivilegeManager).singleton(),
 });
 
 export { container };

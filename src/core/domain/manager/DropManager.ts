@@ -1,4 +1,4 @@
-import { GameConfig } from '@/game/infra/config/GameConfig';
+import { CommonDrop, GameConfig } from '@/game/infra/config/GameConfig';
 import Item from '@/core/domain/entities/game/item/Item';
 import Monster from '@/core/domain/entities/game/mob/Monster';
 import MathUtil from '@/core/domain/util/MathUtil';
@@ -7,6 +7,7 @@ import { ChatMessageTypeEnum } from '@/core/enum/ChatMessageTypeEnum';
 import { SpecialItemEnum } from '@/core/enum/SpecialItemEnum';
 import ItemManager from './ItemManager';
 import Player from '../entities/game/player/Player';
+import { PrivilegeManager, PrivilegeTypeEnum } from './PrivilegeManager';
 
 class DropItem {
     public readonly item: Item;
@@ -19,24 +20,26 @@ class DropItem {
 }
 
 export default class DropManager {
-    private readonly commonDrops = new Map();
+    private readonly commonDrops = new Map<MobRankEnum, Array<CommonDrop>>();
     private readonly config: GameConfig;
     private readonly itemManager: ItemManager;
+    private readonly privilegeManager: PrivilegeManager;
 
-    constructor({ config, itemManager }) {
+    constructor({ config, itemManager, privilegeManager }) {
         this.config = config;
         this.itemManager = itemManager;
+        this.privilegeManager = privilegeManager;
     }
 
     load() {
         Object.keys(this.config.commonDrops).forEach((rank) => {
-            this.commonDrops.set(rank, this.config.commonDrops[rank]);
+            this.commonDrops.set(rank as MobRankEnum, this.config.commonDrops[rank]);
         });
     }
 
     getCommonDrops(player: Player, monster: Monster, delta: number, range: number) {
         const drops = [];
-        const commonDrops = this.commonDrops.get(monster.getRank());
+        const commonDrops = this.commonDrops.get(monster.getRank() as MobRankEnum);
 
         if (!commonDrops) return drops;
 
@@ -93,10 +96,11 @@ export default class DropManager {
         }
 
         const itemDropBonus = Math.min(100, player.getItemDropBonus());
-        const empireDropBonus = 10000; //TODO
+        const empireDropBonus = this.privilegeManager.getEmpirePrivilege(player.getEmpire(), PrivilegeTypeEnum.DROP);
+        const privilegeDropBonus = this.privilegeManager.getPlayerPrivilege(player, PrivilegeTypeEnum.DROP);
 
         range = 4_000_000;
-        range = (range * 100) / (100 + empireDropBonus + itemDropBonus);
+        range = (range * 100) / (100 + empireDropBonus + itemDropBonus + privilegeDropBonus);
 
         return {
             delta,
@@ -124,16 +128,50 @@ export default class DropManager {
                 100;
         }
 
+        percent += this.privilegeManager.getEmpirePrivilege(player.getEmpire(), PrivilegeTypeEnum.GOLD);
+        percent += this.privilegeManager.getPlayerPrivilege(player, PrivilegeTypeEnum.GOLD);
+
         percent = Math.max(100, percent);
 
         if (MathUtil.getRandomInt(1, 100) > percent) return;
 
         const capToMultGoldBy50 = 50_000;
-        const percentToMultGoldBy50 = this.config.PERCENT_TO_MULT_GOLD_BY_50;
+        const percentToMultGoldBy50EmpireBonus = this.privilegeManager.getEmpirePrivilege(
+            player.getEmpire(),
+            PrivilegeTypeEnum.GOLD_50,
+        );
+        const percentToMultGoldBy50PlayerBonus = this.privilegeManager.getPlayerPrivilege(
+            player,
+            PrivilegeTypeEnum.GOLD_50,
+        );
+        const percentToMultGoldBy50 =
+            this.config.PERCENT_TO_MULT_GOLD_BY_50 +
+            percentToMultGoldBy50PlayerBonus +
+            percentToMultGoldBy50EmpireBonus;
         const capToMultGoldBy10 = 10_000;
-        const percentToMultGoldBy10 = this.config.PERCENT_TO_MULT_GOLD_BY_10;
+        const percentToMultGoldBy10EmpireBonus = this.privilegeManager.getEmpirePrivilege(
+            player.getEmpire(),
+            PrivilegeTypeEnum.GOLD_10,
+        );
+        const percentToMultGoldBy10PlayerBonus = this.privilegeManager.getPlayerPrivilege(
+            player,
+            PrivilegeTypeEnum.GOLD_10,
+        );
+        const percentToMultGoldBy10 =
+            this.config.PERCENT_TO_MULT_GOLD_BY_10 +
+            percentToMultGoldBy10PlayerBonus +
+            percentToMultGoldBy10EmpireBonus;
         const capToMultGoldBy5 = 5_000;
-        const percentToMultGoldBy5 = this.config.PERCENT_TO_MULT_GOLD_BY_5;
+        const percentToMultGoldBy5EmpireBonus = this.privilegeManager.getEmpirePrivilege(
+            player.getEmpire(),
+            PrivilegeTypeEnum.GOLD_5,
+        );
+        const percentToMultGoldBy5PlayerBonus = this.privilegeManager.getPlayerPrivilege(
+            player,
+            PrivilegeTypeEnum.GOLD_5,
+        );
+        const percentToMultGoldBy5 =
+            this.config.PERCENT_TO_MULT_GOLD_BY_5 + percentToMultGoldBy5PlayerBonus + percentToMultGoldBy5EmpireBonus;
 
         switch (true) {
             case (capToMultGoldBy50 / 100) * percentToMultGoldBy50 >= MathUtil.getRandomInt(1, capToMultGoldBy50): {

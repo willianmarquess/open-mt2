@@ -1,8 +1,4 @@
-enum EmpireEnum {
-    RED = 1,
-    YELLOW = 2,
-    BLUE = 3,
-}
+import { EmpireEnum } from '@/core/enum/EmpireEnum';
 
 const empireIdToEmpireName = {
     [EmpireEnum.RED]: 'red',
