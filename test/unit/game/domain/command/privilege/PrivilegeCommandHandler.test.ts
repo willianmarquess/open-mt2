@@ -25,6 +25,8 @@ describe('PrivilegeCommandHandler', () => {
         command = sinon.createStubInstance(PrivilegeCommand);
     });
 
+    afterEach(() => sinon.restore());
+
     it('should log an error and send command errors if the command is invalid', async () => {
         command.isValid.returns(false);
         command.errors.returns([{ name: 'Invalid command', errors: [], value: '' }]);
@@ -41,7 +43,7 @@ describe('PrivilegeCommandHandler', () => {
         const target = sinon.createStubInstance(Player);
         world.getPlayerByName.returns(target);
         command.isValid.returns(true);
-        command.getArgs.returns(['player', '', 'gold', '5', '3600']);
+        command.getArgs.returns(['player', 'test', 'gold', '5', '3600']);
 
         await handler.execute(player, command);
 
@@ -51,7 +53,7 @@ describe('PrivilegeCommandHandler', () => {
     it("should not add a player privilege if the kind is 'player' when player not exists", async () => {
         world.getPlayerByName.returns(undefined);
         command.isValid.returns(true);
-        command.getArgs.returns(['player', '', 'gold', '5', '3600']);
+        command.getArgs.returns(['player', 'test', 'gold', '5', '3600']);
 
         await handler.execute(player, command);
 
