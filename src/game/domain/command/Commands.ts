@@ -15,6 +15,8 @@ import LogoutCommand from './command/logout/LogoutCommand';
 import LogoutCommandHandler from './command/logout/LogoutCommandHandler';
 import LevelCommand from './command/lvl/LevelCommand';
 import LevelCommandHandler from './command/lvl/LevelCommandHandler';
+import PrivilegeCommand from './command/privilege/PrivilegeCommand';
+import PrivilegeCommandHandler from './command/privilege/PrivilegeCommandHandler';
 import QuitCommand from './command/quit/QuitCommand';
 import QuitCommandHandler from './command/quit/QuitCommandHandler';
 import StatCommand from './command/stat/StatCommand';
@@ -103,6 +105,13 @@ export default () =>
             {
                 command: ItemCommand,
                 createHandler: (params) => new ItemCommandHandler(params),
+            },
+        ],
+        [
+            PrivilegeCommand.getName(),
+            {
+                command: PrivilegeCommand,
+                createHandler: (params) => new PrivilegeCommandHandler(params),
             },
         ],
     ]);

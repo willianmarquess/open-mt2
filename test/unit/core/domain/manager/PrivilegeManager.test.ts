@@ -40,7 +40,7 @@ describe('PrivilegeManager', () => {
         privilegeManager.tick();
 
         const privilegeValue = privilegeManager.getPlayerPrivilege(player, PrivilegeTypeEnum.EXP);
-        expect(privilegeValue).to.be.undefined;
+        expect(privilegeValue).to.be.equal(0);
     });
 
     it('should expire empire privileges after the specified time', () => {
@@ -50,7 +50,7 @@ describe('PrivilegeManager', () => {
         privilegeManager.tick();
 
         const privilegeValue = privilegeManager.getEmpirePrivilege(EmpireEnum.RED, PrivilegeTypeEnum.GOLD);
-        expect(privilegeValue).to.be.undefined;
+        expect(privilegeValue).to.be.equal(0);
     });
 
     it('should throw an error for invalid player privilege parameters', () => {
