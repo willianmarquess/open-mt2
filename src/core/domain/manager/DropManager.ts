@@ -89,7 +89,6 @@ export default class DropManager {
         }
 
         //TODO: impl premium types to increase this percent
-        //TODO: verify premium items are equipped like (gloves)
 
         if (player.getMallItemBonus() > 0) {
             delta += (delta * player.getMallItemBonus()) / 100;
@@ -98,9 +97,12 @@ export default class DropManager {
         const itemDropBonus = Math.min(100, player.getItemDropBonus());
         const empireDropBonus = this.privilegeManager.getEmpirePrivilege(player.getEmpire(), PrivilegeTypeEnum.DROP);
         const privilegeDropBonus = this.privilegeManager.getPlayerPrivilege(player, PrivilegeTypeEnum.DROP);
+        const uniqueGlovesDropBonus = player.isEquippedWithUniqueItem(SpecialItemEnum.UNIQUE_ITEM_DOUBLE_ITEM)
+            ? 100
+            : 0;
 
         range = 4_000_000;
-        range = (range * 100) / (100 + empireDropBonus + itemDropBonus + privilegeDropBonus);
+        range = (range * 100) / (100 + empireDropBonus + itemDropBonus + privilegeDropBonus + uniqueGlovesDropBonus);
 
         return {
             delta,
@@ -115,7 +117,6 @@ export default class DropManager {
         let goldMult = 1;
         const levelDelta = monster.getLevel() + 15 - player.getLevel();
 
-        //TODO: verify special item and premium stats
         if (monster.getRank() === MobRankEnum.BOSS) {
             percent =
                 (goldPercent *
@@ -198,6 +199,8 @@ export default class DropManager {
         }
 
         gold *= goldMult;
+
+        //TODO: verify auto loot and premium stats
 
         const item = this.itemManager.getItem(SpecialItemEnum.GOLD);
         return new DropItem(item, gold);

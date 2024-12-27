@@ -5,6 +5,7 @@ import ItemRemovedEvent from '../events/ItemRemovedEvent';
 import Player from '../Player';
 import { WindowTypeEnum } from '@/core/enum/WindowTypeEnum';
 import { ItemEquipmentSlotEnum } from '@/core/enum/ItemEquipmentSlotEnum';
+import { SpecialItemEnum } from '@/core/enum/SpecialItemEnum';
 
 export default class PlayerInventory {
     private readonly player: Player;
@@ -109,5 +110,12 @@ export default class PlayerInventory {
 
     getHair() {
         return this.player.getInventory().getItemFromSlot(ItemEquipmentSlotEnum.COSTUME_HAIR);
+    }
+
+    isEquippedWithUniqueItem(uniqueItemId: SpecialItemEnum): boolean {
+        const uniqueItem1 = this.player.getInventory().getItemFromSlot(ItemEquipmentSlotEnum.UNIQUE1);
+        const uniqueItem2 = this.player.getInventory().getItemFromSlot(ItemEquipmentSlotEnum.UNIQUE1);
+
+        return uniqueItem1?.getId() === uniqueItemId || uniqueItem2?.getId() === uniqueItemId;
     }
 }

@@ -38,6 +38,7 @@ import DroppedItem from '../item/DroppedItem';
 import { StatsEnum } from '@/core/enum/StatsEnum';
 import PlayerState from '../../state/player/PlayerState';
 import Character from '../Character';
+import { SpecialItemEnum } from '@/core/enum/SpecialItemEnum';
 
 const REGEN_INTERVAL = 3000;
 
@@ -955,6 +956,10 @@ export default class Player extends Character {
         if (otherEntity instanceof DroppedItem) {
             this.hideDroppedItem({ virtualId: otherEntity.getVirtualId() });
         }
+    }
+
+    isEquippedWithUniqueItem(uniqueItemId: SpecialItemEnum): boolean {
+        return this.playerInventory.isEquippedWithUniqueItem(uniqueItemId);
     }
 
     static create(
