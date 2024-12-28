@@ -1,10 +1,16 @@
 import { EntityStateEnum } from '@/core/enum/EntityStateEnum';
 import MathUtil from '../../../util/MathUtil';
 import Monster from '@/core/domain/entities/game/mob/Monster';
+import Player from '../player/Player';
 
 const POSITION_OFFSET = 600;
 const MIN_DELAY = 10000;
 const MAX_DELAY = 25000;
+
+type DamageMapType = {
+    player: Player,
+    damage: number,
+}
 
 export default class Behavior {
     private readonly monster: Monster;
@@ -12,6 +18,9 @@ export default class Behavior {
     private initialPositionY: number = 0;
     private nextMove: number = this.calcDelay();
     private enable: boolean = false;
+
+    private readonly damageMap: Map<number, DamageMapType> = new Map();
+    private target: Player;
 
     constructor(monster: Monster) {
         this.monster = monster;
@@ -39,6 +48,23 @@ export default class Behavior {
     calcDelay() {
         return performance.now() + MathUtil.getRandomInt(MIN_DELAY, MAX_DELAY);
     }
+
+    onDamage(attacker: Player, damage: number) {
+        const damageMapItem = this.damageMap.get(attacker.getVirtualId());
+        this.damageMap.set(attacker.getVirtualId(), { damage: (damageMapItem.damage || 0) + damage, player: attacker });
+
+        if (!this.target || this.damageMap.get(attacker.getVirtualId()) > this.damageMap.get(this.target.getVirtualId())) {
+            this.target = attacker;
+        }
+    }
+
+    getTargets() {
+        return this.damageMap;
+    }
+
+    getTarget() {
+        return this.target;
+     }
 
     moveToRandomLocation() {
         const x = Math.max(

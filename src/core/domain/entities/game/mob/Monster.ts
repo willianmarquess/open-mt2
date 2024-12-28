@@ -7,6 +7,9 @@ import MonsterMovedEvent from './events/MonsterMovedEvent';
 import Mob from './Mob';
 import { EntityTypeEnum } from '@/core/enum/EntityTypeEnum';
 import { EntityStateEnum } from '@/core/enum/EntityStateEnum';
+import ExperienceManager from '@/core/domain/manager/ExperienceManager';
+
+const MAX_DISTANCE_TO_GET_EXP = 5_000;
 
 export default class Monster extends Mob {
     private readonly behavior: Behavior;
@@ -15,6 +18,7 @@ export default class Monster extends Mob {
     private maxHealth: number = 0;
 
     private readonly dropManager: DropManager;
+    private readonly experienceManager: ExperienceManager;
 
     constructor(
         {
@@ -66,7 +70,7 @@ export default class Monster extends Mob {
             hpPercentToGetRevive,
             direction,
         },
-        { animationManager, dropManager },
+        { animationManager, dropManager, experienceManager },
     ) {
         super(
             {
@@ -122,6 +126,7 @@ export default class Monster extends Mob {
             { animationManager },
         );
         this.dropManager = dropManager;
+        this.experienceManager = experienceManager;
         this.health = maxHp;
         this.maxHealth = maxHp;
         this.behavior = new Behavior(this);
@@ -157,24 +162,54 @@ export default class Monster extends Mob {
         });
 
         this.health -= damage;
+        this.behavior.onDamage(attacker, damage);
 
         this.broadcastMyTarget();
 
         if (this.health <= 0) {
             this.die();
-            this.reward(attacker);
-            //TODO: add drop and add exp to player
+            this.reward();
+            return;
         }
 
         this.state = EntityStateEnum.IDLE;
     }
 
-    reward(attacker: Player) {
+    reward() {
+        const attacker = this.behavior.getTarget();
         const drops = this.dropManager.getDrops(attacker, this);
 
         for (const { item, count } of drops) {
             attacker.dropItem({ item, count });
         }
+
+        this.giveExp();
+    }
+
+    giveExp() {
+        const exp = this.getExp();
+
+        const attackersSize = this.behavior.getTargets().size;
+        const mostDamageAttacker = this.behavior.getTarget();
+
+        for (const { player } of this.behavior.getTargets().values()) {
+            let playerExp = exp / attackersSize;
+
+            if (player === mostDamageAttacker) {
+                playerExp *= 1.2;
+            }
+
+            const distance = MathUtil.calcDistance(player.getPositionX(), player.getPositionY(), this.getPositionX(), this.getPositionY());
+
+            if (distance > MAX_DISTANCE_TO_GET_EXP) {
+                continue
+            }
+
+            const expToGive = this.experienceManager.calculateExpToGive(player, this, playerExp);
+            player.addExperience(expToGive);
+            //TODO: player.sendFly();
+        }
+
     }
 
     die() {

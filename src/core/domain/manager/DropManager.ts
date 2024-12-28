@@ -206,7 +206,7 @@ export default class DropManager {
         return new DropItem(item, gold);
     }
 
-    getDrops(player: Player, monster: Monster) {
+    getDrops(player: Player, monster: Monster): Array<DropItem> {
         const drops = [];
 
         const { delta, range } = this.calcDropPercent(player, monster);

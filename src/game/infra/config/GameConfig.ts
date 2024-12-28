@@ -8,6 +8,7 @@ import animations from '../../../core/infra/config/data/animation/animations.jso
 import commonDrops from '../../../core/infra/config/data/drop/common_drops.json';
 import dropDeltaBoss from '../../../core/infra/config/data/drop/dropDeltaBoss';
 import dropDeltaLevel from '../../../core/infra/config/data/drop/dropDeltaLevel';
+import expDeltaLevel from '../../../core/infra/config/data/exp/expDeltaLevel';
 import dropGoldByRank from '../../../core/infra/config/data/drop/dropGoldByRank';
 import general from '../../../core/infra/config/data/general.json';
 
@@ -196,6 +197,7 @@ export type GameConfig = Config & {
     commonDrops: CommonDrops;
     dropDeltaBoss: Array<number>;
     dropDeltaLevel: Array<number>;
+    expDeltaLevel: Array<number>;
     dropGoldByRank: DropGoldByRank;
     MAX_LEVEL: number;
     POINTS_PER_LEVEL: number;
@@ -222,6 +224,7 @@ const gameConfig: GameConfig = {
     dropDeltaBoss,
     dropDeltaLevel,
     dropGoldByRank,
+    expDeltaLevel,
     ...general,
 };
 

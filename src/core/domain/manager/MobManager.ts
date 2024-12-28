@@ -14,6 +14,7 @@ import NPC from '../entities/game/mob/NPC';
 import Stone from '../entities/game/mob/Stone';
 import AnimationManager from './AnimationManager';
 import DropManager from './DropManager';
+import ExperienceManager from './ExperienceManager';
 
 // const MobRankEnum = {
 //     PAWN: 0,
@@ -96,11 +97,13 @@ export default class MobManager {
     private readonly mobs = new Map<number, MobsProto>(); //todo
     private readonly animationManager: AnimationManager;
     private readonly dropManager: DropManager;
+    private readonly experienceManager: ExperienceManager;
 
-    constructor({ config, animationManager, dropManager }) {
+    constructor({ config, animationManager, dropManager, experienceManager }) {
         this.config = config;
         this.animationManager = animationManager;
         this.dropManager = dropManager;
+        this.experienceManager = experienceManager;
     }
 
     load() {
@@ -171,6 +174,7 @@ export default class MobManager {
                     {
                         animationManager: this.animationManager,
                         dropManager: this.dropManager,
+                        experienceManager: this.experienceManager,
                     },
                 );
             }
