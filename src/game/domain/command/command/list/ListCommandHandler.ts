@@ -4,15 +4,18 @@ import ListCommand from './ListCommand';
 import World from '@/core/domain/World';
 import Player from '@/core/domain/entities/game/player/Player';
 import { ChatMessageTypeEnum } from '@/core/enum/ChatMessageTypeEnum';
+import { PrivilegeManager } from '@/core/domain/manager/PrivilegeManager';
 
 export default class ListCommandHandler extends CommandHandler<ListCommand> {
     private readonly logger: Logger;
     private readonly world: World;
+    private readonly privilegeManager: PrivilegeManager;
 
-    constructor({ logger, world }) {
+    constructor({ logger, world, privilegeManager }) {
         super();
         this.logger = logger;
         this.world = world;
+        this.privilegeManager = privilegeManager;
     }
 
     async execute(player: Player, listCommand: ListCommand) {
@@ -43,6 +46,20 @@ export default class ListCommandHandler extends CommandHandler<ListCommand> {
                         message: `name: ${entity.getName()} | x: ${entity.getPositionX()} | y: ${entity.getPositionY()}`,
                         messageType: ChatMessageTypeEnum.INFO,
                     });
+                }
+                break;
+            }
+
+            case 'privileges': {
+                const empiresPrivileges = this.privilegeManager.getEmpiresPrivileges();
+
+                for (const privileges of Object(empiresPrivileges).values()) {
+                    for (const { type, target, expiration, value } of privileges) {
+                        player.chat({
+                            message: `Type: ${type} | Empire: ${target} | privilege value: ${value} | expiration: ${expiration}`,
+                            messageType: ChatMessageTypeEnum.INFO,
+                        });
+                    }
                 }
                 break;
             }

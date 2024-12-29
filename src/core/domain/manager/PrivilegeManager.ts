@@ -112,4 +112,15 @@ export class PrivilegeManager {
         const privilege = privileges.find((privilege) => privilege.target === target);
         return privilege?.value;
     }
+
+    getEmpiresPrivileges() {
+        return {
+            [PrivilegeTypeEnum.EXP]: this.empirePrivilege.get(PrivilegeTypeEnum.EXP) || [],
+            [PrivilegeTypeEnum.GOLD]: this.empirePrivilege.get(PrivilegeTypeEnum.GOLD) || [],
+            [PrivilegeTypeEnum.DROP]: this.empirePrivilege.get(PrivilegeTypeEnum.DROP) || [],
+            [PrivilegeTypeEnum.GOLD_5]: this.empirePrivilege.get(PrivilegeTypeEnum.GOLD_5) || [],
+            [PrivilegeTypeEnum.GOLD_10]: this.empirePrivilege.get(PrivilegeTypeEnum.GOLD_10) || [],
+            [PrivilegeTypeEnum.GOLD_50]: this.empirePrivilege.get(PrivilegeTypeEnum.GOLD_50) || [],
+        };
+    }
 }

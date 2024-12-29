@@ -8,9 +8,9 @@ const MIN_DELAY = 10000;
 const MAX_DELAY = 25000;
 
 type DamageMapType = {
-    player: Player,
-    damage: number,
-}
+    player: Player;
+    damage: number;
+};
 
 export default class Behavior {
     private readonly monster: Monster;
@@ -53,7 +53,10 @@ export default class Behavior {
         const damageMapItem = this.damageMap.get(attacker.getVirtualId());
         this.damageMap.set(attacker.getVirtualId(), { damage: (damageMapItem.damage || 0) + damage, player: attacker });
 
-        if (!this.target || this.damageMap.get(attacker.getVirtualId()) > this.damageMap.get(this.target.getVirtualId())) {
+        if (
+            !this.target ||
+            this.damageMap.get(attacker.getVirtualId()) > this.damageMap.get(this.target.getVirtualId())
+        ) {
             this.target = attacker;
         }
     }
@@ -64,7 +67,7 @@ export default class Behavior {
 
     getTarget() {
         return this.target;
-     }
+    }
 
     moveToRandomLocation() {
         const x = Math.max(

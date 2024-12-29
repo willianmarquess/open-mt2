@@ -10,9 +10,9 @@ export default class ListCommand extends Command {
         return '/list';
     }
     static getDescription() {
-        return 'list resources <areas, players>';
+        return 'list resources <areas, players, privileges>';
     }
     static getExample() {
-        return '/list <areas, players>';
+        return '/list <areas, players, privileges>';
     }
 }

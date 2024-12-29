@@ -5,7 +5,7 @@ export default class ListCommandValidator extends CommandValidator {
         this.createRule(this.command.getArgs(), 'args').isRequired().isArray().build();
         this.createRule(this.command.getArgs()[0], 'type')
             .isString()
-            .isInEnum(['areas', 'players'])
+            .isInEnum(['areas', 'players', 'privileges'])
             .isRequired()
             .build();
     }

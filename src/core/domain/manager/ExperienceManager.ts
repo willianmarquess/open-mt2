@@ -28,26 +28,26 @@ export default class ExperienceManager {
         const delta = this.config.expDeltaLevel[MathUtil.minMax(0, levelDelta, this.config.expDeltaLevel.length)];
         exp = (exp * delta) / 100;
 
-        exp = exp * (100 + this.privilegeManager.getPlayerPrivilege(player, PrivilegeTypeEnum.EXP)) / 100;
-        exp = exp * (100 + this.privilegeManager.getEmpirePrivilege(player.getEmpire(), PrivilegeTypeEnum.EXP)) / 100;
-        
-        if(player.isEquippedWithUniqueItem(SpecialItemEnum.UNIQUE_ITEM_LARBOR_MEDAL)) {
+        exp = (exp * (100 + this.privilegeManager.getPlayerPrivilege(player, PrivilegeTypeEnum.EXP))) / 100;
+        exp = (exp * (100 + this.privilegeManager.getEmpirePrivilege(player.getEmpire(), PrivilegeTypeEnum.EXP))) / 100;
+
+        if (player.isEquippedWithUniqueItem(SpecialItemEnum.UNIQUE_ITEM_LARBOR_MEDAL)) {
             exp += exp * 0.2;
         }
 
         const expDoubleBonus = player.getPoint(PointsEnum.EXP_DOUBLE_BONUS);
 
-        if(expDoubleBonus > 0) {
-            if(MathUtil.getRandomInt(0, 100) <= expDoubleBonus) {
+        if (expDoubleBonus > 0) {
+            if (MathUtil.getRandomInt(0, 100) <= expDoubleBonus) {
                 exp = exp * 1.3;
             }
         }
 
-        if(player.isEquippedWithUniqueItem(SpecialItemEnum.UNIQUE_ITEM_DOUBLE_EXP)) {
+        if (player.isEquippedWithUniqueItem(SpecialItemEnum.UNIQUE_ITEM_DOUBLE_EXP)) {
             exp = exp * 1.5;
         }
 
-        if(player.isEquippedWithUniqueItem(SpecialItemEnum.UNIQUE_GROUP_RING_OF_EXP)) {
+        if (player.isEquippedWithUniqueItem(SpecialItemEnum.UNIQUE_GROUP_RING_OF_EXP)) {
             exp = exp * 2;
         }
 

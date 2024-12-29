@@ -199,17 +199,21 @@ export default class Monster extends Mob {
                 playerExp *= 1.2;
             }
 
-            const distance = MathUtil.calcDistance(player.getPositionX(), player.getPositionY(), this.getPositionX(), this.getPositionY());
+            const distance = MathUtil.calcDistance(
+                player.getPositionX(),
+                player.getPositionY(),
+                this.getPositionX(),
+                this.getPositionY(),
+            );
 
             if (distance > MAX_DISTANCE_TO_GET_EXP) {
-                continue
+                continue;
             }
 
             const expToGive = this.experienceManager.calculateExpToGive(player, this, playerExp);
             player.addExperience(expToGive);
             //TODO: player.sendFly();
         }
-
     }
 
     die() {
