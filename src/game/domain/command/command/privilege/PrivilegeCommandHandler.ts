@@ -12,6 +12,7 @@ const privilegeTypeMapper = {
     gold5: PrivilegeTypeEnum.GOLD_5,
     gold10: PrivilegeTypeEnum.GOLD_10,
     gold50: PrivilegeTypeEnum.GOLD_50,
+    exp: PrivilegeTypeEnum.EXP,
 };
 
 const empireMapper = {

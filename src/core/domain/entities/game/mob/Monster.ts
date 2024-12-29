@@ -211,8 +211,9 @@ export default class Monster extends Mob {
             }
 
             const expToGive = this.experienceManager.calculateExpToGive(player, this, playerExp);
+            console.log(player.getName(), expToGive);
             player.addExperience(expToGive);
-            //TODO: player.sendFly();
+            //TODO: player.sendFly(), we should send the fly particles like (hp/mana steal, honor, exp);
         }
     }
 

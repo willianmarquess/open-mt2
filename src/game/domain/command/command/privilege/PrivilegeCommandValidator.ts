@@ -12,7 +12,7 @@ export default class PrivilegeCommandValidator extends CommandValidator {
         this.createRule(this.command.getArgs()[2], 'type')
             .isRequired()
             .isString()
-            .isInEnum(['gold', 'drop', 'gold5', 'gold10', 'gold50'])
+            .isInEnum(['exp', 'gold', 'drop', 'gold5', 'gold10', 'gold50'])
             .build();
         this.createRule(this.command.getArgs()[3], 'value').isRequired().isNumber().isGreaterThan(0).build();
         this.createRule(this.command.getArgs()[4], 'timeInSeconds').isRequired().isNumber().isGreaterThan(0).build();

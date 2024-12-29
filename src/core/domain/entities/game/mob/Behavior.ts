@@ -51,7 +51,10 @@ export default class Behavior {
 
     onDamage(attacker: Player, damage: number) {
         const damageMapItem = this.damageMap.get(attacker.getVirtualId());
-        this.damageMap.set(attacker.getVirtualId(), { damage: (damageMapItem.damage || 0) + damage, player: attacker });
+        this.damageMap.set(attacker.getVirtualId(), {
+            damage: (damageMapItem?.damage || 0) + damage,
+            player: attacker,
+        });
 
         if (
             !this.target ||

@@ -13,9 +13,12 @@ export enum PrivilegeTypeEnum {
 type Privilege<T> = {
     type: PrivilegeTypeEnum;
     target: T;
-    expiration: number;
+    expirationTimestamp: number;
+    expirationDate: string;
     value: number;
 };
+
+//TODO: storing this in the database in the future we will probably need to refactor
 
 export class PrivilegeManager {
     private readonly playerPrivilege: Map<PrivilegeTypeEnum, Array<Privilege<Player>>> = new Map();
@@ -26,10 +29,14 @@ export class PrivilegeManager {
             throw new Error('Invalid privilege parameters');
         }
 
+        const timeToExpirationInMilliSeconds = timeToExpirationInSeconds * 1000;
+        const dataExpiracao = new Date(new Date().getTime() + timeToExpirationInMilliSeconds);
+
         const privilege: Privilege<EmpireEnum> = {
             type,
             target,
-            expiration: performance.now() + timeToExpirationInSeconds * 1000,
+            expirationTimestamp: performance.now() + timeToExpirationInMilliSeconds,
+            expirationDate: dataExpiracao.toISOString(),
             value,
         };
 
@@ -39,7 +46,7 @@ export class PrivilegeManager {
 
         const privileges = this.empirePrivilege.get(type)!;
 
-        const index = privileges.findIndex((p) => p.expiration > privilege.expiration);
+        const index = privileges.findIndex((p) => p.expirationTimestamp > privilege.expirationTimestamp);
         if (index === -1) {
             privileges.push(privilege);
         } else {
@@ -52,10 +59,14 @@ export class PrivilegeManager {
             throw new Error('Invalid privilege parameters');
         }
 
+        const timeToExpirationInMilliSeconds = timeToExpirationInSeconds * 1000;
+        const dataExpiracao = new Date(new Date().getTime() + timeToExpirationInMilliSeconds);
+
         const privilege: Privilege<Player> = {
             type,
             target,
-            expiration: performance.now() + timeToExpirationInSeconds * 1000,
+            expirationTimestamp: performance.now() + timeToExpirationInMilliSeconds,
+            expirationDate: dataExpiracao.toISOString(),
             value,
         };
 
@@ -65,7 +76,7 @@ export class PrivilegeManager {
 
         const privileges = this.playerPrivilege.get(type)!;
 
-        const index = privileges.findIndex((p) => p.expiration > privilege.expiration);
+        const index = privileges.findIndex((p) => p.expirationTimestamp > privilege.expirationTimestamp);
         if (index === -1) {
             privileges.push(privilege);
         } else {
@@ -77,7 +88,7 @@ export class PrivilegeManager {
         const now = performance.now();
 
         for (const [type, privilegeArray] of this.playerPrivilege.entries()) {
-            while (privilegeArray.length > 0 && privilegeArray[0].expiration <= now) {
+            while (privilegeArray.length > 0 && privilegeArray[0].expirationTimestamp <= now) {
                 privilegeArray.shift();
             }
 
@@ -87,7 +98,7 @@ export class PrivilegeManager {
         }
 
         for (const [type, privilegeArray] of this.empirePrivilege.entries()) {
-            while (privilegeArray.length > 0 && privilegeArray[0].expiration <= now) {
+            while (privilegeArray.length > 0 && privilegeArray[0].expirationTimestamp <= now) {
                 privilegeArray.shift();
             }
 

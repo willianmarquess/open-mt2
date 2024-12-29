@@ -4,7 +4,23 @@ import ListCommand from './ListCommand';
 import World from '@/core/domain/World';
 import Player from '@/core/domain/entities/game/player/Player';
 import { ChatMessageTypeEnum } from '@/core/enum/ChatMessageTypeEnum';
-import { PrivilegeManager } from '@/core/domain/manager/PrivilegeManager';
+import { PrivilegeManager, PrivilegeTypeEnum } from '@/core/domain/manager/PrivilegeManager';
+import { EmpireEnum } from '@/core/enum/EmpireEnum';
+
+const empireMapper = {
+    [EmpireEnum.BLUE]: 'blue',
+    [EmpireEnum.RED]: 'red',
+    [EmpireEnum.YELLOW]: 'yellow',
+};
+
+const privilegeMapper = {
+    [PrivilegeTypeEnum.DROP]: 'drop',
+    [PrivilegeTypeEnum.EXP]: 'exp',
+    [PrivilegeTypeEnum.GOLD]: 'gold',
+    [PrivilegeTypeEnum.GOLD_5]: 'gold5x',
+    [PrivilegeTypeEnum.GOLD_10]: 'gold10x',
+    [PrivilegeTypeEnum.GOLD_50]: 'gold50x',
+};
 
 export default class ListCommandHandler extends CommandHandler<ListCommand> {
     private readonly logger: Logger;
@@ -53,10 +69,10 @@ export default class ListCommandHandler extends CommandHandler<ListCommand> {
             case 'privileges': {
                 const empiresPrivileges = this.privilegeManager.getEmpiresPrivileges();
 
-                for (const privileges of Object(empiresPrivileges).values()) {
-                    for (const { type, target, expiration, value } of privileges) {
+                for (const privileges of Object.values(empiresPrivileges)) {
+                    for (const { type, target, expirationDate, value } of privileges) {
                         player.chat({
-                            message: `Type: ${type} | Empire: ${target} | privilege value: ${value} | expiration: ${expiration}`,
+                            message: `Type: ${privilegeMapper[type]} | Empire: ${empireMapper[target]} | privilege value: ${value}% | expiration: ${expirationDate}`,
                             messageType: ChatMessageTypeEnum.INFO,
                         });
                     }
