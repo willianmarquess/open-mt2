@@ -91,7 +91,7 @@ describe('PrivilegeCommandValidator', () => {
                 errors: [
                     { error: 'type is required' },
                     { error: 'type must be a string' },
-                    { error: 'type value must be one of (gold, drop, gold5, gold10, gold50)' },
+                    { error: 'type value must be one of (exp, gold, drop, gold5, gold10, gold50)' },
                 ],
             },
         ]);
@@ -108,7 +108,7 @@ describe('PrivilegeCommandValidator', () => {
             {
                 name: 'type',
                 value: 'invalidType',
-                errors: [{ error: 'type value must be one of (gold, drop, gold5, gold10, gold50)' }],
+                errors: [{ error: 'type value must be one of (exp, gold, drop, gold5, gold10, gold50)' }],
             },
         ]);
     });
