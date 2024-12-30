@@ -41,6 +41,8 @@ import Character from '../Character';
 import { SpecialItemEnum } from '@/core/enum/SpecialItemEnum';
 import { FlyEnum } from '@/core/enum/FlyEnum';
 import ShowFlyEffectEvent from './events/ShowFlyEffectEvent';
+import { AffectTypeEnum } from '@/core/enum/AffectTypeEnum';
+import { DamageTypeEnum } from '@/core/enum/DamageTypeEnum';
 
 const REGEN_INTERVAL = 3000;
 
@@ -74,8 +76,6 @@ export default class Player extends Character {
     private config: GameConfig;
 
     //in game points
-    private maxHealth: number;
-    private maxMana: number;
     private defense: number = 0;
     private defensePerHtPoint: number = 0;
     private attackValue: number = 0;
@@ -259,10 +259,47 @@ export default class Player extends Character {
         setInterval(this.regenMana.bind(this), REGEN_INTERVAL);
     }
 
-    damage(): number {
-        throw new Error('Method not implemented.');
+    applyPoison(attacker: Character) {
+        if (this.isAffectByFlag(AffectTypeEnum.POISON)) return;
+
+        this.eventTimerManager.addTimer('POISON_AFFECT', () => {
+            const baseDamage = this.maxHealth * 0.05;
+            const damage = Math.max(0, baseDamage - (baseDamage * (this.getPoint(PointsEnum.POISON_REDUCE) / 100)));
+            this.takeDamage(attacker, damage, DamageTypeEnum.POISON);
+
+        }, {
+            interval: 1_000,
+            duration: 10_000
+        })
+
+        //TODO: send affect packet
     }
-    takeDamage(): number {
+
+    applyStun() {
+        if (this.isAffectByFlag(AffectTypeEnum.STUN)) return;
+
+        //TODO
+    }
+
+    applySlow() {
+        if (this.isAffectByFlag(AffectTypeEnum.SLOW)) return;
+
+
+        const actualMoveSpeed = this.getPoint(PointsEnum.MOVE_SPEED);
+        this.setMovementSpeed(actualMoveSpeed - (actualMoveSpeed * 0.4));
+        //TODO: send affect packet
+
+        this.eventTimerManager.addTimer('SLOW_AFFECT', () => {
+            this.setMovementSpeed(actualMoveSpeed);
+        }, {
+            interval: 10_000,
+            duration: 10_000,
+            repeatCount: 1
+        })
+    }
+
+    takeDamage(attacker: Character, damage: number, type: DamageTypeEnum): number {
+        console.log(attacker.getName(), damage, type);
         throw new Error('Method not implemented.');
     }
 

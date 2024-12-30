@@ -11,6 +11,11 @@ import ExperienceManager from '@/core/domain/manager/ExperienceManager';
 import { ChatMessageTypeEnum } from '@/core/enum/ChatMessageTypeEnum';
 import { FlyEnum } from '@/core/enum/FlyEnum';
 import FlyEffectCreatedEvent from '../shared/event/FlyEffectCreatedEvent';
+import { DamageTypeEnum } from '@/core/enum/DamageTypeEnum';
+import Character from '../Character';
+import { AffectTypeEnum } from '@/core/enum/AffectTypeEnum';
+import BitFlag from '@/core/util/BitFlag';
+import { DamageFlagEnum } from '@/core/enum/DamageFlagEnum';
 
 const MAX_DISTANCE_TO_GET_EXP = 5_000;
 
@@ -18,7 +23,6 @@ export default class Monster extends Mob {
     private readonly behavior: Behavior;
     private behaviorInitialized: boolean = false;
     private health: number = 0;
-    private maxHealth: number = 0;
 
     private readonly dropManager: DropManager;
     private readonly experienceManager: ExperienceManager;
@@ -137,6 +141,43 @@ export default class Monster extends Mob {
         setInterval(this.regenHealth.bind(this), this.regenCycle * 1_000);
     }
 
+    applyPoison(attacker: Character) {
+        if (this.isAffectByFlag(AffectTypeEnum.POISON)) return;
+
+        this.eventTimerManager.addTimer('POISON_AFFECT', () => {
+            const damage = this.maxHealth * 0.05;
+            this.takeDamage(attacker, damage, DamageTypeEnum.POISON);
+        }, {
+            interval: 1_000,
+            duration: 10_000
+        })
+
+        //TODO: send affect packet
+    }
+
+    applyStun() {
+        if (this.isAffectByFlag(AffectTypeEnum.STUN)) return;
+
+        //TODO
+    }
+
+    applySlow() {
+        if (this.isAffectByFlag(AffectTypeEnum.SLOW)) return;
+
+
+        const actualMoveSpeed = this.getMovementSpeed();
+        this.setMovementSpeed(actualMoveSpeed - (actualMoveSpeed * 0.4));
+        //TODO: send affect packet
+
+        this.eventTimerManager.addTimer('SLOW_AFFECT', () => {
+            this.setMovementSpeed(actualMoveSpeed);
+        }, {
+            interval: 10_000,
+            duration: 10_000,
+            repeatCount: 1
+        })
+    }
+
     regenHealth() {
         if (this.state === EntityStateEnum.DEAD) return;
         if (this.health >= this.maxHealth) return;
@@ -153,15 +194,25 @@ export default class Monster extends Mob {
         return Math.round(Math.max(0, Math.min(100, (this.health * 100) / this.maxHealth)));
     }
 
-    takeDamage(attacker: Player, damage: number) {
+    takeDamage(attacker: Character, damage: number, damageType: DamageTypeEnum) {
         if (!(attacker instanceof Player)) return;
 
         this.state = EntityStateEnum.BATTLE;
 
+        const damageFlags = new BitFlag();
+
+        if (damageType === DamageTypeEnum.POISON) {
+            damageFlags.set(DamageFlagEnum.POISON);
+        } else {
+            damageFlags.set(DamageFlagEnum.NORMAL);
+        }
+
+        //TODO: verify critical, penetrate
+
         attacker.sendDamageCaused({
             virtualId: this.virtualId,
             damage,
-            damageFlags: 1,
+            damageFlags,
         });
 
         this.health -= damage;

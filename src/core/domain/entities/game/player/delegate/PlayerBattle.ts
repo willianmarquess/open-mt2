@@ -6,6 +6,9 @@ import { ItemTypeEnum } from '@/core/enum/ItemTypeEnum';
 import { ItemSubTypeEnum } from '@/core/enum/ItemSubTypeEnum';
 import { ChatMessageTypeEnum } from '@/core/enum/ChatMessageTypeEnum';
 import Character from '../../Character';
+import { PointsEnum } from '@/core/enum/PointsEnum';
+import { AffectTypeEnum } from '@/core/enum/AffectTypeEnum';
+import { DamageTypeEnum } from '@/core/enum/DamageTypeEnum';
 
 export default class PlayerBattle {
     private readonly player: Player;
@@ -79,6 +82,8 @@ export default class PlayerBattle {
 
         const attack = Math.floor(basePlayerAttack * attackRating);
 
+        this.applyAttackEffect(victim);
+
         //apply affects: poison, stun, slow, fire
         //calculate bonus damage: mob (monster, animals, trees, demons etc)
         //calculate bonus damage: player (humanoids, races)
@@ -92,6 +97,31 @@ export default class PlayerBattle {
             messageType: ChatMessageTypeEnum.NORMAL,
         });
 
-        victim.takeDamage(this.player, damage);
+        victim.takeDamage(this.player, damage, DamageTypeEnum.NORMAL);
+    }
+
+    private applyAttackEffect(victim: Character) {
+        const poisonChance = this.player.getPoint(PointsEnum.POISON);
+        const canApplyPoison = poisonChance > 0 && !victim.isAffectByFlag(AffectTypeEnum.POISON);
+
+        if(canApplyPoison && MathUtil.getRandomInt(1, 100) <= poisonChance) {
+            victim.applyPoison(this.player);
+        }
+
+        const stunChance = this.player.getPoint(PointsEnum.STUN);
+        const canApplyStun = stunChance > 0 && !victim.isAffectByFlag(AffectTypeEnum.STUN);
+
+        if(canApplyStun && MathUtil.getRandomInt(1, 100) <= stunChance) {
+            victim.applyStun(this.player);
+        }
+
+        const slowChance = this.player.getPoint(PointsEnum.SLOW);
+        const canApplySlow = slowChance > 0 && !victim.isAffectByFlag(AffectTypeEnum.SLOW);
+
+        if(canApplySlow && MathUtil.getRandomInt(1, 100) <= slowChance) {
+            victim.applySlow(this.player);
+        }
+
+        //TODO: add fire affect
     }
 }

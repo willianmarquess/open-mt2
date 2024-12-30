@@ -5,10 +5,13 @@ import { AnimationTypeEnum } from '@/core/enum/AnimationTypeEnum';
 import { AnimationSubTypeEnum } from '@/core/enum/AnimationSubTypeEnum';
 import MathUtil from '../../util/MathUtil';
 import AnimationUtil from '../../util/AnimationUtil';
-import Monster from './mob/Monster';
 import Player from './player/Player';
 import { AttackTypeEnum } from '@/core/enum/AttackTypeEnum';
 import GameEntity from './GameEntity';
+import BitFlag from '@/core/util/BitFlag';
+import { AffectTypeEnum } from '@/core/enum/AffectTypeEnum';
+import EventTimerManager from '../../manager/EventTimerManager';
+import { DamageTypeEnum } from '@/core/enum/DamageTypeEnum';
 
 export default abstract class Character extends GameEntity {
     protected id: number;
@@ -40,6 +43,11 @@ export default abstract class Character extends GameEntity {
 
     protected target: Character;
     protected targetedBy = new Map<number, GameEntity>();
+
+    protected affectFlag = new BitFlag();
+    protected eventTimerManager = new EventTimerManager();
+    protected maxHealth: number = 0;
+    protected maxMana: number = 0;
 
     constructor(
         {
@@ -82,6 +90,18 @@ export default abstract class Character extends GameEntity {
         this.animationManager = animationManager;
     }
 
+    isAffectByFlag(value: AffectTypeEnum) {
+        return this.affectFlag.is(value);
+    }
+
+    setAffectFlag(value: AffectTypeEnum) {
+        this.affectFlag.set(value);
+    }
+
+    abstract applyPoison(attacker: Character): void;
+    abstract applyStun(attacker: Character): void;
+    abstract applySlow(attacker: Character): void;
+
     getAttackRating() {
         return Math.min(90, this.dx * 4 + (this.level * 2) / 6);
     }
@@ -90,8 +110,7 @@ export default abstract class Character extends GameEntity {
     abstract getAttack(): number;
     abstract getDefense(): number;
     abstract attack(victim: GameEntity, attackType: AttackTypeEnum): void;
-    abstract damage(): number;
-    abstract takeDamage(attacker: Player | Monster, damage: number): void;
+    abstract takeDamage(attacker: Character, damage: number, type: DamageTypeEnum): void;
 
     die() {
         this.state = EntityStateEnum.DEAD;
