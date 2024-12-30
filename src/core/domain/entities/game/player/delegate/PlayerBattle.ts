@@ -104,21 +104,21 @@ export default class PlayerBattle {
         const poisonChance = this.player.getPoint(PointsEnum.POISON);
         const canApplyPoison = poisonChance > 0 && !victim.isAffectByFlag(AffectTypeEnum.POISON);
 
-        if(canApplyPoison && MathUtil.getRandomInt(1, 100) <= poisonChance) {
+        if (canApplyPoison && MathUtil.getRandomInt(1, 100) <= poisonChance) {
             victim.applyPoison(this.player);
         }
 
         const stunChance = this.player.getPoint(PointsEnum.STUN);
         const canApplyStun = stunChance > 0 && !victim.isAffectByFlag(AffectTypeEnum.STUN);
 
-        if(canApplyStun && MathUtil.getRandomInt(1, 100) <= stunChance) {
+        if (canApplyStun && MathUtil.getRandomInt(1, 100) <= stunChance) {
             victim.applyStun(this.player);
         }
 
         const slowChance = this.player.getPoint(PointsEnum.SLOW);
         const canApplySlow = slowChance > 0 && !victim.isAffectByFlag(AffectTypeEnum.SLOW);
 
-        if(canApplySlow && MathUtil.getRandomInt(1, 100) <= slowChance) {
+        if (canApplySlow && MathUtil.getRandomInt(1, 100) <= slowChance) {
             victim.applySlow(this.player);
         }
 

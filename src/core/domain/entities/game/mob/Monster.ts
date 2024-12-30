@@ -144,15 +144,21 @@ export default class Monster extends Mob {
     applyPoison(attacker: Character) {
         if (this.isAffectByFlag(AffectTypeEnum.POISON)) return;
 
-        this.eventTimerManager.addTimer('POISON_AFFECT', () => {
-            const damage = this.maxHealth * 0.05;
-            this.takeDamage(attacker, damage, DamageTypeEnum.POISON);
-        }, {
-            interval: 1_000,
-            duration: 10_000
-        })
-
         //TODO: send affect packet
+        this.eventTimerManager.addTimer({
+            id: 'POISON_AFFECT',
+            eventFunction: () => {
+                const damage = this.maxHealth * 0.05;
+                this.takeDamage(attacker, damage, DamageTypeEnum.POISON);
+            },
+            options: {
+                interval: 1_000,
+                duration: 10_000,
+            },
+            onEndEventFunction: () => {
+                //TODO: send remove affect packet
+            },
+        });
     }
 
     applyStun() {
@@ -164,18 +170,22 @@ export default class Monster extends Mob {
     applySlow() {
         if (this.isAffectByFlag(AffectTypeEnum.SLOW)) return;
 
-
         const actualMoveSpeed = this.getMovementSpeed();
-        this.setMovementSpeed(actualMoveSpeed - (actualMoveSpeed * 0.4));
+        this.setMovementSpeed(actualMoveSpeed - actualMoveSpeed * 0.4);
         //TODO: send affect packet
 
-        this.eventTimerManager.addTimer('SLOW_AFFECT', () => {
-            this.setMovementSpeed(actualMoveSpeed);
-        }, {
-            interval: 10_000,
-            duration: 10_000,
-            repeatCount: 1
-        })
+        this.eventTimerManager.addTimer({
+            id: 'SLOW_AFFECT',
+            eventFunction: () => {
+                this.setMovementSpeed(actualMoveSpeed);
+                //TODO: send remove packet
+            },
+            options: {
+                interval: 10_000,
+                duration: 10_000,
+                repeatCount: 1,
+            },
+        });
     }
 
     regenHealth() {

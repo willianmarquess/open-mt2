@@ -4,13 +4,21 @@ type TimerOptions = {
     interval: number;
     duration?: number;
     repeatCount?: number;
-}
+};
+
+type addTimerParam = {
+    id: string;
+    eventFunction: EventCallback;
+    options: TimerOptions;
+    onEndEventFunction?: EventCallback;
+};
 
 export default class EventTimerManager {
     private timers: Map<string, NodeJS.Timeout> = new Map();
     private endTimes: Map<string, number> = new Map();
 
-    addTimer(id: string, callback: EventCallback, options: TimerOptions): void {
+    addTimer(params: addTimerParam): void {
+        const { id, options, eventFunction, onEndEventFunction } = params;
         if (this.timers.has(id)) {
             throw new Error(`Timer with ID "${id}" already exists.`);
         }
@@ -23,12 +31,14 @@ export default class EventTimerManager {
         const timer = setInterval(() => {
             const now = Date.now();
 
-            callback();
-
+            eventFunction();
             executedCount++;
 
             if ((endTime && now >= endTime) || (repeatCount && executedCount >= repeatCount)) {
                 this.removeTimer(id);
+                if (onEndEventFunction) {
+                    onEndEventFunction();
+                }
             }
         }, interval);
 
@@ -55,7 +65,7 @@ export default class EventTimerManager {
 
     clearAllTimers(): void {
         for (const id of this.timers.keys()) {
-            this.removeTimer(id)
+            this.removeTimer(id);
         }
     }
 }

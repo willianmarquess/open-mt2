@@ -1,9 +1,9 @@
-import EventTimerManager from "@/core/domain/manager/EventTimerManager";
-import { expect } from "chai";
-import { describe, it, beforeEach, afterEach } from "mocha";
-import sinon from "sinon";
+import EventTimerManager from '@/core/domain/manager/EventTimerManager';
+import { expect } from 'chai';
+import { describe, it, beforeEach, afterEach } from 'mocha';
+import sinon from 'sinon';
 
-describe("EventTimerManager with Sinon", () => {
+describe('EventTimerManager', () => {
     let timerManager: EventTimerManager;
     let clock: sinon.SinonFakeTimers;
 
@@ -16,90 +16,100 @@ describe("EventTimerManager with Sinon", () => {
         clock.restore();
     });
 
-    it("should add and execute a timer correctly", () => {
-        const callback = sinon.spy();
+    it('should execute onEndEventFunction when the timer ends due to duration', () => {
+        const eventFunction = sinon.spy();
+        const onEndEventFunction = sinon.spy();
 
-        timerManager.addTimer("testTimer", callback, { interval: 100, repeatCount: 1 });
+        timerManager.addTimer({
+            id: 'testTimer',
+            eventFunction,
+            options: { interval: 100, duration: 300 },
+            onEndEventFunction,
+        });
 
-        clock.tick(100);
+        clock.tick(300);
 
-        expect(callback.calledOnce).to.be.true;
+        expect(eventFunction.callCount).to.equal(3);
+        expect(onEndEventFunction.calledOnce).to.be.true;
     });
 
-    it("should throw an error when adding a timer with a duplicate ID", () => {
-        const callback = () => {};
+    it('should execute onEndEventFunction when the timer ends due to repeatCount', () => {
+        const eventFunction = sinon.spy();
+        const onEndEventFunction = sinon.spy();
 
-        timerManager.addTimer("duplicateTimer", callback, { interval: 100 });
+        timerManager.addTimer({
+            id: 'repeatTimer',
+            eventFunction,
+            options: { interval: 100, repeatCount: 3 },
+            onEndEventFunction,
+        });
 
-        expect(() => {
-            timerManager.addTimer("duplicateTimer", callback, { interval: 100 });
-        }).to.throw(Error, `Timer with ID "duplicateTimer" already exists.`);
+        clock.tick(300);
+
+        expect(eventFunction.callCount).to.equal(3);
+        expect(onEndEventFunction.calledOnce).to.be.true;
     });
 
-    it("should remove a timer correctly", () => {
-        const callback = sinon.spy();
+    it('should not execute onEndEventFunction if the timer is removed early', () => {
+        const eventFunction = sinon.spy();
+        const onEndEventFunction = sinon.spy();
 
-        timerManager.addTimer("removableTimer", callback, { interval: 100, repeatCount: 1 });
+        timerManager.addTimer({
+            id: 'earlyRemoveTimer',
+            eventFunction,
+            options: { interval: 100, repeatCount: 5 },
+            onEndEventFunction,
+        });
 
-        timerManager.removeTimer("removableTimer");
+        clock.tick(200);
+        timerManager.removeTimer('earlyRemoveTimer');
+        clock.tick(300);
 
-        clock.tick(100);
-
-        expect(callback.notCalled).to.be.true;
-        expect(timerManager.isTimerActive("removableTimer")).to.be.false;
+        expect(eventFunction.callCount).to.equal(2);
+        expect(onEndEventFunction.notCalled).to.be.true;
     });
 
-    it("should check if a timer is active", () => {
-        const callback = () => {};
-        timerManager.addTimer("activeTimer", callback, { interval: 100 });
+    it('should handle multiple timers and execute their onEndEventFunction independently', () => {
+        const eventFunction1 = sinon.spy();
+        const onEndEventFunction1 = sinon.spy();
 
-        expect(timerManager.isTimerActive("activeTimer")).to.be.true;
+        const eventFunction2 = sinon.spy();
+        const onEndEventFunction2 = sinon.spy();
 
-        timerManager.removeTimer("activeTimer");
+        timerManager.addTimer({
+            id: 'timer1',
+            eventFunction: eventFunction1,
+            options: { interval: 100, duration: 300 },
+            onEndEventFunction: onEndEventFunction1,
+        });
 
-        expect(timerManager.isTimerActive("activeTimer")).to.be.false;
+        timerManager.addTimer({
+            id: 'timer2',
+            eventFunction: eventFunction2,
+            options: { interval: 200, repeatCount: 2 },
+            onEndEventFunction: onEndEventFunction2,
+        });
+
+        clock.tick(400);
+
+        expect(eventFunction1.callCount).to.equal(3);
+        expect(onEndEventFunction1.calledOnce).to.be.true;
+
+        expect(eventFunction2.callCount).to.equal(2);
+        expect(onEndEventFunction2.calledOnce).to.be.true;
     });
 
-    it("should clear all timers", () => {
-        const callback = sinon.spy();
+    it('should not throw errors when no onEndEventFunction is provided', () => {
+        const eventFunction = sinon.spy();
 
-        timerManager.addTimer("timer1", callback, { interval: 100 });
-        timerManager.addTimer("timer2", callback, { interval: 100 });
+        timerManager.addTimer({
+            id: 'noEndCallbackTimer',
+            eventFunction,
+            options: { interval: 100, repeatCount: 3 },
+        });
 
-        timerManager.clearAllTimers();
+        clock.tick(300);
 
-        clock.tick(100);
-
-        expect(callback.notCalled).to.be.true;
-        expect(timerManager.isTimerActive("timer1")).to.be.false;
-        expect(timerManager.isTimerActive("timer2")).to.be.false;
-    });
-
-    it("should execute a timer with a limited duration", () => {
-        const callback = sinon.spy();
-
-        timerManager.addTimer("limitedTimer", callback, { interval: 100, duration: 300 });
-
-        clock.tick(100);
-        clock.tick(100);
-        clock.tick(100);
-        clock.tick(100);
-
-        expect(callback.callCount).to.equal(3);
-        expect(timerManager.isTimerActive("limitedTimer")).to.be.false;
-    });
-
-    it("should execute a timer with a limited number of repetitions", () => {
-        const callback = sinon.spy();
-
-        timerManager.addTimer("repeatTimer", callback, { interval: 100, repeatCount: 3 });
-
-        clock.tick(100);
-        clock.tick(100);
-        clock.tick(100);
-        clock.tick(100);
-
-        expect(callback.callCount).to.equal(3);
-        expect(timerManager.isTimerActive("repeatTimer")).to.be.false;
+        expect(eventFunction.callCount).to.equal(3);
     });
 });

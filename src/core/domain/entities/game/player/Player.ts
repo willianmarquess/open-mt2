@@ -255,24 +255,38 @@ export default class Player extends Character {
         this.points[PointsEnum.MALL_ITEM_BONUS] = () => this.mallItemBonus;
         this.points[PointsEnum.ITEM_DROP_BONUS] = () => this.itemDropBonus;
 
-        setInterval(this.regenHealth.bind(this), REGEN_INTERVAL);
-        setInterval(this.regenMana.bind(this), REGEN_INTERVAL);
+        this.eventTimerManager.addTimer({
+            id: 'REGEN_HEALTH',
+            eventFunction: this.regenHealth.bind(this),
+            options: { interval: REGEN_INTERVAL },
+        });
+        this.eventTimerManager.addTimer({
+            id: 'REGEN_MANA',
+            eventFunction: this.regenMana.bind(this),
+            options: { interval: REGEN_INTERVAL },
+        });
     }
 
     applyPoison(attacker: Character) {
         if (this.isAffectByFlag(AffectTypeEnum.POISON)) return;
 
-        this.eventTimerManager.addTimer('POISON_AFFECT', () => {
-            const baseDamage = this.maxHealth * 0.05;
-            const damage = Math.max(0, baseDamage - (baseDamage * (this.getPoint(PointsEnum.POISON_REDUCE) / 100)));
-            this.takeDamage(attacker, damage, DamageTypeEnum.POISON);
-
-        }, {
-            interval: 1_000,
-            duration: 10_000
-        })
-
         //TODO: send affect packet
+
+        this.eventTimerManager.addTimer({
+            id: 'POISON_AFFECT',
+            eventFunction: () => {
+                const baseDamage = this.maxHealth * 0.05;
+                const damage = Math.max(0, baseDamage - baseDamage * (this.getPoint(PointsEnum.POISON_REDUCE) / 100));
+                this.takeDamage(attacker, damage, DamageTypeEnum.POISON);
+            },
+            options: {
+                interval: 1_000,
+                duration: 10_000,
+            },
+            onEndEventFunction: () => {
+                //TODO: send remove affect packet
+            },
+        });
     }
 
     applyStun() {
@@ -284,18 +298,21 @@ export default class Player extends Character {
     applySlow() {
         if (this.isAffectByFlag(AffectTypeEnum.SLOW)) return;
 
-
         const actualMoveSpeed = this.getPoint(PointsEnum.MOVE_SPEED);
-        this.setMovementSpeed(actualMoveSpeed - (actualMoveSpeed * 0.4));
+        this.setMovementSpeed(actualMoveSpeed - actualMoveSpeed * 0.4);
         //TODO: send affect packet
 
-        this.eventTimerManager.addTimer('SLOW_AFFECT', () => {
-            this.setMovementSpeed(actualMoveSpeed);
-        }, {
-            interval: 10_000,
-            duration: 10_000,
-            repeatCount: 1
-        })
+        this.eventTimerManager.addTimer({
+            id: 'SLOW_AFFECT',
+            eventFunction: () => {
+                this.setMovementSpeed(actualMoveSpeed);
+            },
+            options: {
+                interval: 10_000,
+                duration: 10_000,
+                repeatCount: 1,
+            },
+        });
     }
 
     takeDamage(attacker: Character, damage: number, type: DamageTypeEnum): number {
