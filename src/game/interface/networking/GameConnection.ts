@@ -42,6 +42,8 @@ import TargetUpdatedEvent from '@/core/domain/entities/game/player/events/Target
 import OtherCharacterDiedEvent from '@/core/domain/entities/game/player/events/OtherCharacterDiedEvent';
 import PacketOut from '@/core/interface/networking/packets/packet/out/PacketOut';
 import PacketBidirectional from '@/core/interface/networking/packets/packet/bidirectional/PacketBidirectional';
+import ShowFlyEffectEvent from '@/core/domain/entities/game/player/events/ShowFlyEffectEvent';
+import FlyPacket from '@/core/interface/networking/packets/packet/out/FlyPacket';
 
 const OUTGOING_MESSAGES_PER_CON_QUEUE_SIZE = 5_000;
 
@@ -94,10 +96,22 @@ export default class GameConnection extends Connection {
         this.player.subscribe(DamageCausedEvent, this.onDamageCaused.bind(this));
         this.player.subscribe(TargetUpdatedEvent, this.onTargetUpdated.bind(this));
         this.player.subscribe(OtherCharacterDiedEvent, this.onOtherCharacterDied.bind(this));
+        this.player.subscribe(ShowFlyEffectEvent, this.onFlyEffectEvent.bind(this));
     }
 
     getPlayer() {
         return this.player;
+    }
+
+    onFlyEffectEvent(showFlyEvent: ShowFlyEffectEvent) {
+        const { type, fromVirtualId, toVirtualId } = showFlyEvent;
+        this.send(
+            new FlyPacket({
+                fromVirtualId,
+                toVirtualId,
+                type,
+            }),
+        );
     }
 
     onOtherCharacterDied(otherCharacterDiedEvent: OtherCharacterDiedEvent) {

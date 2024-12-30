@@ -39,6 +39,8 @@ import { StatsEnum } from '@/core/enum/StatsEnum';
 import PlayerState from '../../state/player/PlayerState';
 import Character from '../Character';
 import { SpecialItemEnum } from '@/core/enum/SpecialItemEnum';
+import { FlyEnum } from '@/core/enum/FlyEnum';
+import ShowFlyEffectEvent from './events/ShowFlyEffectEvent';
 
 const REGEN_INTERVAL = 3000;
 
@@ -960,6 +962,16 @@ export default class Player extends Character {
 
     isEquippedWithUniqueItem(uniqueItemId: SpecialItemEnum): boolean {
         return this.playerInventory.isEquippedWithUniqueItem(uniqueItemId);
+    }
+
+    showFlyEffect(type: FlyEnum, from: number, to: number) {
+        this.publish(
+            new ShowFlyEffectEvent({
+                type,
+                fromVirtualId: from,
+                toVirtualId: to,
+            }),
+        );
     }
 
     static create(

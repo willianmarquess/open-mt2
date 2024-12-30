@@ -8,6 +8,9 @@ import Mob from './Mob';
 import { EntityTypeEnum } from '@/core/enum/EntityTypeEnum';
 import { EntityStateEnum } from '@/core/enum/EntityStateEnum';
 import ExperienceManager from '@/core/domain/manager/ExperienceManager';
+import { ChatMessageTypeEnum } from '@/core/enum/ChatMessageTypeEnum';
+import { FlyEnum } from '@/core/enum/FlyEnum';
+import FlyEffectCreatedEvent from '../shared/event/FlyEffectCreatedEvent';
 
 const MAX_DISTANCE_TO_GET_EXP = 5_000;
 
@@ -211,9 +214,21 @@ export default class Monster extends Mob {
             }
 
             const expToGive = this.experienceManager.calculateExpToGive(player, this, playerExp);
-            console.log(player.getName(), expToGive);
+
+            player.chat({
+                messageType: ChatMessageTypeEnum.INFO,
+                message: `Earned ${expToGive} of EXP after kill ${this.folder || this.name}`,
+            });
+
             player.addExperience(expToGive);
-            //TODO: player.sendFly(), we should send the fly particles like (hp/mana steal, honor, exp);
+
+            this.publish(
+                new FlyEffectCreatedEvent({
+                    fromVirtualId: this.virtualId,
+                    toVirtualId: player.getVirtualId(),
+                    type: FlyEnum.EXP,
+                }),
+            );
         }
     }
 

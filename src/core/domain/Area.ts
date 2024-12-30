@@ -17,6 +17,7 @@ import CharacterUpdatedEvent from './entities/game/player/events/CharacterUpdate
 import MonsterMovedEvent from './entities/game/mob/events/MonsterMovedEvent';
 import MonsterDiedEvent from './entities/game/mob/events/MonsterDiedEvent';
 import DropItemEvent from './entities/game/player/events/DropItemEvent';
+import FlyEffectCreatedEvent from './entities/game/shared/event/FlyEffectCreatedEvent';
 
 const SIZE_QUEUE = 5_000;
 const CHAR_VIEW_SIZE = 9000;
@@ -138,7 +139,7 @@ export default class Area {
                 promises.push(this.saveCharacterService.execute(entity));
             }
         }
-
+        //TODO: refact this sending to a queue and save behind scenes (other process)
         return Promise.all(promises).catch((error) =>
             this.logger.error('[AREA] Error when try to save player: ', error),
         );
@@ -292,19 +293,42 @@ export default class Area {
         }
     }
 
+    onFlyEffect(flyEffectCreatedEvent: FlyEffectCreatedEvent) {
+        const { type, fromVirtualId, toVirtualId } = flyEffectCreatedEvent;
+        const fromEntity = this.getEntity(fromVirtualId);
+
+        if (!fromEntity) return;
+
+        const entities = this.quadTree.queryAround(
+            fromEntity.getPositionX(),
+            fromEntity.getPositionY(),
+            CHAR_VIEW_SIZE,
+            EntityTypeEnum.PLAYER,
+        ) as Map<number, Player>;
+
+        for (const otherEntity of entities.values()) {
+            otherEntity.showFlyEffect(type, fromVirtualId, toVirtualId);
+        }
+    }
+
     tick() {
         for (const entity of this.entitiesToSpawn.dequeueIterator()) {
-            if (entity instanceof Player) {
-                entity.subscribe(CharacterMovedEvent, this.onCharacterMove.bind(this));
-                entity.subscribe(CharacterLevelUpEvent, this.onCharacterLevelUp.bind(this));
-                entity.subscribe(DropItemEvent, this.onItemDrop.bind(this));
-                entity.subscribe(CharacterUpdatedEvent, this.onCharacterUpdate.bind(this));
+            if (entity instanceof Character) {
+                if (entity instanceof Player) {
+                    entity.subscribe(CharacterMovedEvent, this.onCharacterMove.bind(this));
+                    entity.subscribe(CharacterLevelUpEvent, this.onCharacterLevelUp.bind(this));
+                    entity.subscribe(DropItemEvent, this.onItemDrop.bind(this));
+                    entity.subscribe(CharacterUpdatedEvent, this.onCharacterUpdate.bind(this));
+                }
+
+                if (entity instanceof Monster) {
+                    entity.subscribe(MonsterMovedEvent, this.onMonsterMove.bind(this));
+                    entity.subscribe(MonsterDiedEvent, this.onMonsterDied.bind(this));
+                }
+
+                entity.subscribe(FlyEffectCreatedEvent, this.onFlyEffect.bind(this));
             }
 
-            if (entity instanceof Monster) {
-                entity.subscribe(MonsterMovedEvent, this.onMonsterMove.bind(this));
-                entity.subscribe(MonsterDiedEvent, this.onMonsterDied.bind(this));
-            }
             this.quadTree.insert(entity);
 
             const entities = this.quadTree.queryAround(
@@ -336,16 +360,19 @@ export default class Area {
                 EntityTypeEnum.PLAYER,
             ) as Map<number, Player>;
 
-            if (entity instanceof Player) {
-                entity.removeAllListeners(CharacterMovedEvent);
-                entity.removeAllListeners(CharacterLevelUpEvent);
-                entity.removeAllListeners(DropItemEvent);
-                entity.removeAllListeners(CharacterUpdatedEvent);
-            }
+            if (entity instanceof Character) {
+                if (entity instanceof Player) {
+                    entity.removeAllListeners(CharacterMovedEvent);
+                    entity.removeAllListeners(CharacterLevelUpEvent);
+                    entity.removeAllListeners(DropItemEvent);
+                    entity.removeAllListeners(CharacterUpdatedEvent);
+                }
 
-            if (entity instanceof Monster) {
-                entity.removeAllListeners(MonsterMovedEvent);
-                entity.removeAllListeners(MonsterDiedEvent);
+                if (entity instanceof Monster) {
+                    entity.removeAllListeners(MonsterMovedEvent);
+                    entity.removeAllListeners(MonsterDiedEvent);
+                }
+                entity.removeAllListeners(FlyEffectCreatedEvent);
             }
 
             for (const otherEntity of entities.values()) {

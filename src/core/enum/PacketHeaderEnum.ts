@@ -42,4 +42,5 @@ export default {
     TARGET: 0x3d,
     TARGET_UPDATED: 0x3f,
     CHARACTER_DIED: 0x0e,
+    FLY: 0x46,
 };
