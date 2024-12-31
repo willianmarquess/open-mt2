@@ -7,7 +7,7 @@ import { ItemSubTypeEnum } from '@/core/enum/ItemSubTypeEnum';
 import { ChatMessageTypeEnum } from '@/core/enum/ChatMessageTypeEnum';
 import Character from '../../Character';
 import { PointsEnum } from '@/core/enum/PointsEnum';
-import { AffectTypeEnum } from '@/core/enum/AffectTypeEnum';
+import { AffectBitsTypeEnum } from '@/core/enum/AffectBitsTypeEnum';
 import { DamageTypeEnum } from '@/core/enum/DamageTypeEnum';
 
 export default class PlayerBattle {
@@ -102,21 +102,21 @@ export default class PlayerBattle {
 
     private applyAttackEffect(victim: Character) {
         const poisonChance = this.player.getPoint(PointsEnum.POISON);
-        const canApplyPoison = poisonChance > 0 && !victim.isAffectByFlag(AffectTypeEnum.POISON);
+        const canApplyPoison = poisonChance > 0 && !victim.isAffectByFlag(AffectBitsTypeEnum.POISON);
 
         if (canApplyPoison && MathUtil.getRandomInt(1, 100) <= poisonChance) {
             victim.applyPoison(this.player);
         }
 
         const stunChance = this.player.getPoint(PointsEnum.STUN);
-        const canApplyStun = stunChance > 0 && !victim.isAffectByFlag(AffectTypeEnum.STUN);
+        const canApplyStun = stunChance > 0 && !victim.isAffectByFlag(AffectBitsTypeEnum.STUN);
 
         if (canApplyStun && MathUtil.getRandomInt(1, 100) <= stunChance) {
             victim.applyStun(this.player);
         }
 
         const slowChance = this.player.getPoint(PointsEnum.SLOW);
-        const canApplySlow = slowChance > 0 && !victim.isAffectByFlag(AffectTypeEnum.SLOW);
+        const canApplySlow = slowChance > 0 && !victim.isAffectByFlag(AffectBitsTypeEnum.SLOW);
 
         if (canApplySlow && MathUtil.getRandomInt(1, 100) <= slowChance) {
             victim.applySlow(this.player);

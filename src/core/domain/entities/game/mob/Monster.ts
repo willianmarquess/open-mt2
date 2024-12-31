@@ -13,9 +13,10 @@ import { FlyEnum } from '@/core/enum/FlyEnum';
 import FlyEffectCreatedEvent from '../shared/event/FlyEffectCreatedEvent';
 import { DamageTypeEnum } from '@/core/enum/DamageTypeEnum';
 import Character from '../Character';
-import { AffectTypeEnum } from '@/core/enum/AffectTypeEnum';
+import { AffectBitsTypeEnum } from '@/core/enum/AffectBitsTypeEnum';
 import BitFlag from '@/core/util/BitFlag';
 import { DamageFlagEnum } from '@/core/enum/DamageFlagEnum';
+import CharacterUpdatePacket from '@/core/interface/networking/packets/packet/out/CharacterUpdatePacket';
 
 const MAX_DISTANCE_TO_GET_EXP = 5_000;
 
@@ -141,10 +142,28 @@ export default class Monster extends Mob {
         setInterval(this.regenHealth.bind(this), this.regenCycle * 1_000);
     }
 
-    applyPoison(attacker: Character) {
-        if (this.isAffectByFlag(AffectTypeEnum.POISON)) return;
+    private sendUpdateEvent() {
+        this.publish(
+            new CharacterUpdatePacket({
+                affects: this.getAffectFlags(),
+                attackSpeed: this.getAttackSpeed(),
+                moveSpeed: this.getMovementSpeed(),
+                parts: [0, 0, 0, 0],
+                vid: this.getVirtualId(),
+                guildId: 0,
+                mountVnum: 0,
+                pkMode: 0,
+                rankPoints: 0,
+                state: 0,
+            }),
+        );
+    }
 
-        //TODO: send affect packet
+    applyPoison(attacker: Character) {
+        if (this.isAffectByFlag(AffectBitsTypeEnum.POISON)) return;
+
+        this.sendUpdateEvent();
+
         this.eventTimerManager.addTimer({
             id: 'POISON_AFFECT',
             eventFunction: () => {
@@ -153,36 +172,37 @@ export default class Monster extends Mob {
             },
             options: {
                 interval: 1_000,
-                duration: 10_000,
+                duration: 30_000,
             },
             onEndEventFunction: () => {
-                //TODO: send remove affect packet
+                //send update packet
             },
         });
     }
 
     applyStun() {
-        if (this.isAffectByFlag(AffectTypeEnum.STUN)) return;
+        if (this.isAffectByFlag(AffectBitsTypeEnum.STUN)) return;
 
         //TODO
     }
 
     applySlow() {
-        if (this.isAffectByFlag(AffectTypeEnum.SLOW)) return;
+        if (this.isAffectByFlag(AffectBitsTypeEnum.SLOW)) return;
+        const SLOW_VALUE = 30;
+        this.setMovementSpeed(this.getMovementSpeed() - SLOW_VALUE);
 
-        const actualMoveSpeed = this.getMovementSpeed();
-        this.setMovementSpeed(actualMoveSpeed - actualMoveSpeed * 0.4);
-        //TODO: send affect packet
+        this.sendUpdateEvent();
 
         this.eventTimerManager.addTimer({
             id: 'SLOW_AFFECT',
             eventFunction: () => {
-                this.setMovementSpeed(actualMoveSpeed);
-                //TODO: send remove packet
+                this.setMovementSpeed(this.getMovementSpeed() + SLOW_VALUE);
+
+                this.sendUpdateEvent();
             },
             options: {
-                interval: 10_000,
-                duration: 10_000,
+                interval: 20_000,
+                duration: 20_000,
                 repeatCount: 1,
             },
         });

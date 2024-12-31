@@ -30,7 +30,6 @@ import OtherCharacterUpdatedEvent from '@/core/domain/entities/game/player/event
 import CharacterSpawnedEvent from '@/core/domain/entities/game/player/events/CharacterSpawnedEvent';
 import CharacterPointsUpdatedEvent from '@/core/domain/entities/game/player/events/CharacterPointsUpdatedEvent';
 import CharacterTeleportedEvent from '@/core/domain/entities/game/player/events/CharacterTeleportedEvent';
-import CharacterUpdatedEvent from '@/core/domain/entities/game/player/events/CharacterUpdatedEvent';
 import ItemAddedEvent from '@/core/domain/entities/game/player/events/ItemAddedEvent';
 import ItemRemovedEvent from '@/core/domain/entities/game/player/events/ItemRemovedEvent';
 import ItemDroppedEvent from '@/core/domain/entities/game/player/events/ItemDroppedEvent';
@@ -44,6 +43,9 @@ import PacketOut from '@/core/interface/networking/packets/packet/out/PacketOut'
 import PacketBidirectional from '@/core/interface/networking/packets/packet/bidirectional/PacketBidirectional';
 import ShowFlyEffectEvent from '@/core/domain/entities/game/player/events/ShowFlyEffectEvent';
 import FlyPacket from '@/core/interface/networking/packets/packet/out/FlyPacket';
+import AffectAddedEvent from '@/core/domain/entities/game/shared/event/AffectAddedEvent';
+import AffectAddPacket from '@/core/interface/networking/packets/packet/out/AffectAddPacket';
+import CharacterUpdatedEvent from '@/core/domain/entities/game/shared/event/CharacterUpdatedEvent';
 
 const OUTGOING_MESSAGES_PER_CON_QUEUE_SIZE = 5_000;
 
@@ -97,10 +99,25 @@ export default class GameConnection extends Connection {
         this.player.subscribe(TargetUpdatedEvent, this.onTargetUpdated.bind(this));
         this.player.subscribe(OtherCharacterDiedEvent, this.onOtherCharacterDied.bind(this));
         this.player.subscribe(ShowFlyEffectEvent, this.onFlyEffectEvent.bind(this));
+        this.player.subscribe(AffectAddedEvent, this.onAffectAddedEvent.bind(this));
     }
 
     getPlayer() {
         return this.player;
+    }
+
+    onAffectAddedEvent(affectAddedEvent: AffectAddedEvent) {
+        const { type, apply, duration, flag, manaCost, value } = affectAddedEvent;
+        this.send(
+            new AffectAddPacket({
+                type,
+                apply,
+                duration,
+                flag,
+                value,
+                manaCost,
+            }),
+        );
     }
 
     onFlyEffectEvent(showFlyEvent: ShowFlyEffectEvent) {
@@ -142,7 +159,7 @@ export default class GameConnection extends Connection {
     }
 
     onOtherCharacterUpdated(otherCharacterUpdated: OtherCharacterUpdatedEvent) {
-        const { attackSpeed, moveSpeed, vid, bodyId, weaponId, hairId } = otherCharacterUpdated;
+        const { attackSpeed, moveSpeed, vid, bodyId, weaponId, hairId, affects } = otherCharacterUpdated;
 
         this.send(
             new CharacterUpdatePacket({
@@ -150,6 +167,7 @@ export default class GameConnection extends Connection {
                 attackSpeed,
                 moveSpeed,
                 parts: [bodyId, weaponId, 0, hairId],
+                affects,
             }),
         );
     }

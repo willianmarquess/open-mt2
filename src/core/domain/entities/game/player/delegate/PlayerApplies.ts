@@ -15,15 +15,25 @@ export default class PlayerApplies {
     }
 
     init() {
-        this.applies.set(ApplyTypeEnum.APPLY_ATT_SPEED, (value: number) => this.player.addAttackSpeed(value));
-        this.applies.set(ApplyTypeEnum.APPLY_MOV_SPEED, (value: number) => this.player.addMovementSpeed(value));
-        this.applies.set(ApplyTypeEnum.APPLY_HP_REGEN, (value: number) => this.player.addHealthRegen(value));
-        this.applies.set(ApplyTypeEnum.APPLY_SP_REGEN, (value: number) => this.player.addManaRegen(value));
+        this.applies.set(ApplyTypeEnum.ATT_SPEED, (value: number) => this.player.addAttackSpeed(value));
+        this.applies.set(ApplyTypeEnum.MOV_SPEED, (value: number) => this.player.addMovementSpeed(value));
+        this.applies.set(ApplyTypeEnum.HP_REGEN, (value: number) => this.player.addHealthRegen(value));
+        this.applies.set(ApplyTypeEnum.SP_REGEN, (value: number) => this.player.addManaRegen(value));
+    }
+
+    addApply(type: ApplyTypeEnum, value: number) {
+        const applyFunc = this.applies.get(type);
+
+        if (applyFunc && typeof applyFunc === 'function') {
+            applyFunc(Number(value));
+        } else {
+            this.logger.debug(`[PLAYER] Apply not implemented yet: ${type}`);
+        }
     }
 
     addItemApplies(item: Item) {
         for (const { type, value } of item.getApplies()) {
-            if (type === ApplyTypeEnum.APPLY_NONE) continue;
+            if (type === ApplyTypeEnum.NONE) continue;
             const applyFunc = this.applies.get(type);
 
             if (applyFunc && typeof applyFunc === 'function') {
@@ -36,7 +46,7 @@ export default class PlayerApplies {
 
     removeItemApplies(item: Item) {
         for (const { type, value } of item.getApplies()) {
-            if (type === ApplyTypeEnum.APPLY_NONE) continue;
+            if (type === ApplyTypeEnum.NONE) continue;
             const applyFunc = this.applies.get(type);
 
             if (applyFunc && typeof applyFunc === 'function') {

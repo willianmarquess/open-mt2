@@ -1,7 +1,4 @@
-import PlayerEventsEnum from './PlayerEventsEnum';
-
 export default class CharacterUpdatedEvent {
-    public static readonly type = PlayerEventsEnum.CHARACTER_UPDATED;
     public readonly vid: number;
     public readonly attackSpeed: number;
     public readonly moveSpeed: number;
@@ -11,8 +8,20 @@ export default class CharacterUpdatedEvent {
     public readonly bodyId: number;
     public readonly weaponId: number;
     public readonly hairId: number;
+    public readonly affects: number[];
 
-    constructor({ vid, attackSpeed, moveSpeed, positionX, positionY, name, bodyId, weaponId, hairId }) {
+    constructor({
+        vid,
+        attackSpeed,
+        moveSpeed,
+        positionX,
+        positionY,
+        name,
+        bodyId,
+        weaponId,
+        hairId,
+        affects = new Array(2).fill(0),
+    }) {
         this.vid = vid;
         this.attackSpeed = attackSpeed;
         this.moveSpeed = moveSpeed;
@@ -22,5 +31,6 @@ export default class CharacterUpdatedEvent {
         this.weaponId = weaponId;
         this.bodyId = bodyId;
         this.hairId = hairId;
+        this.affects = affects;
     }
 }

@@ -27,7 +27,6 @@ import LogoutEvent from './events/LogoutEvent';
 import ChatEvent from './events/ChatEvent';
 import CharacterPointsUpdatedEvent from './events/CharacterPointsUpdatedEvent';
 import OtherCharacterMovedEvent from './events/OtherCharacterMovedEvent';
-import CharacterUpdatedEvent from './events/CharacterUpdatedEvent';
 import CharacterMovedEvent from './events/CharacterMovedEvent';
 import { ItemAntiFlagEnum } from '@/core/enum/ItemAntiFlagEnum';
 import Item from '../item/Item';
@@ -41,8 +40,11 @@ import Character from '../Character';
 import { SpecialItemEnum } from '@/core/enum/SpecialItemEnum';
 import { FlyEnum } from '@/core/enum/FlyEnum';
 import ShowFlyEffectEvent from './events/ShowFlyEffectEvent';
-import { AffectTypeEnum } from '@/core/enum/AffectTypeEnum';
+import { AffectBitsTypeEnum } from '@/core/enum/AffectBitsTypeEnum';
 import { DamageTypeEnum } from '@/core/enum/DamageTypeEnum';
+import AffectAddedEvent from '../shared/event/AffectAddedEvent';
+import { AffectTypeEnum } from '@/core/enum/AffectTypeEnum';
+import CharacterUpdatedEvent from '../shared/event/CharacterUpdatedEvent';
 
 const REGEN_INTERVAL = 3000;
 
@@ -268,9 +270,20 @@ export default class Player extends Character {
     }
 
     applyPoison(attacker: Character) {
-        if (this.isAffectByFlag(AffectTypeEnum.POISON)) return;
+        if (this.isAffectByFlag(AffectBitsTypeEnum.POISON)) return;
 
         //TODO: send affect packet
+
+        this.publish(
+            new AffectAddedEvent({
+                type: AffectTypeEnum.POISON,
+                apply: PointsEnum.NONE,
+                value: 0,
+                flag: AffectBitsTypeEnum.POISON,
+                duration: 30,
+                manaCost: 0,
+            }),
+        );
 
         this.eventTimerManager.addTimer({
             id: 'POISON_AFFECT',
@@ -290,22 +303,32 @@ export default class Player extends Character {
     }
 
     applyStun() {
-        if (this.isAffectByFlag(AffectTypeEnum.STUN)) return;
+        if (this.isAffectByFlag(AffectBitsTypeEnum.STUN)) return;
 
         //TODO
     }
 
     applySlow() {
-        if (this.isAffectByFlag(AffectTypeEnum.SLOW)) return;
+        if (this.isAffectByFlag(AffectBitsTypeEnum.SLOW)) return;
 
-        const actualMoveSpeed = this.getPoint(PointsEnum.MOVE_SPEED);
-        this.setMovementSpeed(actualMoveSpeed - actualMoveSpeed * 0.4);
-        //TODO: send affect packet
+        const SLOW_VALUE = 30;
+        this.setMovementSpeed(this.getMovementSpeed() - SLOW_VALUE);
+
+        this.publish(
+            new AffectAddedEvent({
+                type: AffectTypeEnum.SLOW,
+                apply: PointsEnum.MOVE_SPEED,
+                value: SLOW_VALUE,
+                flag: AffectBitsTypeEnum.SLOW,
+                duration: 30,
+                manaCost: 0,
+            }),
+        );
 
         this.eventTimerManager.addTimer({
             id: 'SLOW_AFFECT',
             eventFunction: () => {
-                this.setMovementSpeed(actualMoveSpeed);
+                this.setMovementSpeed(this.getMovementSpeed() + SLOW_VALUE);
             },
             options: {
                 interval: 10_000,
@@ -734,8 +757,10 @@ export default class Player extends Character {
         this.publish(new OtherCharacterLevelUpEvent({ virtualId, level }));
     }
 
-    otherEntityUpdated({ vid, attackSpeed, moveSpeed, bodyId, weaponId, hairId }) {
-        this.publish(new OtherCharacterUpdatedEvent({ vid, attackSpeed, moveSpeed, bodyId, weaponId, hairId }));
+    otherEntityUpdated({ vid, attackSpeed, moveSpeed, bodyId, weaponId, hairId, affects }) {
+        this.publish(
+            new OtherCharacterUpdatedEvent({ vid, attackSpeed, moveSpeed, bodyId, weaponId, hairId, affects }),
+        );
     }
 
     logout() {
@@ -793,6 +818,7 @@ export default class Player extends Character {
                 bodyId: this.getBody()?.getId() ?? 0,
                 weaponId: this.getWeapon()?.getId() ?? 0,
                 hairId: this.getHair()?.getId() ?? 0,
+                affects: this.getAffectFlags(),
             }),
         );
     }
@@ -988,6 +1014,7 @@ export default class Player extends Character {
                     bodyId: otherEntity.getBody()?.getId() ?? 0,
                     weaponId: otherEntity.getWeapon()?.getId() ?? 0,
                     hairId: otherEntity.getHair()?.getId() ?? 0,
+                    affects: otherEntity.getAffectFlags(),
                 });
             }
         }

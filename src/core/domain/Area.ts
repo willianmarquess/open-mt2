@@ -13,11 +13,11 @@ import { EntityTypeEnum } from '@/core/enum/EntityTypeEnum';
 import Character from './entities/game/Character';
 import CharacterMovedEvent from './entities/game/player/events/CharacterMovedEvent';
 import CharacterLevelUpEvent from './entities/game/player/events/CharacterLevelUpEvent';
-import CharacterUpdatedEvent from './entities/game/player/events/CharacterUpdatedEvent';
 import MonsterMovedEvent from './entities/game/mob/events/MonsterMovedEvent';
 import MonsterDiedEvent from './entities/game/mob/events/MonsterDiedEvent';
 import DropItemEvent from './entities/game/player/events/DropItemEvent';
 import FlyEffectCreatedEvent from './entities/game/shared/event/FlyEffectCreatedEvent';
+import CharacterUpdatedEvent from './entities/game/shared/event/CharacterUpdatedEvent';
 
 const SIZE_QUEUE = 5_000;
 const CHAR_VIEW_SIZE = 9000;
@@ -282,14 +282,15 @@ export default class Area {
     }
 
     onCharacterUpdate(characterUpdatedEvent: CharacterUpdatedEvent) {
-        const { vid, attackSpeed, moveSpeed, positionX, positionY, bodyId, weaponId, hairId } = characterUpdatedEvent;
+        const { vid, attackSpeed, moveSpeed, positionX, positionY, bodyId, weaponId, hairId, affects } =
+            characterUpdatedEvent;
         const entities = this.quadTree.queryAround(positionX, positionY, CHAR_VIEW_SIZE, EntityTypeEnum.PLAYER) as Map<
             number,
             Player
         >;
         for (const otherEntity of entities.values()) {
             if (otherEntity.getVirtualId() === vid) continue;
-            otherEntity.otherEntityUpdated({ vid, attackSpeed, moveSpeed, bodyId, weaponId, hairId });
+            otherEntity.otherEntityUpdated({ vid, attackSpeed, moveSpeed, bodyId, weaponId, hairId, affects });
         }
     }
 
@@ -318,7 +319,6 @@ export default class Area {
                     entity.subscribe(CharacterMovedEvent, this.onCharacterMove.bind(this));
                     entity.subscribe(CharacterLevelUpEvent, this.onCharacterLevelUp.bind(this));
                     entity.subscribe(DropItemEvent, this.onItemDrop.bind(this));
-                    entity.subscribe(CharacterUpdatedEvent, this.onCharacterUpdate.bind(this));
                 }
 
                 if (entity instanceof Monster) {
@@ -326,6 +326,7 @@ export default class Area {
                     entity.subscribe(MonsterDiedEvent, this.onMonsterDied.bind(this));
                 }
 
+                entity.subscribe(CharacterUpdatedEvent, this.onCharacterUpdate.bind(this));
                 entity.subscribe(FlyEffectCreatedEvent, this.onFlyEffect.bind(this));
             }
 
@@ -365,13 +366,14 @@ export default class Area {
                     entity.removeAllListeners(CharacterMovedEvent);
                     entity.removeAllListeners(CharacterLevelUpEvent);
                     entity.removeAllListeners(DropItemEvent);
-                    entity.removeAllListeners(CharacterUpdatedEvent);
                 }
 
                 if (entity instanceof Monster) {
                     entity.removeAllListeners(MonsterMovedEvent);
                     entity.removeAllListeners(MonsterDiedEvent);
                 }
+
+                entity.removeAllListeners(CharacterUpdatedEvent);
                 entity.removeAllListeners(FlyEffectCreatedEvent);
             }
 

@@ -8,10 +8,10 @@ import AnimationUtil from '../../util/AnimationUtil';
 import Player from './player/Player';
 import { AttackTypeEnum } from '@/core/enum/AttackTypeEnum';
 import GameEntity from './GameEntity';
-import BitFlag from '@/core/util/BitFlag';
-import { AffectTypeEnum } from '@/core/enum/AffectTypeEnum';
+import { AffectBitsTypeEnum } from '@/core/enum/AffectBitsTypeEnum';
 import EventTimerManager from '../../manager/EventTimerManager';
 import { DamageTypeEnum } from '@/core/enum/DamageTypeEnum';
+import AffectBitFlag from '@/core/util/AffectBitFlag';
 
 export default abstract class Character extends GameEntity {
     protected id: number;
@@ -44,7 +44,7 @@ export default abstract class Character extends GameEntity {
     protected target: Character;
     protected targetedBy = new Map<number, GameEntity>();
 
-    protected affectFlag = new BitFlag();
+    protected affectBitFlag = new AffectBitFlag();
     protected eventTimerManager = new EventTimerManager();
     protected maxHealth: number = 0;
     protected maxMana: number = 0;
@@ -90,12 +90,16 @@ export default abstract class Character extends GameEntity {
         this.animationManager = animationManager;
     }
 
-    isAffectByFlag(value: AffectTypeEnum) {
-        return this.affectFlag.is(value);
+    getAffectFlags() {
+        return this.affectBitFlag.getFlags();
     }
 
-    setAffectFlag(value: AffectTypeEnum) {
-        this.affectFlag.set(value);
+    isAffectByFlag(value: AffectBitsTypeEnum) {
+        return this.affectBitFlag.isSet(value);
+    }
+
+    setAffectFlag(value: AffectBitsTypeEnum) {
+        this.affectBitFlag.set(value);
     }
 
     abstract applyPoison(attacker: Character): void;

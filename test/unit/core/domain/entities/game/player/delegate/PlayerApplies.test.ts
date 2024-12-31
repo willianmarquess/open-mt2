@@ -28,8 +28,8 @@ describe('PlayerApplies', function () {
         it('should apply valid item effects to the player', function () {
             const item = {
                 getApplies: () => [
-                    { type: ApplyTypeEnum.APPLY_ATT_SPEED, value: 10 },
-                    { type: ApplyTypeEnum.APPLY_MOV_SPEED, value: 5 },
+                    { type: ApplyTypeEnum.ATT_SPEED, value: 10 },
+                    { type: ApplyTypeEnum.MOV_SPEED, value: 5 },
                 ],
             } as unknown as Item;
 
@@ -55,8 +55,8 @@ describe('PlayerApplies', function () {
         it('should remove valid item effects from the player', function () {
             const item = {
                 getApplies: () => [
-                    { type: ApplyTypeEnum.APPLY_HP_REGEN, value: 8 },
-                    { type: ApplyTypeEnum.APPLY_SP_REGEN, value: 12 },
+                    { type: ApplyTypeEnum.HP_REGEN, value: 8 },
+                    { type: ApplyTypeEnum.SP_REGEN, value: 12 },
                 ],
             } as unknown as Item;
 
