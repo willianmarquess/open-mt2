@@ -16,7 +16,7 @@ import Character from '../Character';
 import { AffectBitsTypeEnum } from '@/core/enum/AffectBitsTypeEnum';
 import BitFlag from '@/core/util/BitFlag';
 import { DamageFlagEnum } from '@/core/enum/DamageFlagEnum';
-import CharacterUpdatePacket from '@/core/interface/networking/packets/packet/out/CharacterUpdatePacket';
+import CharacterUpdatedEvent from '../shared/event/CharacterUpdatedEvent';
 
 const MAX_DISTANCE_TO_GET_EXP = 5_000;
 
@@ -138,23 +138,32 @@ export default class Monster extends Mob {
         this.health = maxHp;
         this.maxHealth = maxHp;
         this.behavior = new Behavior(this);
+        this.initEvents();
+    }
 
-        setInterval(this.regenHealth.bind(this), this.regenCycle * 1_000);
+    private initEvents() {
+        this.eventTimerManager.addTimer({
+            id: 'REGEN_HEALTH',
+            eventFunction: this.regenHealth.bind(this),
+            options: {
+                interval: this.regenCycle * 1_000,
+            },
+        });
     }
 
     private sendUpdateEvent() {
         this.publish(
-            new CharacterUpdatePacket({
+            new CharacterUpdatedEvent({
                 affects: this.getAffectFlags(),
                 attackSpeed: this.getAttackSpeed(),
                 moveSpeed: this.getMovementSpeed(),
-                parts: [0, 0, 0, 0],
+                bodyId: 0,
+                hairId: 0,
+                weaponId: 0,
+                name: this.name,
+                positionX: this.getPositionX(),
+                positionY: this.getPositionY(),
                 vid: this.getVirtualId(),
-                guildId: 0,
-                mountVnum: 0,
-                pkMode: 0,
-                rankPoints: 0,
-                state: 0,
             }),
         );
     }
@@ -162,20 +171,22 @@ export default class Monster extends Mob {
     applyPoison(attacker: Character) {
         if (this.isAffectByFlag(AffectBitsTypeEnum.POISON)) return;
 
+        this.setAffectFlag(AffectBitsTypeEnum.POISON);
         this.sendUpdateEvent();
 
         this.eventTimerManager.addTimer({
             id: 'POISON_AFFECT',
             eventFunction: () => {
-                const damage = this.maxHealth * 0.05;
+                const damage = this.maxHealth * 0.02;
                 this.takeDamage(attacker, damage, DamageTypeEnum.POISON);
             },
             options: {
                 interval: 1_000,
-                duration: 30_000,
+                duration: 20_000,
             },
             onEndEventFunction: () => {
-                //send update packet
+                this.removeAffectFlag(AffectBitsTypeEnum.POISON);
+                this.sendUpdateEvent();
             },
         });
     }
@@ -183,7 +194,21 @@ export default class Monster extends Mob {
     applyStun() {
         if (this.isAffectByFlag(AffectBitsTypeEnum.STUN)) return;
 
-        //TODO
+        this.setAffectFlag(AffectBitsTypeEnum.STUN);
+        this.sendUpdateEvent();
+
+        this.eventTimerManager.addTimer({
+            id: 'STUN_AFFECT',
+            eventFunction: () => {
+                this.removeAffectFlag(AffectBitsTypeEnum.STUN);
+                this.sendUpdateEvent();
+            },
+            options: {
+                interval: 5_000,
+                duration: 5_000,
+                repeatCount: 1,
+            },
+        });
     }
 
     applySlow() {
@@ -191,24 +216,26 @@ export default class Monster extends Mob {
         const SLOW_VALUE = 30;
         this.setMovementSpeed(this.getMovementSpeed() - SLOW_VALUE);
 
+        this.setAffectFlag(AffectBitsTypeEnum.SLOW);
         this.sendUpdateEvent();
 
         this.eventTimerManager.addTimer({
             id: 'SLOW_AFFECT',
             eventFunction: () => {
                 this.setMovementSpeed(this.getMovementSpeed() + SLOW_VALUE);
-
+                this.removeAffectFlag(AffectBitsTypeEnum.SLOW);
                 this.sendUpdateEvent();
             },
             options: {
-                interval: 20_000,
-                duration: 20_000,
+                interval: 10_000,
+                duration: 10_000,
                 repeatCount: 1,
             },
         });
     }
 
     regenHealth() {
+        if (this.isAffectByFlag(AffectBitsTypeEnum.POISON)) return;
         if (this.state === EntityStateEnum.DEAD) return;
         if (this.health >= this.maxHealth) return;
 
@@ -242,7 +269,7 @@ export default class Monster extends Mob {
         attacker.sendDamageCaused({
             virtualId: this.virtualId,
             damage,
-            damageFlags,
+            damageFlags: damageFlags.getFlag(),
         });
 
         this.health -= damage;
@@ -256,7 +283,7 @@ export default class Monster extends Mob {
             return;
         }
 
-        this.state = EntityStateEnum.IDLE;
+        this.state = EntityStateEnum.IDLE; //TODO: this behavior is incorrect
     }
 
     reward() {
@@ -326,6 +353,7 @@ export default class Monster extends Mob {
     }
 
     goto(x: number, y: number) {
+        if (this.isAffectByFlag(AffectBitsTypeEnum.STUN)) return;
         const rotation = MathUtil.calcRotationFromXY(x - this.positionX, y - this.positionY) / 5;
         super.gotoInternal(x, y, rotation);
         this.publish(
@@ -345,6 +373,7 @@ export default class Monster extends Mob {
 
     tick() {
         if (this.state === EntityStateEnum.DEAD) return;
+        if (this.isAffectByFlag(AffectBitsTypeEnum.STUN)) return;
 
         super.tick();
 
@@ -368,6 +397,7 @@ export default class Monster extends Mob {
         this.behaviorInitialized = false;
         this.state = EntityStateEnum.IDLE;
         this.health = this.maxHealth;
+        this.initEvents();
         //TODO: spawn at original location
     }
 

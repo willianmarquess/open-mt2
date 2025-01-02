@@ -256,6 +256,9 @@ export default class Player extends Character {
         this.points[PointsEnum.MAGIC_DEF_GRADE] = () => this.magicDefense;
         this.points[PointsEnum.MALL_ITEM_BONUS] = () => this.mallItemBonus;
         this.points[PointsEnum.ITEM_DROP_BONUS] = () => this.itemDropBonus;
+        this.points[PointsEnum.POISON] = () => this.poisonChance;
+        this.points[PointsEnum.SLOW] = () => this.slowChance;
+        this.points[PointsEnum.STUN] = () => this.stunChance;
 
         this.eventTimerManager.addTimer({
             id: 'REGEN_HEALTH',
@@ -272,7 +275,8 @@ export default class Player extends Character {
     applyPoison(attacker: Character) {
         if (this.isAffectByFlag(AffectBitsTypeEnum.POISON)) return;
 
-        //TODO: send affect packet
+        this.setAffectFlag(AffectBitsTypeEnum.POISON);
+        this.updateView();
 
         this.publish(
             new AffectAddedEvent({
@@ -280,7 +284,7 @@ export default class Player extends Character {
                 apply: PointsEnum.NONE,
                 value: 0,
                 flag: AffectBitsTypeEnum.POISON,
-                duration: 30,
+                duration: 10,
                 manaCost: 0,
             }),
         );
@@ -297,7 +301,8 @@ export default class Player extends Character {
                 duration: 10_000,
             },
             onEndEventFunction: () => {
-                //TODO: send remove affect packet
+                this.removeAffectFlag(AffectBitsTypeEnum.POISON);
+                this.updateView();
             },
         });
     }
@@ -305,7 +310,21 @@ export default class Player extends Character {
     applyStun() {
         if (this.isAffectByFlag(AffectBitsTypeEnum.STUN)) return;
 
-        //TODO
+        this.setAffectFlag(AffectBitsTypeEnum.STUN);
+        this.updateView();
+
+        this.eventTimerManager.addTimer({
+            id: 'STUN_AFFECT',
+            eventFunction: () => {
+                this.removeAffectFlag(AffectBitsTypeEnum.STUN);
+                this.updateView();
+            },
+            options: {
+                interval: 2_000,
+                duration: 2_000,
+                repeatCount: 1,
+            },
+        });
     }
 
     applySlow() {
@@ -313,6 +332,9 @@ export default class Player extends Character {
 
         const SLOW_VALUE = 30;
         this.setMovementSpeed(this.getMovementSpeed() - SLOW_VALUE);
+
+        this.setAffectFlag(AffectBitsTypeEnum.SLOW);
+        this.updateView();
 
         this.publish(
             new AffectAddedEvent({
@@ -329,6 +351,8 @@ export default class Player extends Character {
             id: 'SLOW_AFFECT',
             eventFunction: () => {
                 this.setMovementSpeed(this.getMovementSpeed() + SLOW_VALUE);
+                this.removeAffectFlag(AffectBitsTypeEnum.SLOW);
+                this.updateView();
             },
             options: {
                 interval: 10_000,

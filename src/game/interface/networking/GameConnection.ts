@@ -173,7 +173,7 @@ export default class GameConnection extends Connection {
     }
 
     onCharacterUpdated(characterUpdatedEvent: CharacterUpdatedEvent) {
-        const { attackSpeed, moveSpeed, vid, bodyId, weaponId, hairId } = characterUpdatedEvent;
+        const { attackSpeed, moveSpeed, vid, bodyId, weaponId, hairId, affects } = characterUpdatedEvent;
 
         this.send(
             new CharacterUpdatePacket({
@@ -181,6 +181,7 @@ export default class GameConnection extends Connection {
                 attackSpeed,
                 moveSpeed,
                 parts: [bodyId, weaponId, 0, hairId],
+                affects,
             }),
         );
     }

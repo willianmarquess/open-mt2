@@ -2,6 +2,7 @@ import { EntityStateEnum } from '@/core/enum/EntityStateEnum';
 import MathUtil from '../../../util/MathUtil';
 import Monster from '@/core/domain/entities/game/mob/Monster';
 import Player from '../player/Player';
+import { AffectBitsTypeEnum } from '@/core/enum/AffectBitsTypeEnum';
 
 const POSITION_OFFSET = 600;
 const MIN_DELAY = 10000;
@@ -35,6 +36,7 @@ export default class Behavior {
 
     tick() {
         if (!this.enable) return;
+        if (this.monster.isAffectByFlag(AffectBitsTypeEnum.STUN)) return;
 
         if (this.monster.getState() === EntityStateEnum.IDLE) {
             const now = performance.now();

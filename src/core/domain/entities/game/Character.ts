@@ -49,6 +49,10 @@ export default abstract class Character extends GameEntity {
     protected maxHealth: number = 0;
     protected maxMana: number = 0;
 
+    protected poisonChance: number = 20;
+    protected slowChance: number = 20;
+    protected stunChance: number = 20;
+
     constructor(
         {
             id,
@@ -102,6 +106,10 @@ export default abstract class Character extends GameEntity {
         this.affectBitFlag.set(value);
     }
 
+    removeAffectFlag(value: AffectBitsTypeEnum) {
+        this.affectBitFlag.reset(value);
+    }
+
     abstract applyPoison(attacker: Character): void;
     abstract applyStun(attacker: Character): void;
     abstract applySlow(attacker: Character): void;
@@ -118,6 +126,7 @@ export default abstract class Character extends GameEntity {
 
     die() {
         this.state = EntityStateEnum.DEAD;
+        this.eventTimerManager.clearAllTimers();
     }
 
     setTarget(target: Character) {
@@ -145,7 +154,7 @@ export default abstract class Character extends GameEntity {
     }
 
     tick() {
-        if (this.state == EntityStateEnum.MOVING) {
+        if (this.state === EntityStateEnum.MOVING) {
             const elapsed = performance.now() - this.movementStart;
             let rate = this.movementDuration == 0 ? 1 : elapsed / this.movementDuration;
             if (rate > 1) rate = 1;
@@ -228,75 +237,122 @@ export default abstract class Character extends GameEntity {
         this.emitter.removeAllListeners(eventConstructor.name);
     }
 
-    getId() {
-        return this.id;
+    setPoisonChance(value: number) {
+        this.poisonChance = value > 0 ? value : 0;
     }
-    setId(value: number) {
-        this.id = value;
+
+    addPoisonChance(value: number) {
+        this.poisonChance += value > 0 ? value : 0;
     }
-    getMovementDuration() {
-        return this.movementDuration;
+
+    setStunChance(value: number) {
+        this.stunChance = value > 0 ? value : 0;
     }
-    setRotation(value: number) {
-        this.rotation = value;
+
+    addStunChance(value: number) {
+        this.stunChance += value > 0 ? value : 0;
     }
-    getRotation() {
-        return this.rotation;
+
+    setSlowChance(value: number) {
+        this.slowChance = value > 0 ? value : 0;
     }
+
+    addSlowChance(value: number) {
+        this.slowChance += value > 0 ? value : 0;
+    }
+
+    setMovementSpeed(value: number) {
+        this.movementSpeed = value;
+    }
+
     getMovementSpeed() {
         return this.movementSpeed;
     }
-    setMovementSpeed(value) {
-        this.movementSpeed = value;
+
+    setAttackSpeed(value: number) {
+        this.attackSpeed = value;
     }
+
     getAttackSpeed() {
         return this.attackSpeed;
     }
-    setAttackSpeed(value) {
-        this.attackSpeed = value;
+
+    getId() {
+        return this.id;
     }
+
+    setId(value: number) {
+        this.id = value;
+    }
+
+    getMovementDuration() {
+        return this.movementDuration;
+    }
+
+    setRotation(value: number) {
+        this.rotation = value;
+    }
+
+    getRotation() {
+        return this.rotation;
+    }
+
     getSt() {
         return this.st;
     }
+
     getHt() {
         return this.ht;
     }
+
     getDx() {
         return this.dx;
     }
+
     getIq() {
         return this.iq;
     }
+
     setSt(value: number) {
         this.st = value;
     }
+
     setHt(value: number) {
         this.ht = value;
     }
+
     setDx(value: number) {
         this.dx = value;
     }
+
     setIq(value: number) {
         this.iq = value;
     }
+
     getName() {
         return this.name;
     }
+
     getLevel() {
         return this.level;
     }
+
     protected setLevel(value: number) {
         this.level = value;
     }
+
     getEmpire() {
         return this.empire;
     }
+
     getClassId() {
         return this.classId;
     }
+
     getState() {
         return this.state;
     }
+
     protected setState(value: EntityStateEnum) {
         this.state = value;
     }
