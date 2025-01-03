@@ -2,7 +2,7 @@ import fs from 'fs/promises';
 import fsSync from 'fs';
 import path from 'path';
 import SpawnConfig from '../entities/game/mob/spawn/SpawnConfig';
-import Mob from '../entities/game/mob/Mob';
+import { Mob } from '../entities/game/mob/Mob';
 import MonsterGroup from '../entities/game/mob/MonsterGroup';
 import MathUtil from '../util/MathUtil';
 import Monster from '../entities/game/mob/Monster';

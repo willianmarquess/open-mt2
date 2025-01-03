@@ -1,4 +1,4 @@
-import Character from '@/core/domain/entities/game/Character';
+import Monster from '@/core/domain/entities/game/mob/Monster';
 import Player from '@/core/domain/entities/game/player/Player';
 import World from '@/core/domain/World';
 import { AttackTypeEnum } from '@/core/enum/AttackTypeEnum';
@@ -23,7 +23,7 @@ export default class CharacterAttackService {
             return;
         }
 
-        const victim = area.getEntity(victimVirtualId) as Character;
+        const victim = area.getEntity(victimVirtualId) as Player | Monster;
 
         if (!victim) {
             this.logger.info(`[CharacterAttackService] Victim not found with virtualId ${victimVirtualId}`);

@@ -1,7 +1,26 @@
-import Mob from './Mob';
+import { Mob, MobParams } from './Mob';
 import { EntityTypeEnum } from '@/core/enum/EntityTypeEnum';
 
 export default class NPC extends Mob {
+    constructor(params: Omit<MobParams, 'virtualId' | 'entityType'>, { animationManager }) {
+        super(
+            {
+                ...params,
+                entityType: EntityTypeEnum.NPC,
+            },
+            { animationManager },
+        );
+    }
+
+    applyPoison(): void {
+        throw new Error('Method not implemented.');
+    }
+    applyStun(): void {
+        throw new Error('Method not implemented.');
+    }
+    applySlow(): void {
+        throw new Error('Method not implemented.');
+    }
     getHealthPercentage(): number {
         throw new Error('Method not implemented.');
     }
@@ -19,111 +38,5 @@ export default class NPC extends Mob {
     }
     takeDamage(): void {
         throw new Error('Method not implemented.');
-    }
-    constructor(
-        {
-            id,
-            virtualId = 0,
-            positionX,
-            positionY,
-            name,
-            rank,
-            battleType,
-            level,
-            size,
-            aiFlag,
-            mountCapacity,
-            raceFlag,
-            immuneFlag,
-            empire,
-            folder,
-            onClick,
-            st,
-            dx,
-            ht,
-            iq,
-            damageMin,
-            damageMax,
-            maxHp,
-            regenCycle,
-            regenPercent,
-            goldMin,
-            goldMax,
-            exp,
-            def,
-            attackSpeed,
-            movementSpeed,
-            aggressiveHpPct,
-            aggressiveSight,
-            attackRange,
-            dropItem,
-            resurrectionId,
-            damMultiply,
-            summon,
-            drainSp,
-            mobColor,
-            polymorphItem,
-            hpPercentToGetBerserk,
-            hpPercentToGetStoneSkin,
-            hpPercentToGetGodspeed,
-            hpPercentToGetDeathblow,
-            hpPercentToGetRevive,
-            direction,
-        },
-        { animationManager },
-    ) {
-        super(
-            {
-                id,
-                virtualId,
-                entityType: EntityTypeEnum.NPC,
-                positionX,
-                positionY,
-                name,
-                rank,
-                battleType,
-                level,
-                size,
-                aiFlag,
-                mountCapacity,
-                raceFlag,
-                immuneFlag,
-                empire,
-                folder,
-                onClick,
-                st,
-                dx,
-                ht,
-                iq,
-                damageMin,
-                damageMax,
-                maxHp,
-                regenCycle,
-                regenPercent,
-                goldMin,
-                goldMax,
-                exp,
-                def,
-                attackSpeed,
-                movementSpeed,
-                aggressiveHpPct,
-                aggressiveSight,
-                attackRange,
-                dropItem,
-                resurrectionId,
-                damMultiply,
-                summon,
-                drainSp,
-                mobColor,
-                polymorphItem,
-                hpPercentToGetBerserk,
-                hpPercentToGetStoneSkin,
-                hpPercentToGetGodspeed,
-                hpPercentToGetDeathblow,
-                hpPercentToGetRevive,
-                direction,
-            },
-            { animationManager },
-        );
     }
 }

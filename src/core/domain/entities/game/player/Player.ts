@@ -40,11 +40,9 @@ import Character from '../Character';
 import { SpecialItemEnum } from '@/core/enum/SpecialItemEnum';
 import { FlyEnum } from '@/core/enum/FlyEnum';
 import ShowFlyEffectEvent from './events/ShowFlyEffectEvent';
-import { AffectBitsTypeEnum } from '@/core/enum/AffectBitsTypeEnum';
 import { DamageTypeEnum } from '@/core/enum/DamageTypeEnum';
-import AffectAddedEvent from '../shared/event/AffectAddedEvent';
-import { AffectTypeEnum } from '@/core/enum/AffectTypeEnum';
 import CharacterUpdatedEvent from '../shared/event/CharacterUpdatedEvent';
+import Monster from '../mob/Monster';
 
 const REGEN_INTERVAL = 3000;
 
@@ -91,7 +89,16 @@ export default class Player extends Character {
     private magicDefenseBonus: number = 0;
     private healthRegenBonus: number = 0;
     private manaRegenBonus: number = 0;
-    // attackSpeed;
+    private poisonChance: number = 20;
+    private slowChance: number = 20;
+    private stunChance: number = 20;
+    private criticalChance: number = 20;
+    private penetrateChance: number = 20;
+    private stealHealthPercentage: number = 20;
+    private stealManaPercentage: number = 20;
+    private stealGoldChance: number = 10;
+    private healthHitRecoveryPercentage: number = 10;
+    private manaHitRecoveryPercentage: number = 10;
     // movementSpeed;
     // neededExperience;
     // defenseGrade;
@@ -101,7 +108,6 @@ export default class Player extends Character {
     // skill;
     // minAttackDamage;
     // maxAttackDamage;
-    // criticalPercentage;
     // penetratePercentage;
     private itemDropBonus: number = 0;
     // attackBonus;
@@ -240,10 +246,10 @@ export default class Player extends Character {
         this.points[PointsEnum.IQ] = () => this.iq;
         this.points[PointsEnum.DX] = () => this.dx;
         this.points[PointsEnum.LEVEL] = () => this.level;
-        this.points[PointsEnum.MAX_HP] = () => this.maxHealth;
-        this.points[PointsEnum.MAX_MP] = () => this.maxMana;
-        this.points[PointsEnum.HP] = () => this.health;
-        this.points[PointsEnum.MP] = () => this.mana;
+        this.points[PointsEnum.MAX_HEALTH] = () => this.maxHealth;
+        this.points[PointsEnum.MAX_MANA] = () => this.maxMana;
+        this.points[PointsEnum.HEALTH] = () => this.health;
+        this.points[PointsEnum.MANA] = () => this.mana;
         this.points[PointsEnum.ATTACK_SPEED] = () => this.attackSpeed;
         this.points[PointsEnum.MOVE_SPEED] = () => this.movementSpeed;
         this.points[PointsEnum.NEEDED_EXPERIENCE] = () => this.experienceManager.getNeededExperience(this.level);
@@ -259,6 +265,13 @@ export default class Player extends Character {
         this.points[PointsEnum.POISON] = () => this.poisonChance;
         this.points[PointsEnum.SLOW] = () => this.slowChance;
         this.points[PointsEnum.STUN] = () => this.stunChance;
+        this.points[PointsEnum.CRITICAL_PERCENTAGE] = () => this.criticalChance;
+        this.points[PointsEnum.PENETRATE_PERCENTAGE] = () => this.penetrateChance;
+        this.points[PointsEnum.STEAL_HEALTH] = () => this.stealHealthPercentage;
+        this.points[PointsEnum.STEAL_MANA] = () => this.stealManaPercentage;
+        this.points[PointsEnum.STEAL_GOLD] = () => this.stealGoldChance;
+        this.points[PointsEnum.HIT_HEALTH_RECOVERY] = () => this.healthHitRecoveryPercentage;
+        this.points[PointsEnum.HIT_MANA_RECOVERY] = () => this.manaHitRecoveryPercentage;
 
         this.eventTimerManager.addTimer({
             id: 'REGEN_HEALTH',
@@ -272,94 +285,16 @@ export default class Player extends Character {
         });
     }
 
-    applyPoison(attacker: Character) {
-        if (this.isAffectByFlag(AffectBitsTypeEnum.POISON)) return;
-
-        this.setAffectFlag(AffectBitsTypeEnum.POISON);
-        this.updateView();
-
-        this.publish(
-            new AffectAddedEvent({
-                type: AffectTypeEnum.POISON,
-                apply: PointsEnum.NONE,
-                value: 0,
-                flag: AffectBitsTypeEnum.POISON,
-                duration: 10,
-                manaCost: 0,
-            }),
-        );
-
-        this.eventTimerManager.addTimer({
-            id: 'POISON_AFFECT',
-            eventFunction: () => {
-                const baseDamage = this.maxHealth * 0.05;
-                const damage = Math.max(0, baseDamage - baseDamage * (this.getPoint(PointsEnum.POISON_REDUCE) / 100));
-                this.takeDamage(attacker, damage, DamageTypeEnum.POISON);
-            },
-            options: {
-                interval: 1_000,
-                duration: 10_000,
-            },
-            onEndEventFunction: () => {
-                this.removeAffectFlag(AffectBitsTypeEnum.POISON);
-                this.updateView();
-            },
-        });
+    applyPoison(attacker: Player | Monster) {
+        this.playerBattle.applyPoison(attacker);
     }
 
     applyStun() {
-        if (this.isAffectByFlag(AffectBitsTypeEnum.STUN)) return;
-
-        this.setAffectFlag(AffectBitsTypeEnum.STUN);
-        this.updateView();
-
-        this.eventTimerManager.addTimer({
-            id: 'STUN_AFFECT',
-            eventFunction: () => {
-                this.removeAffectFlag(AffectBitsTypeEnum.STUN);
-                this.updateView();
-            },
-            options: {
-                interval: 2_000,
-                duration: 2_000,
-                repeatCount: 1,
-            },
-        });
+        this.playerBattle.applyStun();
     }
 
     applySlow() {
-        if (this.isAffectByFlag(AffectBitsTypeEnum.SLOW)) return;
-
-        const SLOW_VALUE = 30;
-        this.setMovementSpeed(this.getMovementSpeed() - SLOW_VALUE);
-
-        this.setAffectFlag(AffectBitsTypeEnum.SLOW);
-        this.updateView();
-
-        this.publish(
-            new AffectAddedEvent({
-                type: AffectTypeEnum.SLOW,
-                apply: PointsEnum.MOVE_SPEED,
-                value: SLOW_VALUE,
-                flag: AffectBitsTypeEnum.SLOW,
-                duration: 30,
-                manaCost: 0,
-            }),
-        );
-
-        this.eventTimerManager.addTimer({
-            id: 'SLOW_AFFECT',
-            eventFunction: () => {
-                this.setMovementSpeed(this.getMovementSpeed() + SLOW_VALUE);
-                this.removeAffectFlag(AffectBitsTypeEnum.SLOW);
-                this.updateView();
-            },
-            options: {
-                interval: 10_000,
-                duration: 10_000,
-                repeatCount: 1,
-            },
-        });
+        this.playerBattle.applySlow();
     }
 
     takeDamage(attacker: Character, damage: number, type: DamageTypeEnum): number {
@@ -389,7 +324,7 @@ export default class Player extends Character {
         );
     }
 
-    attack(victim: Character, attackType: AttackTypeEnum): void {
+    attack(victim: Player | Monster, attackType: AttackTypeEnum): void {
         return this.playerBattle.attack(victim, attackType);
     }
 
@@ -723,7 +658,7 @@ export default class Player extends Character {
         this.maxMana = this.baseMana + this.iq * this.mpPerIqPoint + this.level * this.mpPerLvl;
     }
 
-    getPoint(point: PointsEnum) {
+    getPoint(point: PointsEnum): number {
         if (this.points[point]) {
             return this.points[point]();
         }
@@ -1255,5 +1190,28 @@ export default class Player extends Character {
     }
     getItemDropBonus() {
         return this.itemDropBonus;
+    }
+    setPoisonChance(value: number) {
+        this.poisonChance = value > 0 ? value : 0;
+    }
+
+    addPoisonChance(value: number) {
+        this.poisonChance += value > 0 ? value : 0;
+    }
+
+    setStunChance(value: number) {
+        this.stunChance = value > 0 ? value : 0;
+    }
+
+    addStunChance(value: number) {
+        this.stunChance += value > 0 ? value : 0;
+    }
+
+    setSlowChance(value: number) {
+        this.slowChance = value > 0 ? value : 0;
+    }
+
+    addSlowChance(value: number) {
+        this.slowChance += value > 0 ? value : 0;
     }
 }

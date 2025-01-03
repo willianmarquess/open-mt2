@@ -33,7 +33,7 @@ export default class DropManager {
 
     load() {
         Object.keys(this.config.commonDrops).forEach((rank) => {
-            this.commonDrops.set(rank as MobRankEnum, this.config.commonDrops[rank]);
+            this.commonDrops.set(rank as unknown as MobRankEnum, this.config.commonDrops[rank]);
         });
     }
 

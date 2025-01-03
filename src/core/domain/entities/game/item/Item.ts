@@ -9,6 +9,20 @@ import { ItemImmuneFlagEnum } from '@/core/enum/ItemImmuneFlagEnum';
 import { ItemWearFlagEnum } from '@/core/enum/ItemWearFlagEnum';
 import { ApplyTypeEnum } from '@/core/enum/ApplyTypeEnum';
 import ItemState from '../../state/item/ItemState';
+import { ItemArmorSubTypeEnum } from '@/core/enum/ItemArmorSubTypeEnum';
+import { ItemWeaponSubTypeEnum } from '@/core/enum/ItemWeaponSubTypeEnum';
+import { ItemTypeEnum } from '@/core/enum/ItemTypeEnum';
+import { ItemAutoUseSubTypeEnum } from '@/core/enum/ItemAutoUseSubTypeEnum';
+import { ItemCostumeSubTypeEnum } from '@/core/enum/ItemCostumeSubTypeEnum';
+import { ItemLotterySubTypeEnum } from '@/core/enum/ItemLotterySubTypeEnum';
+import { ItemFishSubTypeEnum } from '@/core/enum/ItemFishSubTypeEnum';
+import { ItemMaterialSubTypeEnum } from '@/core/enum/ItemMaterialSubTypeEnum';
+import { ItemResourceSubTypeEnum } from '@/core/enum/ItemResourceSubTypeEnum';
+import { ItemSpecialSubTypeEnum } from '@/core/enum/ItemSpecialSubTypeEnum';
+import { ItemMetinSubTypeEnum } from '@/core/enum/ItemMetinSubTypeEnum';
+import { ItemUseSubTypeEnum } from '@/core/enum/ItemUseSubTypeEnum';
+import { ItemExtractSubTypeEnum } from '@/core/enum/ItemExtractSubTypeEnum';
+import { ItemToolSubTypeEnum } from '@/core/enum/ItemToolSubTypeEnum';
 
 const parseFlags = (flags: string, enumType: any) => {
     const bitFlag = new BitFlag();
@@ -21,11 +35,27 @@ const parseFlags = (flags: string, enumType: any) => {
     return bitFlag;
 };
 
+const itemTypeSubTypeMapper = {
+    [ItemTypeEnum.ITEM_ARMOR]: ItemArmorSubTypeEnum,
+    [ItemTypeEnum.ITEM_WEAPON]: ItemWeaponSubTypeEnum,
+    [ItemTypeEnum.ITEM_AUTOUSE]: ItemAutoUseSubTypeEnum,
+    [ItemTypeEnum.ITEM_COSTUME]: ItemCostumeSubTypeEnum,
+    [ItemTypeEnum.ITEM_LOTTERY]: ItemLotterySubTypeEnum,
+    [ItemTypeEnum.ITEM_FISH]: ItemFishSubTypeEnum,
+    [ItemTypeEnum.ITEM_MATERIAL]: ItemMaterialSubTypeEnum,
+    [ItemTypeEnum.ITEM_RESOURCE]: ItemResourceSubTypeEnum,
+    [ItemTypeEnum.ITEM_SPECIAL]: ItemSpecialSubTypeEnum,
+    [ItemTypeEnum.ITEM_METIN]: ItemMetinSubTypeEnum,
+    [ItemTypeEnum.ITEM_USE]: ItemUseSubTypeEnum,
+    [ItemTypeEnum.ITEM_EXTRACT]: ItemExtractSubTypeEnum,
+    [ItemTypeEnum.ITEM_TOOL]: ItemToolSubTypeEnum,
+};
+
 type ItemParams = {
     id?: number;
     name?: string;
-    type?: string;
-    subType?: string;
+    type?: number;
+    subType?: number;
     size?: number;
     antiFlags?: BitFlag;
     flags?: BitFlag;
@@ -66,8 +96,8 @@ type ItemParams = {
 export default class Item {
     private readonly id: number;
     private readonly name: string;
-    private readonly type: string;
-    private readonly subType: string;
+    private readonly type: number;
+    private readonly subType: number;
     private readonly size: number;
     private readonly antiFlags: BitFlag;
     private readonly flags: BitFlag;
@@ -189,6 +219,7 @@ export default class Item {
         this.attributeType6 = attributeType6;
         this.attributeValue6 = attributeValue6;
         this.dbId = dbId;
+        this.protoId = id;
     }
 
     getId() {
@@ -197,7 +228,7 @@ export default class Item {
     getName() {
         return this.name;
     }
-    geType() {
+    getType() {
         return this.type;
     }
     getSubType() {
@@ -326,16 +357,16 @@ export default class Item {
     getWindow() {
         return this.window;
     }
-    setDbId(value) {
+    setDbId(value: number) {
         this.dbId = value;
     }
-    setSocket0(value) {
+    setSocket0(value: number) {
         this.socket0 = value;
     }
-    setSocket1(value) {
+    setSocket1(value: number) {
         this.socket1 = value;
     }
-    setSocket2(value) {
+    setSocket2(value: number) {
         this.socket2 = value;
     }
     setAttributeType0(value: number) {
@@ -372,17 +403,20 @@ export default class Item {
         const flagsBitFlag = parseFlags(proto.flag, ItemFlagEnum);
         const immuneFlagsBitFlag = parseFlags(proto.immune, ItemImmuneFlagEnum);
         const wearFlagsBitFlag = parseFlags(proto.item_wear, ItemWearFlagEnum);
+        const itemType = ItemTypeEnum[proto.item_type] || ItemTypeEnum.ITEM_NONE;
+        const itemSubTypeEnum = itemTypeSubTypeMapper[itemType];
+        const itemSubType = itemSubTypeEnum && itemSubTypeEnum[proto.sub_type] ? itemSubTypeEnum[proto.sub_type] : 0;
 
         return new Item({
             id: Number(proto.vnum),
             name: proto.name,
-            type: proto.item_type,
+            type: itemType,
             gold: Number(proto.gold),
             shopPrice: Number(proto.shop_buy_price),
             refineId: Number(proto.refine),
             refineSet: Number(proto.refineset),
             magicPercent: Number(proto.magic_pct),
-            subType: proto.sub_type,
+            subType: itemSubType,
             size: Number(proto.size),
             addon: Number(proto.attu_addon),
             socket: Number(proto.socket),
@@ -393,25 +427,25 @@ export default class Item {
             wearFlags: wearFlagsBitFlag,
             limits: [
                 new ItemLimit({
-                    type: ItemLimitTypeEnum[proto.limit_type0] || ItemLimitTypeEnum.LIMIT_NONE,
+                    type: ItemLimitTypeEnum[proto.limit_type0] || ItemLimitTypeEnum.NONE,
                     value: proto.limit_value0,
                 }),
                 new ItemLimit({
-                    type: ItemLimitTypeEnum[proto.limit_type1] || ItemLimitTypeEnum.LIMIT_NONE,
+                    type: ItemLimitTypeEnum[`LIMIT_${proto.limit_type1}`] || ItemLimitTypeEnum.NONE,
                     value: proto.limit_value1,
                 }),
             ],
             applies: [
                 new ItemApply({
-                    type: ApplyTypeEnum[proto.addon_type0] || ApplyTypeEnum.APPLY_NONE,
+                    type: ApplyTypeEnum[`APPLY_${proto.addon_type0}`] || ApplyTypeEnum.NONE,
                     value: proto.addon_value0,
                 }),
                 new ItemApply({
-                    type: ApplyTypeEnum[proto.addon_type1] || ApplyTypeEnum.APPLY_NONE,
+                    type: ApplyTypeEnum[`APPLY_${proto.addon_type1}`] || ApplyTypeEnum.NONE,
                     value: proto.addon_value1,
                 }),
                 new ItemApply({
-                    type: ApplyTypeEnum[proto.addon_type2] || ApplyTypeEnum.APPLY_NONE,
+                    type: ApplyTypeEnum[`APPLY_${proto.addon_type2}`] || ApplyTypeEnum.NONE,
                     value: proto.addon_value2,
                 }),
             ],

@@ -1,0 +1,8 @@
+export enum ItemAutoUseSubTypeEnum {
+    AUTOUSE_POTION,
+    AUTOUSE_ABILITY_UP,
+    AUTOUSE_BOMB,
+    AUTOUSE_GOLD,
+    AUTOUSE_MONEYBAG,
+    AUTOUSE_TREASURE_BOX,
+}

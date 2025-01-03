@@ -4,7 +4,7 @@ import Player from '../player/Player';
 import Behavior from './Behavior';
 import MonsterDiedEvent from './events/MonsterDiedEvent';
 import MonsterMovedEvent from './events/MonsterMovedEvent';
-import Mob from './Mob';
+import { Mob, MobParams } from './Mob';
 import { EntityTypeEnum } from '@/core/enum/EntityTypeEnum';
 import { EntityStateEnum } from '@/core/enum/EntityStateEnum';
 import ExperienceManager from '@/core/domain/manager/ExperienceManager';
@@ -12,13 +12,26 @@ import { ChatMessageTypeEnum } from '@/core/enum/ChatMessageTypeEnum';
 import { FlyEnum } from '@/core/enum/FlyEnum';
 import FlyEffectCreatedEvent from '../shared/event/FlyEffectCreatedEvent';
 import { DamageTypeEnum } from '@/core/enum/DamageTypeEnum';
-import Character from '../Character';
 import { AffectBitsTypeEnum } from '@/core/enum/AffectBitsTypeEnum';
 import BitFlag from '@/core/util/BitFlag';
 import { DamageFlagEnum } from '@/core/enum/DamageFlagEnum';
 import CharacterUpdatedEvent from '../shared/event/CharacterUpdatedEvent';
+import { MobEnchantEnum } from '@/core/enum/MobEnchantEnum';
+import { PointsEnum } from '@/core/enum/PointsEnum';
+import { MobImmuneFlagEnum } from '@/core/enum/MobImmuneFlagEnum';
+import { ItemWeaponSubTypeEnum } from '@/core/enum/ItemWeaponSubTypeEnum';
+import { MobResistEnum } from '@/core/enum/MobResistEnum';
 
 const MAX_DISTANCE_TO_GET_EXP = 5_000;
+
+const weaponResistanceMapper = {
+    [ItemWeaponSubTypeEnum.WEAPON_BELL]: MobResistEnum.BELL,
+    [ItemWeaponSubTypeEnum.WEAPON_DAGGER]: MobResistEnum.DAGGER,
+    [ItemWeaponSubTypeEnum.WEAPON_FAN]: MobResistEnum.FAN,
+    [ItemWeaponSubTypeEnum.WEAPON_SWORD]: MobResistEnum.SWORD,
+    [ItemWeaponSubTypeEnum.WEAPON_TWO_HANDED]: MobResistEnum.TWOHAND,
+    [ItemWeaponSubTypeEnum.WEAPON_BOW]: MobResistEnum.BOW,
+};
 
 export default class Monster extends Mob {
     private readonly behavior: Behavior;
@@ -29,114 +42,19 @@ export default class Monster extends Mob {
     private readonly experienceManager: ExperienceManager;
 
     constructor(
-        {
-            id,
-            virtualId = 0,
-            positionX,
-            positionY,
-            name,
-            rank,
-            battleType,
-            level,
-            size,
-            aiFlag,
-            mountCapacity,
-            raceFlag,
-            immuneFlag,
-            empire,
-            folder,
-            onClick,
-            st,
-            dx,
-            ht,
-            iq,
-            damageMin,
-            damageMax,
-            maxHp,
-            regenCycle,
-            regenPercent,
-            goldMin,
-            goldMax,
-            exp,
-            def,
-            attackSpeed,
-            movementSpeed,
-            aggressiveHpPct,
-            aggressiveSight,
-            attackRange,
-            dropItem,
-            resurrectionId,
-            damMultiply,
-            summon,
-            drainSp,
-            mobColor,
-            polymorphItem,
-            hpPercentToGetBerserk,
-            hpPercentToGetStoneSkin,
-            hpPercentToGetGodspeed,
-            hpPercentToGetDeathblow,
-            hpPercentToGetRevive,
-            direction,
-        },
+        params: Omit<MobParams, 'virtualId' | 'entityType'>,
         { animationManager, dropManager, experienceManager },
     ) {
         super(
             {
-                id,
-                virtualId,
+                ...params,
                 entityType: EntityTypeEnum.MONSTER,
-                positionX,
-                positionY,
-                name,
-                rank,
-                battleType,
-                level,
-                size,
-                aiFlag,
-                mountCapacity,
-                raceFlag,
-                immuneFlag,
-                empire,
-                folder,
-                onClick,
-                st,
-                dx,
-                ht,
-                iq,
-                damageMin,
-                damageMax,
-                maxHp,
-                regenCycle,
-                regenPercent,
-                goldMin,
-                goldMax,
-                exp,
-                def,
-                attackSpeed,
-                movementSpeed,
-                aggressiveHpPct,
-                aggressiveSight,
-                attackRange,
-                dropItem,
-                resurrectionId,
-                damMultiply,
-                summon,
-                drainSp,
-                mobColor,
-                polymorphItem,
-                hpPercentToGetBerserk,
-                hpPercentToGetStoneSkin,
-                hpPercentToGetGodspeed,
-                hpPercentToGetDeathblow,
-                hpPercentToGetRevive,
-                direction,
             },
             { animationManager },
         );
         this.dropManager = dropManager;
         this.experienceManager = experienceManager;
-        this.health = maxHp;
-        this.maxHealth = maxHp;
+        this.health = this.maxHealth;
         this.behavior = new Behavior(this);
         this.initEvents();
     }
@@ -149,6 +67,29 @@ export default class Monster extends Mob {
                 interval: this.regenCycle * 1_000,
             },
         });
+    }
+
+    protected applyAttackEffect(victim: Player) {
+        const poisonChance = this.getChanceToApplyEnchant(MobEnchantEnum.POISON);
+        const canApplyPoison = poisonChance > 0 && !victim.isAffectByFlag(AffectBitsTypeEnum.POISON);
+
+        if (canApplyPoison && MathUtil.getRandomInt(1, 100) <= poisonChance) {
+            victim.applyPoison(this);
+        }
+
+        const stunChance = this.getChanceToApplyEnchant(MobEnchantEnum.STUN);
+        const canApplyStun = stunChance > 0 && !victim.isAffectByFlag(AffectBitsTypeEnum.STUN);
+
+        if (canApplyStun && MathUtil.getRandomInt(1, 100) <= stunChance) {
+            victim.applyStun();
+        }
+
+        const slowChance = this.getChanceToApplyEnchant(MobEnchantEnum.SLOW);
+        const canApplySlow = slowChance > 0 && !victim.isAffectByFlag(AffectBitsTypeEnum.SLOW);
+
+        if (canApplySlow && MathUtil.getRandomInt(1, 100) <= slowChance) {
+            victim.applyStun();
+        }
     }
 
     private sendUpdateEvent() {
@@ -168,7 +109,31 @@ export default class Monster extends Mob {
         );
     }
 
-    applyPoison(attacker: Character) {
+    applyFire(attacker: Player) {
+        if (this.isAffectByFlag(AffectBitsTypeEnum.FIRE)) return;
+
+        this.setAffectFlag(AffectBitsTypeEnum.FIRE);
+        this.sendUpdateEvent();
+
+        this.eventTimerManager.addTimer({
+            id: 'FIRE_AFFECT',
+            eventFunction: () => {
+                const damage = this.maxHealth * 0.05;
+                this.takeDamage(attacker, damage, DamageTypeEnum.FIRE);
+            },
+            options: {
+                interval: 1_000,
+                duration: 10_000,
+            },
+            onEndEventFunction: () => {
+                this.removeAffectFlag(AffectBitsTypeEnum.FIRE);
+                this.sendUpdateEvent();
+            },
+        });
+    }
+
+    applyPoison(attacker: Player) {
+        if (this.isImmuneByFlag(MobImmuneFlagEnum.POISON)) return;
         if (this.isAffectByFlag(AffectBitsTypeEnum.POISON)) return;
 
         this.setAffectFlag(AffectBitsTypeEnum.POISON);
@@ -192,6 +157,7 @@ export default class Monster extends Mob {
     }
 
     applyStun() {
+        if (this.isImmuneByFlag(MobImmuneFlagEnum.STUN)) return;
         if (this.isAffectByFlag(AffectBitsTypeEnum.STUN)) return;
 
         this.setAffectFlag(AffectBitsTypeEnum.STUN);
@@ -212,6 +178,7 @@ export default class Monster extends Mob {
     }
 
     applySlow() {
+        if (this.isImmuneByFlag(MobImmuneFlagEnum.SLOW)) return;
         if (this.isAffectByFlag(AffectBitsTypeEnum.SLOW)) return;
         const SLOW_VALUE = 30;
         this.setMovementSpeed(this.getMovementSpeed() - SLOW_VALUE);
@@ -251,20 +218,61 @@ export default class Monster extends Mob {
         return Math.round(Math.max(0, Math.min(100, (this.health * 100) / this.maxHealth)));
     }
 
-    takeDamage(attacker: Character, damage: number, damageType: DamageTypeEnum) {
-        if (!(attacker instanceof Player)) return;
+    private applyResistance(damage: number, resistance: number): number {
+        return damage - damage * (resistance / 100);
+    }
 
+    private applyWeaponDamageResistance(attacker: Player, damage: number): number {
+        const attackerWeapon = attacker.getWeapon();
+        if (!attackerWeapon) return damage;
+
+        const resistanceType = weaponResistanceMapper[attackerWeapon.getSubType()];
+        if (resistanceType) {
+            return this.applyResistance(damage, this.getResist(resistanceType));
+        }
+
+        console.log(`Invalid weapon type: ${attackerWeapon.getSubType()}`);
+        return damage;
+    }
+
+    private applyCriticalDamage(attacker: Player, damage: number, damageFlags: BitFlag): number {
+        const criticalChance = attacker.getPoint(PointsEnum.CRITICAL_PERCENTAGE);
+        if (MathUtil.getRandomInt(1, 100) <= criticalChance) {
+            damage *= 2;
+            damageFlags.set(DamageFlagEnum.CRITICAL);
+        }
+        return damage;
+    }
+
+    private applyPenetrateDamage(attacker: Player, damage: number, damageFlags: BitFlag): number {
+        const penetrateChance = attacker.getPoint(PointsEnum.PENETRATE_PERCENTAGE);
+        if (MathUtil.getRandomInt(1, 100) <= penetrateChance) {
+            damage += this.getDefense();
+            damageFlags.set(DamageFlagEnum.PENETRATE);
+        }
+        return damage;
+    }
+
+    takeDamage(attacker: Player, damage: number, damageType: DamageTypeEnum) {
         this.state = EntityStateEnum.BATTLE;
 
         const damageFlags = new BitFlag();
 
         if (damageType === DamageTypeEnum.POISON) {
             damageFlags.set(DamageFlagEnum.POISON);
+            damage -= damage * (this.getResist(MobResistEnum.POISON) / 100);
         } else {
             damageFlags.set(DamageFlagEnum.NORMAL);
-        }
 
-        //TODO: verify critical, penetrate
+            damage = this.applyCriticalDamage(attacker, damage, damageFlags);
+            damage = this.applyPenetrateDamage(attacker, damage, damageFlags);
+            damage = this.applyWeaponDamageResistance(attacker, damage);
+            this.calculateAndSendHealthSteal(attacker, damage);
+            this.calculateAndSendManaSteal(attacker, damage);
+            this.calculateAndSendGoldSteal(attacker);
+            this.calculateAndSendHealthHitRecovery(attacker, damage);
+            this.calculateAndSendManaHitRecovery(attacker, damage);
+        }
 
         attacker.sendDamageCaused({
             virtualId: this.virtualId,
@@ -272,6 +280,7 @@ export default class Monster extends Mob {
             damageFlags: damageFlags.getFlag(),
         });
 
+        damage = damage > 0 ? damage : MathUtil.getRandomInt(1, 5);
         this.health -= damage;
         this.behavior.onDamage(attacker, damage);
 
@@ -284,6 +293,114 @@ export default class Monster extends Mob {
         }
 
         this.state = EntityStateEnum.IDLE; //TODO: this behavior is incorrect
+    }
+
+    private calculateAndSendHealthSteal(attacker: Player, damage: number) {
+        const attackerStealHealthValue = attacker.getPoint(PointsEnum.STEAL_HEALTH);
+
+        if (attackerStealHealthValue > 0) {
+            const stealHealthChance = 1;
+            if (MathUtil.getRandomInt(1, 10) <= stealHealthChance) {
+                const healthDamage = (Math.min(damage, Math.max(0, this.health)) * attackerStealHealthValue) / 100;
+                this.health -= healthDamage;
+                attacker.addHealth(healthDamage);
+                this.publish(
+                    new FlyEffectCreatedEvent({
+                        fromVirtualId: this.virtualId,
+                        toVirtualId: attacker.getVirtualId(),
+                        type: FlyEnum.HEALTH_BIG,
+                    }),
+                );
+                attacker.chat({
+                    messageType: ChatMessageTypeEnum.INFO,
+                    message: `[HEALTH_STEAL] you received ${healthDamage} of health`,
+                });
+            }
+        }
+    }
+
+    private calculateAndSendManaSteal(attacker: Player, damage: number) {
+        const attackerStealManaValue = attacker.getPoint(PointsEnum.STEAL_MANA);
+
+        if (attackerStealManaValue > 0) {
+            const stealManaChance = 1;
+            if (MathUtil.getRandomInt(1, 10) <= stealManaChance) {
+                const manaDamage =
+                    (Math.min(damage, Math.max(0, this.maxMana || this.health)) * attackerStealManaValue) / 100;
+                this.health -= manaDamage;
+                attacker.addMana(manaDamage);
+                this.publish(
+                    new FlyEffectCreatedEvent({
+                        fromVirtualId: this.virtualId,
+                        toVirtualId: attacker.getVirtualId(),
+                        type: FlyEnum.MANA_BIG,
+                    }),
+                );
+                attacker.chat({
+                    messageType: ChatMessageTypeEnum.INFO,
+                    message: `[MANA_STEAL] you received ${manaDamage} of mana`,
+                });
+            }
+        }
+    }
+
+    private calculateAndSendGoldSteal(attacker: Player) {
+        const attackerStealGoldChance = attacker.getPoint(PointsEnum.STEAL_GOLD);
+
+        if (MathUtil.getRandomInt(1, 100) <= attackerStealGoldChance) {
+            const amount = MathUtil.getRandomInt(1, this.level * 50);
+            attacker.addGold(amount);
+            attacker.chat({
+                messageType: ChatMessageTypeEnum.INFO,
+                message: `[GOLD_STEAL] you received ${amount} of gold`,
+            });
+        }
+    }
+
+    private calculateAndSendHealthHitRecovery(attacker: Player, damage: number) {
+        const attackerHitHealthRecoveryPercentage = attacker.getPoint(PointsEnum.HIT_HEALTH_RECOVERY);
+
+        if (attackerHitHealthRecoveryPercentage > 0) {
+            const amount = Math.min(damage, this.health) * (attackerHitHealthRecoveryPercentage / 100);
+
+            if (amount > 0) {
+                attacker.addHealth(amount);
+                this.publish(
+                    new FlyEffectCreatedEvent({
+                        fromVirtualId: this.virtualId,
+                        toVirtualId: attacker.getVirtualId(),
+                        type: FlyEnum.HEALTH_BIG,
+                    }),
+                );
+                attacker.chat({
+                    messageType: ChatMessageTypeEnum.INFO,
+                    message: `[HEALTH_HIT_RECOVERY] you received ${amount} of health`,
+                });
+            }
+        }
+    }
+
+    private calculateAndSendManaHitRecovery(attacker: Player, damage: number) {
+        const attackerHitManaRecoveryPercentage = attacker.getPoint(PointsEnum.HIT_MANA_RECOVERY);
+
+        if (attackerHitManaRecoveryPercentage > 0) {
+            const amount = Math.min(damage, this.maxMana || this.health) * (attackerHitManaRecoveryPercentage / 100);
+
+            if (amount > 0) {
+                attacker.addMana(amount);
+                this.publish(
+                    new FlyEffectCreatedEvent({
+                        fromVirtualId: this.virtualId,
+                        toVirtualId: attacker.getVirtualId(),
+                        type: FlyEnum.MANA_BIG,
+                    }),
+                );
+                attacker.chat({
+                    messageType: ChatMessageTypeEnum.INFO,
+                    message: `[MANA_HIT_RECOVERY] you received ${amount} of mana`,
+                });
+            }
+        }
     }
 
     reward() {

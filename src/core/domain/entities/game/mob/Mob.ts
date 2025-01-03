@@ -1,5 +1,15 @@
+import { MobRankEnum } from '@/core/enum/MobRankEnum';
 import Character from '../Character';
 import MonsterGroup from './MonsterGroup';
+import { BattleTypeEnum } from '@/core/enum/BattleTypeEnum';
+import BitFlag from '@/core/util/BitFlag';
+import { MobAIFlagEnum } from '@/core/enum/MobAIFlagEnum';
+import { MobRaceFlagEnum } from '@/core/enum/MobRaceFlagEnum';
+import { MobImmuneFlagEnum } from '@/core/enum/MobImmuneFlagEnum';
+import { MobsProto } from '@/game/infra/config/GameConfig';
+import { EntityTypeEnum } from '@/core/enum/EntityTypeEnum';
+import { MobEnchantEnum } from '@/core/enum/MobEnchantEnum';
+import { MobResistEnum } from '@/core/enum/MobResistEnum';
 
 enum MobSizeEnum {
     RESERVED = 0,
@@ -8,78 +18,53 @@ enum MobSizeEnum {
     BIG = 3,
 }
 
-enum MobResistTypeEnum {
-    SWORD = 1,
-    TWO_HAND = 2,
-    DAGGER = 3,
-    BELL = 4,
-    FAN = 5,
-    BOW = 6,
-    FIRE = 7,
-    ELECT = 8,
-    MAGIC = 9,
-    WIND = 10,
-    POISON = 11,
-}
-
-enum MobEnchantTypeEnum {
-    CURSE = 1,
-    SLOW = 2,
-    POISON = 3,
-    STUN = 4,
-    CRITICAL = 5,
-    PENETRATE = 6,
-}
-
 class MobResist {
-    private readonly type: MobResistTypeEnum;
+    public readonly type: MobResistEnum;
+    public readonly value: number;
 
-    constructor({ type }) {
+    constructor({ type, value }) {
         this.type = type;
-    }
-
-    getType() {
-        return this.type;
+        this.value = value;
     }
 }
 
 class MobEnchant {
-    private readonly type: MobEnchantTypeEnum;
+    public readonly type: MobEnchantEnum;
+    public readonly value: number;
 
-    constructor({ type }) {
+    constructor({ type, value }) {
         this.type = type;
-    }
-
-    getType() {
-        return this.type;
+        this.value = value;
     }
 }
 
 class MobSkill {
-    private readonly id: number;
-    private readonly level: number;
+    public readonly id: number;
+    public readonly level: number;
 
     constructor({ id, level }) {
         this.id = id;
         this.level = level;
     }
-
-    getId() {
-        return this.id;
-    }
-    getLevel() {
-        return this.level;
-    }
 }
 
-export default abstract class Mob extends Character {
-    protected readonly rank: string;
-    protected readonly battleType: string;
+export type MobParams = {
+    proto: MobsProto;
+    positionX: number;
+    positionY: number;
+    entityType: EntityTypeEnum;
+    virtualId?: number;
+    direction: number;
+};
+
+export abstract class Mob extends Character {
+    protected readonly rank: MobRankEnum;
+    protected readonly battleType: BattleTypeEnum;
     protected readonly size: MobSizeEnum = MobSizeEnum.MEDIUM;
-    protected readonly aiFlag: string;
+    protected readonly aiFlag: BitFlag = new BitFlag();
     protected readonly mountCapacity: number;
-    protected readonly raceFlag: string;
-    protected readonly immuneFlag: string;
+    protected readonly raceFlag: BitFlag = new BitFlag();
+    protected readonly immuneFlag: BitFlag = new BitFlag();
     protected readonly folder: string;
     protected readonly onClick: number;
     protected readonly damageMin: number;
@@ -98,9 +83,9 @@ export default abstract class Mob extends Character {
     protected readonly resurrectionId: number;
     protected readonly direction: number;
 
-    protected readonly resists = [];
-    protected readonly enchants = [];
-    protected readonly skills = [];
+    protected readonly resists: Array<MobResist> = [];
+    protected readonly enchants: Array<MobEnchant> = [];
+    protected readonly skills: Array<MobSkill> = [];
 
     protected readonly damMultiply: number;
     protected readonly summon: number;
@@ -116,125 +101,126 @@ export default abstract class Mob extends Character {
 
     protected group: MonsterGroup;
 
-    constructor(
-        {
-            id,
-            virtualId,
-            entityType,
-            positionX,
-            positionY,
-            name,
-            rank,
-            battleType,
-            level,
-            size,
-            aiFlag,
-            mountCapacity,
-            raceFlag,
-            immuneFlag,
-            empire,
-            folder,
-            onClick,
-            st,
-            dx,
-            ht,
-            iq,
-            damageMin,
-            damageMax,
-            maxHp,
-            regenCycle,
-            regenPercent,
-            goldMin,
-            goldMax,
-            exp,
-            def,
-            attackSpeed,
-            movementSpeed,
-            aggressiveHpPct,
-            aggressiveSight,
-            attackRange,
-            dropItem,
-            resurrectionId,
-            damMultiply,
-            summon,
-            drainSp,
-            mobColor,
-            polymorphItem,
-            hpPercentToGetBerserk,
-            hpPercentToGetStoneSkin,
-            hpPercentToGetGodspeed,
-            hpPercentToGetDeathblow,
-            hpPercentToGetRevive,
-            direction,
-        },
-        { animationManager },
-    ) {
+    constructor(params: MobParams, { animationManager }) {
         super(
             {
-                id,
-                classId: id,
-                virtualId,
-                entityType,
-                positionX,
-                positionY,
-                movementSpeed,
-                attackSpeed,
-                dx,
-                ht,
-                iq,
-                st,
-                name,
-                level,
-                empire,
+                id: Number(params.proto.vnum),
+                classId: Number(params.proto.vnum),
+                virtualId: Number(params.virtualId),
+                entityType: Number(params.entityType),
+                positionX: Number(params.positionX),
+                positionY: Number(params.positionY),
+                movementSpeed: Number(params.proto.move_speed),
+                attackSpeed: Number(params.proto.attack_speed),
+                dx: Number(params.proto.dx),
+                ht: Number(params.proto.ht),
+                iq: Number(params.proto.iq),
+                st: Number(params.proto.st),
+                name: Number(params.proto.name),
+                level: Number(params.proto.level),
+                empire: Number(params.proto.empire),
             },
             { animationManager },
         );
-        this.rank = rank;
-        this.battleType = battleType;
-        this.size = size;
-        this.aiFlag = aiFlag;
-        this.mountCapacity = mountCapacity;
-        this.raceFlag = raceFlag;
-        this.immuneFlag = immuneFlag;
-        this.folder = folder;
-        this.onClick = onClick;
-        this.damageMin = damageMin;
-        this.damageMax = damageMax;
-        this.maxHp = maxHp;
-        this.regenCycle = regenCycle;
-        this.regenPercent = regenPercent;
-        this.goldMin = goldMin;
-        this.goldMax = goldMax;
-        this.exp = exp;
-        this.def = def;
-        this.aggressiveHpPct = aggressiveHpPct;
-        this.aggressiveSight = aggressiveSight;
-        this.attackRange = attackRange;
-        this.dropItem = dropItem;
-        this.resurrectionId = resurrectionId;
-        this.damMultiply = damMultiply;
-        this.summon = summon;
-        this.drainSp = drainSp;
-        this.mobColor = mobColor;
-        this.polymorphItem = polymorphItem;
-        this.hpPercentToGetBerserk = hpPercentToGetBerserk;
-        this.hpPercentToGetStoneSkin = hpPercentToGetStoneSkin;
-        this.hpPercentToGetGodspeed = hpPercentToGetGodspeed;
-        this.hpPercentToGetDeathblow = hpPercentToGetDeathblow;
-        this.hpPercentToGetRevive = hpPercentToGetRevive;
-        this.direction = direction;
+        const proto = params.proto;
+
+        this.rank = MobRankEnum[String(proto.rank)] || MobRankEnum.KNIGHT;
+        this.battleType = BattleTypeEnum[proto.battle_type] || BattleTypeEnum.MELEE;
+
+        const aiFlags = proto.ai_flag?.split(',');
+        aiFlags.forEach((aiFlag) => MobAIFlagEnum[aiFlag] && this.aiFlag.set(MobAIFlagEnum[aiFlag]));
+
+        const raceFlags = proto.race_flag?.split(',');
+        raceFlags.forEach((raceFlag) => MobRaceFlagEnum[raceFlag] && this.raceFlag.set(MobRaceFlagEnum[raceFlag]));
+
+        const immuneFlags = proto.immune_flag?.split(',');
+        immuneFlags.forEach(
+            (immuneFlag) => MobImmuneFlagEnum[immuneFlag] && this.immuneFlag.set(MobImmuneFlagEnum[immuneFlag]),
+        );
+
+        if (proto.enchant_curse) this.addEnchant(MobEnchantEnum.CURSE, Number(proto.enchant_curse));
+        if (proto.enchant_slow) this.addEnchant(MobEnchantEnum.SLOW, Number(proto.enchant_slow));
+        if (proto.enchant_poison) this.addEnchant(MobEnchantEnum.POISON, Number(proto.enchant_poison));
+        if (proto.enchant_stun) this.addEnchant(MobEnchantEnum.STUN, Number(proto.enchant_stun));
+        if (proto.enchant_critical) this.addEnchant(MobEnchantEnum.CRITICAL, Number(proto.enchant_critical));
+        if (proto.enchant_penetrate) this.addEnchant(MobEnchantEnum.PENETRATE, Number(proto.enchant_penetrate));
+
+        if (proto.resist_sword) this.addResist(MobResistEnum.SWORD, Number(proto.resist_sword));
+        if (proto.resist_twohand) this.addResist(MobResistEnum.TWOHAND, Number(proto.resist_twohand));
+        if (proto.resist_dagger) this.addResist(MobResistEnum.DAGGER, Number(proto.resist_dagger));
+        if (proto.resist_bell) this.addResist(MobResistEnum.BELL, Number(proto.resist_bell));
+        if (proto.resist_fan) this.addResist(MobResistEnum.FAN, Number(proto.resist_fan));
+        if (proto.resist_bow) this.addResist(MobResistEnum.BOW, Number(proto.resist_bow));
+        if (proto.resist_fire) this.addResist(MobResistEnum.FIRE, Number(proto.resist_fire));
+        if (proto.resist_elect) this.addResist(MobResistEnum.ELECT, Number(proto.resist_elect));
+        if (proto.resist_magic) this.addResist(MobResistEnum.MAGIC, Number(proto.resist_magic));
+        if (proto.resist_wind) this.addResist(MobResistEnum.WIND, Number(proto.resist_wind));
+        if (proto.resist_poison) this.addResist(MobResistEnum.POISON, Number(proto.resist_poison));
+
+        if (proto.skill_level0 && proto.skill_vnum0)
+            this.addSkill(Number(proto.skill_vnum0), Number(proto.skill_level0));
+        if (proto.skill_level1 && proto.skill_vnum1)
+            this.addSkill(Number(proto.skill_vnum1), Number(proto.skill_level1));
+        if (proto.skill_level2 && proto.skill_vnum2)
+            this.addSkill(Number(proto.skill_vnum2), Number(proto.skill_level2));
+        if (proto.skill_level3 && proto.skill_vnum3)
+            this.addSkill(Number(proto.skill_vnum3), Number(proto.skill_level3));
+        if (proto.skill_level4 && proto.skill_vnum4)
+            this.addSkill(Number(proto.skill_vnum4), Number(proto.skill_level4));
+
+        this.size = Number(proto.size);
+        this.mountCapacity = Number(proto.mount_capacity);
+        this.folder = proto.folder;
+        this.onClick = Number(proto.on_click);
+        this.damageMin = Number(proto.damage_min);
+        this.damageMax = Number(proto.damage_max);
+        this.maxHp = Number(proto.max_hp);
+        this.regenCycle = Number(proto.regen_cycle);
+        this.regenPercent = Number(proto.regen_percent);
+        this.goldMin = Number(proto.gold_min);
+        this.goldMax = Number(proto.gold_max);
+        this.exp = Number(proto.exp);
+        this.def = Number(proto.def);
+        this.aggressiveHpPct = Number(proto.aggressive_hp_pct);
+        this.aggressiveSight = Number(proto.aggressive_sight);
+        this.attackRange = Number(proto.attack_range);
+        this.dropItem = Number(proto.drop_item);
+        this.resurrectionId = Number(proto.resurrection_vnum);
+        this.damMultiply = Number(proto.dam_multiply);
+        this.summon = Number(proto.summon);
+        this.drainSp = Number(proto.drain_sp);
+        this.mobColor = Number(proto.mob_color);
+        this.polymorphItem = Number(proto.polymorph_item);
+        this.hpPercentToGetBerserk = Number(proto.sp_berserk);
+        this.hpPercentToGetStoneSkin = Number(proto.sp_stoneskin);
+        this.hpPercentToGetGodspeed = Number(proto.sp_godspeed);
+        this.hpPercentToGetDeathblow = Number(proto.sp_deathblow);
+        this.hpPercentToGetRevive = Number(proto.sp_revive);
+        this.direction = Number(params.direction);
     }
 
-    addResist(type: MobResistTypeEnum) {
-        this.resists.push(new MobResist({ type }));
+    protected getChanceToApplyEnchant(type: MobEnchantEnum) {
+        return this.enchants.find((enchant) => enchant.type === type)?.value || 0;
     }
 
-    addEnchant(type: MobEnchantTypeEnum) {
-        this.enchants.push(new MobEnchant({ type }));
+    private addResist(type: MobResistEnum, value: number) {
+        this.resists.push(new MobResist({ type, value }));
     }
 
-    addSkill(id: number, level: number) {
+    private addEnchant(type: MobEnchantEnum, value: number) {
+        this.enchants.push(new MobEnchant({ type, value }));
+    }
+
+    private addSkill(id: number, level: number) {
         this.skills.push(new MobSkill({ id, level }));
+    }
+
+    isImmuneByFlag(flag: MobImmuneFlagEnum) {
+        return this.immuneFlag.is(flag);
+    }
+
+    getResist(resistType: MobResistEnum) {
+        return this.resists.find((resist) => resist.type === resistType)?.value || 0;
     }
 
     getRank() {

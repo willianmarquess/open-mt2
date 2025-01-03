@@ -1,0 +1,15 @@
+export enum MobAIFlagEnum {
+    AGGR = 1 << 0,
+    NOMOVE = 1 << 1,
+    COWARD = 1 << 2,
+    NOATTACKSHINSU = 1 << 3,
+    NOATTACKJINNO = 1 << 4,
+    NOATTACKCHUNJO = 1 << 5,
+    ATTACKMOB = 1 << 6,
+    BERSERK = 1 << 7,
+    STONESKIN = 1 << 8,
+    GODSPEED = 1 << 9,
+    DEATHBLOW = 1 << 10,
+    REVIVE = 1 << 11,
+    DEFAULT = 1 << 12,
+}

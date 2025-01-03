@@ -1,4 +1,4 @@
-export enum ItemSubTypeEnum {
+export enum ItemWeaponSubTypeEnum {
     WEAPON_SWORD,
     WEAPON_DAGGER,
     WEAPON_BOW,

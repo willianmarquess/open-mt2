@@ -6,11 +6,9 @@ import { AnimationSubTypeEnum } from '@/core/enum/AnimationSubTypeEnum';
 import MathUtil from '../../util/MathUtil';
 import AnimationUtil from '../../util/AnimationUtil';
 import Player from './player/Player';
-import { AttackTypeEnum } from '@/core/enum/AttackTypeEnum';
 import GameEntity from './GameEntity';
 import { AffectBitsTypeEnum } from '@/core/enum/AffectBitsTypeEnum';
 import EventTimerManager from '../../manager/EventTimerManager';
-import { DamageTypeEnum } from '@/core/enum/DamageTypeEnum';
 import AffectBitFlag from '@/core/util/AffectBitFlag';
 
 export default abstract class Character extends GameEntity {
@@ -37,7 +35,6 @@ export default abstract class Character extends GameEntity {
     protected ht: number;
     protected iq: number;
 
-    protected animationManager: AnimationManager;
     protected emitter = new EventEmitter();
     protected nearbyEntities = new Map<number, GameEntity>();
 
@@ -45,13 +42,11 @@ export default abstract class Character extends GameEntity {
     protected targetedBy = new Map<number, GameEntity>();
 
     protected affectBitFlag = new AffectBitFlag();
-    protected eventTimerManager = new EventTimerManager();
     protected maxHealth: number = 0;
     protected maxMana: number = 0;
 
-    protected poisonChance: number = 20;
-    protected slowChance: number = 20;
-    protected stunChance: number = 20;
+    protected readonly eventTimerManager = new EventTimerManager();
+    protected readonly animationManager: AnimationManager;
 
     constructor(
         {
@@ -94,6 +89,10 @@ export default abstract class Character extends GameEntity {
         this.animationManager = animationManager;
     }
 
+    getEventTimerManager() {
+        return this.eventTimerManager;
+    }
+
     getAffectFlags() {
         return this.affectBitFlag.getFlags();
     }
@@ -110,10 +109,6 @@ export default abstract class Character extends GameEntity {
         this.affectBitFlag.reset(value);
     }
 
-    abstract applyPoison(attacker: Character): void;
-    abstract applyStun(attacker: Character): void;
-    abstract applySlow(attacker: Character): void;
-
     getAttackRating() {
         return Math.min(90, this.dx * 4 + (this.level * 2) / 6);
     }
@@ -121,8 +116,6 @@ export default abstract class Character extends GameEntity {
     abstract getHealthPercentage(): number;
     abstract getAttack(): number;
     abstract getDefense(): number;
-    abstract attack(victim: GameEntity, attackType: AttackTypeEnum): void;
-    abstract takeDamage(attacker: Character, damage: number, type: DamageTypeEnum): void;
 
     die() {
         this.state = EntityStateEnum.DEAD;
@@ -235,30 +228,6 @@ export default abstract class Character extends GameEntity {
 
     removeAllListeners<T>(eventConstructor: new (args: any) => T) {
         this.emitter.removeAllListeners(eventConstructor.name);
-    }
-
-    setPoisonChance(value: number) {
-        this.poisonChance = value > 0 ? value : 0;
-    }
-
-    addPoisonChance(value: number) {
-        this.poisonChance += value > 0 ? value : 0;
-    }
-
-    setStunChance(value: number) {
-        this.stunChance = value > 0 ? value : 0;
-    }
-
-    addStunChance(value: number) {
-        this.stunChance += value > 0 ? value : 0;
-    }
-
-    setSlowChance(value: number) {
-        this.slowChance = value > 0 ? value : 0;
-    }
-
-    addSlowChance(value: number) {
-        this.slowChance += value > 0 ? value : 0;
     }
 
     setMovementSpeed(value: number) {
