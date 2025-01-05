@@ -69,7 +69,6 @@ export abstract class Mob extends Character {
     protected readonly onClick: number;
     protected readonly damageMin: number;
     protected readonly damageMax: number;
-    protected readonly maxHp: number;
     protected readonly regenCycle: number;
     protected readonly regenPercent: number;
     protected readonly goldMin: number;
@@ -116,7 +115,7 @@ export abstract class Mob extends Character {
                 ht: Number(params.proto.ht),
                 iq: Number(params.proto.iq),
                 st: Number(params.proto.st),
-                name: Number(params.proto.name),
+                name: params.proto.name,
                 level: Number(params.proto.level),
                 empire: Number(params.proto.empire),
             },
@@ -128,13 +127,13 @@ export abstract class Mob extends Character {
         this.battleType = BattleTypeEnum[proto.battle_type] || BattleTypeEnum.MELEE;
 
         const aiFlags = proto.ai_flag?.split(',');
-        aiFlags.forEach((aiFlag) => MobAIFlagEnum[aiFlag] && this.aiFlag.set(MobAIFlagEnum[aiFlag]));
+        aiFlags?.forEach((aiFlag) => MobAIFlagEnum[aiFlag] && this.aiFlag.set(MobAIFlagEnum[aiFlag]));
 
         const raceFlags = proto.race_flag?.split(',');
-        raceFlags.forEach((raceFlag) => MobRaceFlagEnum[raceFlag] && this.raceFlag.set(MobRaceFlagEnum[raceFlag]));
+        raceFlags?.forEach((raceFlag) => MobRaceFlagEnum[raceFlag] && this.raceFlag.set(MobRaceFlagEnum[raceFlag]));
 
         const immuneFlags = proto.immune_flag?.split(',');
-        immuneFlags.forEach(
+        immuneFlags?.forEach(
             (immuneFlag) => MobImmuneFlagEnum[immuneFlag] && this.immuneFlag.set(MobImmuneFlagEnum[immuneFlag]),
         );
 
@@ -174,7 +173,7 @@ export abstract class Mob extends Character {
         this.onClick = Number(proto.on_click);
         this.damageMin = Number(proto.damage_min);
         this.damageMax = Number(proto.damage_max);
-        this.maxHp = Number(proto.max_hp);
+        this.maxHealth = Number(proto.max_hp);
         this.regenCycle = Number(proto.regen_cycle);
         this.regenPercent = Number(proto.regen_percent);
         this.goldMin = Number(proto.gold_min);
@@ -219,6 +218,10 @@ export abstract class Mob extends Character {
         return this.immuneFlag.is(flag);
     }
 
+    isRaceByFlag(flag: MobRaceFlagEnum) {
+        return this.raceFlag.is(flag);
+    }
+
     getResist(resistType: MobResistEnum) {
         return this.resists.find((resist) => resist.type === resistType)?.value || 0;
     }
@@ -255,9 +258,6 @@ export abstract class Mob extends Character {
     }
     getDamageMax() {
         return this.damageMax;
-    }
-    getMaxHp() {
-        return this.maxHp;
     }
     getRegenCycle() {
         return this.regenCycle;

@@ -291,8 +291,8 @@ export default class GameConnection extends Connection {
 
     onCharacterPointsUpdated() {
         const characterPointsPacket = new CharacterPointsPacket();
-        for (const point in this.player.getPoints()) {
-            characterPointsPacket.addPoint(Number(point), this.player.getPoint(Number(point) as PointsEnum));
+        for (const point of this.player.getPoints().keys()) {
+            characterPointsPacket.addPoint(Number(point), this.player.getPoint(point));
         }
         this.send(characterPointsPacket);
     }

@@ -1,5 +1,6 @@
 import Monster from '@/core/domain/entities/game/mob/Monster';
 import Player from '@/core/domain/entities/game/player/Player';
+import BattleServiceFactory from '@/core/domain/service/battle/BattleServiceFactory';
 import World from '@/core/domain/World';
 import { AttackTypeEnum } from '@/core/enum/AttackTypeEnum';
 import Logger from '@/core/infra/logger/Logger';
@@ -7,10 +8,12 @@ import Logger from '@/core/infra/logger/Logger';
 export default class CharacterAttackService {
     private readonly logger: Logger;
     private readonly world: World;
+    private readonly battleServiceFactory: BattleServiceFactory;
 
-    constructor({ logger, world }) {
+    constructor({ logger, world, BattleServiceFactory }) {
         this.logger = logger;
         this.world = world;
+        this.battleServiceFactory = BattleServiceFactory;
     }
 
     async execute(player: Player, attackType: AttackTypeEnum, victimVirtualId: number) {
@@ -30,6 +33,7 @@ export default class CharacterAttackService {
             return;
         }
 
-        player.attack(victim, attackType);
+        const battleService = this.battleServiceFactory.createBattleService(player, victim);
+        battleService.execute(attackType);
     }
 }

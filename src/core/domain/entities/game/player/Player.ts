@@ -7,10 +7,8 @@ import InventoryEventsEnum from '../inventory/events/InventoryEventsEnum';
 import { PointsEnum } from '@/core/enum/PointsEnum';
 import OtherCharacterDiedEvent from './events/OtherCharacterDiedEvent';
 import TargetUpdatedEvent from './events/TargetUpdatedEvent';
-import PlayerBattle from './delegate/PlayerBattle';
 import PlayerApplies from './delegate/PlayerApplies';
 import PlayerInventory from './delegate/PlayerInventory';
-import { AttackTypeEnum } from '@/core/enum/AttackTypeEnum';
 import DamageCausedEvent from './events/DamageCausedEvent';
 import { EntityStateEnum } from '@/core/enum/EntityStateEnum';
 import { ChatMessageTypeEnum } from '@/core/enum/ChatMessageTypeEnum';
@@ -40,9 +38,7 @@ import Character from '../Character';
 import { SpecialItemEnum } from '@/core/enum/SpecialItemEnum';
 import { FlyEnum } from '@/core/enum/FlyEnum';
 import ShowFlyEffectEvent from './events/ShowFlyEffectEvent';
-import { DamageTypeEnum } from '@/core/enum/DamageTypeEnum';
 import CharacterUpdatedEvent from '../shared/event/CharacterUpdatedEvent';
-import Monster from '../mob/Monster';
 
 const REGEN_INTERVAL = 3000;
 
@@ -61,7 +57,6 @@ export default class Player extends Character {
     private slot: number;
 
     private appearance: number;
-    private points = {};
 
     private health: number;
     private baseHealth: number;
@@ -125,7 +120,6 @@ export default class Player extends Character {
     //delegate
     private playerInventory: PlayerInventory;
     private playerApplies: PlayerApplies;
-    private playerBattle: PlayerBattle;
 
     constructor(
         {
@@ -227,7 +221,6 @@ export default class Player extends Character {
 
         this.playerInventory = new PlayerInventory(this);
         this.playerApplies = new PlayerApplies(this, logger);
-        this.playerBattle = new PlayerBattle(this, logger);
 
         this.init();
     }
@@ -240,38 +233,38 @@ export default class Player extends Character {
         this.updateDefense();
         this.updateAttack();
 
-        this.points[PointsEnum.EXPERIENCE] = () => this.experience;
-        this.points[PointsEnum.HT] = () => this.ht;
-        this.points[PointsEnum.ST] = () => this.st;
-        this.points[PointsEnum.IQ] = () => this.iq;
-        this.points[PointsEnum.DX] = () => this.dx;
-        this.points[PointsEnum.LEVEL] = () => this.level;
-        this.points[PointsEnum.MAX_HEALTH] = () => this.maxHealth;
-        this.points[PointsEnum.MAX_MANA] = () => this.maxMana;
-        this.points[PointsEnum.HEALTH] = () => this.health;
-        this.points[PointsEnum.MANA] = () => this.mana;
-        this.points[PointsEnum.ATTACK_SPEED] = () => this.attackSpeed;
-        this.points[PointsEnum.MOVE_SPEED] = () => this.movementSpeed;
-        this.points[PointsEnum.NEEDED_EXPERIENCE] = () => this.experienceManager.getNeededExperience(this.level);
-        this.points[PointsEnum.STATUS_POINTS] = () => this.availableStatusPoints;
-        this.points[PointsEnum.GOLD] = () => this.gold;
-        this.points[PointsEnum.DEFENSE] = () => this.defense;
-        this.points[PointsEnum.DEFENSE_GRADE] = () => this.defense;
-        this.points[PointsEnum.ATTACK_GRADE] = () => this.attackValue;
-        this.points[PointsEnum.MAGIC_ATT_GRADE] = () => this.magicAttack;
-        this.points[PointsEnum.MAGIC_DEF_GRADE] = () => this.magicDefense;
-        this.points[PointsEnum.MALL_ITEM_BONUS] = () => this.mallItemBonus;
-        this.points[PointsEnum.ITEM_DROP_BONUS] = () => this.itemDropBonus;
-        this.points[PointsEnum.POISON] = () => this.poisonChance;
-        this.points[PointsEnum.SLOW] = () => this.slowChance;
-        this.points[PointsEnum.STUN] = () => this.stunChance;
-        this.points[PointsEnum.CRITICAL_PERCENTAGE] = () => this.criticalChance;
-        this.points[PointsEnum.PENETRATE_PERCENTAGE] = () => this.penetrateChance;
-        this.points[PointsEnum.STEAL_HEALTH] = () => this.stealHealthPercentage;
-        this.points[PointsEnum.STEAL_MANA] = () => this.stealManaPercentage;
-        this.points[PointsEnum.STEAL_GOLD] = () => this.stealGoldChance;
-        this.points[PointsEnum.HIT_HEALTH_RECOVERY] = () => this.healthHitRecoveryPercentage;
-        this.points[PointsEnum.HIT_MANA_RECOVERY] = () => this.manaHitRecoveryPercentage;
+        this.points.set(PointsEnum.EXPERIENCE, () => this.experience);
+        this.points.set(PointsEnum.HT, () => this.ht);
+        this.points.set(PointsEnum.ST, () => this.st);
+        this.points.set(PointsEnum.IQ, () => this.iq);
+        this.points.set(PointsEnum.DX, () => this.dx);
+        this.points.set(PointsEnum.LEVEL, () => this.level);
+        this.points.set(PointsEnum.MAX_HEALTH, () => this.maxHealth);
+        this.points.set(PointsEnum.MAX_MANA, () => this.maxMana);
+        this.points.set(PointsEnum.HEALTH, () => this.health);
+        this.points.set(PointsEnum.MANA, () => this.mana);
+        this.points.set(PointsEnum.ATTACK_SPEED, () => this.attackSpeed);
+        this.points.set(PointsEnum.MOVE_SPEED, () => this.movementSpeed);
+        this.points.set(PointsEnum.NEEDED_EXPERIENCE, () => this.experienceManager.getNeededExperience(this.level));
+        this.points.set(PointsEnum.STATUS_POINTS, () => this.availableStatusPoints);
+        this.points.set(PointsEnum.GOLD, () => this.gold);
+        this.points.set(PointsEnum.DEFENSE, () => this.defense);
+        this.points.set(PointsEnum.DEFENSE_GRADE, () => this.defense);
+        this.points.set(PointsEnum.ATTACK_GRADE, () => this.attackValue);
+        this.points.set(PointsEnum.MAGIC_ATT_GRADE, () => this.magicAttack);
+        this.points.set(PointsEnum.MAGIC_DEF_GRADE, () => this.magicDefense);
+        this.points.set(PointsEnum.MALL_ITEM_BONUS, () => this.mallItemBonus);
+        this.points.set(PointsEnum.ITEM_DROP_BONUS, () => this.itemDropBonus);
+        this.points.set(PointsEnum.POISON, () => this.poisonChance);
+        this.points.set(PointsEnum.SLOW, () => this.slowChance);
+        this.points.set(PointsEnum.STUN, () => this.stunChance);
+        this.points.set(PointsEnum.CRITICAL_PERCENTAGE, () => this.criticalChance);
+        this.points.set(PointsEnum.PENETRATE_PERCENTAGE, () => this.penetrateChance);
+        this.points.set(PointsEnum.STEAL_HEALTH, () => this.stealHealthPercentage);
+        this.points.set(PointsEnum.STEAL_MANA, () => this.stealManaPercentage);
+        this.points.set(PointsEnum.STEAL_GOLD, () => this.stealGoldChance);
+        this.points.set(PointsEnum.HIT_HEALTH_RECOVERY, () => this.healthHitRecoveryPercentage);
+        this.points.set(PointsEnum.HIT_MANA_RECOVERY, () => this.manaHitRecoveryPercentage);
 
         this.eventTimerManager.addTimer({
             id: 'REGEN_HEALTH',
@@ -285,20 +278,7 @@ export default class Player extends Character {
         });
     }
 
-    applyPoison(attacker: Player | Monster) {
-        this.playerBattle.applyPoison(attacker);
-    }
-
-    applyStun() {
-        this.playerBattle.applyStun();
-    }
-
-    applySlow() {
-        this.playerBattle.applySlow();
-    }
-
-    takeDamage(attacker: Character, damage: number, type: DamageTypeEnum): number {
-        console.log(attacker.getName(), damage, type);
+    takeDamage(): void {
         throw new Error('Method not implemented.');
     }
 
@@ -322,10 +302,6 @@ export default class Player extends Character {
                 healthPercentage: target.getHealthPercentage(),
             }),
         );
-    }
-
-    attack(victim: Player | Monster, attackType: AttackTypeEnum): void {
-        return this.playerBattle.attack(victim, attackType);
     }
 
     sendDamageCaused({ virtualId, damage, damageFlags }) {
@@ -656,17 +632,6 @@ export default class Player extends Character {
 
     updateMana() {
         this.maxMana = this.baseMana + this.iq * this.mpPerIqPoint + this.level * this.mpPerLvl;
-    }
-
-    getPoint(point: PointsEnum): number {
-        if (this.points[point]) {
-            return this.points[point]();
-        }
-        return 0;
-    }
-
-    getPoints() {
-        return this.points;
     }
 
     spawn() {

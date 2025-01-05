@@ -10,6 +10,9 @@ import GameEntity from './GameEntity';
 import { AffectBitsTypeEnum } from '@/core/enum/AffectBitsTypeEnum';
 import EventTimerManager from '../../manager/EventTimerManager';
 import AffectBitFlag from '@/core/util/AffectBitFlag';
+import { PointsEnum } from '@/core/enum/PointsEnum';
+import FlyEffectCreatedEvent from './shared/event/FlyEffectCreatedEvent';
+import { FlyEnum } from '@/core/enum/FlyEnum';
 
 export default abstract class Character extends GameEntity {
     protected id: number;
@@ -47,6 +50,7 @@ export default abstract class Character extends GameEntity {
 
     protected readonly eventTimerManager = new EventTimerManager();
     protected readonly animationManager: AnimationManager;
+    protected readonly points: Map<PointsEnum, () => number> = new Map();
 
     constructor(
         {
@@ -89,6 +93,18 @@ export default abstract class Character extends GameEntity {
         this.animationManager = animationManager;
     }
 
+    getPoint(point: PointsEnum) {
+        if (this.points.has(point)) {
+            return this.points.get(point)();
+        }
+
+        return 0;
+    }
+
+    getPoints() {
+        return this.points;
+    }
+
     getEventTimerManager() {
         return this.eventTimerManager;
     }
@@ -116,6 +132,17 @@ export default abstract class Character extends GameEntity {
     abstract getHealthPercentage(): number;
     abstract getAttack(): number;
     abstract getDefense(): number;
+    abstract takeDamage(attacker: Character, damage: number): void;
+
+    public createFlyEffect(toVirtualId: number, type: FlyEnum) {
+        this.publish(
+            new FlyEffectCreatedEvent({
+                fromVirtualId: this.virtualId,
+                toVirtualId,
+                type,
+            }),
+        );
+    }
 
     die() {
         this.state = EntityStateEnum.DEAD;

@@ -6,7 +6,6 @@ import GameConnection from '@/game/interface/networking/GameConnection';
 import { ConnectionStateEnum } from '@/core/enum/ConnectionStateEnum';
 import CharacterDetailsPacket from '../../out/CharacterDetailsPacket';
 import CharacterPointsPacket from '../../out/CharacterPointsPacket';
-import { PointsEnum } from '@/core/enum/PointsEnum';
 
 export default class SelectCharacterPacketHandler extends PacketHandler<SelectCharacterPacket> {
     private readonly selectCharacterService: SelectCharacterService;
@@ -64,8 +63,8 @@ export default class SelectCharacterPacketHandler extends PacketHandler<SelectCh
         );
 
         const characterPointsPacket = new CharacterPointsPacket();
-        for (const point in player.getPoints()) {
-            characterPointsPacket.addPoint(Number(point), player.getPoint(Number(point) as PointsEnum));
+        for (const point of player.getPoints().keys()) {
+            characterPointsPacket.addPoint(Number(point), player.getPoint(point));
         }
 
         connection.send(characterPointsPacket);

@@ -7,5 +7,4 @@ export enum ItemWeaponSubTypeEnum {
     WEAPON_FAN,
     WEAPON_ARROW,
     WEAPON_MOUNT_SPEAR,
-    WEAPON_NUM_TYPES,
 }
