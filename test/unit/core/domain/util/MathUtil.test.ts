@@ -1,7 +1,9 @@
 import { expect } from 'chai';
 import MathUtil from '@/core/domain/util/MathUtil';
+import Monster from '@/core/domain/entities/game/mob/Monster';
+import Player from '@/core/domain/entities/game/player/Player';
 
-describe('MathUtil', () => {
+describe.only('MathUtil', () => {
     it('should return MAX_UINT', () => {
         expect(MathUtil.MAX_UINT).to.equal(1e9);
     });
@@ -44,5 +46,57 @@ describe('MathUtil', () => {
         const randomInt = MathUtil.getRandomInt(min, max);
         expect(randomInt).to.be.at.least(min);
         expect(randomInt).to.be.at.most(max);
+    });
+
+    it('deve calcular a posição prevista corretamente', () => {
+        // Mock do objeto Monster
+        const mockMonster = {
+            getPositionX: () => 0,
+            getPositionY: () => 0,
+            getRotation: () => 0,
+            getMovementSpeed: () => 10,
+        };
+
+        // Mock do objeto Player
+        const mockPlayer = {
+            getPositionX: () => 100,
+            getPositionY: () => 100,
+            getRotation: () => 45,
+            getMovementSpeed: () => 5,
+        };
+
+        // Chamada do método estático
+        const result = MathUtil.calcPredictMove(mockMonster as unknown as Monster, mockPlayer as unknown as Player);
+
+        // Validação do resultado
+        expect(result).to.have.property('x').that.is.a('number');
+        expect(result).to.have.property('y').that.is.a('number');
+        expect(result.x).to.be.closeTo(70.71, 0.01); // Resultado esperado pode variar
+        expect(result.y).to.be.closeTo(70.71, 0.01); // Resultado esperado pode variar
+    });
+
+    it('deve retornar a posição original do target se followSpeed for insuficiente', () => {
+        // Mock do objeto Monster com velocidade muito baixa
+        const mockMonster = {
+            getPositionX: () => 0,
+            getPositionY: () => 0,
+            getRotation: () => 0,
+            getMovementSpeed: () => 0.1,
+        };
+
+        // Mock do objeto Player
+        const mockPlayer = {
+            getPositionX: () => 100,
+            getPositionY: () => 100,
+            getRotation: () => 45,
+            getMovementSpeed: () => 5,
+        };
+
+        // Chamada do método estático
+        const result = MathUtil.calcPredictMove(mockMonster as unknown as Monster, mockPlayer as unknown as Player);
+
+        // Validação do resultado
+        expect(result).to.have.property('x', 100);
+        expect(result).to.have.property('y', 100);
     });
 });

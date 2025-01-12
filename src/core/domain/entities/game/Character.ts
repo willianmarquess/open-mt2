@@ -149,6 +149,10 @@ export default abstract class Character extends GameEntity {
         this.eventTimerManager.clearAllTimers();
     }
 
+    isDead() {
+        return this.state === EntityStateEnum.DEAD;
+    }
+
     setTarget(target: Character) {
         if (this.target) {
             this.target.removeTargetedBy(this);

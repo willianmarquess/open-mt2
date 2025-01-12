@@ -5,6 +5,7 @@ import PrivilegeCommand from './PrivilegeCommand';
 import { PrivilegeManager, PrivilegeTypeEnum } from '@/core/domain/manager/PrivilegeManager';
 import { EmpireEnum } from '@/core/enum/EmpireEnum';
 import World from '@/core/domain/World';
+import { ChatMessageTypeEnum } from '@/core/enum/ChatMessageTypeEnum';
 
 const privilegeTypeMapper = {
     gold: PrivilegeTypeEnum.GOLD,
@@ -58,6 +59,10 @@ export default class PrivilegeCommandHandler extends CommandHandler<PrivilegeCom
                 }
 
                 this.privilegeManager.addPlayerPrivilege(target, privilegeType, Number(timeInSeconds), Number(value));
+                player.chat({
+                    messageType: ChatMessageTypeEnum.INFO,
+                    message: `[PRIV] You added to ${kind}:${name} the priv type ${type}:${value} per ${timeInSeconds} seconds`,
+                });
                 break;
             }
             case 'empire': {
@@ -67,6 +72,10 @@ export default class PrivilegeCommandHandler extends CommandHandler<PrivilegeCom
                     return;
                 }
                 this.privilegeManager.addEmpirePrivilege(empire, privilegeType, Number(timeInSeconds), Number(value));
+                player.chat({
+                    messageType: ChatMessageTypeEnum.INFO,
+                    message: `[PRIV] You added to ${kind}:${name} the priv type ${type}:${value} per ${timeInSeconds} seconds`,
+                });
                 break;
             }
             case 'guild': {

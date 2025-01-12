@@ -30,7 +30,7 @@ export default abstract class Command {
     }
 
     static getExample(): string {
-        throw new Error('This method must be overwritten in a subclass');
+        return '';
     }
 
     isValid(): boolean {

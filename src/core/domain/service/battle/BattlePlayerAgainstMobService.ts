@@ -39,14 +39,14 @@ export default class BattlePlayerAgainstMobService extends BattlePlayerService<M
         if (!attackerWeapon) return damage;
 
         const resistanceType = weaponResistanceMapper[attackerWeapon.getSubType()];
-        if (resistanceType) {
+        if (resistanceType >= 0) {
             return this.applyResistance(damage, this.victim.getResist(resistanceType));
         }
 
         return Math.round(damage);
     }
 
-    takeDamage(damage: number, damageType: DamageTypeEnum) {
+    private applyDamage(damage: number, damageType: DamageTypeEnum) {
         //TODO: manage entity battle state
         const damageFlags = new BitFlag();
 
@@ -58,12 +58,16 @@ export default class BattlePlayerAgainstMobService extends BattlePlayerService<M
 
             damage = this.calculateCriticalDamage(damage, damageFlags);
             damage = this.calculatePenetrateDamage(damage, damageFlags);
-            damage = this.calculateWeaponDamageResistance(damage);
             this.calculateAndSendHealthSteal(damage);
             this.calculateAndSendManaSteal(damage);
             this.calculateAndSendGoldSteal();
             this.calculateAndSendHealthHitRecovery(damage);
             this.calculateAndSendManaHitRecovery(damage);
+
+            damage = this.calculateWeaponDamageResistance(damage);
+            if (this.victim.isStoneSkinner()) {
+                damage /= 2;
+            }
         }
 
         damage = damage > 0 ? Math.round(damage) : MathUtil.getRandomInt(1, 5);
@@ -156,7 +160,7 @@ export default class BattlePlayerAgainstMobService extends BattlePlayerService<M
         let damage = Math.max(0, attack - defense);
         damage += this.calculateBonusRaceDamage();
 
-        this.takeDamage(damage, DamageTypeEnum.NORMAL);
+        this.applyDamage(damage, DamageTypeEnum.NORMAL);
     }
 
     private calculateBonusRaceDamage() {
@@ -210,7 +214,7 @@ export default class BattlePlayerAgainstMobService extends BattlePlayerService<M
             id: 'FIRE_AFFECT',
             eventFunction: () => {
                 const damage = this.victim.getPoint(PointsEnum.MAX_HEALTH) * 0.05;
-                this.takeDamage(damage, DamageTypeEnum.FIRE);
+                this.applyDamage(damage, DamageTypeEnum.FIRE);
             },
             options: {
                 interval: 1_000,
@@ -234,7 +238,7 @@ export default class BattlePlayerAgainstMobService extends BattlePlayerService<M
             id: 'POISON_AFFECT',
             eventFunction: () => {
                 const damage = this.victim.getPoint(PointsEnum.MAX_HEALTH) * 0.03;
-                this.takeDamage(damage, DamageTypeEnum.POISON);
+                this.applyDamage(damage, DamageTypeEnum.POISON);
             },
             options: {
                 interval: 1_000,

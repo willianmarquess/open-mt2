@@ -3,10 +3,17 @@ import MathUtil from '../../../util/MathUtil';
 import Monster from '@/core/domain/entities/game/mob/Monster';
 import Player from '../player/Player';
 import { AffectBitsTypeEnum } from '@/core/enum/AffectBitsTypeEnum';
+import MonsterMovedEvent from './events/MonsterMovedEvent';
+import { MovementTypeEnum } from '@/core/enum/MovementTypeEnum';
 
 const POSITION_OFFSET = 600;
 const MIN_DELAY = 10000;
 const MAX_DELAY = 25000;
+const MAX_TIME_WITHOUT_ATTACK = 15_000;
+const MAX_DISTANCE_WITHOUT_ATTACK = 5_000;
+const BASE_NEXT_TIME_TO_ATTACK = 2_000;
+const MIN_NEXT_TIME_TO_ATTACK = 500;
+const MIN_NEXT_TIME_TO_MOVE = 500;
 
 type DamageMapType = {
     player: Player;
@@ -19,6 +26,11 @@ export default class Behavior {
     private initialPositionY: number = 0;
     private nextMove: number = this.calcDelay();
     private enable: boolean = false;
+    private nextAttackTime: number = 0;
+    private lastAttackTime: number = 0;
+    private nextMoveTime: number = 0;
+    private lastAttackPositionX: number = 0;
+    private lastAttackPositionY: number = 0;
 
     private readonly damageMap: Map<number, DamageMapType> = new Map();
     private target: Player;
@@ -34,20 +46,121 @@ export default class Behavior {
         this.enable = true;
     }
 
+    private getDistanceFromTarget() {
+        return this.getDistance(this.target.getPositionX(), this.target.getPositionY());
+    }
+
+    private getDistance(x: number, y: number) {
+        return MathUtil.calcDistance(this.monster.getPositionX(), this.monster.getPositionY(), x, y);
+    }
+
+    private moveToOriginalPosition() {
+        this.target = undefined;
+        this.damageMap.clear();
+        this.monster.goto(this.lastAttackPositionX, this.lastAttackPositionY);
+    }
+
     tick() {
         if (!this.enable) return;
         if (this.monster.isAffectByFlag(AffectBitsTypeEnum.STUN)) return;
+        if (this.monster.isDead()) return;
 
-        if (this.monster.getState() === EntityStateEnum.IDLE) {
-            const now = performance.now();
-            if (now >= this.nextMove) {
-                this.moveToRandomLocation();
-                this.nextMove = this.calcDelay();
+        const now = performance.now();
+
+        if (this.target) {
+            if (this.target.isDead()) {
+                this.damageMap.delete(this.target.getVirtualId());
+                //TODO next target
+                return;
+            }
+
+            if (this.lastAttackTime) {
+                const toMuchTimeWithoutAttack = this.lastAttackTime + MAX_TIME_WITHOUT_ATTACK <= now;
+                const tooFar =
+                    this.getDistance(this.lastAttackPositionX, this.lastAttackPositionY) >= MAX_DISTANCE_WITHOUT_ATTACK;
+
+                if (toMuchTimeWithoutAttack || tooFar) {
+                    this.moveToOriginalPosition();
+                    return;
+                }
+            }
+            const distanceFromTarget = this.getDistanceFromTarget();
+
+            switch (this.monster.getState()) {
+                case EntityStateEnum.MOVING: {
+                    if (distanceFromTarget > this.monster.getAttackRange()) {
+                        if (this.nextMoveTime <= now) {
+                            this.moveToTarget();
+                            this.nextMoveTime = now;
+                            this.nextMoveTime += MIN_NEXT_TIME_TO_MOVE; //move each ~500ms
+                        }
+                    }
+                    break;
+                }
+                case EntityStateEnum.IDLE: {
+                    if (distanceFromTarget > this.monster.getAttackRange()) {
+                        if (this.nextMoveTime <= now) {
+                            this.moveToTarget();
+                            this.nextMoveTime = now;
+                            this.nextMoveTime += MIN_NEXT_TIME_TO_MOVE; //move each ~500ms
+                        }
+                    } else {
+                        if (this.nextAttackTime <= now) {
+                            this.attack();
+                            this.nextAttackTime = now;
+                            this.nextAttackTime += Math.min(
+                                MIN_NEXT_TIME_TO_ATTACK,
+                                BASE_NEXT_TIME_TO_ATTACK * (1 - this.monster.getAttackSpeed() / 100),
+                            );
+                            this.lastAttackTime = now;
+                            this.lastAttackPositionX = this.monster.getPositionX();
+                            this.lastAttackPositionY = this.monster.getPositionY();
+                        }
+                    }
+                    break;
+                }
+            }
+        } else {
+            if (this.monster.getState() === EntityStateEnum.IDLE) {
+                if (now >= this.nextMove) {
+                    this.moveToRandomLocation();
+                    this.nextMove = this.calcDelay();
+                }
             }
         }
     }
 
-    calcDelay() {
+    private attack() {
+        console.log(
+            this.monster.getFolder(),
+            this.monster.getVirtualId(),
+            'iam attacking the target: ',
+            this.target.getName(),
+        );
+
+        const rotation =
+            MathUtil.calcRotationFromXY(
+                this.target.getPositionX() - this.monster.getPositionX(),
+                this.target.getPositionY() - this.monster.getPositionY(),
+            ) / 5;
+
+        this.monster.publish(
+            new MonsterMovedEvent({
+                params: {
+                    positionX: this.monster.getPositionX(),
+                    positionY: this.monster.getPositionY(),
+                    arg: 0,
+                    rotation,
+                    time: performance.now(),
+                    duration: 0,
+                    movementType: MovementTypeEnum.ATTACK,
+                },
+                entity: this.monster,
+            }),
+        );
+    }
+
+    private calcDelay() {
         return performance.now() + MathUtil.getRandomInt(MIN_DELAY, MAX_DELAY);
     }
 
@@ -74,7 +187,25 @@ export default class Behavior {
         return this.target;
     }
 
-    moveToRandomLocation() {
+    private moveToTarget() {
+        //TODO: its working ok, but we can improve this logic
+        let directionX = this.target.getPositionX() - this.monster.getPositionX();
+        let directionY = this.target.getPositionY() - this.monster.getPositionY();
+        const directionLength = Math.sqrt(directionX * directionX + directionY * directionY);
+        directionX /= directionLength;
+        directionY /= directionLength;
+
+        const targetX =
+            this.target.getPositionX() +
+            directionX * this.monster.getAttackRange() * (MathUtil.getRandomInt(1, 4) / 100);
+        const targetY =
+            this.target.getPositionY() +
+            directionY * this.monster.getAttackRange() * (MathUtil.getRandomInt(1, 4) / 100);
+
+        this.monster.goto(targetX, targetY);
+    }
+
+    private moveToRandomLocation() {
         const x = Math.max(
             0,
             Math.min(
