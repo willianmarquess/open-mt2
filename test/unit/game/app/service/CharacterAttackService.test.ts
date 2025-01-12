@@ -1,97 +1,76 @@
-// import Player from '@/core/domain/entities/game/player/Player';
-// import { AttackTypeEnum } from '@/core/enum/AttackTypeEnum';
-// import CharacterAttackService from '@/game/app/service/CharacterAttackService';
-// import { expect } from 'chai';
-// import sinon from 'sinon';
+import { expect } from 'chai';
+import sinon from 'sinon';
+import { AttackTypeEnum } from '@/core/enum/AttackTypeEnum';
+import CharacterAttackService from '@/game/app/service/CharacterAttackService';
+import Logger from '@/core/infra/logger/Logger';
+import World from '@/core/domain/World';
+import BattleServiceFactory from '@/core/domain/service/battle/BattleServiceFactory';
+import Player from '@/core/domain/entities/game/player/Player';
+import WinstonLoggerAdapter from '@/core/infra/logger/WinstonLoggerAdapter';
+import Area from '@/core/domain/Area';
+import BattleService from '@/core/domain/service/battle/BattleService';
 
-// describe.skip('CharacterAttackService', function () {
-//     let loggerMock;
-//     let worldMock;
-//     let characterAttackService: CharacterAttackService;
+describe('CharacterAttackService', () => {
+    let service: CharacterAttackService;
+    let logger: sinon.SinonStubbedInstance<Logger>;
+    let world: sinon.SinonStubbedInstance<World>;
+    let battleServiceFactory: sinon.SinonStubbedInstance<BattleServiceFactory>;
+    let player: sinon.SinonStubbedInstance<Player>;
+    let victim: sinon.SinonStubbedInstance<Player>;
 
-//     beforeEach(function () {
-//         loggerMock = {
-//             info: sinon.spy(),
-//         };
+    beforeEach(() => {
+        logger = sinon.createStubInstance(WinstonLoggerAdapter);
+        world = sinon.createStubInstance(World);
+        battleServiceFactory = sinon.createStubInstance(BattleServiceFactory);
+        player = sinon.createStubInstance(Player);
+        victim = sinon.createStubInstance(Player);
 
-//         worldMock = {
-//             getAreaByCoordinates: sinon.stub(),
-//         };
+        service = new CharacterAttackService({
+            logger,
+            world,
+            battleServiceFactory,
+        });
+    });
 
-//         characterAttackService = new CharacterAttackService({
-//             logger: loggerMock,
-//             world: worldMock,
-//         });
-//     });
+    it('should log info when area is not found', async () => {
+        player.getPositionX.returns(100);
+        player.getPositionY.returns(200);
+        world.getAreaByCoordinates.returns(null);
 
-//     describe('execute', function () {
-//         it('should log and return if area is not found', async function () {
-//             const playerMock = {
-//                 getPositionX: sinon.stub().returns(10),
-//                 getPositionY: sinon.stub().returns(20),
-//             } as unknown as Player;
+        await service.execute(player, AttackTypeEnum.NORMAL, 1);
 
-//             worldMock.getAreaByCoordinates.returns(undefined);
+        expect(logger.info.calledOnce).to.be.true;
+        expect(logger.info.calledWith('[CharacterAttackService] Area not found at x: 100, y: 200')).to.be.true;
+    });
 
-//             await characterAttackService.execute(playerMock, AttackTypeEnum.NORMAL, 123);
+    it('should log info when victim is not found', async () => {
+        player.getPositionX.returns(100);
+        player.getPositionY.returns(200);
+        world.getAreaByCoordinates.returns({
+            getEntity: sinon.stub().returns(null),
+        } as unknown as Area);
 
-//             expect(worldMock.getAreaByCoordinates.calledOnce).to.be.true;
-//             expect(worldMock.getAreaByCoordinates.firstCall.args).to.deep.equal([10, 20]);
+        await service.execute(player, AttackTypeEnum.NORMAL, 1);
 
-//             expect(loggerMock.info.calledOnce).to.be.true;
-//             expect(loggerMock.info.firstCall.args[0]).to.equal(
-//                 '[CharacterAttackService] Area not found at x: 10, y: 20',
-//             );
-//         });
+        expect(logger.info.calledOnce).to.be.true;
+        expect(logger.info.calledWith('[CharacterAttackService] Victim not found with virtualId 1')).to.be.true;
+    });
 
-//         it('should log and return if victim is not found', async function () {
-//             const playerMock = {
-//                 getPositionX: sinon.stub().returns(10),
-//                 getPositionY: sinon.stub().returns(20),
-//             } as unknown as Player;
+    it('should execute battle service when victim is found', async () => {
+        player.getPositionX.returns(100);
+        player.getPositionY.returns(200);
+        const mockArea = {
+            getEntity: sinon.stub().returns(victim),
+        } as unknown as Area;
+        world.getAreaByCoordinates.returns(mockArea);
+        const battleService = {
+            execute: sinon.stub(),
+        } as unknown as BattleService;
+        battleServiceFactory.createBattleService.returns(battleService);
 
-//             const areaMock = {
-//                 getEntity: sinon.stub().returns(undefined),
-//             };
+        await service.execute(player, AttackTypeEnum.NORMAL, 2);
 
-//             worldMock.getAreaByCoordinates.returns(areaMock);
-
-//             await characterAttackService.execute(playerMock, AttackTypeEnum.NORMAL, 123);
-
-//             expect(areaMock.getEntity.calledOnce).to.be.true;
-//             expect(areaMock.getEntity.firstCall.args[0]).to.equal(123);
-
-//             expect(loggerMock.info.calledOnce).to.be.true;
-//             expect(loggerMock.info.firstCall.args[0]).to.equal(
-//                 '[CharacterAttackService] Victim not found with virtualId 123',
-//             );
-//         });
-
-//         it('should execute attack if area and victim are found', async function () {
-//             const playerMock = {
-//                 getPositionX: sinon.stub().returns(10),
-//                 getPositionY: sinon.stub().returns(20),
-//                 attack: sinon.spy(),
-//             } as unknown as Player;
-
-//             const victimMock = {};
-
-//             const areaMock = {
-//                 getEntity: sinon.stub().returns(victimMock),
-//             };
-
-//             worldMock.getAreaByCoordinates.returns(areaMock);
-
-//             await characterAttackService.execute(playerMock, AttackTypeEnum.NORMAL, 123);
-
-//             expect(areaMock.getEntity.calledOnce).to.be.true;
-//             expect(areaMock.getEntity.firstCall.args[0]).to.equal(123);
-
-//             expect((playerMock.attack as sinon.SinonStub).calledOnce).to.be.true;
-//             expect((playerMock.attack as sinon.SinonStub).firstCall.args).to.deep.equal([
-//                 victimMock,
-//                 AttackTypeEnum.NORMAL,
-//             ]);
-//         });
-//     });
-// });
+        expect((battleService.execute as sinon.SinonSpy).calledOnce).to.be.true;
+        expect((battleService.execute as sinon.SinonSpy).calledWith(AttackTypeEnum.NORMAL)).to.be.true;
+    });
+});

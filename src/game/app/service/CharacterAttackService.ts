@@ -10,10 +10,10 @@ export default class CharacterAttackService {
     private readonly world: World;
     private readonly battleServiceFactory: BattleServiceFactory;
 
-    constructor({ logger, world, BattleServiceFactory }) {
+    constructor({ logger, world, battleServiceFactory }) {
         this.logger = logger;
         this.world = world;
-        this.battleServiceFactory = BattleServiceFactory;
+        this.battleServiceFactory = battleServiceFactory;
     }
 
     async execute(player: Player, attackType: AttackTypeEnum, victimVirtualId: number) {
