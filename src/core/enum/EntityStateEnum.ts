@@ -1,6 +1,6 @@
 export enum EntityStateEnum {
-    IDLE = 0,
-    MOVING = 1,
-    BATTLE = 2,
-    DEAD = 3,
+    IDLE = 'IDLE',
+    MOVING = 'MOVING',
+    BATTLE = 'BATTLE',
+    DEAD = 'DEAD',
 }

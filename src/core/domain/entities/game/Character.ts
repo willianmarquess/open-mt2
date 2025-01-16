@@ -13,6 +13,7 @@ import AffectBitFlag from '@/core/util/AffectBitFlag';
 import { PointsEnum } from '@/core/enum/PointsEnum';
 import FlyEffectCreatedEvent from './shared/event/FlyEffectCreatedEvent';
 import { FlyEnum } from '@/core/enum/FlyEnum';
+import { StateMachine } from '@/core/util/StateMachine';
 
 export default abstract class Character extends GameEntity {
     protected id: number;
@@ -51,6 +52,8 @@ export default abstract class Character extends GameEntity {
     protected readonly eventTimerManager = new EventTimerManager();
     protected readonly animationManager: AnimationManager;
     protected readonly points: Map<PointsEnum, () => number> = new Map();
+
+    protected readonly stateMachine: StateMachine = new StateMachine();
 
     constructor(
         {
@@ -145,12 +148,13 @@ export default abstract class Character extends GameEntity {
     }
 
     die() {
-        this.state = EntityStateEnum.DEAD;
-        this.eventTimerManager.clearAllTimers();
+        //this.state = EntityStateEnum.DEAD;
+        // this.eventTimerManager.clearAllTimers();
+        this.stateMachine.gotoState(EntityStateEnum.DEAD);
     }
 
     isDead() {
-        return this.state === EntityStateEnum.DEAD;
+        return this.stateMachine.getCurrentStateName() === EntityStateEnum.DEAD;
     }
 
     setTarget(target: Character) {
@@ -178,21 +182,7 @@ export default abstract class Character extends GameEntity {
     }
 
     tick() {
-        if (this.state === EntityStateEnum.MOVING) {
-            const elapsed = performance.now() - this.movementStart;
-            let rate = this.movementDuration == 0 ? 1 : elapsed / this.movementDuration;
-            if (rate > 1) rate = 1;
-
-            const x = (this.targetPositionX - this.startPositionX) * rate + this.startPositionX;
-            const y = (this.targetPositionY - this.startPositionY) * rate + this.startPositionY;
-
-            this.positionX = x;
-            this.positionY = y;
-
-            if (rate >= 1) {
-                this.state = EntityStateEnum.IDLE;
-            }
-        }
+        this.stateMachine.tick();
     }
 
     protected gotoInternal(x: number, y: number, rotation: number) {
@@ -205,7 +195,7 @@ export default abstract class Character extends GameEntity {
             AnimationSubTypeEnum.GENERAL,
         );
 
-        this.state = EntityStateEnum.MOVING;
+        // this.state = EntityStateEnum.MOVING;
         this.targetPositionX = x;
         this.targetPositionY = y;
         this.startPositionX = this.positionX;
@@ -226,6 +216,7 @@ export default abstract class Character extends GameEntity {
         }
 
         this.rotation = rotation * 5;
+        this.stateMachine.gotoState(EntityStateEnum.MOVING);
     }
 
     protected move(x: number, y: number) {
@@ -240,8 +231,8 @@ export default abstract class Character extends GameEntity {
     }
 
     stop() {
-        this.state = EntityStateEnum.IDLE;
-        this.movementDuration = 0;
+        // this.state = EntityStateEnum.IDLE;
+        this.stateMachine.gotoState(EntityStateEnum.IDLE);
     }
 
     publish<T>(event: T) {
@@ -350,7 +341,7 @@ export default abstract class Character extends GameEntity {
     }
 
     getState() {
-        return this.state;
+        return this.stateMachine.getCurrentStateName();
     }
 
     protected setState(value: EntityStateEnum) {
@@ -372,4 +363,37 @@ export default abstract class Character extends GameEntity {
     getNearbyEntities() {
         return this.nearbyEntities;
     }
+
+    /**
+     * STATE MANAGEMENT
+     */
+
+    protected idleStateStart() {
+        this.movementDuration = 0;
+    }
+
+    protected idleStateTick() {}
+
+    protected movingStateTick() {
+        if (this.isAffectByFlag(AffectBitsTypeEnum.STUN)) return;
+        const elapsed = performance.now() - this.movementStart;
+        let rate = this.movementDuration == 0 ? 1 : elapsed / this.movementDuration;
+        if (rate > 1) rate = 1;
+
+        const x = (this.targetPositionX - this.startPositionX) * rate + this.startPositionX;
+        const y = (this.targetPositionY - this.startPositionY) * rate + this.startPositionY;
+
+        this.positionX = x;
+        this.positionY = y;
+
+        if (rate >= 1) {
+            this.stateMachine.gotoState(EntityStateEnum.IDLE);
+        }
+    }
+
+    protected deadStateStart() {
+        this.eventTimerManager.clearAllTimers();
+    }
+
+    protected deadStateTick() {}
 }

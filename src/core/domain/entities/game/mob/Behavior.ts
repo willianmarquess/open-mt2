@@ -12,7 +12,7 @@ const MAX_DELAY = 25000;
 const MAX_TIME_WITHOUT_ATTACK = 15_000;
 const MAX_DISTANCE_WITHOUT_ATTACK = 5_000;
 const BASE_NEXT_TIME_TO_ATTACK = 2_000;
-const MIN_NEXT_TIME_TO_ATTACK = 500;
+const MIN_NEXT_TIME_TO_ATTACK = 1_000;
 const MIN_NEXT_TIME_TO_MOVE = 500;
 
 type DamageMapType = {
@@ -108,9 +108,9 @@ export default class Behavior {
                         if (this.nextAttackTime <= now) {
                             this.attack();
                             this.nextAttackTime = now;
-                            this.nextAttackTime += Math.min(
+                            this.nextAttackTime += Math.max(
                                 MIN_NEXT_TIME_TO_ATTACK,
-                                BASE_NEXT_TIME_TO_ATTACK * (1 - this.monster.getAttackSpeed() / 100),
+                                BASE_NEXT_TIME_TO_ATTACK / (this.monster.getAttackSpeed() / 100),
                             );
                             this.lastAttackTime = now;
                             this.lastAttackPositionX = this.monster.getPositionX();

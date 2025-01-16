@@ -222,6 +222,23 @@ export default class Player extends Character {
         this.playerInventory = new PlayerInventory(this);
         this.playerApplies = new PlayerApplies(this, logger);
 
+        this.stateMachine
+            .addState({
+                name: EntityStateEnum.IDLE,
+                onTick: this.idleStateTick.bind(this),
+                onStart: this.idleStateStart.bind(this),
+            })
+            .addState({
+                name: EntityStateEnum.MOVING,
+                onTick: this.movingStateTick.bind(this),
+            })
+            .addState({
+                name: EntityStateEnum.DEAD,
+                onTick: this.deadStateTick.bind(this),
+                onStart: this.deadStateStart.bind(this),
+            })
+            .gotoState(EntityStateEnum.IDLE);
+
         this.init();
     }
 

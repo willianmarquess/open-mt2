@@ -77,7 +77,7 @@ container.register({
     characterUpdateTargetService: asClass(CharacterUpdateTargetService).scoped(),
     dropManager: asClass(DropManager).singleton(),
     privilegeManager: asClass(PrivilegeManager).singleton(),
-    BattleServiceFactory: asClass(BattleServiceFactory).scoped(),
+    battleServiceFactory: asClass(BattleServiceFactory).scoped(),
 });
 
 export { container };

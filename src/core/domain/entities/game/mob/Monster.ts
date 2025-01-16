@@ -1,19 +1,19 @@
 import DropManager from '@/core/domain/manager/DropManager';
+import ExperienceManager from '@/core/domain/manager/ExperienceManager';
+import { AffectBitsTypeEnum } from '@/core/enum/AffectBitsTypeEnum';
+import { ChatMessageTypeEnum } from '@/core/enum/ChatMessageTypeEnum';
+import { EntityTypeEnum } from '@/core/enum/EntityTypeEnum';
+import { FlyEnum } from '@/core/enum/FlyEnum';
+import { PointsEnum } from '@/core/enum/PointsEnum';
 import MathUtil from '../../../util/MathUtil';
 import Player from '../player/Player';
+import CharacterUpdatedEvent from '../shared/event/CharacterUpdatedEvent';
+import FlyEffectCreatedEvent from '../shared/event/FlyEffectCreatedEvent';
 import Behavior from './Behavior';
 import MonsterDiedEvent from './events/MonsterDiedEvent';
 import MonsterMovedEvent from './events/MonsterMovedEvent';
 import { Mob, MobParams } from './Mob';
-import { EntityTypeEnum } from '@/core/enum/EntityTypeEnum';
 import { EntityStateEnum } from '@/core/enum/EntityStateEnum';
-import ExperienceManager from '@/core/domain/manager/ExperienceManager';
-import { ChatMessageTypeEnum } from '@/core/enum/ChatMessageTypeEnum';
-import { FlyEnum } from '@/core/enum/FlyEnum';
-import FlyEffectCreatedEvent from '../shared/event/FlyEffectCreatedEvent';
-import { AffectBitsTypeEnum } from '@/core/enum/AffectBitsTypeEnum';
-import CharacterUpdatedEvent from '../shared/event/CharacterUpdatedEvent';
-import { PointsEnum } from '@/core/enum/PointsEnum';
 
 const MAX_DISTANCE_TO_GET_EXP = 5_000;
 
@@ -40,7 +40,54 @@ export default class Monster extends Mob {
         this.experienceManager = experienceManager;
         this.health = this.maxHealth;
         this.behavior = new Behavior(this);
+
+        this.stateMachine
+            .addState({
+                name: EntityStateEnum.IDLE,
+                onTick: this.idleStateTick.bind(this),
+                onStart: this.idleStateStart.bind(this),
+            })
+            .addState({
+                name: EntityStateEnum.MOVING,
+                onTick: this.movingStateTick.bind(this),
+            })
+            .addState({
+                name: EntityStateEnum.DEAD,
+                onTick: this.deadStateTick.bind(this),
+                onStart: this.deadStateStart.bind(this),
+            })
+            .gotoState(EntityStateEnum.IDLE);
         this.init();
+    }
+
+    protected movingStateTick(): void {
+        super.movingStateTick();
+    }
+
+    protected idleStateTick(): void {
+        super.idleStateTick();
+    }
+
+    protected idleStateStart(): void {
+        super.idleStateStart();
+        if (!this.behaviorInitialized) {
+            this.behavior.init();
+            this.behaviorInitialized = true;
+        }
+    }
+
+    protected deadStateStart(): void {
+        super.deadStateStart();
+
+        this.publish(
+            new MonsterDiedEvent({
+                entity: this,
+            }),
+        );
+    }
+
+    protected deadStateTick() {
+        super.deadStateTick();
     }
 
     private init() {
@@ -83,8 +130,9 @@ export default class Monster extends Mob {
 
     private regenHealth() {
         if (this.isAffectByFlag(AffectBitsTypeEnum.POISON)) return;
-        if (this.state === EntityStateEnum.DEAD) return;
         if (this.health >= this.maxHealth) return;
+        // if (this.state === EntityStateEnum.DEAD) return;
+        if (this.stateMachine.getCurrentState().name === 'DEAD') return;
 
         const amount = Math.floor(this.maxHealth * (this.regenPercent / 100));
         this.addHealth(Math.max(1, amount));
@@ -166,15 +214,15 @@ export default class Monster extends Mob {
     }
 
     die() {
-        if (this.state === EntityStateEnum.DEAD) return;
+        // if (this.state === EntityStateEnum.DEAD) return;
 
         super.die();
 
-        this.publish(
-            new MonsterDiedEvent({
-                entity: this,
-            }),
-        );
+        // this.publish(
+        //     new MonsterDiedEvent({
+        //         entity: this,
+        //     }),
+        // );
     }
 
     goto(x: number, y: number) {
@@ -197,17 +245,8 @@ export default class Monster extends Mob {
     }
 
     tick() {
-        if (this.state === EntityStateEnum.DEAD) return;
-        if (this.isAffectByFlag(AffectBitsTypeEnum.STUN)) return;
-
         super.tick();
-
-        if (!this.behaviorInitialized) {
-            this.behavior.init();
-            this.behaviorInitialized = true;
-        }
-
-        this.behavior.tick();
+        this.behavior?.tick?.();
     }
 
     getDefense() {
@@ -220,7 +259,8 @@ export default class Monster extends Mob {
 
     reset() {
         this.behaviorInitialized = false;
-        this.state = EntityStateEnum.IDLE;
+        // this.state = EntityStateEnum.IDLE;
+        this.stateMachine.gotoState(EntityStateEnum.IDLE);
         this.health = this.maxHealth;
         this.initEvents();
         //TODO: spawn at original location
