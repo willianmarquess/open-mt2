@@ -73,7 +73,6 @@ export default class Area {
     }
 
     async load() {
-        return;
         const entitiesToSpawn = await this.spawnManager.getEntities(this.name);
         entitiesToSpawn.forEach((entity) => {
             entity.setVirtualId(this.world.generateVirtualId());
