@@ -1,8 +1,8 @@
+import { expect } from 'chai';
+import sinon from 'sinon';
 import LoginService from '@/auth/app/service/LoginService';
 import Result from '@/core/domain/util/Result';
 import { ErrorTypesEnum } from '@/core/enum/ErrorTypesEnum';
-import { expect } from 'chai';
-import sinon from 'sinon';
 
 describe('LoginService', function () {
     let accountRepository, logger, cacheProvider, encryptionProvider, loginService;

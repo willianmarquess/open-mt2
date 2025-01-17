@@ -25,7 +25,7 @@ services:
         - cache
         - database
       working_dir: /usr/app
-      command: bash -c "npm install && npm run migrate && node --experimental-json-modules src/auth/main.js"
+      command: bash -c "npm install && npm run migrate && npm run dev:auth"
   game-server:
       image: node:22
       container_name: game-server
@@ -52,7 +52,7 @@ services:
         - cache
         - database
       working_dir: /usr/app
-      command: bash -c "npm install && node --experimental-json-modules src/game/main.js"
+      command: bash -c "npm install && npm run dev:game"
 
   cache:
     image: redis:latest
