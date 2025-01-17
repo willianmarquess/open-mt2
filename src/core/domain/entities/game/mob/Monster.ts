@@ -66,14 +66,14 @@ export default class Monster extends Mob {
 
     protected idleStateTick(): void {
         super.idleStateTick();
-    }
-
-    protected idleStateStart(): void {
-        super.idleStateStart();
         if (!this.behaviorInitialized) {
             this.behavior.init();
             this.behaviorInitialized = true;
         }
+    }
+
+    protected idleStateStart(): void {
+        super.idleStateStart();
     }
 
     protected deadStateStart(): void {
@@ -131,7 +131,6 @@ export default class Monster extends Mob {
     private regenHealth() {
         if (this.isAffectByFlag(AffectBitsTypeEnum.POISON)) return;
         if (this.health >= this.maxHealth) return;
-        // if (this.state === EntityStateEnum.DEAD) return;
         if (this.stateMachine.getCurrentState().name === 'DEAD') return;
 
         const amount = Math.floor(this.maxHealth * (this.regenPercent / 100));
@@ -213,18 +212,6 @@ export default class Monster extends Mob {
         }
     }
 
-    die() {
-        // if (this.state === EntityStateEnum.DEAD) return;
-
-        super.die();
-
-        // this.publish(
-        //     new MonsterDiedEvent({
-        //         entity: this,
-        //     }),
-        // );
-    }
-
     goto(x: number, y: number) {
         if (this.isAffectByFlag(AffectBitsTypeEnum.STUN)) return;
         const rotation = MathUtil.calcRotationFromXY(x - this.positionX, y - this.positionY) / 5;
@@ -259,11 +246,10 @@ export default class Monster extends Mob {
 
     reset() {
         this.behaviorInitialized = false;
-        // this.state = EntityStateEnum.IDLE;
+        this.behavior.setTarget(null);
         this.stateMachine.gotoState(EntityStateEnum.IDLE);
         this.health = this.maxHealth;
         this.initEvents();
-        //TODO: spawn at original location
     }
 
     getAttack(): number {

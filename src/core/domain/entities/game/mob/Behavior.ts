@@ -187,6 +187,10 @@ export default class Behavior {
         return this.target;
     }
 
+    setTarget(target?: Player) {
+        this.target = target;
+    }
+
     private moveToTarget() {
         //TODO: its working ok, but we can improve this logic
         let directionX = this.target.getPositionX() - this.monster.getPositionX();
