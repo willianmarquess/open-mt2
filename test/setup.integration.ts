@@ -1,5 +1,5 @@
-import { container } from './auth/Container';
-import AuthApplication from './auth/app/AuthApplication';
+import AuthApplication from '@/auth/app/AuthApplication';
+import { container } from '@/auth/Container';
 const app = new AuthApplication(container.cradle);
 
 before(async () => {

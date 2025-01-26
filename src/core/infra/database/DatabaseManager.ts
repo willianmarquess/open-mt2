@@ -42,12 +42,14 @@ export default class DatabaseManager {
     }
 
     async init() {
-        this.logger.info('[DBMANAGER] Connecting with database');
+        this.logger.info('[DBMANAGER] Connecting');
         await this.getConnection();
-        this.logger.info('[DBMANAGER] Connected with success');
+        this.logger.info('[DBMANAGER] Connected');
     }
 
-    close() {
-        return this.connection?.end();
+    async close() {
+        this.logger.info('[DBMANAGER] Closing connection');
+        await this.connection?.end();
+        this.logger.info('[DBMANAGER] Connection closed');
     }
 }

@@ -20,7 +20,7 @@ import FlyEffectCreatedEvent from './entities/game/shared/event/FlyEffectCreated
 import CharacterUpdatedEvent from './entities/game/shared/event/CharacterUpdatedEvent';
 
 const SIZE_QUEUE = 5_000;
-const CHAR_VIEW_SIZE = 9000;
+const CHAR_VIEW_SIZE = 8000;
 const SAVE_PLAYERS_INTERVAL = 120000;
 const REMOVE_ITEM_FROM_GROUND = 30000;
 const SPAWN_POSITION_MULTIPLIER = 100;
@@ -72,6 +72,8 @@ export default class Area {
         setInterval(this.savePlayers.bind(this), SAVE_PLAYERS_INTERVAL);
     }
 
+    //TODO: add system do choose which map will be generated on this server
+    //to be able to only deal with the map we want to deal with.
     async load() {
         const entitiesToSpawn = await this.spawnManager.getEntities(this.name);
         entitiesToSpawn.forEach((entity) => {
@@ -121,6 +123,7 @@ export default class Area {
             positionY,
         });
         this.spawn(droppedItem);
+        //TODO: add logic to removed onwer first, then after 3 min remove item from ground
         setTimeout(() => {
             if (this.entities.has(virtualId)) {
                 this.despawn(droppedItem);

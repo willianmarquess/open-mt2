@@ -53,6 +53,11 @@ services:
         - database
       working_dir: /usr/app
       command: bash -c "npm install && npm run dev:game"
+      # deploy:
+      #   resources:
+      #     limits:
+      #       memory: 900M 
+      #       cpus: "2.5"
 
   cache:
     image: redis:latest

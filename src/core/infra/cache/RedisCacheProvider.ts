@@ -43,7 +43,9 @@ export default class RedisCacheProvider implements CacheProvider {
     }
 
     async close() {
+        this.logger.info('[CACHE] Closing connection');
         await this.client.quit();
+        this.logger.info('[CACHE] Connection closed');
     }
 
     async exists(key: string) {

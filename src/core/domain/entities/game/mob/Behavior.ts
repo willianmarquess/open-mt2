@@ -7,7 +7,7 @@ import MonsterMovedEvent from './events/MonsterMovedEvent';
 import { MovementTypeEnum } from '@/core/enum/MovementTypeEnum';
 
 const POSITION_OFFSET = 600;
-const MIN_DELAY = 10000;
+const MIN_DELAY = 15000;
 const MAX_DELAY = 25000;
 const MAX_TIME_WITHOUT_ATTACK = 15_000;
 const MAX_DISTANCE_WITHOUT_ATTACK = 5_000;
