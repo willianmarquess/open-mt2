@@ -50,16 +50,16 @@ Metin2 are copyrighted by [Webzen](http://webzen.com/ "Webzen").
 | GM System    |      | X     |      |
 | Character Exp System    |      |       | ✅    |
 | Character Stat System    |      |       | ✅    |
-| Character Health System    |      | X     |      |
-| Character Mana System    |      | X     |      |
-| Character Attack System(physic, magic, melee, range)    | X    |       |      |
-| Character Defense System(physic, magic, melee, range)    | X    |       |      |
-| Character Bonus and Reduces System(physic, magic, melee, range)    | X    |       |      |
+| Character Health System    |      |       |  ✅   |
+| Character Mana System    |      |       | ✅    |
+| Character Attack System(physic, magic, melee, range)    |      |  X    |      |
+| Character Defense System(physic, magic, melee, range)    |      | X     |      |
+| Character Bonus and Reduces System(physic, magic, melee, range)    |      | X     |      |
 | Character Inventory    |      |       | ✅    |
 | Character Regen System    |      |       | ✅    |
 | Character Duel System   | X    |       |      |
-| Drop System   | X    |       |      |
-| Affect System   | X    |       |      |
+| Drop System   |      | X     |      |
+| Affect System   |      | X     |      |
 | Quest System   | X    |       |      |
 | Skills System   | X    |       |      |
 | Chat System   | X    |       |      |
