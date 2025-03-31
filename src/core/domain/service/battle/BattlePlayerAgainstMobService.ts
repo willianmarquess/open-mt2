@@ -48,6 +48,8 @@ export default class BattlePlayerAgainstMobService extends BattlePlayerService<M
 
     private applyDamage(damage: number, damageType: DamageTypeEnum) {
         //TODO: manage entity battle state
+        //TODO verify block attack
+        //TODO verify dodge attack
         const damageFlags = new BitFlag();
 
         if (damageType === DamageTypeEnum.POISON) {
@@ -66,6 +68,7 @@ export default class BattlePlayerAgainstMobService extends BattlePlayerService<M
 
             damage = this.calculateWeaponDamageResistance(damage);
             if (this.victim.isStoneSkinner()) {
+                //TODO: calculate stoneskin chance, this is not 100%
                 damage /= 2;
             }
         }

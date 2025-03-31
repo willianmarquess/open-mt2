@@ -36,7 +36,7 @@ import ItemDroppedEvent from '@/core/domain/entities/game/player/events/ItemDrop
 import ItemDroppedHideEvent from '@/core/domain/entities/game/player/events/ItemDroppedHideEvent';
 import ChatEvent from '@/core/domain/entities/game/player/events/ChatEvent';
 import LogoutEvent from '@/core/domain/entities/game/player/events/LogoutEvent';
-import DamageCausedEvent from '@/core/domain/entities/game/player/events/DamageCausedEvent';
+import DamageEvent from '@/core/domain/entities/game/player/events/DamageEvent';
 import TargetUpdatedEvent from '@/core/domain/entities/game/player/events/TargetUpdatedEvent';
 import OtherCharacterDiedEvent from '@/core/domain/entities/game/player/events/OtherCharacterDiedEvent';
 import PacketOut from '@/core/interface/networking/packets/packet/out/PacketOut';
@@ -95,7 +95,7 @@ export default class GameConnection extends Connection {
         this.player.subscribe(ItemDroppedHideEvent, this.onItemDroppedHide.bind(this));
         this.player.subscribe(ChatEvent, this.onChat.bind(this));
         this.player.subscribe(LogoutEvent, this.onLogout.bind(this));
-        this.player.subscribe(DamageCausedEvent, this.onDamageCaused.bind(this));
+        this.player.subscribe(DamageEvent, this.onDamage.bind(this));
         this.player.subscribe(TargetUpdatedEvent, this.onTargetUpdated.bind(this));
         this.player.subscribe(OtherCharacterDiedEvent, this.onOtherCharacterDied.bind(this));
         this.player.subscribe(ShowFlyEffectEvent, this.onFlyEffectEvent.bind(this));
@@ -147,8 +147,8 @@ export default class GameConnection extends Connection {
         );
     }
 
-    onDamageCaused(damageCausedEvent: DamageCausedEvent) {
-        const { virtualId, damage, damageFlags } = damageCausedEvent;
+    onDamage(DamageEvent: DamageEvent) {
+        const { virtualId, damage, damageFlags } = DamageEvent;
         this.send(
             new DamagePacket({
                 virtualId,

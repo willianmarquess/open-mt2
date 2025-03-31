@@ -15,6 +15,7 @@ import Stone from '../entities/game/mob/Stone';
 import AnimationManager from './AnimationManager';
 import DropManager from './DropManager';
 import ExperienceManager from './ExperienceManager';
+import BattleServiceFactory from '../service/battle/BattleServiceFactory';
 
 // const MobRankEnum = {
 //     PAWN: 0,
@@ -98,12 +99,14 @@ export default class MobManager {
     private readonly animationManager: AnimationManager;
     private readonly dropManager: DropManager;
     private readonly experienceManager: ExperienceManager;
+    private readonly battleServiceFactory: BattleServiceFactory;
 
-    constructor({ config, animationManager, dropManager, experienceManager }) {
+    constructor({ config, animationManager, dropManager, experienceManager, battleServiceFactory }) {
         this.config = config;
         this.animationManager = animationManager;
         this.dropManager = dropManager;
         this.experienceManager = experienceManager;
+        this.battleServiceFactory = battleServiceFactory;
     }
 
     load() {
@@ -133,6 +136,7 @@ export default class MobManager {
                         animationManager: this.animationManager,
                         dropManager: this.dropManager,
                         experienceManager: this.experienceManager,
+                        battleServiceFactory: this.battleServiceFactory,
                     },
                 );
             }

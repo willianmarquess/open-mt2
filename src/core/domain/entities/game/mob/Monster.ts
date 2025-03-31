@@ -14,6 +14,8 @@ import MonsterDiedEvent from './events/MonsterDiedEvent';
 import MonsterMovedEvent from './events/MonsterMovedEvent';
 import { Mob, MobParams } from './Mob';
 import { EntityStateEnum } from '@/core/enum/EntityStateEnum';
+import BattleServiceFactory from '@/core/domain/service/battle/BattleServiceFactory';
+import { AttackTypeEnum } from '@/core/enum/AttackTypeEnum';
 
 const MAX_DISTANCE_TO_GET_EXP = 5_000;
 
@@ -24,10 +26,11 @@ export default class Monster extends Mob {
 
     private readonly dropManager: DropManager;
     private readonly experienceManager: ExperienceManager;
+    private readonly battleServiceFactory: BattleServiceFactory;
 
     constructor(
         params: Omit<MobParams, 'virtualId' | 'entityType'>,
-        { animationManager, dropManager, experienceManager },
+        { animationManager, dropManager, experienceManager, battleServiceFactory },
     ) {
         super(
             {
@@ -38,6 +41,7 @@ export default class Monster extends Mob {
         );
         this.dropManager = dropManager;
         this.experienceManager = experienceManager;
+        this.battleServiceFactory = battleServiceFactory;
         this.health = this.maxHealth;
         this.behavior = new Behavior(this);
 
@@ -237,7 +241,7 @@ export default class Monster extends Mob {
     }
 
     getDefense() {
-        return Math.floor(this.level * 3 + this.st * 4 + this.def);
+        return Math.floor(this.level * 3 + this.ht * 4 + this.def);
     }
 
     getRespawnTimeInMs() {
@@ -253,11 +257,16 @@ export default class Monster extends Mob {
     }
 
     getAttack(): number {
-        throw new Error('Method not implemented.');
+        return (
+            (MathUtil.getRandomInt(this.getDamageMin(), this.getDamageMax()) +
+                Math.floor(this.level * 3 + this.st * 4)) *
+            this.damMultiply
+        );
     }
 
-    attack(): void {
-        throw new Error('Method not implemented.');
+    attack(victim: Player): void {
+        const battleService = this.battleServiceFactory.createBattleService(this, victim);
+        battleService.execute(AttackTypeEnum.NORMAL);
     }
 
     damage(): number {

@@ -9,7 +9,7 @@ import OtherCharacterDiedEvent from './events/OtherCharacterDiedEvent';
 import TargetUpdatedEvent from './events/TargetUpdatedEvent';
 import PlayerApplies from './delegate/PlayerApplies';
 import PlayerInventory from './delegate/PlayerInventory';
-import DamageCausedEvent from './events/DamageCausedEvent';
+import DamageEvent from './events/DamageEvent';
 import { EntityStateEnum } from '@/core/enum/EntityStateEnum';
 import { ChatMessageTypeEnum } from '@/core/enum/ChatMessageTypeEnum';
 import MathUtil from '@/core/domain/util/MathUtil';
@@ -295,8 +295,15 @@ export default class Player extends Character {
         });
     }
 
-    takeDamage(): void {
-        throw new Error('Method not implemented.');
+    takeDamage(attacker: Character, damage: number): void {
+        console.log(attacker.getName());
+        this.health -= damage;
+
+        if (this.health <= 0) {
+            this.health = this.maxHealth;
+            //TODO: player death
+            return;
+        }
     }
 
     otherEntityDied(entity: GameEntity) {
@@ -323,8 +330,18 @@ export default class Player extends Character {
 
     sendDamageCaused({ virtualId, damage, damageFlags }) {
         this.publish(
-            new DamageCausedEvent({
+            new DamageEvent({
                 virtualId,
+                damage,
+                damageFlags,
+            }),
+        );
+    }
+
+    sendDamageReceived({ damage, damageFlags }) {
+        this.publish(
+            new DamageEvent({
+                virtualId: this.virtualId,
                 damage,
                 damageFlags,
             }),

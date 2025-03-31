@@ -4,6 +4,7 @@ import Player from '../../entities/game/player/Player';
 import Monster from '../../entities/game/mob/Monster';
 import BattleService from './BattleService';
 import BattlePlayerAgainstMobService from './BattlePlayerAgainstMobService';
+import BattleMobAgainstPlayerService from './BattleMobAgainstPlayerService';
 
 export default class BattleServiceFactory {
     private readonly logger: Logger;
@@ -22,7 +23,7 @@ export default class BattleServiceFactory {
         }
 
         if (attacker instanceof Monster && victim instanceof Player) {
-            // TODO
+            return new BattleMobAgainstPlayerService(this.logger, attacker, victim);
         }
 
         throw new Error('Unsupported battle configuration');

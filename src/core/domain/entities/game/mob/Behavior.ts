@@ -158,6 +158,8 @@ export default class Behavior {
                 entity: this.monster,
             }),
         );
+
+        this.monster.attack(this.target);
     }
 
     private calcDelay() {

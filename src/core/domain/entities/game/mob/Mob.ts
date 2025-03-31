@@ -226,8 +226,20 @@ export abstract class Mob extends Character {
         return this.resists.find((resist) => resist.type === resistType)?.value || 0;
     }
 
+    getEnchant(enchantType: MobEnchantEnum) {
+        return this.enchants.find((enchant) => enchant.type === enchantType)?.value || 0;
+    }
+
     isStoneSkinner() {
         return this.aiFlag.is(MobAIFlagEnum.STONESKIN);
+    }
+
+    isDeathBlower() {
+        return this.aiFlag.is(MobAIFlagEnum.DEATHBLOW);
+    }
+
+    getDeathBlowChance() {
+        return this.hpPercentToGetDeathblow ?? 0; //TODO: chance this name to percentToGetDeathblow
     }
 
     getRank() {

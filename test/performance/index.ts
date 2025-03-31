@@ -7,7 +7,7 @@ import MathUtil from '@/core/domain/util/MathUtil';
 
 const SIGNALS = ['SIGINT', 'SIGTERM'];
 const ERRORS = ['unhandledRejection', 'uncaughtException'];
-const MAX_FAKE_PLAYERS = 500;
+const MAX_FAKE_PLAYERS = 1000;
 
 const users = [];
 const gameFlows = [];
@@ -82,14 +82,51 @@ async function clearData(db) {
     }
 }
 
-async function createFakePlayers() {
-    let i = 0;
+/**
+ *
+ * this test is testing how many concurrently users we can handle at the same place (player range)
+ * packet qtd will be like players*players
+ */
+// async function createFakePlayers() {
+//     let i = 1;
+
+//     for (const { x, y } of regen as any) {
+//         if (users.length >= MAX_FAKE_PLAYERS) break;
+
+//         for (let j = 1; j <= 100; j++) {
+//             const posX = MathUtil.getRandomInt(-3000, 3000);
+//             const posY = MathUtil.getRandomInt(-3000, 3000);
+//             const positionX = 921600 + x * 100 + posX;
+//             const positionY = 204800 + y * 100 + posY;
+//             const { user, password } = await createData(db, i * j, positionX, positionY);
+//             users.push(user);
+
+//             const token = await authFlow(user, password);
+//             const gameFlow = new GameFlow(user, token);
+
+//             await gameFlow.connect();
+//             await gameFlow.basicFlow();
+//             gameFlows.push(gameFlow);
+//         }
+
+//         i++;
+//     }
+
+//     console.log(`Initialized ${users.length} fake players.`);
+//     return gameFlows;
+// }
+
+//TODO: pass test type and quantity of players to test
+async function createFakePlayersSpread() {
+    let i = 1;
 
     for (const { x, y } of regen as any) {
-        if (i >= MAX_FAKE_PLAYERS) break;
+        if (users.length >= MAX_FAKE_PLAYERS) break;
 
-        const positionX = 921600 + x * 100;
-        const positionY = 204800 + y * 100;
+        const posX = MathUtil.getRandomInt(-3000, 3000);
+        const posY = MathUtil.getRandomInt(-3000, 3000);
+        const positionX = 921600 + x * 100 + posX;
+        const positionY = 204800 + y * 100 + posY;
         const { user, password } = await createData(db, i, positionX, positionY);
         users.push(user);
 
@@ -103,7 +140,7 @@ async function createFakePlayers() {
         i++;
     }
 
-    console.log(`Initialized ${i} fake players.`);
+    console.log(`Initialized ${users.length} fake players.`);
     return gameFlows;
 }
 
@@ -118,7 +155,7 @@ async function startRandomMovement(gameFlows) {
 
 async function main() {
     try {
-        const gameFlows = await createFakePlayers();
+        const gameFlows = await createFakePlayersSpread();
         await startRandomMovement(gameFlows);
     } catch (error) {
         console.error('Error in main:', error);
