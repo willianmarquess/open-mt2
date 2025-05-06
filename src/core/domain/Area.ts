@@ -3,7 +3,6 @@ import QuadTree from '../util/QuadTree';
 import Queue from '../util/Queue';
 import GameEntity from './entities/game/GameEntity';
 import DroppedItem from './entities/game/item/DroppedItem';
-import Monster from './entities/game/mob/Monster';
 import Player from './entities/game/player/Player';
 import MathUtil from './util/MathUtil';
 import Logger from '@/core/infra/logger/Logger';
@@ -317,22 +316,6 @@ export default class Area {
 
     tick() {
         for (const entity of this.entitiesToSpawn.dequeueIterator()) {
-            if (entity instanceof Character) {
-                if (entity instanceof Player) {
-                    entity.subscribe(CharacterMovedEvent, this.onCharacterMove.bind(this));
-                    entity.subscribe(CharacterLevelUpEvent, this.onCharacterLevelUp.bind(this));
-                    entity.subscribe(DropItemEvent, this.onItemDrop.bind(this));
-                }
-
-                if (entity instanceof Monster) {
-                    entity.subscribe(MonsterMovedEvent, this.onMonsterMove.bind(this));
-                    entity.subscribe(MonsterDiedEvent, this.onMonsterDied.bind(this));
-                }
-
-                entity.subscribe(CharacterUpdatedEvent, this.onCharacterUpdate.bind(this));
-                entity.subscribe(FlyEffectCreatedEvent, this.onFlyEffect.bind(this));
-            }
-
             this.quadTree.insert(entity);
 
             const entities = this.quadTree.queryAround(
@@ -341,6 +324,7 @@ export default class Area {
                 CHAR_VIEW_SIZE,
                 entity.getEntityType() !== EntityTypeEnum.PLAYER ? EntityTypeEnum.PLAYER : null,
             );
+
             for (const otherEntity of entities.values()) {
                 if (otherEntity.getVirtualId() === entity.getVirtualId()) continue;
 
@@ -354,6 +338,7 @@ export default class Area {
             }
 
             this.entities.set(entity.getVirtualId(), entity);
+            entity.setArea(this);
         }
 
         for (const entity of this.entitiesToDespawn.dequeueIterator()) {
@@ -364,22 +349,6 @@ export default class Area {
                 EntityTypeEnum.PLAYER,
             ) as Map<number, Player>;
 
-            if (entity instanceof Character) {
-                if (entity instanceof Player) {
-                    entity.removeAllListeners(CharacterMovedEvent);
-                    entity.removeAllListeners(CharacterLevelUpEvent);
-                    entity.removeAllListeners(DropItemEvent);
-                }
-
-                if (entity instanceof Monster) {
-                    entity.removeAllListeners(MonsterMovedEvent);
-                    entity.removeAllListeners(MonsterDiedEvent);
-                }
-
-                entity.removeAllListeners(CharacterUpdatedEvent);
-                entity.removeAllListeners(FlyEffectCreatedEvent);
-            }
-
             for (const otherEntity of entities.values()) {
                 if (entity instanceof Character) {
                     entity.removeNearbyEntity(otherEntity);
@@ -389,6 +358,7 @@ export default class Area {
                     otherEntity.removeNearbyEntity(entity);
                 }
             }
+
             this.entities.delete(entity.getVirtualId());
             this.quadTree.remove(entity);
         }

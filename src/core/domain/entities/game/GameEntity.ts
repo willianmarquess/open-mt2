@@ -1,4 +1,5 @@
 import { EntityTypeEnum } from '@/core/enum/EntityTypeEnum';
+import Area from '../../Area';
 
 export default abstract class GameEntity {
     protected virtualId: number;
@@ -7,11 +8,18 @@ export default abstract class GameEntity {
     protected positionY: number = 0;
     protected nearbyEntities = new Map<number, GameEntity>();
 
+    //area
+    protected area: Area;
+
     constructor({ virtualId, entityType, positionX, positionY }) {
         this.virtualId = virtualId;
         this.entityType = entityType;
         this.positionX = positionX;
         this.positionY = positionY;
+    }
+
+    setArea(area: Area) {
+        this.area = area;
     }
 
     getVirtualId() {

@@ -5,40 +5,45 @@ import { GameConfig } from '@/game/infra/config/GameConfig';
 import Inventory from '../inventory/Inventory';
 import InventoryEventsEnum from '../inventory/events/InventoryEventsEnum';
 import { PointsEnum } from '@/core/enum/PointsEnum';
-import OtherCharacterDiedEvent from './events/OtherCharacterDiedEvent';
-import TargetUpdatedEvent from './events/TargetUpdatedEvent';
 import PlayerApplies from './delegate/PlayerApplies';
-import PlayerInventory from './delegate/PlayerInventory';
-import DamageEvent from './events/DamageEvent';
 import { EntityStateEnum } from '@/core/enum/EntityStateEnum';
 import { ChatMessageTypeEnum } from '@/core/enum/ChatMessageTypeEnum';
 import MathUtil from '@/core/domain/util/MathUtil';
-import CharacterTeleportedEvent from './events/CharacterTeleportedEvent';
-import CharacterLevelUpEvent from './events/CharacterLevelUpEvent';
 import JobUtil from '@/core/domain/util/JobUtil';
-import CharacterSpawnedEvent from './events/CharacterSpawnedEvent';
-import OtherCharacterSpawnedEvent from './events/OtherCharacterSpawnedEvent';
-import OtherCharacterLeftGameEvent from './events/OtherCharacterLeftGameEvent';
-import OtherCharacterLevelUpEvent from './events/OtherCharacterLevelUpEvent';
-import OtherCharacterUpdatedEvent from './events/OtherCharacterUpdatedEvent';
-import LogoutEvent from './events/LogoutEvent';
-import ChatEvent from './events/ChatEvent';
-import CharacterPointsUpdatedEvent from './events/CharacterPointsUpdatedEvent';
-import OtherCharacterMovedEvent from './events/OtherCharacterMovedEvent';
 import CharacterMovedEvent from './events/CharacterMovedEvent';
 import { ItemAntiFlagEnum } from '@/core/enum/ItemAntiFlagEnum';
 import Item from '../item/Item';
 import DropItemEvent from './events/DropItemEvent';
-import ItemDroppedEvent from './events/ItemDroppedEvent';
-import ItemDroppedHideEvent from './events/ItemDroppedHideEvent';
 import DroppedItem from '../item/DroppedItem';
 import { StatsEnum } from '@/core/enum/StatsEnum';
 import PlayerState from '../../state/player/PlayerState';
 import Character from '../Character';
 import { SpecialItemEnum } from '@/core/enum/SpecialItemEnum';
 import { FlyEnum } from '@/core/enum/FlyEnum';
-import ShowFlyEffectEvent from './events/ShowFlyEffectEvent';
 import CharacterUpdatedEvent from '../shared/event/CharacterUpdatedEvent';
+import GameConnection from '@/game/interface/networking/GameConnection';
+import ChatOutPacket from '@/core/interface/networking/packets/packet/out/ChatOutPacket';
+import DamagePacket from '@/core/interface/networking/packets/packet/out/DamagePacket';
+import TargetUpdatedPacket from '@/core/interface/networking/packets/packet/out/TargetUpdatePacket';
+import CharacterSpawnPacket from '@/core/interface/networking/packets/packet/out/CharacterSpawnPacket';
+import CharacterInfoPacket from '@/core/interface/networking/packets/packet/out/CharacterInfoPacket';
+import CharacterUpdatePacket from '@/core/interface/networking/packets/packet/out/CharacterUpdatePacket';
+import CharacterPointsPacket from '@/core/interface/networking/packets/packet/out/CharacterPointsPacket';
+import CharacterDetailsPacket from '@/core/interface/networking/packets/packet/out/CharacterDetailsPacket';
+import CharacterDiedPacket from '@/core/interface/networking/packets/packet/out/CharacterDiedPacket';
+import TeleportPacket from '@/core/interface/networking/packets/packet/out/TeleportPacket';
+import Ip from '@/core/util/Ip';
+import CharacterPointChangePacket from '@/core/interface/networking/packets/packet/out/CharacterPointChangePacket';
+import RemoveCharacterPacket from '@/core/interface/networking/packets/packet/out/RemoveCharacterPacket';
+import ItemDroppedPacket from '@/core/interface/networking/packets/packet/out/ItemDroppedPacket';
+import SetItemOwnershipPacket from '@/core/interface/networking/packets/packet/out/SetItemOwnershipPacket';
+import ItemDroppedHidePacket from '@/core/interface/networking/packets/packet/out/ItemDroppedHidePacket';
+import ItemPacket from '@/core/interface/networking/packets/packet/out/ItemPacket';
+import { WindowTypeEnum } from '@/core/enum/WindowTypeEnum';
+import { ItemEquipmentSlotEnum } from '@/core/enum/ItemEquipmentSlotEnum';
+import FlyPacket from '@/core/interface/networking/packets/packet/out/FlyPacket';
+import CharacterMoveOutPacket from '@/core/interface/networking/packets/packet/out/CharacterMoveOutPacket';
+import AffectAddPacket from '@/core/interface/networking/packets/packet/out/AffectAddPacket';
 
 const REGEN_INTERVAL = 3000;
 
@@ -118,8 +123,10 @@ export default class Player extends Character {
     private inventory: Inventory;
 
     //delegate
-    private playerInventory: PlayerInventory;
     private playerApplies: PlayerApplies;
+
+    //connection
+    private connection: GameConnection;
 
     constructor(
         {
@@ -219,7 +226,6 @@ export default class Player extends Character {
         this.inventory.subscribe(InventoryEventsEnum.ITEM_EQUIPPED, this.onItemEquipped.bind(this));
         this.inventory.subscribe(InventoryEventsEnum.ITEM_UNEQUIPPED, this.onItemUnequipped.bind(this));
 
-        this.playerInventory = new PlayerInventory(this);
         this.playerApplies = new PlayerApplies(this, logger);
 
         this.stateMachine
@@ -240,6 +246,25 @@ export default class Player extends Character {
             .gotoState(EntityStateEnum.IDLE);
 
         this.init();
+    }
+
+    setConnection(connection: GameConnection) {
+        this.connection = connection;
+    }
+
+    sendDetails() {
+        this.connection.send(
+            new CharacterDetailsPacket({
+                vid: this.getVirtualId(),
+                playerClass: this.getPlayerClass(),
+                playerName: this.getName(),
+                skillGroup: this.getSkillGroup(),
+                positionX: this.getPositionX(),
+                positionY: this.getPositionY(),
+                positionZ: 0,
+                empireId: this.getEmpire(),
+            }),
+        );
     }
 
     init() {
@@ -307,7 +332,7 @@ export default class Player extends Character {
     }
 
     otherEntityDied(entity: GameEntity) {
-        this.publish(new OtherCharacterDiedEvent({ virtualId: entity.getVirtualId() }));
+        this.connection.send(new CharacterDiedPacket({ virtualId: entity.getVirtualId() }));
     }
 
     getHealthPercentage() {
@@ -320,8 +345,8 @@ export default class Player extends Character {
     }
 
     sendTargetUpdated(target: Character) {
-        this.publish(
-            new TargetUpdatedEvent({
+        this.connection.send(
+            new TargetUpdatedPacket({
                 virtualId: target.getVirtualId(),
                 healthPercentage: target.getHealthPercentage(),
             }),
@@ -329,8 +354,8 @@ export default class Player extends Character {
     }
 
     sendDamageCaused({ virtualId, damage, damageFlags }) {
-        this.publish(
-            new DamageEvent({
+        this.connection.send(
+            new DamagePacket({
                 virtualId,
                 damage,
                 damageFlags,
@@ -339,8 +364,8 @@ export default class Player extends Character {
     }
 
     sendDamageReceived({ damage, damageFlags }) {
-        this.publish(
-            new DamageEvent({
+        this.connection.send(
+            new DamagePacket({
                 virtualId: this.virtualId,
                 damage,
                 damageFlags,
@@ -358,7 +383,7 @@ export default class Player extends Character {
         this.addHealth(Math.floor(amount));
         this.chat({
             messageType: ChatMessageTypeEnum.INFO,
-            message: `[HP REGEN] amount: ${Math.floor(amount)} percent: ${percent}`,
+            message: `[SYSTEM][HP REGEN] amount: ${Math.floor(amount)} percent: ${percent}`,
         });
         this.sendPoints();
     }
@@ -373,7 +398,7 @@ export default class Player extends Character {
         this.addMana(Math.floor(amount));
         this.chat({
             messageType: ChatMessageTypeEnum.INFO,
-            message: `[MANA REGEN] amount: ${Math.floor(amount)} percent: ${percent}`,
+            message: `[SYSTEM][MANA REGEN] amount: ${Math.floor(amount)} percent: ${percent}`,
         });
         this.sendPoints();
     }
@@ -515,7 +540,14 @@ export default class Player extends Character {
         this.move(x, y);
         this.stop();
 
-        this.publish(new CharacterTeleportedEvent());
+        this.connection.send(
+            new TeleportPacket({
+                positionX: this.getPositionX(),
+                positionY: this.getPositionY(),
+                port: Number(this.config.SERVER_PORT),
+                address: Ip.toInt(this.config.SERVER_ADDRESS),
+            }),
+        );
     }
 
     addGold(value: number = 1) {
@@ -583,7 +615,14 @@ export default class Player extends Character {
         this.sendPoints();
 
         //verify if we really need to send this
-        this.publish(new CharacterLevelUpEvent({ entity: this }));
+        this.connection.send(
+            new CharacterPointChangePacket({
+                vid: this.virtualId,
+                type: PointsEnum.LEVEL,
+                amount: 0,
+                value: this.level,
+            }),
+        );
     }
 
     setLevel(value: number = 1) {
@@ -613,7 +652,14 @@ export default class Player extends Character {
 
         //add skill point
         //verify if we really need to send this
-        this.publish(new CharacterLevelUpEvent({ entity: this }));
+        this.connection.send(
+            new CharacterPointChangePacket({
+                vid: this.virtualId,
+                type: PointsEnum.LEVEL,
+                amount: 0,
+                value: this.level,
+            }),
+        );
     }
 
     addHealthRegen(value: number) {
@@ -668,16 +714,7 @@ export default class Player extends Character {
         this.maxMana = this.baseMana + this.iq * this.mpPerIqPoint + this.level * this.mpPerLvl;
     }
 
-    spawn() {
-        this.lastPlayTime = performance.now();
-        this.publish(new CharacterSpawnedEvent());
-        this.chat({
-            messageType: ChatMessageTypeEnum.INFO,
-            message: 'Welcome to Metin2 JS - An Open Source Project',
-        });
-    }
-
-    showOtherEntity({
+    private showEntity({
         virtualId,
         playerClass,
         entityType,
@@ -690,46 +727,131 @@ export default class Player extends Character {
         name,
         rotation,
     }) {
-        this.publish(
-            new OtherCharacterSpawnedEvent({
-                virtualId,
+        this.connection.send(
+            new CharacterSpawnPacket({
+                vid: virtualId,
                 playerClass,
                 entityType,
                 attackSpeed,
                 movementSpeed,
                 positionX,
                 positionY,
+                positionZ: 0,
+                rotation,
+            }),
+        );
+
+        this.connection.send(
+            new CharacterInfoPacket({
+                vid: virtualId,
                 empireId,
                 level,
-                name,
-                rotation,
+                playerName: name,
+                guildId: 0, //todo
+                mountId: 0, //todo
+                pkMode: 0, //todo
+                rankPoints: 0, //todo
             }),
         );
     }
 
+    spawn() {
+        this.lastPlayTime = performance.now();
+
+        this.showEntity({
+            virtualId: this.getVirtualId(),
+            playerClass: this.getPlayerClass(),
+            entityType: this.getEntityType(),
+            attackSpeed: this.getAttackSpeed(),
+            movementSpeed: this.getMovementSpeed(),
+            positionX: this.getPositionX(),
+            positionY: this.getPositionY(),
+            empireId: this.getEmpire(),
+            level: this.getLevel(),
+            name: this.getName(),
+            rotation: this.getRotation(),
+        });
+
+        this.chat({
+            messageType: ChatMessageTypeEnum.INFO,
+            message: '[SYSTEM] Welcome to Open Metin2 - An Open Source Project',
+        });
+    }
+
+    private showOtherEntity({
+        virtualId,
+        playerClass,
+        entityType,
+        attackSpeed,
+        movementSpeed,
+        positionX,
+        positionY,
+        empireId,
+        level,
+        name,
+        rotation,
+    }) {
+        this.showEntity({
+            virtualId,
+            playerClass,
+            entityType,
+            attackSpeed,
+            movementSpeed,
+            positionX,
+            positionY,
+            empireId,
+            level,
+            name,
+            rotation,
+        });
+    }
+
     hideOtherEntity({ virtualId }) {
-        this.publish(new OtherCharacterLeftGameEvent({ virtualId }));
+        this.connection.send(
+            new RemoveCharacterPacket({
+                vid: virtualId,
+            }),
+        );
     }
 
     otherEntityLevelUp({ virtualId, level }) {
-        this.publish(new OtherCharacterLevelUpEvent({ virtualId, level }));
+        this.connection.send(
+            new CharacterPointChangePacket({
+                vid: virtualId,
+                type: PointsEnum.LEVEL,
+                amount: 0,
+                value: level,
+            }),
+        );
     }
 
     otherEntityUpdated({ vid, attackSpeed, moveSpeed, bodyId, weaponId, hairId, affects }) {
-        this.publish(
-            new OtherCharacterUpdatedEvent({ vid, attackSpeed, moveSpeed, bodyId, weaponId, hairId, affects }),
+        this.connection.send(
+            new CharacterUpdatePacket({
+                vid,
+                attackSpeed,
+                moveSpeed,
+                parts: [bodyId, weaponId, 0, hairId],
+                affects,
+            }),
         );
     }
 
     logout() {
-        this.publish(new LogoutEvent());
+        this.chat({
+            message: '[SYSTEM] Leaving game',
+            messageType: ChatMessageTypeEnum.INFO,
+        });
+        setTimeout(() => this.connection.close(), 1_000);
     }
 
-    chat({ message, messageType }) {
-        this.publish(
-            new ChatEvent({
-                message,
+    chat({ message, messageType }: { message: string; messageType: ChatMessageTypeEnum }) {
+        this.connection.send(
+            new ChatOutPacket({
                 messageType,
+                message,
+                vid: this.getVirtualId(),
+                empireId: this.getEmpire(),
             }),
         );
     }
@@ -738,7 +860,7 @@ export default class Player extends Character {
         errors.forEach(({ errors }) => {
             errors.forEach(({ error }) => {
                 this.chat({
-                    message: error,
+                    message: `[SYSTEM] ${error}`,
                     messageType: ChatMessageTypeEnum.INFO,
                 });
             });
@@ -746,13 +868,17 @@ export default class Player extends Character {
     }
 
     sendPoints() {
-        this.publish(new CharacterPointsUpdatedEvent());
+        const characterPointsPacket = new CharacterPointsPacket();
+        for (const point of this.getPoints().keys()) {
+            characterPointsPacket.addPoint(Number(point), this.getPoint(point));
+        }
+        this.connection.send(characterPointsPacket);
     }
 
     updateOtherEntity({ virtualId, arg, movementType, time, rotation, positionX, positionY, duration }) {
-        this.publish(
-            new OtherCharacterMovedEvent({
-                virtualId,
+        this.connection.send(
+            new CharacterMoveOutPacket({
+                vid: virtualId,
                 arg,
                 movementType,
                 time,
@@ -764,8 +890,31 @@ export default class Player extends Character {
         );
     }
 
+    sendAffect({ type, apply, duration, flag, value, manaCost }) {
+        this.connection.send(
+            new AffectAddPacket({
+                type,
+                apply,
+                duration,
+                flag,
+                value,
+                manaCost,
+            }),
+        );
+    }
+
     updateView() {
-        this.publish(
+        this.connection.send(
+            new CharacterUpdatePacket({
+                vid: this.virtualId,
+                attackSpeed: this.attackSpeed,
+                moveSpeed: this.movementSpeed,
+                parts: [this.getBody()?.getId() ?? 0, this.getWeapon()?.getId() ?? 0, 0, this.getHair()?.getId() ?? 0],
+                affects: this.getAffectFlags(),
+            }),
+        );
+
+        this.area?.onCharacterUpdate(
             new CharacterUpdatedEvent({
                 name: this.name,
                 attackSpeed: this.attackSpeed,
@@ -783,7 +932,7 @@ export default class Player extends Character {
 
     wait({ positionX, positionY, arg, rotation, time, movementType }) {
         super.waitInternal(positionX, positionY);
-        this.publish(
+        this.area.onCharacterMove(
             new CharacterMovedEvent({
                 params: { positionX, positionY, arg, rotation, time, movementType, duration: 0 },
                 entity: this,
@@ -793,7 +942,7 @@ export default class Player extends Character {
 
     goto({ positionX, positionY, arg, rotation, time, movementType }) {
         super.gotoInternal(positionX, positionY, rotation);
-        this.publish(
+        this.area.onCharacterMove(
             new CharacterMovedEvent({
                 params: { positionX, positionY, arg, rotation, time, movementType, duration: this.movementDuration },
                 entity: this,
@@ -809,7 +958,7 @@ export default class Player extends Character {
         //remove invisible and cancel other things like mining
         this.rotation = rotation;
         this.move(positionX, positionY);
-        this.publish(
+        this.area.onCharacterMove(
             new CharacterMovedEvent({
                 params: { positionX, positionY, arg, rotation, time, movementType, duration: 0 },
                 entity: this,
@@ -861,36 +1010,113 @@ export default class Player extends Character {
         ITEM MANAGEMENT
     */
 
+    isEquippedWithUniqueItem(uniqueItemId: SpecialItemEnum): boolean {
+        const uniqueItem1 = this.inventory.getItemFromSlot(ItemEquipmentSlotEnum.UNIQUE1);
+        const uniqueItem2 = this.inventory.getItemFromSlot(ItemEquipmentSlotEnum.UNIQUE1);
+
+        return uniqueItem1?.getId() === uniqueItemId || uniqueItem2?.getId() === uniqueItemId;
+    }
+
     sendItemAdded({ window, position, item }) {
-        return this.playerInventory.sendItemAdded(window, position, item);
+        this.connection.send(
+            new ItemPacket({
+                window,
+                position,
+                id: item.getId(),
+                count: item.getCount() ?? 1,
+                flags: item.getFlags().getFlag(),
+                antiFlags: item.getAntiFlags().getFlag(),
+                highlight: 0, //todo
+                bonuses: [], //todo
+                sockets: [], //todo
+            }),
+        );
     }
 
     sendItemRemoved({ window, position }) {
-        return this.playerInventory.sendItemRemoved({ window, position });
+        this.connection.send(
+            new ItemPacket({
+                window,
+                position,
+                id: 0,
+                count: 0,
+                flags: 0,
+                antiFlags: 0,
+                highlight: 0,
+            }),
+        );
     }
 
     getItem(position: number) {
-        return this.playerInventory.getItem(position);
+        return this.inventory.getItem(Number(position));
     }
 
     isWearable(item: Item) {
-        return this.playerInventory.isWearable(item);
+        return (
+            this.getLevel() >= item.getLevelLimit() &&
+            item.getWearFlags().getFlag() > 0 &&
+            !item.getAntiFlags().is(this.antiFlagClass) &&
+            !item.getAntiFlags().is(this.antiFlagGender)
+        );
     }
 
     moveItem({ fromWindow, fromPosition, toWindow, toPosition /*_count*/ }) {
-        return this.playerInventory.moveItem({ fromWindow, fromPosition, toWindow, toPosition /*_count*/ });
+        const item = this.getItem(fromPosition);
+
+        if (!item) return;
+        if (fromWindow !== WindowTypeEnum.INVENTORY || toWindow !== WindowTypeEnum.INVENTORY) return;
+        if (!this.getInventory().isValidPosition(toPosition)) return;
+        if (!this.getInventory().haveAvailablePosition(toPosition, item.getSize())) return;
+
+        if (this.getInventory().isEquipmentPosition(toPosition)) {
+            if (!this.isWearable(item)) return;
+            if (!this.getInventory().isValidSlot(item, toPosition)) return;
+        }
+
+        this.getInventory().removeItem(fromPosition, item.getSize());
+        this.getInventory().addItemAt(item, toPosition);
+
+        this.sendItemRemoved({
+            window: fromWindow,
+            position: fromPosition,
+        });
+        this.sendItemAdded({ window: toWindow, position: toPosition, item });
+
+        return item;
     }
 
-    addItem(item: Item) {
-        return this.playerInventory.addItem(item);
+    addItem(item: Item): boolean {
+        const position = this.getInventory().addItem(item);
+
+        if (position < 0) {
+            this.chat({
+                messageType: ChatMessageTypeEnum.INFO,
+                message: 'Inventory is full',
+            });
+            return false;
+        }
+
+        this.sendItemAdded({ window: WindowTypeEnum.INVENTORY, position, item });
+
+        return true;
+    }
+
+    addItems(items: Array<Item>) {
+        for (const item of items) {
+            this.inventory.addItemAt(item, item.getPosition());
+        }
+        this.sendPoints();
     }
 
     sendInventory() {
-        return this.playerInventory.sendInventory();
+        for (const item of this.getInventory().getItems().values()) {
+            this.sendItemAdded({ window: item.getWindow(), position: item.getPosition(), item });
+        }
+        this.updateView();
     }
 
     dropItem({ item, count }) {
-        this.publish(
+        this.area.onItemDrop(
             new DropItemEvent({
                 item,
                 count,
@@ -901,37 +1127,42 @@ export default class Player extends Character {
         );
     }
 
-    showDroppedItem({ virtualId, count, positionX, positionY, ownerName, id }) {
-        this.publish(
-            new ItemDroppedEvent({
-                virtualId,
-                count,
+    showDroppedItem({ virtualId, positionX, positionY, ownerName, id }) {
+        this.connection.send(
+            new ItemDroppedPacket({
+                id,
                 positionX,
                 positionY,
+                virtualId,
+            }),
+        );
+
+        this.connection.send(
+            new SetItemOwnershipPacket({
                 ownerName,
-                id,
+                virtualId,
             }),
         );
     }
 
     hideDroppedItem({ virtualId }) {
-        this.publish(
-            new ItemDroppedHideEvent({
+        this.connection.send(
+            new ItemDroppedHidePacket({
                 virtualId,
             }),
         );
     }
 
     getBody() {
-        return this.playerInventory.getBody();
+        return this.inventory.getItemFromSlot(ItemEquipmentSlotEnum.BODY);
     }
 
     getWeapon() {
-        return this.playerInventory.getWeapon();
+        return this.inventory.getItemFromSlot(ItemEquipmentSlotEnum.WEAPON);
     }
 
     getHair() {
-        return this.playerInventory.getHair();
+        return this.inventory.getItemFromSlot(ItemEquipmentSlotEnum.COSTUME_HAIR);
     }
 
     /* 
@@ -980,7 +1211,7 @@ export default class Player extends Character {
         if (otherEntity instanceof DroppedItem) {
             this.showDroppedItem({
                 virtualId: otherEntity.getVirtualId(),
-                count: otherEntity.getCount(),
+                // count: otherEntity.getCount(),
                 ownerName: otherEntity.getOwnerName(),
                 positionX: otherEntity.getPositionX(),
                 positionY: otherEntity.getPositionY(),
@@ -999,16 +1230,12 @@ export default class Player extends Character {
         }
     }
 
-    isEquippedWithUniqueItem(uniqueItemId: SpecialItemEnum): boolean {
-        return this.playerInventory.isEquippedWithUniqueItem(uniqueItemId);
-    }
-
     showFlyEffect(type: FlyEnum, from: number, to: number) {
-        this.publish(
-            new ShowFlyEffectEvent({
-                type,
+        this.connection.send(
+            new FlyPacket({
                 fromVirtualId: from,
                 toVirtualId: to,
+                type,
             }),
         );
     }

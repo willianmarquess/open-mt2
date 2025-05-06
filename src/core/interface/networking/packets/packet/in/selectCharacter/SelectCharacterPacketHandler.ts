@@ -4,8 +4,6 @@ import SelectCharacterPacket from './SelectCharacterPacket';
 import Logger from '@/core/infra/logger/Logger';
 import GameConnection from '@/game/interface/networking/GameConnection';
 import { ConnectionStateEnum } from '@/core/enum/ConnectionStateEnum';
-import CharacterDetailsPacket from '../../out/CharacterDetailsPacket';
-import CharacterPointsPacket from '../../out/CharacterPointsPacket';
 
 export default class SelectCharacterPacketHandler extends PacketHandler<SelectCharacterPacket> {
     private readonly selectCharacterService: SelectCharacterService;
@@ -38,35 +36,11 @@ export default class SelectCharacterPacketHandler extends PacketHandler<SelectCh
         connection.setState(ConnectionStateEnum.LOADING);
 
         const slot = packet.getSlot();
-        const result = await this.selectCharacterService.execute(slot, accountId);
+        const result = await this.selectCharacterService.execute(slot, accountId, connection);
 
         if (result.hasError()) {
             connection.close();
             return;
         }
-
-        const player = result.getData();
-
-        connection.setPlayer(player);
-
-        connection.send(
-            new CharacterDetailsPacket({
-                vid: player.getVirtualId(),
-                playerClass: player.getPlayerClass(),
-                playerName: player.getName(),
-                skillGroup: player.getSkillGroup(),
-                positionX: player.getPositionX(),
-                positionY: player.getPositionY(),
-                positionZ: 0,
-                empireId: player.getEmpire(),
-            }),
-        );
-
-        const characterPointsPacket = new CharacterPointsPacket();
-        for (const point of player.getPoints().keys()) {
-            characterPointsPacket.addPoint(Number(point), player.getPoint(point));
-        }
-
-        connection.send(characterPointsPacket);
     }
 }

@@ -6,6 +6,7 @@ import World from '@/core/domain/World';
 import { ErrorTypesEnum } from '@/core/enum/ErrorTypesEnum';
 import Logger from '@/core/infra/logger/Logger';
 import { IPlayerRepository } from '@/core/domain/repository/IPlayerRepository';
+import GameConnection from '@/game/interface/networking/GameConnection';
 
 export default class SelectCharacterService {
     private readonly logger: Logger;
@@ -22,7 +23,11 @@ export default class SelectCharacterService {
         this.itemManager = itemManager;
     }
 
-    async execute(slot: number, accountId: number): Promise<Result<Player, ErrorTypesEnum>> {
+    async execute(
+        slot: number,
+        accountId: number,
+        connection: GameConnection,
+    ): Promise<Result<Player, ErrorTypesEnum>> {
         const playerFounded = await this.playerRepository.getByAccountIdAndSlot(accountId, slot);
 
         if (!playerFounded) {
@@ -34,11 +39,14 @@ export default class SelectCharacterService {
 
         player.setVirtualId(this.world.generateVirtualId());
 
+        connection.setPlayer(player);
+
+        player.sendDetails();
+
         const items = await this.itemManager.getItems(player.getId());
 
-        for (const item of items) {
-            player.getInventory().addItemAt(item, item.getPosition());
-        }
+        player.addItems(items);
+        player.sendPoints();
 
         return Result.ok(player);
     }

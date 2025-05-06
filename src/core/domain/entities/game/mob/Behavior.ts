@@ -3,8 +3,6 @@ import MathUtil from '../../../util/MathUtil';
 import Monster from '@/core/domain/entities/game/mob/Monster';
 import Player from '../player/Player';
 import { AffectBitsTypeEnum } from '@/core/enum/AffectBitsTypeEnum';
-import MonsterMovedEvent from './events/MonsterMovedEvent';
-import { MovementTypeEnum } from '@/core/enum/MovementTypeEnum';
 
 const POSITION_OFFSET = 600;
 const MIN_DELAY = 15000;
@@ -13,12 +11,24 @@ const MAX_TIME_WITHOUT_ATTACK = 15_000;
 const MAX_DISTANCE_WITHOUT_ATTACK = 5_000;
 const BASE_NEXT_TIME_TO_ATTACK = 2_000;
 const MIN_NEXT_TIME_TO_ATTACK = 1_000;
-const MIN_NEXT_TIME_TO_MOVE = 500;
+const MIN_NEXT_TIME_TO_MOVE = 700;
 
 type DamageMapType = {
     player: Player;
     damage: number;
 };
+
+function degreeToRadian(degree: number): number {
+    return (degree * Math.PI) / 180;
+}
+
+function getDeltaByDegree(degree: number, distance: number): { dx: number; dy: number } {
+    const rad = degreeToRadian(degree);
+    return {
+        dx: distance * Math.sin(rad),
+        dy: distance * Math.cos(rad),
+    };
+}
 
 export default class Behavior {
     private readonly monster: Monster;
@@ -85,10 +95,12 @@ export default class Behavior {
                 }
             }
             const distanceFromTarget = this.getDistanceFromTarget();
+            console.log('distance: ', distanceFromTarget);
+            console.log('range: ', this.monster.getAttackRange());
 
             switch (this.monster.getState()) {
                 case EntityStateEnum.MOVING: {
-                    if (distanceFromTarget > this.monster.getAttackRange()) {
+                    if (distanceFromTarget > Math.max(300, this.monster.getAttackRange() * 1.15)) {
                         if (this.nextMoveTime <= now) {
                             this.moveToTarget();
                             this.nextMoveTime = now;
@@ -138,27 +150,11 @@ export default class Behavior {
             this.target.getName(),
         );
 
-        const rotation =
-            MathUtil.calcRotationFromXY(
-                this.target.getPositionX() - this.monster.getPositionX(),
-                this.target.getPositionY() - this.monster.getPositionY(),
-            ) / 5;
-
-        this.monster.publish(
-            new MonsterMovedEvent({
-                params: {
-                    positionX: this.monster.getPositionX(),
-                    positionY: this.monster.getPositionY(),
-                    arg: 0,
-                    rotation,
-                    time: performance.now(),
-                    duration: 0,
-                    movementType: MovementTypeEnum.ATTACK,
-                },
-                entity: this.monster,
-            }),
+        const rotation = MathUtil.calcRotationFromXY(
+            this.target.getPositionX() - this.monster.getPositionX(),
+            this.target.getPositionY() - this.monster.getPositionY(),
         );
-
+        this.monster.setRotation(rotation);
         this.monster.attack(this.target);
     }
 
@@ -195,19 +191,28 @@ export default class Behavior {
 
     private moveToTarget() {
         //TODO: its working ok, but we can improve this logic
-        let directionX = this.target.getPositionX() - this.monster.getPositionX();
-        let directionY = this.target.getPositionY() - this.monster.getPositionY();
-        const directionLength = Math.sqrt(directionX * directionX + directionY * directionY);
-        directionX /= directionLength;
-        directionY /= directionLength;
+        // let directionX = this.target.getPositionX() - this.monster.getPositionX();
+        // let directionY = this.target.getPositionY() - this.monster.getPositionY();
+        // const directionLength = Math.sqrt(directionX * directionX + directionY * directionY);
+        // directionX /= directionLength;
+        // directionY /= directionLength;
 
-        const targetX =
-            this.target.getPositionX() +
-            directionX * this.monster.getAttackRange() * (MathUtil.getRandomInt(1, 4) / 100);
-        const targetY =
-            this.target.getPositionY() +
-            directionY * this.monster.getAttackRange() * (MathUtil.getRandomInt(1, 4) / 100);
+        // const targetX =
+        //     this.target.getPositionX() +
+        //     directionX * this.monster.getAttackRange() * (MathUtil.getRandomInt(1, 4) / 100);
+        // const targetY =
+        //     this.target.getPositionY() +
+        //     directionY * this.monster.getAttackRange() * (MathUtil.getRandomInt(1, 4) / 100);
+        // const distance = MathUtil.getRandomInt(400, 1500);
 
+        const angle = MathUtil.getRandomInt(0, 359);
+
+        const { dx, dy } = getDeltaByDegree(angle, Math.random() * (this.monster.getAttackRange() / 2));
+
+        const targetX = this.target.getPositionX() + dx;
+        const targetY = this.target.getPositionY() + dy;
+        console.log('X: ', targetX, this.target.getPositionX());
+        console.log('Y: ', targetY, this.target.getPositionY());
         this.monster.goto(targetX, targetY);
     }
 
