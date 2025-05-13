@@ -56,4 +56,8 @@ export default class SocketClient {
             this.client.end(() => resolve());
         });
     }
+
+    flush() {
+        this.data = Buffer.from([]);
+    }
 }

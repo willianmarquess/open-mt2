@@ -7,7 +7,7 @@ import MathUtil from '@/core/domain/util/MathUtil';
 
 const SIGNALS = ['SIGINT', 'SIGTERM'];
 const ERRORS = ['unhandledRejection', 'uncaughtException'];
-const MAX_FAKE_PLAYERS = 1000;
+const MAX_FAKE_PLAYERS = 1_000;
 
 const users = [];
 const gameFlows = [];
@@ -146,10 +146,16 @@ async function createFakePlayersSpread() {
 
 async function startRandomMovement(gameFlows) {
     for (const gameFlow of gameFlows) {
-        setTimeout(() => gameFlow.moveToRandomLocation(), MathUtil.getRandomInt(1000, 3000));
+        setTimeout(
+            () => {
+                gameFlow.moveToRandomLocation();
+                gameFlow.flush();
+            },
+            MathUtil.getRandomInt(500, 1000),
+        );
     }
 
-    await timers.setTimeout(3000);
+    await timers.setTimeout(1000);
     startRandomMovement(gameFlows);
 }
 

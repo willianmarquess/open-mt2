@@ -227,4 +227,8 @@ export default class GameFlow {
     async close() {
         return this.#client.close();
     }
+
+    flush() {
+        return this.#client.flush();
+    }
 }

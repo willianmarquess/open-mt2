@@ -4,8 +4,10 @@
   "description": "",
   "main": "src/main.js",
   "scripts": {
-    "dev:auth": "cross-env LOG_LEVEL=debug tsnd -r tsconfig-paths/register --transpile-only --respawn --ignore-watch node_modules --watch src/auth --env-file=.env src/auth/main.ts",
-    "dev:game": "cross-env LOG_LEVEL=debug tsnd -r tsconfig-paths/register --transpile-only --respawn --ignore-watch node_modules --watch src/game --env-file=.env src/game/main.ts",
+    "dev:auth": "cross-env LOG_LEVEL=info tsnd -r tsconfig-paths/register --transpile-only --respawn --ignore-watch node_modules --watch src/auth --env-file=.env src/auth/main.ts",
+    "dev:game": "cross-env LOG_LEVEL=info tsnd -r tsconfig-paths/register --transpile-only --respawn --ignore-watch node_modules --watch src/game --env-file=.env src/game/main.ts",
+    "dev:auth:debug": "cross-env LOG_LEVEL=debug tsnd -r tsconfig-paths/register --transpile-only --respawn --ignore-watch node_modules --watch src/auth --env-file=.env src/auth/main.ts",
+    "dev:game:debug": "cross-env LOG_LEVEL=debug tsnd -r tsconfig-paths/register --transpile-only --respawn --ignore-watch node_modules --watch src/game --env-file=.env src/game/main.ts",
     "auth": "node --env-file=.env dist/auth/main.js",
     "game": "node --env-file=.env dist/game/main.js",
     "migrate": "cross-env tsnd -r tsconfig-paths/register --env-file=.env tools/database/migrate.ts",
