@@ -8,7 +8,7 @@ import AnimationUtil from '../../util/AnimationUtil';
 import Player from './player/Player';
 import GameEntity from './GameEntity';
 import { AffectBitsTypeEnum } from '@/core/enum/AffectBitsTypeEnum';
-import EventTimerManager from '../../manager/EventTimerManager';
+import EventTimerManager, { addTimerParam } from '../../manager/EventTimerManager';
 import AffectBitFlag from '@/core/util/AffectBitFlag';
 import { PointsEnum } from '@/core/enum/PointsEnum';
 import FlyEffectCreatedEvent from './shared/event/FlyEffectCreatedEvent';
@@ -19,7 +19,6 @@ export default abstract class Character extends GameEntity {
     protected id: number;
     protected classId: number = 0;
     protected name: string;
-    protected level: number;
     protected empire: number;
 
     //movement and animation
@@ -31,13 +30,6 @@ export default abstract class Character extends GameEntity {
     protected state: EntityStateEnum = EntityStateEnum.IDLE;
     protected movementStart: number = 0;
     protected movementDuration: number = 0;
-    protected movementSpeed: number = 0;
-    protected attackSpeed: number = 0;
-
-    protected st: number;
-    protected dx: number;
-    protected ht: number;
-    protected iq: number;
 
     protected emitter = new EventEmitter();
     protected nearbyEntities = new Map<number, GameEntity>();
@@ -46,35 +38,13 @@ export default abstract class Character extends GameEntity {
     protected targetedBy = new Map<number, GameEntity>();
 
     protected affectBitFlag = new AffectBitFlag();
-    protected maxHealth: number = 0;
-    protected maxMana: number = 0;
 
     protected readonly eventTimerManager = new EventTimerManager();
     protected readonly animationManager: AnimationManager;
-    protected readonly points: Map<PointsEnum, () => number> = new Map();
 
     protected readonly stateMachine: StateMachine = new StateMachine();
 
-    constructor(
-        {
-            id,
-            classId,
-            virtualId,
-            entityType,
-            positionX,
-            positionY,
-            movementSpeed,
-            attackSpeed,
-            st,
-            dx,
-            ht,
-            iq,
-            name,
-            level,
-            empire,
-        },
-        { animationManager },
-    ) {
+    constructor({ id, classId, virtualId, entityType, positionX, positionY, name, empire }, { animationManager }) {
         super({
             entityType,
             positionX,
@@ -83,33 +53,18 @@ export default abstract class Character extends GameEntity {
         });
         this.id = id;
         this.classId = classId;
-        this.movementSpeed = movementSpeed;
-        this.attackSpeed = attackSpeed;
-        this.st = st;
-        this.dx = dx;
-        this.ht = ht;
-        this.iq = iq;
         this.name = name;
-        this.level = level;
         this.empire = empire;
 
         this.animationManager = animationManager;
     }
 
-    getPoint(point: PointsEnum) {
-        if (this.points.has(point)) {
-            return this.points.get(point)();
-        }
+    abstract addPoint(point: PointsEnum, value: number): void;
+    abstract setPoint(point: PointsEnum, value: number): void;
+    abstract getPoint(point: PointsEnum): number;
 
-        return 0;
-    }
-
-    getPoints() {
-        return this.points;
-    }
-
-    getEventTimerManager() {
-        return this.eventTimerManager;
+    addEventTimer(params: addTimerParam) {
+        return this.eventTimerManager.addTimer(params);
     }
 
     getAffectFlags() {
@@ -129,7 +84,7 @@ export default abstract class Character extends GameEntity {
     }
 
     getAttackRating() {
-        return Math.min(90, this.dx * 4 + (this.level * 2) / 6);
+        return Math.min(90, this.getPoint(PointsEnum.DX) * 4 + (this.getPoint(PointsEnum.LEVEL) * 2) / 6);
     }
 
     abstract getHealthPercentage(): number;
@@ -138,7 +93,7 @@ export default abstract class Character extends GameEntity {
     abstract takeDamage(attacker: Character, damage: number): void;
 
     public createFlyEffect(toVirtualId: number, type: FlyEnum) {
-        this.publish(
+        this.area.onFlyEffect(
             new FlyEffectCreatedEvent({
                 fromVirtualId: this.virtualId,
                 toVirtualId,
@@ -148,8 +103,6 @@ export default abstract class Character extends GameEntity {
     }
 
     die() {
-        //this.state = EntityStateEnum.DEAD;
-        // this.eventTimerManager.clearAllTimers();
         this.stateMachine.gotoState(EntityStateEnum.DEAD);
     }
 
@@ -210,7 +163,11 @@ export default abstract class Character extends GameEntity {
         );
 
         if (animation) {
-            this.movementDuration = AnimationUtil.calcAnimationDuration(animation, this.movementSpeed, distance);
+            this.movementDuration = AnimationUtil.calcAnimationDuration(
+                animation,
+                this.getPoint(PointsEnum.MOVE_SPEED),
+                distance,
+            );
         } else {
             this.movementDuration = 0;
         }
@@ -231,7 +188,6 @@ export default abstract class Character extends GameEntity {
     }
 
     stop() {
-        // this.state = EntityStateEnum.IDLE;
         this.stateMachine.gotoState(EntityStateEnum.IDLE);
     }
 
@@ -252,20 +208,16 @@ export default abstract class Character extends GameEntity {
         this.emitter.removeAllListeners(eventConstructor.name);
     }
 
-    setMovementSpeed(value: number) {
-        this.movementSpeed = value;
-    }
-
     getMovementSpeed() {
-        return this.movementSpeed;
-    }
-
-    setAttackSpeed(value: number) {
-        this.attackSpeed = value;
+        return this.getPoint(PointsEnum.MOVE_SPEED);
     }
 
     getAttackSpeed() {
-        return this.attackSpeed;
+        return this.getPoint(PointsEnum.ATTACK_SPEED);
+    }
+
+    getLevel() {
+        return this.getPoint(PointsEnum.LEVEL);
     }
 
     getId() {
@@ -288,51 +240,11 @@ export default abstract class Character extends GameEntity {
         return this.rotation;
     }
 
-    getSt() {
-        return this.st;
-    }
-
-    getHt() {
-        return this.ht;
-    }
-
-    getDx() {
-        return this.dx;
-    }
-
-    getIq() {
-        return this.iq;
-    }
-
-    setSt(value: number) {
-        this.st = value;
-    }
-
-    setHt(value: number) {
-        this.ht = value;
-    }
-
-    setDx(value: number) {
-        this.dx = value;
-    }
-
-    setIq(value: number) {
-        this.iq = value;
-    }
-
     getName() {
         return this.name;
     }
 
-    getLevel() {
-        return this.level;
-    }
-
-    protected setLevel(value: number) {
-        this.level = value;
-    }
-
-    getEmpire() {
+    getEmpire(): number {
         return this.empire;
     }
 

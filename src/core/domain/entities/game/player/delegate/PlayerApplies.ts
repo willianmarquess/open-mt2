@@ -2,6 +2,7 @@ import Logger from '@/core/infra/logger/Logger';
 import Player from '../Player';
 import { ApplyTypeEnum } from '@/core/enum/ApplyTypeEnum';
 import Item from '../../item/Item';
+import { PointsEnum } from '@/core/enum/PointsEnum';
 
 export default class PlayerApplies {
     private readonly applies: Map<ApplyTypeEnum, (value: any) => void> = new Map();
@@ -14,11 +15,30 @@ export default class PlayerApplies {
         this.init();
     }
 
-    init() {
-        this.applies.set(ApplyTypeEnum.ATT_SPEED, (value: number) => this.player.addAttackSpeed(value));
-        this.applies.set(ApplyTypeEnum.MOV_SPEED, (value: number) => this.player.addMovementSpeed(value));
-        this.applies.set(ApplyTypeEnum.HP_REGEN, (value: number) => this.player.addHealthRegen(value));
-        this.applies.set(ApplyTypeEnum.SP_REGEN, (value: number) => this.player.addManaRegen(value));
+    private init() {
+        this.applies.set(ApplyTypeEnum.ATT_SPEED, (value: number) =>
+            this.player.addPoint(PointsEnum.ATTACK_SPEED, value),
+        );
+        this.applies.set(ApplyTypeEnum.MOV_SPEED, (value: number) =>
+            this.player.addPoint(PointsEnum.MOVE_SPEED, value),
+        );
+        this.applies.set(ApplyTypeEnum.HP_REGEN, (value: number) => this.player.addPoint(PointsEnum.HP_REGEN, value));
+        this.applies.set(ApplyTypeEnum.SP_REGEN, (value: number) => this.player.addPoint(PointsEnum.MANA_REGEN, value));
+        this.applies.set(ApplyTypeEnum.STUN_PCT, (value: number) =>
+            this.player.addPoint(PointsEnum.STUN_CHANCE, value),
+        );
+        this.applies.set(ApplyTypeEnum.POISON_PCT, (value: number) =>
+            this.player.addPoint(PointsEnum.POISON_CHANCE, value),
+        );
+        this.applies.set(ApplyTypeEnum.MAX_HP_PCT, (value: number) =>
+            this.player.addPoint(PointsEnum.MAX_HP_PCT, value),
+        );
+        this.applies.set(ApplyTypeEnum.CRITICAL_PCT, (value: number) =>
+            this.player.addPoint(PointsEnum.CRITICAL_CHANCE, value),
+        );
+        this.applies.set(ApplyTypeEnum.PENETRATE_PCT, (value: number) =>
+            this.player.addPoint(PointsEnum.PENETRATE_CHANCE, value),
+        );
     }
 
     addApply(type: ApplyTypeEnum, value: number) {

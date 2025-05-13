@@ -96,7 +96,7 @@ export default class BattleMobAgainstPlayerService extends BattleService<Mob, Pl
         damage = damage > 0 ? Math.round(damage) : MathUtil.getRandomInt(1, 5);
 
         this.victim.chat({
-            message: `received damage: ${damage}`,
+            message: `[SYSTEM] Damage received: ${damage}`,
             messageType: ChatMessageTypeEnum.INFO,
         });
 
@@ -114,7 +114,7 @@ export default class BattleMobAgainstPlayerService extends BattleService<Mob, Pl
                 damage *= 4;
                 this.victim.chat({
                     messageType: ChatMessageTypeEnum.INFO,
-                    message: `[DEATH_BLOW] you received ${Math.round(damage / 5)} extra damage as deathblow`,
+                    message: `[SYSTEM][DEATH_BLOW] You received ${Math.round(damage / 5)} extra damage as deathblow`,
                 });
             }
         }
@@ -129,7 +129,7 @@ export default class BattleMobAgainstPlayerService extends BattleService<Mob, Pl
             damageFlags.set(DamageFlagEnum.CRITICAL);
             this.victim.chat({
                 messageType: ChatMessageTypeEnum.INFO,
-                message: `[CRIT_DAMAGE] you received ${Math.round(damage / 2)} extra damage as critical`,
+                message: `[SYSTEM][CRIT_DAMAGE] You received ${Math.round(damage / 2)} extra damage as critical`,
             });
         }
 
@@ -139,11 +139,11 @@ export default class BattleMobAgainstPlayerService extends BattleService<Mob, Pl
     private calculatePenetrateDamage(damage: number, damageFlags: BitFlag): number {
         const penetrateChance = this.attacker.getEnchant(MobEnchantEnum.PENETRATE);
         if (MathUtil.getRandomInt(1, 100) <= penetrateChance) {
-            damage += this.victim.getDefense();
+            damage += this.victim.getDefense(); //TODO: is this a bug or feature?
             damageFlags.set(DamageFlagEnum.PENETRATE);
             this.victim.chat({
                 messageType: ChatMessageTypeEnum.INFO,
-                message: `[PENETRATE_DAMAGE] you received ${this.victim.getDefense()} extra damage as penetrate`,
+                message: `[SYSTEM][PENETRATE_DAMAGE] You received ${this.victim.getDefense()} extra damage as penetrate`,
             });
         }
         return Math.round(damage);
@@ -171,7 +171,7 @@ export default class BattleMobAgainstPlayerService extends BattleService<Mob, Pl
             this.applySlow();
         }
 
-        //TODO: CURSE effect ??? i believe this effect is not used
+        //TODO: CURSE effect ??? i believe this effect is not used, but we can create
     }
 
     applyPoison(): void {
@@ -180,7 +180,7 @@ export default class BattleMobAgainstPlayerService extends BattleService<Mob, Pl
         this.victim.setAffectFlag(AffectBitsTypeEnum.POISON);
         this.victim.updateView();
 
-        this.victim.getEventTimerManager().addTimer({
+        this.victim.addEventTimer({
             id: 'POISON_AFFECT',
             eventFunction: () => {
                 const damage = this.victim.getPoint(PointsEnum.MAX_HEALTH) * 0.03;
@@ -199,12 +199,13 @@ export default class BattleMobAgainstPlayerService extends BattleService<Mob, Pl
 
     applyStun() {
         //TODO: use antistun to calculate this chance to apply or not
+        //TODO: reset player future position
         if (this.victim.isAffectByFlag(AffectBitsTypeEnum.STUN)) return;
 
         this.victim.setAffectFlag(AffectBitsTypeEnum.STUN);
         this.victim.updateView();
 
-        this.victim.getEventTimerManager().addTimer({
+        this.victim.addEventTimer({
             id: 'STUN_AFFECT',
             eventFunction: () => {
                 this.victim.removeAffectFlag(AffectBitsTypeEnum.STUN);
@@ -222,15 +223,15 @@ export default class BattleMobAgainstPlayerService extends BattleService<Mob, Pl
         //TODO: use antislow to calculate this chance to apply or not
         if (this.victim.isAffectByFlag(AffectBitsTypeEnum.SLOW)) return;
         const SLOW_VALUE = 30;
-        this.victim.setMovementSpeed(this.victim.getMovementSpeed() - SLOW_VALUE);
+        this.victim.addPoint(PointsEnum.MOVE_SPEED, -SLOW_VALUE);
 
         this.victim.setAffectFlag(AffectBitsTypeEnum.SLOW);
         this.victim.updateView();
 
-        this.victim.getEventTimerManager().addTimer({
+        this.victim.addEventTimer({
             id: 'SLOW_AFFECT',
             eventFunction: () => {
-                this.victim.setMovementSpeed(this.victim.getMovementSpeed() + SLOW_VALUE);
+                this.victim.addPoint(PointsEnum.MOVE_SPEED, SLOW_VALUE);
                 this.victim.removeAffectFlag(AffectBitsTypeEnum.SLOW);
                 this.victim.updateView();
             },

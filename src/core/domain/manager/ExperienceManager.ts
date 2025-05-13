@@ -39,7 +39,7 @@ export default class ExperienceManager {
 
         if (expDoubleBonus > 0) {
             if (MathUtil.getRandomInt(0, 100) <= expDoubleBonus) {
-                exp = exp * 1.3;
+                exp = exp * 1.3; //TODO: validate double xp multiply
             }
         }
 

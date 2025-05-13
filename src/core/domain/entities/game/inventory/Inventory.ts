@@ -45,19 +45,19 @@ export default class Inventory {
         return this.width * this.height * this.pages.length;
     }
 
-    addItem(item) {
+    addItem(item: Item) {
         for (let i = 0; i < this.pages.length; i++) {
             const page = this.pages[i];
 
             const position = page.addItem(item);
             if (position != -1) {
                 const realPosition = Math.floor(position + i * this.width * this.height);
-                item.position = realPosition;
-                item.ownerId = this.ownerId;
-                item.window = this.isEquipmentPosition(realPosition)
-                    ? WindowTypeEnum.EQUIPMENT
-                    : WindowTypeEnum.INVENTORY;
-                this.items.set(item.dbId, item);
+                item.setPosition(realPosition);
+                item.setOwnerId(this.ownerId);
+                item.setWindow(
+                    this.isEquipmentPosition(realPosition) ? WindowTypeEnum.EQUIPMENT : WindowTypeEnum.INVENTORY,
+                );
+                this.items.set(item.getDbId(), item);
                 return realPosition;
             }
         }
@@ -161,11 +161,11 @@ export default class Inventory {
         return this.equipment.getWearPosition(item);
     }
 
-    publish(eventName, event) {
+    publish(eventName: string | symbol, event: any) {
         this.emitter.emit(eventName, event);
     }
 
-    subscribe(eventName, callback) {
+    subscribe(eventName: string | symbol, callback: VoidFunction) {
         this.emitter.on(eventName, callback);
     }
 

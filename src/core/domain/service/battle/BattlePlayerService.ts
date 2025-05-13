@@ -17,13 +17,13 @@ export default abstract class BattlePlayerService<Victim extends Character = Cha
     }
 
     protected calculateCriticalDamage(damage: number, damageFlags: BitFlag): number {
-        const criticalChance = this.attacker.getPoint(PointsEnum.CRITICAL_PERCENTAGE);
+        const criticalChance = this.attacker.getPoint(PointsEnum.CRITICAL_CHANCE);
         if (MathUtil.getRandomInt(1, 100) <= criticalChance) {
             damage *= 2;
             damageFlags.set(DamageFlagEnum.CRITICAL);
             this.attacker.chat({
                 messageType: ChatMessageTypeEnum.INFO,
-                message: `[CRIT_DAMAGE] you deal ${Math.round(damage / 2)} extra damage as critical`,
+                message: `[SYSTEM][CRIT_DAMAGE] You deal ${Math.round(damage / 2)} extra damage as critical`,
             });
         }
 
@@ -31,13 +31,13 @@ export default abstract class BattlePlayerService<Victim extends Character = Cha
     }
 
     protected calculatePenetrateDamage(damage: number, damageFlags: BitFlag): number {
-        const penetrateChance = this.attacker.getPoint(PointsEnum.PENETRATE_PERCENTAGE);
+        const penetrateChance = this.attacker.getPoint(PointsEnum.PENETRATE_CHANCE);
         if (MathUtil.getRandomInt(1, 100) <= penetrateChance) {
             damage += this.victim.getDefense();
             damageFlags.set(DamageFlagEnum.PENETRATE);
             this.attacker.chat({
                 messageType: ChatMessageTypeEnum.INFO,
-                message: `[PENETRATE_DAMAGE] you deal ${this.victim.getDefense()} extra damage as penetrate`,
+                message: `[SYSTEM][PENETRATE_DAMAGE] You deal ${this.victim.getDefense()} extra damage as penetrate`,
             });
         }
         return Math.round(damage);
@@ -56,12 +56,12 @@ export default abstract class BattlePlayerService<Victim extends Character = Cha
                 );
 
                 this.victim.takeDamage(this.attacker as unknown as Character, healthDamage);
-                this.attacker.addHealth(healthDamage);
+                this.attacker.addPoint(PointsEnum.HEALTH, healthDamage);
 
                 this.victim.createFlyEffect(this.attacker.getVirtualId(), FlyEnum.HEALTH_BIG);
                 this.attacker.chat({
                     messageType: ChatMessageTypeEnum.INFO,
-                    message: `[HEALTH_STEAL] you received ${healthDamage} of health
+                    message: `[SYSTEM][HEALTH_STEAL] You received ${healthDamage} of health
                     `,
                 });
             }
@@ -88,12 +88,12 @@ export default abstract class BattlePlayerService<Victim extends Character = Cha
 
                 this.victim.takeDamage(this.attacker as unknown as Character, manaDamage);
 
-                this.attacker.addMana(manaDamage);
+                this.attacker.addPoint(PointsEnum.MANA, manaDamage);
                 this.victim.createFlyEffect(this.attacker.getVirtualId(), FlyEnum.MANA_BIG);
 
                 this.attacker.chat({
                     messageType: ChatMessageTypeEnum.INFO,
-                    message: `[MANA_STEAL] you received ${manaDamage} of mana`,
+                    message: `[SYSTEM][MANA_STEAL] You received ${manaDamage} of mana`,
                 });
             }
         }
@@ -108,11 +108,11 @@ export default abstract class BattlePlayerService<Victim extends Character = Cha
             );
 
             if (amount > 0) {
-                this.attacker.addHealth(amount);
+                this.attacker.addPoint(PointsEnum.HEALTH, amount);
                 this.victim.createFlyEffect(this.attacker.getVirtualId(), FlyEnum.HEALTH_BIG);
                 this.attacker.chat({
                     messageType: ChatMessageTypeEnum.INFO,
-                    message: `[HEALTH_HIT_RECOVERY] you received ${amount} of health`,
+                    message: `[SYSTEM][HEALTH_HIT_RECOVERY] You received ${amount} of health`,
                 });
             }
         }
@@ -128,11 +128,11 @@ export default abstract class BattlePlayerService<Victim extends Character = Cha
             );
 
             if (amount > 0) {
-                this.attacker.addMana(amount);
+                this.attacker.addPoint(PointsEnum.MANA, amount);
                 this.victim.createFlyEffect(this.attacker.getVirtualId(), FlyEnum.MANA_BIG);
                 this.attacker.chat({
                     messageType: ChatMessageTypeEnum.INFO,
-                    message: `[MANA_HIT_RECOVERY] you received ${amount} of mana`,
+                    message: `[SYSTEM][MANA_HIT_RECOVERY] You received ${amount} of mana`,
                 });
             }
         }

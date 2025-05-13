@@ -4,6 +4,7 @@ import World from '@/core/domain/World';
 import Player from '@/core/domain/entities/game/player/Player';
 import CommandHandler from '../../CommandHandler';
 import { ChatMessageTypeEnum } from '@/core/enum/ChatMessageTypeEnum';
+import { PointsEnum } from '@/core/enum/PointsEnum';
 
 export default class ExperienceCommandHandler extends CommandHandler<ExperienceCommand> {
     private logger: Logger;
@@ -26,7 +27,7 @@ export default class ExperienceCommandHandler extends CommandHandler<ExperienceC
         const [value, targetName] = experienceCommand.getArgs();
 
         if (!targetName) {
-            player.addExperience(Number(value));
+            player.setPoint(PointsEnum.EXPERIENCE, Number(value));
             return;
         }
 
@@ -34,12 +35,12 @@ export default class ExperienceCommandHandler extends CommandHandler<ExperienceC
 
         if (!target) {
             player.chat({
-                message: `Target: ${targetName} not found.`,
+                message: `[SYSTEM] Target: ${targetName} not found.`,
                 messageType: ChatMessageTypeEnum.INFO,
             });
             return;
         }
 
-        target.addExperience(Number(value));
+        target.setPoint(PointsEnum.EXPERIENCE, Number(value));
     }
 }

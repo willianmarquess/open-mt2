@@ -291,7 +291,7 @@ export default class Item {
     getOwnerId() {
         return this.ownerId;
     }
-    setOwnerId(value) {
+    setOwnerId(value: number) {
         this.ownerId = value;
     }
     getPosition() {
@@ -427,25 +427,25 @@ export default class Item {
             wearFlags: wearFlagsBitFlag,
             limits: [
                 new ItemLimit({
-                    type: ItemLimitTypeEnum[proto.limit_type0] || ItemLimitTypeEnum.NONE,
+                    type: ItemLimitTypeEnum[`${proto.limit_type0.split('LIMIT_')[1]}`] || ItemLimitTypeEnum.NONE,
                     value: proto.limit_value0,
                 }),
                 new ItemLimit({
-                    type: ItemLimitTypeEnum[`LIMIT_${proto.limit_type1}`] || ItemLimitTypeEnum.NONE,
+                    type: ItemLimitTypeEnum[`${proto.limit_type1.split('LIMIT_')[1]}`] || ItemLimitTypeEnum.NONE,
                     value: proto.limit_value1,
                 }),
             ],
             applies: [
                 new ItemApply({
-                    type: ApplyTypeEnum[`APPLY_${proto.addon_type0}`] || ApplyTypeEnum.NONE,
+                    type: ApplyTypeEnum[`${proto.addon_type0.split('APPLY_')[1]}`] || ApplyTypeEnum.NONE,
                     value: proto.addon_value0,
                 }),
                 new ItemApply({
-                    type: ApplyTypeEnum[`APPLY_${proto.addon_type1}`] || ApplyTypeEnum.NONE,
+                    type: ApplyTypeEnum[`${proto.addon_type1.split('APPLY_')[1]}`] || ApplyTypeEnum.NONE,
                     value: proto.addon_value1,
                 }),
                 new ItemApply({
-                    type: ApplyTypeEnum[`APPLY_${proto.addon_type2}`] || ApplyTypeEnum.NONE,
+                    type: ApplyTypeEnum[`${proto.addon_type2.split('APPLY_')[1]}`] || ApplyTypeEnum.NONE,
                     value: proto.addon_value2,
                 }),
             ],

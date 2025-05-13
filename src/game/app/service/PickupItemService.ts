@@ -3,6 +3,7 @@ import Player from '@/core/domain/entities/game/player/Player';
 import World from '@/core/domain/World';
 import { ChatMessageTypeEnum } from '@/core/enum/ChatMessageTypeEnum';
 import { IItemRepository } from '@/core/domain/repository/IItemRepository';
+import { PointsEnum } from '@/core/enum/PointsEnum';
 
 export default class PickupItemService {
     private readonly world: World;
@@ -29,7 +30,7 @@ export default class PickupItemService {
         const isGold = item.getId() === 1;
 
         if (isGold) {
-            player.addGold(Number(count));
+            player.setPoint(PointsEnum.GOLD, Number(count));
             area.despawn(droppedItem);
             return;
         }
@@ -39,7 +40,7 @@ export default class PickupItemService {
         if (!canPickup) {
             player.chat({
                 messageType: ChatMessageTypeEnum.INFO,
-                message: 'This item is not yours',
+                message: '[SYSTEM] This item is not yours',
             });
             return;
         }

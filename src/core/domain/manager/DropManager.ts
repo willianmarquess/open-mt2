@@ -8,6 +8,7 @@ import { SpecialItemEnum } from '@/core/enum/SpecialItemEnum';
 import ItemManager from './ItemManager';
 import Player from '../entities/game/player/Player';
 import { PrivilegeManager, PrivilegeTypeEnum } from './PrivilegeManager';
+import { PointsEnum } from '@/core/enum/PointsEnum';
 
 class DropItem {
     public readonly item: Item;
@@ -89,12 +90,11 @@ export default class DropManager {
         }
 
         //TODO: impl premium types to increase this percent
-
-        if (player.getMallItemBonus() > 0) {
-            delta += (delta * player.getMallItemBonus()) / 100;
+        if (player.getPoint(PointsEnum.MALL_ITEM_BONUS) > 0) {
+            delta += (delta * player.getPoint(PointsEnum.MALL_ITEM_BONUS)) / 100;
         }
 
-        const itemDropBonus = Math.min(100, player.getItemDropBonus());
+        const itemDropBonus = Math.min(100, player.getPoint(PointsEnum.ITEM_DROP_BONUS));
         const empireDropBonus = this.privilegeManager.getEmpirePrivilege(player.getEmpire(), PrivilegeTypeEnum.DROP);
         const privilegeDropBonus = this.privilegeManager.getPlayerPrivilege(player, PrivilegeTypeEnum.DROP);
         const uniqueGlovesDropBonus = player.isEquippedWithUniqueItem(SpecialItemEnum.UNIQUE_ITEM_DOUBLE_ITEM)

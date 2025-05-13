@@ -4,6 +4,7 @@ import LevelCommand from './LevelCommand';
 import World from '@/core/domain/World';
 import Player from '@/core/domain/entities/game/player/Player';
 import { ChatMessageTypeEnum } from '@/core/enum/ChatMessageTypeEnum';
+import { PointsEnum } from '@/core/enum/PointsEnum';
 
 export default class LevelCommandHandler extends CommandHandler<LevelCommand> {
     private readonly logger: Logger;
@@ -26,7 +27,7 @@ export default class LevelCommandHandler extends CommandHandler<LevelCommand> {
         const [value, targetName] = levelCommand.getArgs();
 
         if (!targetName) {
-            player.setLevel(Number(value));
+            player.setPoint(PointsEnum.LEVEL, Number(value));
             return;
         }
 
@@ -40,6 +41,6 @@ export default class LevelCommandHandler extends CommandHandler<LevelCommand> {
             return;
         }
 
-        target.setLevel(Number(value));
+        target.setPoint(PointsEnum.LEVEL, Number(value));
     }
 }

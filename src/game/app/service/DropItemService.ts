@@ -1,6 +1,7 @@
 import Player from '@/core/domain/entities/game/player/Player';
 import ItemManager from '@/core/domain/manager/ItemManager';
 import { ChatMessageTypeEnum } from '@/core/enum/ChatMessageTypeEnum';
+import { PointsEnum } from '@/core/enum/PointsEnum';
 import Logger from '@/core/infra/logger/Logger';
 
 type DropItemServiceParams = {
@@ -53,16 +54,16 @@ export default class DropItemService {
     dropGold(amount: number, player: Player) {
         const amountValidated = Math.max(0, Number(amount));
 
-        if (amountValidated > player.getGold()) {
+        if (amountValidated > player.getPoint(PointsEnum.GOLD)) {
             player.chat({
                 messageType: ChatMessageTypeEnum.INFO,
-                message: 'You are trying to drop more gold than you have',
+                message: '[SYSTEM] You are trying to drop more gold than you have',
             });
-            this.logger.error(`[PLAYER] Player: ${player.getName()} is trying to drop more gold than he has`);
+            this.logger.error(`[PLAYER] Player: ${player.getName()} is trying to drop more gold than they has`);
             return;
         }
 
-        player.addGold(-amount);
+        player.addPoint(PointsEnum.GOLD, -amount);
         player.dropItem({
             count: amount,
             item: {

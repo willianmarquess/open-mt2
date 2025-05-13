@@ -9,6 +9,7 @@ import CreateCharacterFailurePacket from '../../out/CreateCharacterFailurePacket
 import { CreateCharacterFailureReasonEnum } from '@/core/enum/CreateCharacterFailureReasonEnum';
 import CreateCharacterSuccessPacket from '../../out/CreateCharacterSuccessPacket';
 import Ip from '@/core/util/Ip';
+import { PointsEnum } from '@/core/enum/PointsEnum';
 
 export default class CreateCharacterPacketHandler extends PacketHandler<CreateCharacterPacket> {
     private readonly createCharacterService: CreateCharacterService;
@@ -80,19 +81,19 @@ export default class CreateCharacterPacketHandler extends PacketHandler<CreateCh
                     playerClass: player.getPlayerClass(),
                     bodyPart: player.getBodyPart(),
                     hairPart: player.getHairPart(),
-                    level: player.getLevel(),
+                    level: player.getPoint(PointsEnum.LEVEL),
                     skillGroup: player.getSkillGroup(),
-                    playTime: player.getPlayTime(),
+                    playTime: player.getPoint(PointsEnum.PLAY_TIME),
                     port: Number(this.config.SERVER_PORT),
                     ip: Ip.toInt(this.config.SERVER_ADDRESS),
                     id: player.getId(),
                     nameChange: 0,
                     positionX: player.getPositionX(),
                     positionY: player.getPositionY(),
-                    ht: player.getHt(),
-                    st: player.getSt(),
-                    dx: player.getDx(),
-                    iq: player.getIq(),
+                    ht: player.getPoint(PointsEnum.HT),
+                    st: player.getPoint(PointsEnum.ST),
+                    dx: player.getPoint(PointsEnum.DX),
+                    iq: player.getPoint(PointsEnum.IQ),
                 },
             }),
         );

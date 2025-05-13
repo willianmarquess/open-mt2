@@ -4,6 +4,7 @@ import GoldCommand from './GoldCommand';
 import World from '@/core/domain/World';
 import Player from '@/core/domain/entities/game/player/Player';
 import { ChatMessageTypeEnum } from '@/core/enum/ChatMessageTypeEnum';
+import { PointsEnum } from '@/core/enum/PointsEnum';
 
 export default class GoldCommandHandler extends CommandHandler<GoldCommand> {
     private readonly logger: Logger;
@@ -26,7 +27,7 @@ export default class GoldCommandHandler extends CommandHandler<GoldCommand> {
         const [value, targetName] = goldCommand.getArgs();
 
         if (!targetName) {
-            player.addGold(Number(value));
+            player.addPoint(PointsEnum.GOLD, Number(value));
             return;
         }
 
@@ -40,6 +41,6 @@ export default class GoldCommandHandler extends CommandHandler<GoldCommand> {
             return;
         }
 
-        target.addGold(Number(value));
+        target.addPoint(PointsEnum.GOLD, Number(value));
     }
 }

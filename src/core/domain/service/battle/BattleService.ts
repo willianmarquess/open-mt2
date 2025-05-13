@@ -34,21 +34,21 @@ export default abstract class BattleService<
     }
 
     protected applyAttackEffect() {
-        const poisonChance = this.attacker.getPoint(PointsEnum.POISON);
+        const poisonChance = this.attacker.getPoint(PointsEnum.POISON_CHANCE);
         const canApplyPoison = poisonChance > 0 && !this.victim.isAffectByFlag(AffectBitsTypeEnum.POISON);
 
         if (canApplyPoison && MathUtil.getRandomInt(1, 100) <= poisonChance) {
             this.applyPoison();
         }
 
-        const stunChance = this.attacker.getPoint(PointsEnum.STUN);
+        const stunChance = this.attacker.getPoint(PointsEnum.STUN_CHANCE);
         const canApplyStun = stunChance > 0 && !this.victim.isAffectByFlag(AffectBitsTypeEnum.STUN);
 
         if (canApplyStun && MathUtil.getRandomInt(1, 100) <= stunChance) {
             this.applyStun();
         }
 
-        const slowChance = this.attacker.getPoint(PointsEnum.SLOW);
+        const slowChance = this.attacker.getPoint(PointsEnum.SLOW_CHANCE);
         const canApplySlow = slowChance > 0 && !this.victim.isAffectByFlag(AffectBitsTypeEnum.SLOW);
 
         if (canApplySlow && MathUtil.getRandomInt(1, 100) <= slowChance) {
@@ -56,5 +56,10 @@ export default abstract class BattleService<
         }
 
         //TODO: add fire affect
+        // const canApplyFire = slowChance > 0 && !this.victim.isAffectByFlag(AffectBitsTypeEnum.FIRE);
+
+        // if (canApplyFire && MathUtil.getRandomInt(1, 100) <= 1) {
+        //     this.applyFire();
+        // }
     }
 }

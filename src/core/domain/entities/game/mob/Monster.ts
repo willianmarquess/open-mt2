@@ -23,7 +23,7 @@ const MAX_DISTANCE_TO_GET_EXP = 5_000;
 export default class Monster extends Mob {
     private readonly behavior: Behavior;
     private behaviorInitialized: boolean = false;
-    private health: number = 0;
+    // private health: number = 0;
 
     private readonly dropManager: DropManager;
     private readonly experienceManager: ExperienceManager;
@@ -43,7 +43,6 @@ export default class Monster extends Mob {
         this.dropManager = dropManager;
         this.experienceManager = experienceManager;
         this.battleServiceFactory = battleServiceFactory;
-        this.health = this.maxHealth;
         this.behavior = new Behavior(this);
 
         this.stateMachine
@@ -96,13 +95,7 @@ export default class Monster extends Mob {
     }
 
     private init() {
-        this.points.set(PointsEnum.MAX_HEALTH, () => this.maxHealth);
-        this.points.set(PointsEnum.DEFENSE, () => this.getDefense());
-        this.points.set(PointsEnum.ATTACK_GRADE, () => this.getAttack());
-        this.points.set(PointsEnum.MAX_MANA, () => this.maxMana);
-        this.points.set(PointsEnum.HEALTH, () => this.health);
-        this.points.set(PointsEnum.LEVEL, () => this.level);
-
+        this.points.calcPoints();
         this.initEvents();
     }
 
@@ -135,35 +128,39 @@ export default class Monster extends Mob {
 
     private regenHealth() {
         if (this.isAffectByFlag(AffectBitsTypeEnum.POISON)) return;
-        if (this.health >= this.maxHealth) return;
+        if (this.points.getPoint(PointsEnum.HEALTH) >= this.points.getPoint(PointsEnum.MAX_HEALTH)) return;
         if (this.stateMachine.getCurrentState().name === 'DEAD') return;
 
-        const amount = Math.floor(this.maxHealth * (this.regenPercent / 100));
-        this.addHealth(Math.max(1, amount));
-    }
-
-    addHealth(value: number) {
-        this.health = Math.min(this.health + Math.max(value, 0), this.maxHealth);
+        const amount = Math.floor(this.points.getPoint(PointsEnum.MAX_HEALTH) * (this.regenPercent / 100));
+        this.points.addPoint(PointsEnum.HEALTH, Math.max(1, amount));
     }
 
     getHealthPercentage() {
-        return Math.round(Math.max(0, Math.min(100, (this.health * 100) / this.maxHealth)));
+        return Math.round(
+            Math.max(
+                0,
+                Math.min(
+                    100,
+                    (this.points.getPoint(PointsEnum.HEALTH) * 100) / this.points.getPoint(PointsEnum.MAX_HEALTH),
+                ),
+            ),
+        );
     }
 
     takeDamage(attacker: Player, damage: number) {
-        this.health -= damage;
+        this.points.addPoint(PointsEnum.HEALTH, -damage);
         this.behavior.onDamage(attacker, damage);
 
         this.broadcastMyTarget();
 
-        if (this.health <= 0) {
+        if (this.points.getPoint(PointsEnum.HEALTH) <= 0) {
             this.die();
             this.reward();
             return;
         }
     }
 
-    reward() {
+    private reward() {
         const attacker = this.behavior.getTarget();
         const drops = this.dropManager.getDrops(attacker, this);
 
@@ -174,7 +171,7 @@ export default class Monster extends Mob {
         this.giveExp();
     }
 
-    giveExp() {
+    private giveExp() {
         const exp = this.getExp();
 
         const attackersSize = this.behavior.getTargets().size;
@@ -202,10 +199,10 @@ export default class Monster extends Mob {
 
             player.chat({
                 messageType: ChatMessageTypeEnum.INFO,
-                message: `Earned ${expToGive} of EXP after kill ${this.folder || this.name}`,
+                message: `[SYSTEM] Earned ${expToGive} of EXP after kill ${this.folder || this.name}`,
             });
 
-            player.addExperience(expToGive);
+            player.addPoint(PointsEnum.EXPERIENCE, expToGive);
 
             this.area.onFlyEffect(
                 new FlyEffectCreatedEvent({
@@ -243,7 +240,7 @@ export default class Monster extends Mob {
     }
 
     getDefense() {
-        return Math.floor(this.level * 3 + this.ht * 4 + this.def);
+        return this.points.getPoint(PointsEnum.DEFENSE);
     }
 
     getRespawnTimeInMs() {
@@ -254,16 +251,12 @@ export default class Monster extends Mob {
         this.behaviorInitialized = false;
         this.behavior.setTarget(null);
         this.stateMachine.gotoState(EntityStateEnum.IDLE);
-        this.health = this.maxHealth;
+        this.points.calcPointsAndResetValues();
         this.initEvents();
     }
 
     getAttack(): number {
-        return (
-            (MathUtil.getRandomInt(this.getDamageMin(), this.getDamageMax()) +
-                Math.floor(this.level * 3 + this.st * 4)) *
-            this.damMultiply
-        );
+        return this.points.getPoint(PointsEnum.ATTACK_GRADE);
     }
 
     attack(victim: Player): void {

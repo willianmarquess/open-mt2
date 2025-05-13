@@ -1,5 +1,4 @@
 import GameEntity from '@/core/domain/entities/game/GameEntity';
-import ExperienceManager from '@/core/domain/manager/ExperienceManager';
 import { EntityTypeEnum } from '@/core/enum/EntityTypeEnum';
 import { GameConfig } from '@/game/infra/config/GameConfig';
 import Inventory from '../inventory/Inventory';
@@ -8,14 +7,11 @@ import { PointsEnum } from '@/core/enum/PointsEnum';
 import PlayerApplies from './delegate/PlayerApplies';
 import { EntityStateEnum } from '@/core/enum/EntityStateEnum';
 import { ChatMessageTypeEnum } from '@/core/enum/ChatMessageTypeEnum';
-import MathUtil from '@/core/domain/util/MathUtil';
-import JobUtil from '@/core/domain/util/JobUtil';
 import CharacterMovedEvent from './events/CharacterMovedEvent';
 import { ItemAntiFlagEnum } from '@/core/enum/ItemAntiFlagEnum';
 import Item from '../item/Item';
 import DropItemEvent from './events/DropItemEvent';
 import DroppedItem from '../item/DroppedItem';
-import { StatsEnum } from '@/core/enum/StatsEnum';
 import PlayerState from '../../state/player/PlayerState';
 import Character from '../Character';
 import { SpecialItemEnum } from '@/core/enum/SpecialItemEnum';
@@ -44,6 +40,9 @@ import { ItemEquipmentSlotEnum } from '@/core/enum/ItemEquipmentSlotEnum';
 import FlyPacket from '@/core/interface/networking/packets/packet/out/FlyPacket';
 import CharacterMoveOutPacket from '@/core/interface/networking/packets/packet/out/CharacterMoveOutPacket';
 import AffectAddPacket from '@/core/interface/networking/packets/packet/out/AffectAddPacket';
+import ItemEquippedEvent from '../inventory/events/ItemEquippedEvent';
+import ItemUnequippedEvent from '../inventory/events/ItemUnequippedEvent';
+import { PlayerPoints } from './delegate/PlayerPoints';
 
 const REGEN_INTERVAL = 3000;
 
@@ -51,79 +50,18 @@ export default class Player extends Character {
     private readonly accountId: number;
     private readonly playerClass: number;
     private skillGroup: number;
-    private readonly playTime: number;
-    private experience: number;
-    private gold: number;
-    private stamina: number;
     private bodyPart: number;
     private hairPart: number;
-    private givenStatusPoints: number;
-    private availableStatusPoints: number;
     private slot: number;
-
     private appearance: number;
-
-    private health: number;
-    private baseHealth: number;
-    private hpPerLvl: number;
-    private hpPerHtPoint: number;
-    private mana: number;
-    private mpPerLvl: number;
-    private mpPerIqPoint: number;
-    private baseMana: number;
-
-    private experienceManager: ExperienceManager;
-    private config: GameConfig;
-
-    //in game points
-    private defense: number = 0;
-    private defensePerHtPoint: number = 0;
-    private attackValue: number = 0;
-    private attackBonus: number = 0;
-    private attackPerStPoint: number = 0;
-    private attackPerDXPoint: number = 0;
-    private attackPerIQPoint: number = 0;
-    private magicAttack: number = 0;
-    private magicAttackBonus: number = 0;
-    private magicDefense: number = 0;
-    private magicDefenseBonus: number = 0;
-    private healthRegenBonus: number = 0;
-    private manaRegenBonus: number = 0;
-    private poisonChance: number = 20;
-    private slowChance: number = 20;
-    private stunChance: number = 20;
-    private criticalChance: number = 20;
-    private penetrateChance: number = 20;
-    private stealHealthPercentage: number = 20;
-    private stealManaPercentage: number = 20;
-    private stealGoldChance: number = 10;
-    private healthHitRecoveryPercentage: number = 10;
-    private manaHitRecoveryPercentage: number = 10;
-    // movementSpeed;
-    // neededExperience;
-    // defenseGrade;
-    // attackGrade;
-    // statusPoints;
-    // subSkill;
-    // skill;
-    // minAttackDamage;
-    // maxAttackDamage;
-    // penetratePercentage;
-    private itemDropBonus: number = 0;
-    // attackBonus;
-    // defenseBonus;
-    private mallItemBonus: number = 0;
-    // magicAttackBonus;
-    // resistCritical;
-    // resistPenetrate;
-    // minWeaponDamage;
-    // maxWeaponDamage;
-
     private lastPlayTime: number = performance.now();
-    private inventory: Inventory;
+
+    private readonly config: GameConfig;
+    private readonly inventory: Inventory;
 
     //delegate
-    private playerApplies: PlayerApplies;
+    private readonly applies: PlayerApplies;
+    private readonly points: PlayerPoints;
 
     //connection
     private connection: GameConnection;
@@ -159,15 +97,15 @@ export default class Player extends Character {
             hpPerHtPoint = 0,
             mpPerLvl = 0,
             mpPerIqPoint = 0,
-            baseAttackSpeed = 0,
-            baseMovementSpeed = 0,
             baseHealth = 0,
             baseMana = 0,
             appearance = 0,
             defensePerHtPoint = 0,
             attackPerStPoint = 0,
-            attackPerDXPoint = 0,
-            attackPerIQPoint = 0,
+            attackPerDxPoint = 0,
+            attackPerIqPoint = 0,
+            baseAttackSpeed = 0,
+            baseMovementSpeed = 0,
         },
         { animationManager, experienceManager, config, logger },
     ) {
@@ -179,14 +117,7 @@ export default class Player extends Character {
                 positionX,
                 positionY,
                 entityType: EntityTypeEnum.PLAYER,
-                attackSpeed: baseAttackSpeed,
-                movementSpeed: baseMovementSpeed,
-                dx,
-                ht,
-                iq,
-                st,
                 name,
-                level,
                 empire,
             },
             {
@@ -196,37 +127,51 @@ export default class Player extends Character {
         this.accountId = accountId;
         this.playerClass = playerClass;
         this.skillGroup = skillGroup;
-        this.playTime = playTime;
-        this.experience = experience;
-        this.gold = gold;
-        this.health = health;
-        this.mana = mana;
-        this.stamina = stamina;
         this.bodyPart = bodyPart;
         this.hairPart = hairPart;
-        this.givenStatusPoints = givenStatusPoints;
-        this.availableStatusPoints = availableStatusPoints;
         this.slot = slot;
         this.appearance = appearance;
 
-        //in game values
-        this.hpPerLvl = hpPerLvl;
-        this.hpPerHtPoint = hpPerHtPoint;
-        this.mpPerLvl = mpPerLvl;
-        this.mpPerIqPoint = mpPerIqPoint;
-        this.baseMana = baseMana;
-        this.baseHealth = baseHealth;
-        this.defensePerHtPoint = defensePerHtPoint;
-        this.attackPerStPoint = attackPerStPoint;
-        this.attackPerDXPoint = attackPerDXPoint;
-        this.attackPerIQPoint = attackPerIQPoint;
-        this.experienceManager = experienceManager;
         this.config = config;
         this.inventory = new Inventory({ config: this.config, ownerId: this.id });
         this.inventory.subscribe(InventoryEventsEnum.ITEM_EQUIPPED, this.onItemEquipped.bind(this));
         this.inventory.subscribe(InventoryEventsEnum.ITEM_UNEQUIPPED, this.onItemUnequipped.bind(this));
 
-        this.playerApplies = new PlayerApplies(this, logger);
+        this.applies = new PlayerApplies(this, logger);
+        this.points = new PlayerPoints(
+            {
+                playTime,
+                level,
+                experience,
+                gold,
+                st,
+                ht,
+                dx,
+                iq,
+                health,
+                mana,
+                stamina,
+                givenStatusPoints,
+                availableStatusPoints,
+                hpPerLvl,
+                hpPerHtPoint,
+                mpPerLvl,
+                mpPerIqPoint,
+                baseHealth,
+                baseMana,
+                defensePerHtPoint,
+                attackPerStPoint,
+                attackPerDxPoint,
+                attackPerIqPoint,
+                baseAttackSpeed,
+                baseMovementSpeed,
+            },
+            {
+                config,
+                experienceManager,
+                player: this,
+            },
+        );
 
         this.stateMachine
             .addState({
@@ -267,46 +212,37 @@ export default class Player extends Character {
         );
     }
 
-    init() {
-        this.updateHealth();
-        this.resetHealth();
-        this.updateMana();
-        this.resetMana();
-        this.updateDefense();
-        this.updateAttack();
+    addPoint(point: PointsEnum, value: number) {
+        this.points.addPoint(point, value);
+        this.sendPoints();
+    }
 
-        this.points.set(PointsEnum.EXPERIENCE, () => this.experience);
-        this.points.set(PointsEnum.HT, () => this.ht);
-        this.points.set(PointsEnum.ST, () => this.st);
-        this.points.set(PointsEnum.IQ, () => this.iq);
-        this.points.set(PointsEnum.DX, () => this.dx);
-        this.points.set(PointsEnum.LEVEL, () => this.level);
-        this.points.set(PointsEnum.MAX_HEALTH, () => this.maxHealth);
-        this.points.set(PointsEnum.MAX_MANA, () => this.maxMana);
-        this.points.set(PointsEnum.HEALTH, () => this.health);
-        this.points.set(PointsEnum.MANA, () => this.mana);
-        this.points.set(PointsEnum.ATTACK_SPEED, () => this.attackSpeed);
-        this.points.set(PointsEnum.MOVE_SPEED, () => this.movementSpeed);
-        this.points.set(PointsEnum.NEEDED_EXPERIENCE, () => this.experienceManager.getNeededExperience(this.level));
-        this.points.set(PointsEnum.STATUS_POINTS, () => this.availableStatusPoints);
-        this.points.set(PointsEnum.GOLD, () => this.gold);
-        this.points.set(PointsEnum.DEFENSE, () => this.defense);
-        this.points.set(PointsEnum.DEFENSE_GRADE, () => this.defense);
-        this.points.set(PointsEnum.ATTACK_GRADE, () => this.attackValue);
-        this.points.set(PointsEnum.MAGIC_ATT_GRADE, () => this.magicAttack);
-        this.points.set(PointsEnum.MAGIC_DEF_GRADE, () => this.magicDefense);
-        this.points.set(PointsEnum.MALL_ITEM_BONUS, () => this.mallItemBonus);
-        this.points.set(PointsEnum.ITEM_DROP_BONUS, () => this.itemDropBonus);
-        this.points.set(PointsEnum.POISON, () => this.poisonChance);
-        this.points.set(PointsEnum.SLOW, () => this.slowChance);
-        this.points.set(PointsEnum.STUN, () => this.stunChance);
-        this.points.set(PointsEnum.CRITICAL_PERCENTAGE, () => this.criticalChance);
-        this.points.set(PointsEnum.PENETRATE_PERCENTAGE, () => this.penetrateChance);
-        this.points.set(PointsEnum.STEAL_HEALTH, () => this.stealHealthPercentage);
-        this.points.set(PointsEnum.STEAL_MANA, () => this.stealManaPercentage);
-        this.points.set(PointsEnum.STEAL_GOLD, () => this.stealGoldChance);
-        this.points.set(PointsEnum.HIT_HEALTH_RECOVERY, () => this.healthHitRecoveryPercentage);
-        this.points.set(PointsEnum.HIT_MANA_RECOVERY, () => this.manaHitRecoveryPercentage);
+    setPoint(point: PointsEnum, value: number) {
+        this.points.setPoint(point, value);
+        this.sendPoints();
+    }
+
+    getPoint(point: PointsEnum): number {
+        return this.points.getPoint(point);
+    }
+
+    getAttack(): number {
+        return this.points.getPoint(PointsEnum.ATTACK_GRADE);
+    }
+    getDefense(): number {
+        return this.points.getPoint(PointsEnum.DEFENSE_GRADE);
+    }
+
+    getWeaponValues() {
+        return this.inventory.getWeaponValues();
+    }
+
+    getArmorValues() {
+        return this.inventory.getArmorValues();
+    }
+
+    init() {
+        this.points.calcPointsAndResetValues();
 
         this.eventTimerManager.addTimer({
             id: 'REGEN_HEALTH',
@@ -322,10 +258,10 @@ export default class Player extends Character {
 
     takeDamage(attacker: Character, damage: number): void {
         console.log(attacker.getName());
-        this.health -= damage;
+        this.addPoint(PointsEnum.HEALTH, -damage);
 
-        if (this.health <= 0) {
-            this.health = this.maxHealth;
+        if (this.points.getPoint(PointsEnum.HEALTH) <= 0) {
+            this.points.calcPointsAndResetValues();
             //TODO: player death
             return;
         }
@@ -336,7 +272,15 @@ export default class Player extends Character {
     }
 
     getHealthPercentage() {
-        return Math.round(Math.max(0, Math.min(100, (this.health * 100) / this.maxHealth)));
+        return Math.round(
+            Math.max(
+                0,
+                Math.min(
+                    100,
+                    (this.points.getPoint(PointsEnum.HEALTH) * 100) / this.points.getPoint(PointsEnum.MAX_HEALTH),
+                ),
+            ),
+        );
     }
 
     setTarget(target: Character) {
@@ -375,12 +319,12 @@ export default class Player extends Character {
 
     regenHealth() {
         if (this.state === EntityStateEnum.DEAD) return;
-        if (this.health >= this.maxHealth) return;
+        if (this.points.getPoint(PointsEnum.HEALTH) >= this.points.getPoint(PointsEnum.MAX_HEALTH)) return;
 
         let percent = this.state === EntityStateEnum.IDLE ? 5 : 1;
-        percent += percent * (this.healthRegenBonus / 100);
-        const amount = this.maxHealth * (percent / 100);
-        this.addHealth(Math.floor(amount));
+        percent += percent * (this.points.getPoint(PointsEnum.HP_REGEN) / 100);
+        const amount = this.points.getPoint(PointsEnum.MAX_HEALTH) * (percent / 100);
+        this.points.addPoint(PointsEnum.HEALTH, Math.floor(amount));
         this.chat({
             messageType: ChatMessageTypeEnum.INFO,
             message: `[SYSTEM][HP REGEN] amount: ${Math.floor(amount)} percent: ${percent}`,
@@ -390,12 +334,12 @@ export default class Player extends Character {
 
     regenMana() {
         if (this.state === EntityStateEnum.DEAD) return;
-        if (this.mana >= this.maxMana) return;
+        if (this.points.getPoint(PointsEnum.MANA) >= this.points.getPoint(PointsEnum.MAX_MANA)) return;
 
         let percent = this.state === EntityStateEnum.IDLE ? 5 : 1;
-        percent += percent * (this.manaRegenBonus / 100);
-        const amount = this.maxMana * (percent / 100);
-        this.addMana(Math.floor(amount));
+        percent += percent * (this.points.getPoint(PointsEnum.MANA_REGEN) / 100);
+        const amount = this.points.getPoint(PointsEnum.MAX_MANA) * (percent / 100);
+        this.points.addPoint(PointsEnum.MANA, Math.floor(amount));
         this.chat({
             messageType: ChatMessageTypeEnum.INFO,
             message: `[SYSTEM][MANA REGEN] amount: ${Math.floor(amount)} percent: ${percent}`,
@@ -404,136 +348,17 @@ export default class Player extends Character {
     }
 
     onEquipmentChange() {
-        this.updateDefense();
-        this.updateMagicDefense();
-        this.updateAttack();
-        this.updateHealth();
-        this.updateMana();
-        this.updateView();
-        this.sendPoints();
+        this.points.calcPoints();
     }
 
-    onItemEquipped({ item }) {
-        this.playerApplies.addItemApplies(item);
+    onItemEquipped(event: ItemEquippedEvent) {
+        this.applies.addItemApplies(event.getItem());
         this.onEquipmentChange();
     }
 
-    onItemUnequipped({ item }) {
-        this.playerApplies.removeItemApplies(item);
+    onItemUnequipped(event: ItemUnequippedEvent) {
+        this.applies.removeItemApplies(event.getItem());
         this.onEquipmentChange();
-    }
-
-    getAttack() {
-        let attack =
-            this.level * 2 +
-            this.attackPerStPoint * this.st +
-            this.attackPerIQPoint * this.iq +
-            this.attackPerDXPoint * this.dx;
-        attack += this.attackBonus;
-        const { physic } = this.inventory.getWeaponValues();
-        attack += Math.floor(Math.random() * (physic.max - physic.min) + physic.min) * 2;
-        attack += physic.bonus * 2;
-        return Math.floor(attack);
-    }
-
-    getMagicAttack() {
-        let magicAttack = this.level * 2 + 2 * this.iq;
-        magicAttack += this.magicAttackBonus;
-        const { magic } = this.inventory.getWeaponValues();
-        magicAttack += Math.floor(Math.random() * (magic.max - magic.min) + magic.min) * 2;
-        magicAttack += magic.bonus * 2;
-        return Math.floor(magicAttack);
-    }
-
-    getDefense() {
-        let defense = this.level + Math.floor(this.defensePerHtPoint * this.ht);
-        const armorValues = this.inventory.getArmorValues();
-        armorValues.forEach(({ flat, multi }) => {
-            defense += flat;
-            defense += multi * 2;
-        });
-        return Math.floor(defense);
-    }
-
-    getMagicDefense() {
-        let magicDefense = this.level + (this.iq * 3 + this.ht / 3 + this.getDefense() / 2);
-        magicDefense += this.magicDefenseBonus;
-        return Math.floor(magicDefense);
-    }
-
-    updateAttack() {
-        this.attackValue = this.getAttack();
-    }
-
-    updateMagicAttack() {
-        this.magicAttack = this.getMagicAttack();
-    }
-
-    updateDefense() {
-        this.defense = this.getDefense();
-    }
-
-    updateMagicDefense() {
-        this.magicDefense = this.getMagicDefense();
-    }
-
-    addStat(stat: StatsEnum, value = 1) {
-        if (!['st', 'ht', 'dx', 'iq'].includes(stat)) return;
-        const validatedValue = MathUtil.toUnsignedNumber(value);
-        if (validatedValue === 0 || validatedValue > this.availableStatusPoints) return;
-
-        let realValue = 0;
-        if (this[stat] + validatedValue > this.config.MAX_POINTS) {
-            const diff = this.config.MAX_POINTS - this[stat];
-            realValue = diff;
-        } else {
-            realValue = validatedValue;
-        }
-
-        this[stat] += realValue;
-        this.givenStatusPoints += realValue;
-        this.availableStatusPoints -= realValue;
-
-        switch (stat) {
-            case StatsEnum.ST:
-                this.updateAttack();
-                this.sendPoints();
-                break;
-            case StatsEnum.HT:
-                this.updateDefense();
-                this.updateMagicDefense();
-                this.updateHealth();
-                this.sendPoints();
-                break;
-            case StatsEnum.DX:
-                this.updateAttack();
-                this.sendPoints();
-                break;
-            case StatsEnum.IQ:
-                this.updateAttack();
-                this.updateMagicAttack();
-                this.updateMagicDefense();
-                this.updateMana();
-                break;
-        }
-
-        this.sendPoints();
-    }
-
-    updateStatusPoints() {
-        const baseStatusPoints = (this.level - 1) * this.config.POINTS_PER_LEVEL;
-
-        const expNeeded = this.experienceManager.getNeededExperience(this.level);
-        const experienceRatio = this.experience / expNeeded;
-
-        const totalStatusPoints = Math.floor(baseStatusPoints + experienceRatio * 4);
-
-        const excessPoints = this.givenStatusPoints - totalStatusPoints;
-        this.availableStatusPoints -= Math.min(excessPoints, this.availableStatusPoints);
-
-        this.givenStatusPoints -= excessPoints;
-        this.availableStatusPoints += totalStatusPoints - this.givenStatusPoints;
-        this.givenStatusPoints = totalStatusPoints;
     }
 
     teleport(x: number, y: number) {
@@ -548,170 +373,6 @@ export default class Player extends Character {
                 address: Ip.toInt(this.config.SERVER_ADDRESS),
             }),
         );
-    }
-
-    addGold(value: number = 1) {
-        const validatedValue = MathUtil.toNumber(value);
-        if (validatedValue === 0) return;
-
-        this.gold = Math.min(this.gold + validatedValue, MathUtil.MAX_UINT);
-        this.sendPoints();
-    }
-
-    addExperience(value: number) {
-        const validatedValue = MathUtil.toUnsignedNumber(value);
-
-        if (validatedValue < 0 || (this.level >= this.config.MAX_LEVEL && this.experience === 0)) return;
-
-        if (this.level >= this.config.MAX_LEVEL) {
-            this.experience = 0;
-            this.updateStatusPoints();
-            this.sendPoints();
-            return;
-        }
-
-        const expNeeded = this.experienceManager.getNeededExperience(this.level);
-
-        if (this.experience + validatedValue >= expNeeded) {
-            const diff = this.experience + validatedValue - expNeeded;
-            this.experience = diff;
-            this.addLevel(1);
-            this.updateStatusPoints();
-            this.addExperience(0);
-            return;
-        }
-
-        const expPart = expNeeded / 4;
-        const before = this.experience;
-        this.experience += validatedValue;
-
-        const beforePart = before / expPart;
-        const afterPart = this.experience / expPart;
-        const expSteps = Math.floor(afterPart) - Math.floor(beforePart);
-
-        if (expSteps > 0) {
-            this.health = this.maxHealth;
-            this.mana = this.maxMana;
-            this.updateStatusPoints();
-        }
-        this.sendPoints();
-    }
-
-    addLevel(value: number) {
-        const validatedValue = MathUtil.toUnsignedNumber(value);
-        if (this.level + validatedValue > this.config.MAX_LEVEL) return;
-        if (validatedValue < 1) return;
-
-        //add skill point
-        this.level += validatedValue;
-        this.updateHealth();
-        this.resetHealth();
-        this.updateMana();
-        this.resetMana();
-        this.updateStatusPoints();
-        this.updateAttack();
-        this.updateMagicAttack();
-        this.updateDefense();
-        this.sendPoints();
-
-        //verify if we really need to send this
-        this.connection.send(
-            new CharacterPointChangePacket({
-                vid: this.virtualId,
-                type: PointsEnum.LEVEL,
-                amount: 0,
-                value: this.level,
-            }),
-        );
-    }
-
-    setLevel(value: number = 1) {
-        const validatedValue = MathUtil.toUnsignedNumber(value);
-        if (validatedValue < 1 || validatedValue > this.config.MAX_LEVEL) return;
-
-        this.level = validatedValue;
-        //reset skills
-
-        this.givenStatusPoints = 0;
-        this.availableStatusPoints = 0;
-        this.experience = 0;
-        const className = JobUtil.getClassNameFromClassId(this.playerClass);
-        this.st = this.config.jobs[className].common.st;
-        this.ht = this.config.jobs[className].common.ht;
-        this.dx = this.config.jobs[className].common.dx;
-        this.iq = this.config.jobs[className].common.iq;
-
-        this.updateHealth();
-        this.resetHealth();
-        this.updateMana();
-        this.resetMana();
-        this.updateStatusPoints();
-        this.updateAttack();
-        this.updateDefense();
-        this.sendPoints();
-
-        //add skill point
-        //verify if we really need to send this
-        this.connection.send(
-            new CharacterPointChangePacket({
-                vid: this.virtualId,
-                type: PointsEnum.LEVEL,
-                amount: 0,
-                value: this.level,
-            }),
-        );
-    }
-
-    addHealthRegen(value: number) {
-        const validatedValue = Math.min(this.healthRegenBonus + value, MathUtil.MAX_UINT);
-        this.healthRegenBonus += validatedValue;
-    }
-
-    addManaRegen(value: number) {
-        const validatedValue = Math.min(this.manaRegenBonus + value, MathUtil.MAX_UINT);
-        this.manaRegenBonus = validatedValue;
-    }
-
-    addMovementSpeed(value: number) {
-        const validatedValue = Math.min(this.movementSpeed + value, MathUtil.MAX_TINY);
-        this.movementSpeed = validatedValue;
-    }
-
-    addAttackSpeed(value: number) {
-        const validatedValue = Math.min(this.attackSpeed + value, MathUtil.MAX_TINY);
-        this.attackSpeed = validatedValue;
-    }
-
-    addMana(value: number) {
-        this.mana = Math.min(this.mana + Math.max(value, 0), this.maxMana);
-    }
-
-    addMaxMana(value: number) {
-        this.maxMana += MathUtil.toUnsignedNumber(value);
-    }
-
-    addHealth(value: number) {
-        this.health = Math.min(this.health + Math.max(value, 0), this.maxHealth);
-    }
-
-    addMaxHealth(value: number) {
-        this.maxHealth += MathUtil.toUnsignedNumber(value);
-    }
-
-    updateHealth() {
-        this.maxHealth = this.baseHealth + this.ht * this.hpPerHtPoint + this.level * this.hpPerLvl;
-    }
-
-    resetHealth() {
-        this.health = this.maxHealth;
-    }
-
-    resetMana() {
-        this.mana = this.maxMana;
-    }
-
-    updateMana() {
-        this.maxMana = this.baseMana + this.iq * this.mpPerIqPoint + this.level * this.mpPerLvl;
     }
 
     private showEntity({
@@ -867,6 +528,10 @@ export default class Player extends Character {
         });
     }
 
+    getPoints() {
+        return this.points.getPoints();
+    }
+
     sendPoints() {
         const characterPointsPacket = new CharacterPointsPacket();
         for (const point of this.getPoints().keys()) {
@@ -907,8 +572,8 @@ export default class Player extends Character {
         this.connection.send(
             new CharacterUpdatePacket({
                 vid: this.virtualId,
-                attackSpeed: this.attackSpeed,
-                moveSpeed: this.movementSpeed,
+                attackSpeed: this.points.getPoint(PointsEnum.ATTACK_SPEED),
+                moveSpeed: this.points.getPoint(PointsEnum.MOVE_SPEED),
                 parts: [this.getBody()?.getId() ?? 0, this.getWeapon()?.getId() ?? 0, 0, this.getHair()?.getId() ?? 0],
                 affects: this.getAffectFlags(),
             }),
@@ -917,8 +582,8 @@ export default class Player extends Character {
         this.area?.onCharacterUpdate(
             new CharacterUpdatedEvent({
                 name: this.name,
-                attackSpeed: this.attackSpeed,
-                moveSpeed: this.movementSpeed,
+                attackSpeed: this.points.getPoint(PointsEnum.ATTACK_SPEED),
+                moveSpeed: this.points.getPoint(PointsEnum.MOVE_SPEED),
                 vid: this.virtualId,
                 positionX: this.positionX,
                 positionY: this.positionY,
@@ -967,7 +632,10 @@ export default class Player extends Character {
     }
 
     calcPlayTime() {
-        return this.playTime + Math.round((performance.now() - this.lastPlayTime) / (1000 * 60));
+        return (
+            this.points.getPoint(PointsEnum.PLAY_TIME) +
+            Math.round((performance.now() - this.lastPlayTime) / (1000 * 60))
+        );
     }
 
     get antiFlagClass() {
@@ -1197,9 +865,9 @@ export default class Player extends Character {
 
             if (otherEntity instanceof Player) {
                 this.otherEntityUpdated({
-                    vid: otherEntity.virtualId,
-                    attackSpeed: otherEntity.attackSpeed,
-                    moveSpeed: otherEntity.movementSpeed,
+                    vid: otherEntity.getVirtualId(),
+                    attackSpeed: otherEntity.getAttackSpeed(),
+                    moveSpeed: otherEntity.getMovementSpeed(),
                     bodyId: otherEntity.getBody()?.getId() ?? 0,
                     weaponId: otherEntity.getWeapon()?.getId() ?? 0,
                     hairId: otherEntity.getHair()?.getId() ?? 0,
@@ -1271,15 +939,15 @@ export default class Player extends Character {
             hpPerHtPoint,
             mpPerLvl,
             mpPerIqPoint,
-            baseAttackSpeed,
-            baseMovementSpeed,
             baseHealth,
             baseMana,
             appearance,
             defensePerHtPoint,
             attackPerStPoint,
-            attackPerDXPoint,
-            attackPerIQPoint,
+            attackPerDxPoint,
+            attackPerIqPoint,
+            baseAttackSpeed,
+            baseMovementSpeed,
         },
         { animationManager, config, experienceManager, logger },
     ) {
@@ -1314,15 +982,15 @@ export default class Player extends Character {
                 hpPerHtPoint,
                 mpPerLvl,
                 mpPerIqPoint,
-                baseAttackSpeed,
-                baseMovementSpeed,
                 baseHealth,
                 baseMana,
                 appearance,
                 defensePerHtPoint,
                 attackPerStPoint,
-                attackPerDXPoint,
-                attackPerIQPoint,
+                attackPerDxPoint,
+                attackPerIqPoint,
+                baseAttackSpeed,
+                baseMovementSpeed,
             },
             { animationManager, config, experienceManager, logger },
         );
@@ -1336,23 +1004,23 @@ export default class Player extends Character {
             playerClass: this.playerClass,
             skillGroup: this.skillGroup,
             playTime: this.calcPlayTime(),
-            level: this.level,
-            experience: this.experience,
-            gold: this.gold,
-            st: this.st,
-            ht: this.ht,
-            dx: this.dx,
-            iq: this.iq,
+            level: this.points.getPoint(PointsEnum.LEVEL),
+            experience: this.points.getPoint(PointsEnum.EXPERIENCE),
+            gold: this.points.getPoint(PointsEnum.GOLD),
+            st: this.points.getPoint(PointsEnum.ST),
+            ht: this.points.getPoint(PointsEnum.HT),
+            dx: this.points.getPoint(PointsEnum.DX),
+            iq: this.points.getPoint(PointsEnum.IQ),
             positionX: this.positionX,
             positionY: this.positionY,
-            health: this.health,
-            mana: this.mana,
-            stamina: this.stamina,
+            health: this.points.getPoint(PointsEnum.HEALTH),
+            mana: this.points.getPoint(PointsEnum.MANA),
+            stamina: this.points.getPoint(PointsEnum.STAMINA),
             bodyPart: this.getBody()?.getId() ?? 0,
             hairPart: this.getHair()?.getId() ?? 0,
             name: this.name,
-            givenStatusPoints: this.givenStatusPoints,
-            availableStatusPoints: this.availableStatusPoints,
+            givenStatusPoints: this.points.getGivenStatusPoints(),
+            availableStatusPoints: this.points.getPoint(PointsEnum.STATUS_POINTS),
             slot: this.slot,
         });
     }
@@ -1361,10 +1029,10 @@ export default class Player extends Character {
         return this.appearance;
     }
     getMaxHealth() {
-        return this.maxHealth;
+        return this.points.getPoint(PointsEnum.MAX_HEALTH);
     }
     getMaxMana() {
-        return this.maxMana;
+        return this.points.getPoint(PointsEnum.MAX_MANA);
     }
     getAccountId() {
         return this.accountId;
@@ -1375,69 +1043,16 @@ export default class Player extends Character {
     getSkillGroup() {
         return this.skillGroup;
     }
-    getPlayTime() {
-        return this.playTime;
-    }
-    getExperience() {
-        return this.experience;
-    }
-    getGold() {
-        return this.gold;
-    }
-    getHealth() {
-        return this.health;
-    }
-    getMana() {
-        return this.mana;
-    }
-    getStamina() {
-        return this.stamina;
-    }
     getBodyPart() {
         return this.bodyPart;
     }
     getHairPart() {
         return this.hairPart;
     }
-    getGivenStatusPoints() {
-        return this.givenStatusPoints;
-    }
-    getAvailableStatusPoints() {
-        return this.availableStatusPoints;
-    }
     getSlot() {
         return this.slot;
     }
     getInventory() {
         return this.inventory;
-    }
-    getMallItemBonus() {
-        return this.mallItemBonus;
-    }
-    getItemDropBonus() {
-        return this.itemDropBonus;
-    }
-    setPoisonChance(value: number) {
-        this.poisonChance = value > 0 ? value : 0;
-    }
-
-    addPoisonChance(value: number) {
-        this.poisonChance += value > 0 ? value : 0;
-    }
-
-    setStunChance(value: number) {
-        this.stunChance = value > 0 ? value : 0;
-    }
-
-    addStunChance(value: number) {
-        this.stunChance += value > 0 ? value : 0;
-    }
-
-    setSlowChance(value: number) {
-        this.slowChance = value > 0 ? value : 0;
-    }
-
-    addSlowChance(value: number) {
-        this.slowChance += value > 0 ? value : 0;
     }
 }

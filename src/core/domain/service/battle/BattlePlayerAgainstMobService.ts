@@ -106,11 +106,12 @@ export default class BattlePlayerAgainstMobService extends BattlePlayerService<M
         const attackerStealGoldChance = this.attacker.getPoint(PointsEnum.STEAL_GOLD);
 
         if (MathUtil.getRandomInt(1, 100) <= attackerStealGoldChance) {
+            //TODO: add gold bonus do multiply this
             const amount = MathUtil.getRandomInt(1, this.victim.getPoint(PointsEnum.LEVEL) * 50);
-            this.attacker.addGold(amount);
+            this.attacker.addPoint(PointsEnum.GOLD, amount);
             this.attacker.chat({
                 messageType: ChatMessageTypeEnum.INFO,
-                message: `[GOLD_STEAL] you received ${amount} of gold`,
+                message: `[SYSTEM][GOLD_STEAL] You received ${amount} of gold`,
             });
         }
     }
@@ -213,7 +214,7 @@ export default class BattlePlayerAgainstMobService extends BattlePlayerService<M
         this.victim.setAffectFlag(AffectBitsTypeEnum.FIRE);
         this.victim.sendUpdateEvent();
 
-        this.victim.getEventTimerManager().addTimer({
+        this.victim.addEventTimer({
             id: 'FIRE_AFFECT',
             eventFunction: () => {
                 const damage = this.victim.getPoint(PointsEnum.MAX_HEALTH) * 0.05;
@@ -237,7 +238,7 @@ export default class BattlePlayerAgainstMobService extends BattlePlayerService<M
         this.victim.setAffectFlag(AffectBitsTypeEnum.POISON);
         this.victim.sendUpdateEvent();
 
-        this.victim.getEventTimerManager().addTimer({
+        this.victim.addEventTimer({
             id: 'POISON_AFFECT',
             eventFunction: () => {
                 const damage = this.victim.getPoint(PointsEnum.MAX_HEALTH) * 0.03;
@@ -255,13 +256,14 @@ export default class BattlePlayerAgainstMobService extends BattlePlayerService<M
     }
 
     applyStun() {
+        //TODO: reset position
         if (this.victim.isImmuneByFlag(MobImmuneFlagEnum.STUN)) return;
         if (this.victim.isAffectByFlag(AffectBitsTypeEnum.STUN)) return;
 
         this.victim.setAffectFlag(AffectBitsTypeEnum.STUN);
         this.victim.sendUpdateEvent();
 
-        this.victim.getEventTimerManager().addTimer({
+        this.victim.addEventTimer({
             id: 'STUN_AFFECT',
             eventFunction: () => {
                 this.victim.removeAffectFlag(AffectBitsTypeEnum.STUN);
@@ -279,15 +281,15 @@ export default class BattlePlayerAgainstMobService extends BattlePlayerService<M
         if (this.victim.isImmuneByFlag(MobImmuneFlagEnum.SLOW)) return;
         if (this.victim.isAffectByFlag(AffectBitsTypeEnum.SLOW)) return;
         const SLOW_VALUE = 30;
-        this.victim.setMovementSpeed(this.victim.getMovementSpeed() - SLOW_VALUE);
+        this.victim.addPoint(PointsEnum.MOVE_SPEED, -SLOW_VALUE);
 
         this.victim.setAffectFlag(AffectBitsTypeEnum.SLOW);
         this.victim.sendUpdateEvent();
 
-        this.victim.getEventTimerManager().addTimer({
+        this.victim.addEventTimer({
             id: 'SLOW_AFFECT',
             eventFunction: () => {
-                this.victim.setMovementSpeed(this.victim.getMovementSpeed() + SLOW_VALUE);
+                this.victim.addPoint(PointsEnum.MOVE_SPEED, SLOW_VALUE);
                 this.victim.removeAffectFlag(AffectBitsTypeEnum.SLOW);
                 this.victim.sendUpdateEvent();
             },

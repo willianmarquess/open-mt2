@@ -10,6 +10,8 @@ import { MobsProto } from '@/game/infra/config/GameConfig';
 import { EntityTypeEnum } from '@/core/enum/EntityTypeEnum';
 import { MobEnchantEnum } from '@/core/enum/MobEnchantEnum';
 import { MobResistEnum } from '@/core/enum/MobResistEnum';
+import { MobPoints } from './delegate/MobPoints';
+import { PointsEnum } from '@/core/enum/PointsEnum';
 
 enum MobSizeEnum {
     RESERVED = 0,
@@ -95,10 +97,11 @@ export abstract class Mob extends Character {
     protected readonly hpPercentToGetBerserk: number;
     protected readonly hpPercentToGetStoneSkin: number;
     protected readonly hpPercentToGetGodspeed: number;
-    protected readonly hpPercentToGetDeathblow: number;
+    protected readonly percentToGetDeathblow: number;
     protected readonly hpPercentToGetRevive: number;
 
     protected group: MonsterGroup;
+    protected readonly points: MobPoints;
 
     constructor(params: MobParams, { animationManager }) {
         super(
@@ -109,14 +112,7 @@ export abstract class Mob extends Character {
                 entityType: Number(params.entityType),
                 positionX: Number(params.positionX),
                 positionY: Number(params.positionY),
-                movementSpeed: Number(params.proto.move_speed),
-                attackSpeed: Number(params.proto.attack_speed),
-                dx: Number(params.proto.dx),
-                ht: Number(params.proto.ht),
-                iq: Number(params.proto.iq),
-                st: Number(params.proto.st),
                 name: params.proto.name,
-                level: Number(params.proto.level),
                 empire: Number(params.proto.empire),
             },
             { animationManager },
@@ -173,7 +169,6 @@ export abstract class Mob extends Character {
         this.onClick = Number(proto.on_click);
         this.damageMin = Number(proto.damage_min);
         this.damageMax = Number(proto.damage_max);
-        this.maxHealth = Number(proto.max_hp);
         this.regenCycle = Number(proto.regen_cycle);
         this.regenPercent = Number(proto.regen_percent);
         this.goldMin = Number(proto.gold_min);
@@ -193,9 +188,22 @@ export abstract class Mob extends Character {
         this.hpPercentToGetBerserk = Number(proto.sp_berserk);
         this.hpPercentToGetStoneSkin = Number(proto.sp_stoneskin);
         this.hpPercentToGetGodspeed = Number(proto.sp_godspeed);
-        this.hpPercentToGetDeathblow = Number(proto.sp_deathblow);
+        this.percentToGetDeathblow = Number(proto.sp_deathblow);
         this.hpPercentToGetRevive = Number(proto.sp_revive);
         this.direction = Number(params.direction);
+        this.points = new MobPoints(params.proto);
+    }
+
+    addPoint(point: PointsEnum, value: number): void {
+        return this.points.addPoint(point, value);
+    }
+
+    setPoint(point: PointsEnum, value: number): void {
+        return this.points.setPoint(point, value);
+    }
+
+    getPoint(point: PointsEnum): number {
+        return this.points.getPoint(point);
     }
 
     protected getChanceToApplyEnchant(type: MobEnchantEnum) {
@@ -239,7 +247,7 @@ export abstract class Mob extends Character {
     }
 
     getDeathBlowChance() {
-        return this.hpPercentToGetDeathblow ?? 0; //TODO: chance this name to percentToGetDeathblow
+        return this.percentToGetDeathblow ?? 0;
     }
 
     getRank() {
@@ -341,8 +349,8 @@ export abstract class Mob extends Character {
     getHpPercentToGetGodspeed() {
         return this.hpPercentToGetGodspeed;
     }
-    getHpPercentToGetDeathblow() {
-        return this.hpPercentToGetDeathblow;
+    getpercentToGetDeathblow() {
+        return this.percentToGetDeathblow;
     }
     getHpPercentToGetRevive() {
         return this.hpPercentToGetRevive;

@@ -6,7 +6,7 @@ type TimerOptions = {
     repeatCount?: number;
 };
 
-type addTimerParam = {
+export type addTimerParam = {
     id: string;
     eventFunction: EventCallback;
     options: TimerOptions;
