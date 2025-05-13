@@ -1,4 +1,5 @@
 import { ErrorTypesEnum } from '@/core/enum/ErrorTypesEnum';
+import { PointsEnum } from '@/core/enum/PointsEnum';
 import CreateCharacterPacketHandler from '@/core/interface/networking/packets/packet/in/createCharacter/CreateCharacterPacketHandler';
 import CreateCharacterFailurePacket from '@/core/interface/networking/packets/packet/out/CreateCharacterFailurePacket';
 import CreateCharacterSuccessPacket from '@/core/interface/networking/packets/packet/out/CreateCharacterSuccessPacket';
@@ -91,16 +92,23 @@ describe('CreateCharacterPacketHandler', function () {
             getPlayerClass: () => 1,
             getBodyPart: () => 'body',
             getHairPart: () => 'hair',
-            getLevel: () => 1,
             getSkillGroup: () => 'skills',
-            getPlayTime: () => 100,
             getId: () => 1,
             getPositionX: () => 100,
             getPositionY: () => 200,
-            getHt: () => 10,
-            getSt: () => 10,
-            getDx: () => 10,
-            getIq: () => 10,
+            getPoint: (point: PointsEnum) => {
+                switch (point) {
+                    case PointsEnum.HT:
+                    case PointsEnum.ST:
+                    case PointsEnum.IQ:
+                    case PointsEnum.DX:
+                        return 10;
+                    case PointsEnum.PLAY_TIME:
+                        return 100;
+                    case PointsEnum.LEVEL:
+                        return 1;
+                }
+            },
         };
 
         mockCreateCharacterService.execute.resolves({

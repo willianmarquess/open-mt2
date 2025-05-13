@@ -300,8 +300,8 @@ export class PlayerPoints extends Points {
             minWeaponDamage = 0,
             maxWeaponDamage = 0,
 
-            givenStatusPoints,
-            availableStatusPoints,
+            givenStatusPoints = 0,
+            availableStatusPoints = 0,
             hpPerLvl,
             hpPerHtPoint,
             mpPerLvl,
@@ -721,7 +721,6 @@ export class PlayerPoints extends Points {
         this.points.set(PointsEnum.STATUS_POINTS, {
             get: () => this.availableStatusPoints,
         });
-
         this.points.set(PointsEnum.MALL_ITEM_BONUS, {
             get: () => this.mallItemBonus,
             add: (value) => this.addCommonPoint(value, 'mallItemBonus'),
@@ -786,6 +785,9 @@ export class PlayerPoints extends Points {
         });
         this.points.set(PointsEnum.PLAY_TIME, {
             get: () => this.playTime,
+        });
+        this.points.set(PointsEnum.STAMINA, {
+            get: () => this.stamina,
         });
     }
 

@@ -1,5 +1,6 @@
 import Player from '@/core/domain/entities/game/player/Player';
 import { ChatMessageTypeEnum } from '@/core/enum/ChatMessageTypeEnum';
+import { PointsEnum } from '@/core/enum/PointsEnum';
 import DropItemService from '@/game/app/service/DropItemService';
 import { expect } from 'chai';
 import sinon from 'sinon';
@@ -27,11 +28,11 @@ describe('DropItemService', function () {
     describe('execute', function () {
         it('should drop gold if gold is greater than 0', async function () {
             const playerMock = {
-                getGold: sinon.stub().returns(100),
-                addGold: sinon.spy(),
+                getPoint: sinon.stub().returns(100),
                 dropItem: sinon.spy(),
                 chat: sinon.spy(),
                 getName: sinon.stub().returns('TestPlayer'),
+                addPoint: sinon.spy(),
             };
 
             await dropItemService.execute({
@@ -42,18 +43,18 @@ describe('DropItemService', function () {
                 player: playerMock as unknown as Player,
             });
 
-            expect(playerMock.addGold.calledOnceWith(-50)).to.be.true;
+            expect(playerMock.addPoint.calledOnceWith(PointsEnum.GOLD, -50)).to.be.true;
             expect(playerMock.dropItem.calledOnce).to.be.true;
             expect(playerMock.chat.notCalled).to.be.true;
         });
 
         it('should not drop more gold than the player has', async function () {
             const playerMock = {
-                getGold: sinon.stub().returns(30),
-                addGold: sinon.spy(),
+                getPoint: sinon.stub().returns(30),
                 dropItem: sinon.spy(),
                 chat: sinon.spy(),
                 getName: sinon.stub().returns('TestPlayer'),
+                addPoint: sinon.spy(),
             };
 
             await dropItemService.execute({
@@ -64,12 +65,12 @@ describe('DropItemService', function () {
                 player: playerMock as unknown as Player,
             });
 
-            expect(playerMock.addGold.notCalled).to.be.true;
+            expect(playerMock.addPoint.notCalled).to.be.true;
             expect(playerMock.dropItem.notCalled).to.be.true;
             expect(playerMock.chat.calledOnce).to.be.true;
             expect(playerMock.chat.firstCall.args[0]).to.deep.equal({
                 messageType: ChatMessageTypeEnum.INFO,
-                message: 'You are trying to drop more gold than you have',
+                message: '[SYSTEM] You are trying to drop more gold than you have',
             });
             expect(loggerMock.error.calledOnce).to.be.true;
         });
@@ -87,6 +88,7 @@ describe('DropItemService', function () {
                 }),
                 sendItemRemoved: sinon.spy(),
                 dropItem: sinon.spy(),
+                addPoint: sinon.spy(),
             };
 
             await dropItemService.execute({

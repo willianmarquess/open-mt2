@@ -27,7 +27,7 @@ export default class ExperienceCommandHandler extends CommandHandler<ExperienceC
         const [value, targetName] = experienceCommand.getArgs();
 
         if (!targetName) {
-            player.setPoint(PointsEnum.EXPERIENCE, Number(value));
+            player.addPoint(PointsEnum.EXPERIENCE, Number(value));
             return;
         }
 
@@ -41,6 +41,6 @@ export default class ExperienceCommandHandler extends CommandHandler<ExperienceC
             return;
         }
 
-        target.setPoint(PointsEnum.EXPERIENCE, Number(value));
+        target.addPoint(PointsEnum.EXPERIENCE, Number(value));
     }
 }

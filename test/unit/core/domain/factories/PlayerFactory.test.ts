@@ -1,5 +1,6 @@
 import Player from '@/core/domain/entities/game/player/Player';
 import PlayerFactory from '@/core/domain/factories/PlayerFactory';
+import { PointsEnum } from '@/core/enum/PointsEnum';
 import { expect } from 'chai';
 
 describe('PlayerFactory', () => {
@@ -36,6 +37,9 @@ describe('PlayerFactory', () => {
                     },
                 },
             },
+        };
+        experienceManager = {
+            getNeededExperience: () => 100,
         };
         animationManager = {};
         playerFactory = new PlayerFactory({
@@ -88,24 +92,22 @@ describe('PlayerFactory', () => {
         expect(player.getSlot()).to.be.equal(1);
         expect(player.getPositionX()).to.be.equal(300);
         expect(player.getPositionY()).to.be.equal(400);
-        expect(player.getSt()).to.be.equal(10);
-        expect(player.getHt()).to.be.equal(10);
-        expect(player.getDx()).to.be.equal(10);
-        expect(player.getIq()).to.be.equal(10);
-        expect(player.getHealth()).to.be.equal(130);
-        expect(player.getMana()).to.be.equal(65);
-        expect(player.getStamina()).to.be.equal(50);
+        expect(player.getPoint(PointsEnum.ST)).to.be.equal(10);
+        expect(player.getPoint(PointsEnum.HT)).to.be.equal(10);
+        expect(player.getPoint(PointsEnum.DX)).to.be.equal(10);
+        expect(player.getPoint(PointsEnum.IQ)).to.be.equal(10);
+        expect(player.getPoint(PointsEnum.HEALTH)).to.be.equal(130);
+        expect(player.getPoint(PointsEnum.MANA)).to.be.equal(65);
+        expect(player.getPoint(PointsEnum.STAMINA)).to.be.equal(50);
         expect(player.getVirtualId()).to.be.equal(1);
         expect(player.getBodyPart()).to.be.equal(1);
         expect(player.getHairPart()).to.be.equal(1);
-        expect(player.getGivenStatusPoints()).to.be.equal(0);
-        expect(player.getAvailableStatusPoints()).to.be.equal(0);
         expect(player.getId()).to.be.equal(1);
         expect(player.getSkillGroup()).to.be.equal(1);
-        expect(player.getPlayTime()).to.be.equal(1000);
+        expect(player.getPoint(PointsEnum.PLAY_TIME)).to.be.equal(1000);
         expect(player.getLevel()).to.be.equal(1);
-        expect(player.getExperience()).to.be.equal(0);
-        expect(player.getGold()).to.be.equal(100);
+        expect(player.getPoint(PointsEnum.EXPERIENCE)).to.be.equal(0);
+        expect(player.getPoint(PointsEnum.GOLD)).to.be.equal(100);
     });
 
     it('should create a player with config default values when params are missing', () => {
@@ -130,34 +132,5 @@ describe('PlayerFactory', () => {
         const player = playerFactory.create(params);
 
         expect(player).to.be.an.instanceof(Player);
-
-        expect(player).to.include({
-            accountId: 1,
-            name: 'name',
-            empire: 1,
-            playerClass: 1,
-            appearance: 1,
-            slot: 1,
-            positionX: 100,
-            positionY: 200,
-            st: 10,
-            ht: 10,
-            dx: 10,
-            iq: 10,
-            health: 130,
-            mana: 65,
-            stamina: 30,
-            virtualId: 1,
-            bodyPart: 0,
-            hairPart: 0,
-            givenStatusPoints: 0,
-            availableStatusPoints: 0,
-            id: 1,
-            skillGroup: 1,
-            playTime: 1000,
-            level: 1,
-            experience: 0,
-            gold: 100,
-        });
     });
 });

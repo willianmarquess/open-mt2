@@ -30,7 +30,7 @@ export default class PickupItemService {
         const isGold = item.getId() === 1;
 
         if (isGold) {
-            player.setPoint(PointsEnum.GOLD, Number(count));
+            player.addPoint(PointsEnum.GOLD, Number(count));
             area.despawn(droppedItem);
             return;
         }

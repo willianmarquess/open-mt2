@@ -11,10 +11,7 @@ describe('PlayerApplies', function () {
 
     beforeEach(function () {
         playerMock = {
-            addAttackSpeed: sinon.spy(),
-            addMovementSpeed: sinon.spy(),
-            addHealthRegen: sinon.spy(),
-            addManaRegen: sinon.spy(),
+            addPoint: sinon.spy(),
         };
 
         loggerMock = {
@@ -35,8 +32,8 @@ describe('PlayerApplies', function () {
 
             playerApplies.addItemApplies(item);
 
-            expect(playerMock.addAttackSpeed.calledOnceWith(10)).to.be.true;
-            expect(playerMock.addMovementSpeed.calledOnceWith(5)).to.be.true;
+            expect(playerMock.addPoint.firstCall.args[1]).to.be.equal(10);
+            expect(playerMock.addPoint.secondCall.args[1]).to.be.equal(5);
         });
 
         it('should log debug message for unimplemented applies', function () {
@@ -62,8 +59,8 @@ describe('PlayerApplies', function () {
 
             playerApplies.removeItemApplies(item);
 
-            expect(playerMock.addHealthRegen.calledOnceWith(-8)).to.be.true;
-            expect(playerMock.addManaRegen.calledOnceWith(-12)).to.be.true;
+            expect(playerMock.addPoint.firstCall.args[1]).to.be.equal(-8);
+            expect(playerMock.addPoint.secondCall.args[1]).to.be.equal(-12);
         });
 
         it('should log debug message for unimplemented applies', function () {
