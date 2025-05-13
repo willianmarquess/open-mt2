@@ -947,7 +947,7 @@ export class PlayerPoints extends Points {
             this.attackPerDxPoint * this.dx;
         attack += this.attackBonus;
         const { physic } = this.player.getWeaponValues();
-        attack += Math.floor(Math.random() * (physic.max - physic.min) + physic.min) * 2;
+        attack += MathUtil.getRandomInt(physic.max, physic.min) * 2;
         attack += physic.bonus * 2;
         this.attackGrade = Math.floor(attack);
     }
@@ -956,7 +956,7 @@ export class PlayerPoints extends Points {
         let magicAttack = this.level * 2 + 2 * this.iq;
         magicAttack += this.magicAttGradeBonus;
         const { magic } = this.player.getWeaponValues();
-        magicAttack += Math.floor(Math.random() * (magic.max - magic.min) + magic.min) * 2;
+        magicAttack += MathUtil.getRandomInt(magic.max, magic.min) * 2;
         magicAttack += magic.bonus * 2;
         this.magicAttGrade = Math.floor(magicAttack);
     }

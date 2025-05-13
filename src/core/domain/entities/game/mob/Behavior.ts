@@ -207,7 +207,10 @@ export default class Behavior {
 
         const angle = MathUtil.getRandomInt(0, 359);
 
-        const { dx, dy } = getDeltaByDegree(angle, Math.random() * (this.monster.getAttackRange() / 2));
+        const { dx, dy } = getDeltaByDegree(
+            angle,
+            MathUtil.getRandomInt(this.monster.getAttackRange() / 2, this.monster.getAttackRange()),
+        );
 
         const targetX = this.target.getPositionX() + dx;
         const targetY = this.target.getPositionY() + dy;
