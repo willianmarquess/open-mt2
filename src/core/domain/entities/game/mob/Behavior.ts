@@ -3,6 +3,7 @@ import MathUtil from '../../../util/MathUtil';
 import Monster from '@/core/domain/entities/game/mob/Monster';
 import Player from '../player/Player';
 import { AffectBitsTypeEnum } from '@/core/enum/AffectBitsTypeEnum';
+import { PositionEnum } from '@/core/enum/PositionEnum';
 
 const POSITION_OFFSET = 600;
 const MIN_DELAY = 15000;
@@ -66,23 +67,54 @@ export default class Behavior {
 
     private moveToOriginalPosition() {
         this.target = undefined;
+        this.lastAttackTime = undefined;
         this.damageMap.clear();
         this.monster.goto(this.lastAttackPositionX, this.lastAttackPositionY);
     }
 
-    tick() {
+    battleState() {
         if (!this.enable) return;
-        if (this.monster.isAffectByFlag(AffectBitsTypeEnum.STUN)) return;
         if (this.monster.isDead()) return;
+        if (this.monster.isAffectByFlag(AffectBitsTypeEnum.STUN)) return;
+
+        if (!this.target) return; //TODO: goto idle state
+
+        if (this.target.isDead()) {
+            this.damageMap.delete(this.target.getVirtualId());
+            //TODO: next target
+            return;
+        }
 
         const now = performance.now();
 
-        if (this.target) {
-            if (this.target.isDead()) {
-                this.damageMap.delete(this.target.getVirtualId());
-                //TODO next target
-                return;
+        const distanceFromTarget = this.getDistanceFromTarget();
+
+        if (distanceFromTarget > Math.max(300, this.monster.getAttackRange() * 1.15)) {
+            if (this.nextMoveTime <= now) {
+                this.moveToTarget();
+                this.nextMoveTime = now + MathUtil.getRandomInt(MIN_NEXT_TIME_TO_MOVE, 800); //move each ~500ms
             }
+            return;
+        }
+
+        if (this.nextAttackTime <= now) {
+            this.attack();
+            const attackSpeed = Math.max(1, this.monster.getAttackSpeed());
+            const nextAttackDelay = Math.max(MIN_NEXT_TIME_TO_ATTACK, BASE_NEXT_TIME_TO_ATTACK / (attackSpeed / 100));
+            this.nextAttackTime = now + nextAttackDelay;
+            this.lastAttackTime = now;
+            this.lastAttackPositionX = this.monster.getPositionX();
+            this.lastAttackPositionY = this.monster.getPositionY();
+        }
+    }
+
+    movingState() {
+        if (!this.enable) return;
+        if (this.monster.isDead()) return;
+        if (this.monster.isAffectByFlag(AffectBitsTypeEnum.STUN)) return;
+
+        if (this.target) {
+            const now = performance.now();
 
             if (this.lastAttackTime) {
                 const toMuchTimeWithoutAttack = this.lastAttackTime + MAX_TIME_WITHOUT_ATTACK <= now;
@@ -94,53 +126,106 @@ export default class Behavior {
                     return;
                 }
             }
-            const distanceFromTarget = this.getDistanceFromTarget();
-            console.log('distance: ', distanceFromTarget);
-            console.log('range: ', this.monster.getAttackRange());
 
-            switch (this.monster.getState()) {
-                case EntityStateEnum.MOVING: {
-                    if (distanceFromTarget > Math.max(300, this.monster.getAttackRange() * 1.15)) {
-                        if (this.nextMoveTime <= now) {
-                            this.moveToTarget();
-                            this.nextMoveTime = now;
-                            this.nextMoveTime += MIN_NEXT_TIME_TO_MOVE; //move each ~500ms
-                        }
-                    }
-                    break;
-                }
-                case EntityStateEnum.IDLE: {
-                    if (distanceFromTarget > this.monster.getAttackRange()) {
-                        if (this.nextMoveTime <= now) {
-                            this.moveToTarget();
-                            this.nextMoveTime = now;
-                            this.nextMoveTime += MIN_NEXT_TIME_TO_MOVE; //move each ~500ms
-                        }
-                    } else {
-                        if (this.nextAttackTime <= now) {
-                            this.attack();
-                            this.nextAttackTime = now;
-                            this.nextAttackTime += Math.max(
-                                MIN_NEXT_TIME_TO_ATTACK,
-                                BASE_NEXT_TIME_TO_ATTACK / (this.monster.getAttackSpeed() / 100),
-                            );
-                            this.lastAttackTime = now;
-                            this.lastAttackPositionX = this.monster.getPositionX();
-                            this.lastAttackPositionY = this.monster.getPositionY();
-                        }
-                    }
-                    break;
-                }
-            }
-        } else {
-            if (this.monster.getState() === EntityStateEnum.IDLE) {
-                if (now >= this.nextMove) {
-                    this.moveToRandomLocation();
-                    this.nextMove = this.calcDelay();
+            const distanceFromTarget = this.getDistanceFromTarget();
+            if (distanceFromTarget > Math.max(300, this.monster.getAttackRange() * 1.15)) {
+                if (this.nextMoveTime <= now) {
+                    this.moveToTarget();
+                    this.nextMoveTime = now;
+                    this.nextMoveTime += MathUtil.getRandomInt(MIN_NEXT_TIME_TO_MOVE, 800); //move each ~500ms
                 }
             }
         }
     }
+
+    idleState() {
+        if (!this.enable) return;
+        if (this.monster.isDead()) return;
+        if (this.monster.isAffectByFlag(AffectBitsTypeEnum.STUN)) return;
+
+        if (this.target) {
+            this.monster.setPos(PositionEnum.FIGHTING);
+            return;
+        }
+
+        const now = performance.now();
+        if (now >= this.nextMove) {
+            this.moveToRandomLocation();
+            this.nextMove = this.calcDelay();
+        }
+    }
+
+    // tick() {
+    //     if (!this.enable) return;
+    //     if (this.monster.isDead()) return;
+    //     if (this.monster.isAffectByFlag(AffectBitsTypeEnum.STUN)) return;
+
+    //     const now = performance.now();
+
+    //     if (this.target) {
+    //         if (this.target.isDead()) {
+    //             this.damageMap.delete(this.target.getVirtualId());
+    //             //TODO next target
+    //             return;
+    //         }
+
+    //         if (this.lastAttackTime) {
+    //             const toMuchTimeWithoutAttack = this.lastAttackTime + MAX_TIME_WITHOUT_ATTACK <= now;
+    //             const tooFar =
+    //                 this.getDistance(this.lastAttackPositionX, this.lastAttackPositionY) >= MAX_DISTANCE_WITHOUT_ATTACK;
+
+    //             if (toMuchTimeWithoutAttack || tooFar) {
+    //                 this.moveToOriginalPosition();
+    //                 return;
+    //             }
+    //         }
+    //         const distanceFromTarget = this.getDistanceFromTarget();
+    //         console.log('distance: ', distanceFromTarget);
+    //         console.log('range: ', this.monster.getAttackRange());
+
+    //         switch (this.monster.getState()) {
+    //             case EntityStateEnum.MOVING: {
+    //                 if (distanceFromTarget > Math.max(300, this.monster.getAttackRange() * 1.15)) {
+    //                     if (this.nextMoveTime <= now) {
+    //                         this.moveToTarget();
+    //                         this.nextMoveTime = now;
+    //                         this.nextMoveTime += MIN_NEXT_TIME_TO_MOVE; //move each ~500ms
+    //                     }
+    //                 }
+    //                 break;
+    //             }
+    //             case EntityStateEnum.IDLE: {
+    //                 if (distanceFromTarget > this.monster.getAttackRange()) {
+    //                     if (this.nextMoveTime <= now) {
+    //                         this.moveToTarget();
+    //                         this.nextMoveTime = now;
+    //                         this.nextMoveTime += MIN_NEXT_TIME_TO_MOVE; //move each ~500ms
+    //                     }
+    //                 } else {
+    //                     if (this.nextAttackTime <= now) {
+    //                         this.attack();
+    //                         this.nextAttackTime = now;
+    //                         this.nextAttackTime += Math.max(
+    //                             MIN_NEXT_TIME_TO_ATTACK,
+    //                             BASE_NEXT_TIME_TO_ATTACK / (this.monster.getAttackSpeed() / 100),
+    //                         );
+    //                         this.lastAttackTime = now;
+    //                         this.lastAttackPositionX = this.monster.getPositionX();
+    //                         this.lastAttackPositionY = this.monster.getPositionY();
+    //                     }
+    //                 }
+    //                 break;
+    //             }
+    //         }
+    //     } else {
+    //         if (this.monster.getState() === EntityStateEnum.IDLE) {
+    //             if (now >= this.nextMove) {
+    //                 this.moveToRandomLocation();
+    //                 this.nextMove = this.calcDelay();
+    //             }
+    //         }
+    //     }
+    // }
 
     private attack() {
         console.log(
@@ -214,8 +299,6 @@ export default class Behavior {
 
         const targetX = this.target.getPositionX() + dx;
         const targetY = this.target.getPositionY() + dy;
-        console.log('X: ', targetX, this.target.getPositionX());
-        console.log('Y: ', targetY, this.target.getPositionY());
         this.monster.goto(targetX, targetY);
     }
 

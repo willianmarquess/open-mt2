@@ -43,6 +43,7 @@ import AffectAddPacket from '@/core/interface/networking/packets/packet/out/Affe
 import ItemEquippedEvent from '../inventory/events/ItemEquippedEvent';
 import ItemUnequippedEvent from '../inventory/events/ItemUnequippedEvent';
 import { PlayerPoints } from './delegate/PlayerPoints';
+import { PositionEnum } from '@/core/enum/PositionEnum';
 
 const REGEN_INTERVAL = 3000;
 
@@ -183,11 +184,6 @@ export default class Player extends Character {
                 name: EntityStateEnum.MOVING,
                 onTick: this.movingStateTick.bind(this),
             })
-            .addState({
-                name: EntityStateEnum.DEAD,
-                onTick: this.deadStateTick.bind(this),
-                onStart: this.deadStateStart.bind(this),
-            })
             .gotoState(EntityStateEnum.IDLE);
 
         this.init();
@@ -318,10 +314,10 @@ export default class Player extends Character {
     }
 
     regenHealth() {
-        if (this.state === EntityStateEnum.DEAD) return;
+        if (this.pos === PositionEnum.DEAD) return;
         if (this.points.getPoint(PointsEnum.HEALTH) >= this.points.getPoint(PointsEnum.MAX_HEALTH)) return;
 
-        let percent = this.state === EntityStateEnum.IDLE ? 5 : 1;
+        let percent = this.stateMachine.getCurrentStateName() === EntityStateEnum.IDLE ? 5 : 1;
         percent += percent * (this.points.getPoint(PointsEnum.HP_REGEN) / 100);
         const amount = this.points.getPoint(PointsEnum.MAX_HEALTH) * (percent / 100);
         this.points.addPoint(PointsEnum.HEALTH, Math.floor(amount));
@@ -333,10 +329,10 @@ export default class Player extends Character {
     }
 
     regenMana() {
-        if (this.state === EntityStateEnum.DEAD) return;
+        if (this.pos === PositionEnum.DEAD) return;
         if (this.points.getPoint(PointsEnum.MANA) >= this.points.getPoint(PointsEnum.MAX_MANA)) return;
 
-        let percent = this.state === EntityStateEnum.IDLE ? 5 : 1;
+        let percent = this.stateMachine.getCurrentStateName() === EntityStateEnum.IDLE ? 5 : 1;
         percent += percent * (this.points.getPoint(PointsEnum.MANA_REGEN) / 100);
         const amount = this.points.getPoint(PointsEnum.MAX_MANA) * (percent / 100);
         this.points.addPoint(PointsEnum.MANA, Math.floor(amount));

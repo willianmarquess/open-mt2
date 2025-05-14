@@ -14,6 +14,7 @@ import { PointsEnum } from '@/core/enum/PointsEnum';
 import FlyEffectCreatedEvent from './shared/event/FlyEffectCreatedEvent';
 import { FlyEnum } from '@/core/enum/FlyEnum';
 import { StateMachine } from '@/core/util/StateMachine';
+import { PositionEnum } from '@/core/enum/PositionEnum';
 
 export default abstract class Character extends GameEntity {
     protected id: number;
@@ -27,7 +28,7 @@ export default abstract class Character extends GameEntity {
     protected targetPositionY: number = 0;
     protected startPositionX: number = 0;
     protected startPositionY: number = 0;
-    protected state: EntityStateEnum = EntityStateEnum.IDLE;
+    // protected state: EntityStateEnum = EntityStateEnum.IDLE;
     protected movementStart: number = 0;
     protected movementDuration: number = 0;
 
@@ -43,6 +44,7 @@ export default abstract class Character extends GameEntity {
     protected readonly animationManager: AnimationManager;
 
     protected readonly stateMachine: StateMachine = new StateMachine();
+    protected pos: PositionEnum = PositionEnum.STANDING;
 
     constructor({ id, classId, virtualId, entityType, positionX, positionY, name, empire }, { animationManager }) {
         super({
@@ -102,12 +104,24 @@ export default abstract class Character extends GameEntity {
         );
     }
 
-    die() {
-        this.stateMachine.gotoState(EntityStateEnum.DEAD);
+    setPos(pos: PositionEnum) {
+        if (pos === PositionEnum.FIGHTING) {
+            this.pos = pos;
+            this.stateMachine.gotoState(EntityStateEnum.BATTLE);
+            return;
+        }
+
+        this.pos = pos;
+        this.stateMachine.gotoState(EntityStateEnum.IDLE);
     }
 
-    isDead() {
-        return this.stateMachine.getCurrentStateName() === EntityStateEnum.DEAD;
+    die() {
+        this.pos = PositionEnum.DEAD;
+        this.eventTimerManager.clearAllTimers();
+    }
+
+    isDead(): boolean {
+        return this.pos === PositionEnum.DEAD;
     }
 
     setTarget(target: Character) {
@@ -148,7 +162,6 @@ export default abstract class Character extends GameEntity {
             AnimationSubTypeEnum.GENERAL,
         );
 
-        // this.state = EntityStateEnum.MOVING;
         this.targetPositionX = x;
         this.targetPositionY = y;
         this.startPositionX = this.positionX;
@@ -256,10 +269,6 @@ export default abstract class Character extends GameEntity {
         return this.stateMachine.getCurrentStateName();
     }
 
-    protected setState(value: EntityStateEnum) {
-        this.state = value;
-    }
-
     addNearbyEntity(entity: GameEntity) {
         this.nearbyEntities.set(entity.getVirtualId(), entity);
     }
@@ -287,7 +296,9 @@ export default abstract class Character extends GameEntity {
     protected idleStateTick() {}
 
     protected movingStateTick() {
+        if (this.isDead()) return;
         if (this.isAffectByFlag(AffectBitsTypeEnum.STUN)) return;
+
         const elapsed = performance.now() - this.movementStart;
         let rate = this.movementDuration == 0 ? 1 : elapsed / this.movementDuration;
         if (rate > 1) rate = 1;
@@ -302,10 +313,4 @@ export default abstract class Character extends GameEntity {
             this.stateMachine.gotoState(EntityStateEnum.IDLE);
         }
     }
-
-    protected deadStateStart() {
-        this.eventTimerManager.clearAllTimers();
-    }
-
-    protected deadStateTick() {}
 }

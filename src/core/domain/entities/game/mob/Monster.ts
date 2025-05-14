@@ -17,6 +17,7 @@ import { EntityStateEnum } from '@/core/enum/EntityStateEnum';
 import BattleServiceFactory from '@/core/domain/service/battle/BattleServiceFactory';
 import { AttackTypeEnum } from '@/core/enum/AttackTypeEnum';
 import { MovementTypeEnum } from '@/core/enum/MovementTypeEnum';
+import { PositionEnum } from '@/core/enum/PositionEnum';
 
 const MAX_DISTANCE_TO_GET_EXP = 5_000;
 
@@ -56,42 +57,42 @@ export default class Monster extends Mob {
                 onTick: this.movingStateTick.bind(this),
             })
             .addState({
-                name: EntityStateEnum.DEAD,
-                onTick: this.deadStateTick.bind(this),
-                onStart: this.deadStateStart.bind(this),
+                name: EntityStateEnum.BATTLE,
+                onTick: this.battleStateTick.bind(this),
             })
             .gotoState(EntityStateEnum.IDLE);
         this.init();
     }
 
-    protected movingStateTick(): void {
-        super.movingStateTick();
+    battleStateTick(): void {
+        this.behavior.battleState();
     }
 
-    protected idleStateTick(): void {
+    movingStateTick(): void {
+        super.movingStateTick();
+        this.behavior.movingState();
+    }
+
+    idleStateTick(): void {
         super.idleStateTick();
         if (!this.behaviorInitialized) {
             this.behavior.init();
             this.behaviorInitialized = true;
         }
+        this.behavior.idleState();
     }
 
-    protected idleStateStart(): void {
+    idleStateStart(): void {
         super.idleStateStart();
     }
 
-    protected deadStateStart(): void {
-        super.deadStateStart();
-
+    die() {
+        super.die();
         this.area.onMonsterDied(
             new MonsterDiedEvent({
                 entity: this,
             }),
         );
-    }
-
-    protected deadStateTick() {
-        super.deadStateTick();
     }
 
     private init() {
@@ -127,9 +128,9 @@ export default class Monster extends Mob {
     }
 
     private regenHealth() {
+        if (this.isDead()) return;
         if (this.isAffectByFlag(AffectBitsTypeEnum.POISON)) return;
         if (this.points.getPoint(PointsEnum.HEALTH) >= this.points.getPoint(PointsEnum.MAX_HEALTH)) return;
-        if (this.stateMachine.getCurrentState().name === 'DEAD') return;
 
         const amount = Math.floor(this.points.getPoint(PointsEnum.MAX_HEALTH) * (this.regenPercent / 100));
         this.points.addPoint(PointsEnum.HEALTH, Math.max(1, amount));
@@ -152,6 +153,7 @@ export default class Monster extends Mob {
         this.behavior.onDamage(attacker, damage);
 
         this.broadcastMyTarget();
+        this.setPos(PositionEnum.FIGHTING);
 
         if (this.points.getPoint(PointsEnum.HEALTH) <= 0) {
             this.die();
@@ -236,7 +238,6 @@ export default class Monster extends Mob {
     tick() {
         if (this.nearbyEntities.size < 1) return;
         super.tick();
-        this.behavior?.tick?.();
     }
 
     getDefense() {
@@ -250,9 +251,14 @@ export default class Monster extends Mob {
     reset() {
         this.behaviorInitialized = false;
         this.behavior.setTarget(null);
+        this.setPos(PositionEnum.STANDING);
         this.stateMachine.gotoState(EntityStateEnum.IDLE);
         this.points.calcPointsAndResetValues();
         this.initEvents();
+    }
+
+    setState(state: EntityStateEnum) {
+        this.stateMachine.gotoState(state);
     }
 
     getAttack(): number {
