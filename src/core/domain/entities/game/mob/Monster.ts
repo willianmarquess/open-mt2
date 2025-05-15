@@ -229,6 +229,7 @@ export default class Monster extends Mob {
                     rotation,
                     time: performance.now(),
                     duration: this.movementDuration,
+                    movementType: MovementTypeEnum.WAIT,
                 },
                 entity: this,
             }),

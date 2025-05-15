@@ -1,6 +1,4 @@
 import crypto from 'node:crypto';
-import Monster from '../entities/game/mob/Monster';
-import Player from '../entities/game/player/Player';
 
 export default class MathUtil {
     private static max_uint = 1e9;
@@ -86,47 +84,42 @@ export default class MathUtil {
         return max < temp ? max : temp;
     }
 
-    static calcPredictMove(monster: Monster, target: Player) {
-        let targetX = target.getPositionX();
-        let targetY = target.getPositionY();
-        const monsterX = monster.getPositionX();
-        const monsterY = monster.getPositionY();
+    static degreeToRadian(degree: number): number {
+        return (degree * Math.PI) / 180;
+    }
 
-        const rotationDelta = MathUtil.calcDegreeDelta(
-            monster.getRotation(),
-            MathUtil.calcRotationFromXY(targetX - monsterX, targetY - monsterY),
-        );
+    static getDeltaByDegree(degree: number, distance: number): { dx: number; dy: number } {
+        const rad = this.degreeToRadian(degree);
+        return {
+            dx: distance * Math.sin(rad),
+            dy: distance * Math.cos(rad),
+        };
+    }
 
-        const monsterMovementSpeed = monster.getMovementSpeed();
-        const targetMovementeSpeed = target.getMovementSpeed();
+    static radianToDegree(radian: number) {
+        return radian * (180 / Math.PI);
+    }
 
-        const distance = this.calcDistance(monsterX, monsterY, targetX, targetY);
+    static getDegreeFromPosition(x: number, y: number) {
+        const angleRad = Math.atan2(x, y);
+        let angleDeg = this.radianToDegree(angleRad);
+        if (angleDeg < 0) angleDeg += 360;
+        return angleDeg;
+    }
 
-        const followSpeed = monsterMovementSpeed - targetMovementeSpeed * Math.cos((rotationDelta * Math.PI) / 180);
+    static getDegreeFromPositionXY(sx: number, sy: number, ex: number, ey: number) {
+        return this.getDegreeFromPosition(ex - sx, ey - sy);
+    }
 
-        if (followSpeed > 0.1) {
-            const meetTime = distance / followSpeed;
+    static getDegreeDelta(a: number, b: number) {
+        if (a > 180) a = a - 360;
 
-            if (meetTime * monsterMovementSpeed <= 1_00000) {
-                const { x: estimateX, y: estimateY } = MathUtil.calcDeltaByDegree(
-                    target.getRotation(),
-                    meetTime * targetMovementeSpeed,
-                );
+        if (b > 180) b = b - 360;
 
-                targetX += estimateX;
-                targetY += estimateY;
+        return Math.abs(a - b);
+    }
 
-                const newDistance = Math.sqrt(
-                    (targetX - monsterX) * (targetX - monsterX) + (targetY - monsterY) * (targetY - monsterY),
-                );
-
-                if (distance < newDistance) {
-                    targetX = monsterX + ((targetX - monsterX) * distance) / newDistance;
-                    targetY = monsterY + ((targetY - monsterY) * distance) / newDistance;
-                }
-            }
-        }
-
-        return { x: targetX, y: targetY };
+    static distanceSQRT(dx: number, dy: number) {
+        return Math.sqrt(dx * dx + dy * dy);
     }
 }

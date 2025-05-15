@@ -12,24 +12,12 @@ const MAX_TIME_WITHOUT_ATTACK = 15_000;
 const MAX_DISTANCE_WITHOUT_ATTACK = 5_000;
 const BASE_NEXT_TIME_TO_ATTACK = 2_000;
 const MIN_NEXT_TIME_TO_ATTACK = 1_000;
-const MIN_NEXT_TIME_TO_MOVE = 700;
+const MIN_NEXT_TIME_TO_MOVE = 500;
 
 type DamageMapType = {
     player: Player;
     damage: number;
 };
-
-function degreeToRadian(degree: number): number {
-    return (degree * Math.PI) / 180;
-}
-
-function getDeltaByDegree(degree: number, distance: number): { dx: number; dy: number } {
-    const rad = degreeToRadian(degree);
-    return {
-        dx: distance * Math.sin(rad),
-        dy: distance * Math.cos(rad),
-    };
-}
 
 export default class Behavior {
     private readonly monster: Monster;
@@ -39,6 +27,7 @@ export default class Behavior {
     private enable: boolean = false;
     private nextAttackTime: number = 0;
     private lastAttackTime: number = 0;
+    private lastChangeAttackPositionTime: number = 0;
     private nextMoveTime: number = 0;
     private lastAttackPositionX: number = 0;
     private lastAttackPositionY: number = 0;
@@ -89,10 +78,10 @@ export default class Behavior {
 
         const distanceFromTarget = this.getDistanceFromTarget();
 
-        if (distanceFromTarget > Math.max(300, this.monster.getAttackRange() * 1.15)) {
+        if (distanceFromTarget > this.monster.getAttackRange() * 1.15) {
             if (this.nextMoveTime <= now) {
-                this.moveToTarget();
-                this.nextMoveTime = now + MathUtil.getRandomInt(MIN_NEXT_TIME_TO_MOVE, 800); //move each ~500ms
+                this.followTarget();
+                this.nextMoveTime = now + MIN_NEXT_TIME_TO_MOVE; //move each ~500ms
             }
             return;
         }
@@ -117,22 +106,22 @@ export default class Behavior {
             const now = performance.now();
 
             if (this.lastAttackTime) {
-                const toMuchTimeWithoutAttack = this.lastAttackTime + MAX_TIME_WITHOUT_ATTACK <= now;
+                const tooMuchTimeWithoutAttack = this.lastAttackTime + MAX_TIME_WITHOUT_ATTACK <= now;
                 const tooFar =
                     this.getDistance(this.lastAttackPositionX, this.lastAttackPositionY) >= MAX_DISTANCE_WITHOUT_ATTACK;
 
-                if (toMuchTimeWithoutAttack || tooFar) {
+                if (tooMuchTimeWithoutAttack || tooFar) {
                     this.moveToOriginalPosition();
                     return;
                 }
             }
 
             const distanceFromTarget = this.getDistanceFromTarget();
-            if (distanceFromTarget > Math.max(300, this.monster.getAttackRange() * 1.15)) {
+            if (distanceFromTarget >= this.monster.getAttackRange() * 1.15) {
                 if (this.nextMoveTime <= now) {
-                    this.moveToTarget();
+                    this.followTarget();
                     this.nextMoveTime = now;
-                    this.nextMoveTime += MathUtil.getRandomInt(MIN_NEXT_TIME_TO_MOVE, 800); //move each ~500ms
+                    this.nextMoveTime += MIN_NEXT_TIME_TO_MOVE; //move each ~500ms
                 }
             }
         }
@@ -154,78 +143,6 @@ export default class Behavior {
             this.nextMove = this.calcDelay();
         }
     }
-
-    // tick() {
-    //     if (!this.enable) return;
-    //     if (this.monster.isDead()) return;
-    //     if (this.monster.isAffectByFlag(AffectBitsTypeEnum.STUN)) return;
-
-    //     const now = performance.now();
-
-    //     if (this.target) {
-    //         if (this.target.isDead()) {
-    //             this.damageMap.delete(this.target.getVirtualId());
-    //             //TODO next target
-    //             return;
-    //         }
-
-    //         if (this.lastAttackTime) {
-    //             const toMuchTimeWithoutAttack = this.lastAttackTime + MAX_TIME_WITHOUT_ATTACK <= now;
-    //             const tooFar =
-    //                 this.getDistance(this.lastAttackPositionX, this.lastAttackPositionY) >= MAX_DISTANCE_WITHOUT_ATTACK;
-
-    //             if (toMuchTimeWithoutAttack || tooFar) {
-    //                 this.moveToOriginalPosition();
-    //                 return;
-    //             }
-    //         }
-    //         const distanceFromTarget = this.getDistanceFromTarget();
-    //         console.log('distance: ', distanceFromTarget);
-    //         console.log('range: ', this.monster.getAttackRange());
-
-    //         switch (this.monster.getState()) {
-    //             case EntityStateEnum.MOVING: {
-    //                 if (distanceFromTarget > Math.max(300, this.monster.getAttackRange() * 1.15)) {
-    //                     if (this.nextMoveTime <= now) {
-    //                         this.moveToTarget();
-    //                         this.nextMoveTime = now;
-    //                         this.nextMoveTime += MIN_NEXT_TIME_TO_MOVE; //move each ~500ms
-    //                     }
-    //                 }
-    //                 break;
-    //             }
-    //             case EntityStateEnum.IDLE: {
-    //                 if (distanceFromTarget > this.monster.getAttackRange()) {
-    //                     if (this.nextMoveTime <= now) {
-    //                         this.moveToTarget();
-    //                         this.nextMoveTime = now;
-    //                         this.nextMoveTime += MIN_NEXT_TIME_TO_MOVE; //move each ~500ms
-    //                     }
-    //                 } else {
-    //                     if (this.nextAttackTime <= now) {
-    //                         this.attack();
-    //                         this.nextAttackTime = now;
-    //                         this.nextAttackTime += Math.max(
-    //                             MIN_NEXT_TIME_TO_ATTACK,
-    //                             BASE_NEXT_TIME_TO_ATTACK / (this.monster.getAttackSpeed() / 100),
-    //                         );
-    //                         this.lastAttackTime = now;
-    //                         this.lastAttackPositionX = this.monster.getPositionX();
-    //                         this.lastAttackPositionY = this.monster.getPositionY();
-    //                     }
-    //                 }
-    //                 break;
-    //             }
-    //         }
-    //     } else {
-    //         if (this.monster.getState() === EntityStateEnum.IDLE) {
-    //             if (now >= this.nextMove) {
-    //                 this.moveToRandomLocation();
-    //                 this.nextMove = this.calcDelay();
-    //             }
-    //         }
-    //     }
-    // }
 
     private attack() {
         console.log(
@@ -274,32 +191,136 @@ export default class Behavior {
         this.target = target;
     }
 
-    private moveToTarget() {
-        //TODO: its working ok, but we can improve this logic
-        // let directionX = this.target.getPositionX() - this.monster.getPositionX();
-        // let directionY = this.target.getPositionY() - this.monster.getPositionY();
-        // const directionLength = Math.sqrt(directionX * directionX + directionY * directionY);
-        // directionX /= directionLength;
-        // directionY /= directionLength;
+    private changeAttackPosition({
+        targetX,
+        targetY,
+        monsterX,
+        monsterY,
+        minDistance,
+    }: {
+        targetX: number;
+        targetY: number;
+        monsterX: number;
+        monsterY: number;
+        minDistance: number;
+    }) {
+        this.lastChangeAttackPositionTime = performance.now();
+        const CLOSE_DISTANCE_TO_TURN_90_DEGREES = 500;
+        const distance: number = MathUtil.distanceSQRT(targetX - monsterX, targetY - monsterY);
 
-        // const targetX =
-        //     this.target.getPositionX() +
-        //     directionX * this.monster.getAttackRange() * (MathUtil.getRandomInt(1, 4) / 100);
-        // const targetY =
-        //     this.target.getPositionY() +
-        //     directionY * this.monster.getAttackRange() * (MathUtil.getRandomInt(1, 4) / 100);
-        // const distance = MathUtil.getRandomInt(400, 1500);
+        let fx: number, fy: number;
+        const rot = MathUtil.getDegreeFromPositionXY(targetX, targetY, monsterX, monsterY);
 
-        const angle = MathUtil.getRandomInt(0, 359);
+        if (distance < CLOSE_DISTANCE_TO_TURN_90_DEGREES) {
+            const { dx, dy } = MathUtil.getDeltaByDegree(
+                (rot + MathUtil.getRandomInt(-90, 90) + MathUtil.getRandomInt(-90, 90)) % 360,
+                minDistance,
+            );
+            fx = dx;
+            fy = dy;
+        } else {
+            const { dx, dy } = MathUtil.getDeltaByDegree(MathUtil.getRandomInt(0, 359), minDistance);
+            fx = dx;
+            fy = dy;
+        }
 
-        const { dx, dy } = getDeltaByDegree(
-            angle,
-            MathUtil.getRandomInt(this.monster.getAttackRange() / 2, this.monster.getAttackRange()),
+        //TODO: we should implement map coordinates attributes to validate if the position is valid (not blocked or object)
+        //TODO: implement retries when implement map coord validation
+
+        return {
+            dx: targetX + fx,
+            dy: targetY + fy,
+        };
+    }
+
+    private shouldChangeAttackPosition() {
+        let changeTime = 5_000;
+
+        if (this.getDistanceFromTarget() > this.monster.getAttackRange() + 100) {
+            changeTime = 1_000;
+        }
+
+        return performance.now() - this.lastChangeAttackPositionTime > changeTime;
+    }
+
+    private predictTargetMovement(targetX: number, targetY: number, monsterX: number, monsterY: number) {
+        const targetRotation = this.target.getRotation();
+        const rotationDelta = MathUtil.getDegreeDelta(
+            targetRotation,
+            MathUtil.getDegreeFromPositionXY(monsterX, monsterY, targetX, targetY),
         );
 
-        const targetX = this.target.getPositionX() + dx;
-        const targetY = this.target.getPositionY() + dy;
-        this.monster.goto(targetX, targetY);
+        const targetSpeed = this.target.getMovementSpeed();
+        const monsterSpeed = this.monster.getMovementSpeed();
+        const distance = MathUtil.distanceSQRT(targetX - monsterX, targetY - monsterY);
+        const followSpeed = monsterSpeed - targetSpeed * Math.cos((rotationDelta * Math.PI) / 180);
+
+        if (followSpeed >= 0.1) {
+            const meetTime = distance / followSpeed;
+
+            if (meetTime * targetSpeed <= 1_00000) {
+                const { dx: yourMoveEstimateX, dy: yourMoveEstimateY } = MathUtil.getDeltaByDegree(
+                    this.target.getRotation(),
+                    meetTime * targetSpeed,
+                );
+
+                targetX += yourMoveEstimateX;
+                targetY += yourMoveEstimateY;
+
+                const newDistance = Math.sqrt(
+                    (targetX - monsterX) * (targetX - monsterX) + (targetY - monsterY) * (targetY - monsterY),
+                );
+
+                if (distance < newDistance) {
+                    targetX = monsterX + ((targetX - monsterX) * distance) / newDistance;
+                    targetY = monsterY + ((targetY - monsterY) * distance) / newDistance;
+                }
+            }
+        }
+
+        return {
+            x: targetX,
+            y: targetY,
+        };
+    }
+
+    private followTarget() {
+        let targetX = this.target.getPositionX();
+        let targetY = this.target.getPositionY();
+        const monsterX = this.monster.getPositionX();
+        const monsterY = this.monster.getPositionY();
+        const minDistance = this.monster.getAttackRange() * 0.9; //90%
+
+        const shouldPredictTargetMovement = this.target.getState() === EntityStateEnum.MOVING;
+
+        if (shouldPredictTargetMovement) {
+            const { x, y } = this.predictTargetMovement(targetX, targetY, monsterX, monsterY);
+            targetX = x;
+            targetY = y;
+        }
+
+        this.monster.setRotation(MathUtil.getDegreeFromPositionXY(monsterX, monsterY, targetX, targetY));
+
+        const distance: number = MathUtil.distanceSQRT(targetX - monsterX, targetY - monsterY);
+
+        if (distance <= minDistance) return;
+
+        if (this.shouldChangeAttackPosition()) {
+            const { dx, dy } = this.changeAttackPosition({
+                targetX,
+                targetY,
+                monsterX,
+                monsterY,
+                minDistance,
+            });
+            this.monster.goto(dx, dy);
+            return;
+        }
+
+        const distanceToGo = distance - minDistance;
+        const { dx, dy } = MathUtil.getDeltaByDegree(this.monster.getRotation(), distanceToGo);
+
+        this.monster.goto(monsterX + dx, monsterY + dy);
     }
 
     private moveToRandomLocation() {
