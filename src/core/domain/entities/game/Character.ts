@@ -196,8 +196,10 @@ export default abstract class Character extends GameEntity {
     }
 
     protected waitInternal(x: number, y: number) {
-        this.positionX = x;
-        this.positionY = y;
+        this.positionX = this.startPositionX = this.targetPositionX = x;
+        this.positionY = this.startPositionY = this.targetPositionY = y;
+        this.setRotation(MathUtil.calcRotationFromXY(x, y));
+        this.stateMachine.gotoState(EntityStateEnum.IDLE);
     }
 
     stop() {
