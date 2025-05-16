@@ -14,7 +14,6 @@ import MonsterDiedEvent from './events/MonsterDiedEvent';
 import MonsterMovedEvent from './events/MonsterMovedEvent';
 import { Mob, MobParams } from './Mob';
 import { EntityStateEnum } from '@/core/enum/EntityStateEnum';
-import BattleServiceFactory from '@/core/domain/service/battle/BattleServiceFactory';
 import { AttackTypeEnum } from '@/core/enum/AttackTypeEnum';
 import { MovementTypeEnum } from '@/core/enum/MovementTypeEnum';
 import { PositionEnum } from '@/core/enum/PositionEnum';
@@ -28,22 +27,20 @@ export default class Monster extends Mob {
 
     private readonly dropManager: DropManager;
     private readonly experienceManager: ExperienceManager;
-    private readonly battleServiceFactory: BattleServiceFactory;
 
     constructor(
         params: Omit<MobParams, 'virtualId' | 'entityType'>,
-        { animationManager, dropManager, experienceManager, battleServiceFactory },
+        { animationManager, dropManager, experienceManager, logger },
     ) {
         super(
             {
                 ...params,
                 entityType: EntityTypeEnum.MONSTER,
             },
-            { animationManager },
+            { animationManager, logger },
         );
         this.dropManager = dropManager;
         this.experienceManager = experienceManager;
-        this.battleServiceFactory = battleServiceFactory;
         this.behavior = new Behavior(this);
 
         this.stateMachine
@@ -281,8 +278,7 @@ export default class Monster extends Mob {
                 entity: this,
             }),
         );
-        const battleService = this.battleServiceFactory.createBattleService(this, victim);
-        battleService.execute(AttackTypeEnum.NORMAL);
+        this.battle.execute(AttackTypeEnum.NORMAL, victim);
     }
 
     damage(): number {

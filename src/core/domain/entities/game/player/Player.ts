@@ -44,6 +44,9 @@ import ItemEquippedEvent from '../inventory/events/ItemEquippedEvent';
 import ItemUnequippedEvent from '../inventory/events/ItemUnequippedEvent';
 import { PlayerPoints } from './delegate/PlayerPoints';
 import { PositionEnum } from '@/core/enum/PositionEnum';
+import { PlayerBattle } from './delegate/battle/PlayerBattle';
+import { AttackTypeEnum } from '@/core/enum/AttackTypeEnum';
+import Monster from '../mob/Monster';
 
 const REGEN_INTERVAL = 3000;
 
@@ -63,6 +66,7 @@ export default class Player extends Character {
     //delegate
     private readonly applies: PlayerApplies;
     private readonly points: PlayerPoints;
+    private readonly battle: PlayerBattle;
 
     //connection
     private connection: GameConnection;
@@ -173,6 +177,7 @@ export default class Player extends Character {
                 player: this,
             },
         );
+        this.battle = new PlayerBattle(this, logger);
 
         this.stateMachine
             .addState({
@@ -191,6 +196,10 @@ export default class Player extends Character {
 
     setConnection(connection: GameConnection) {
         this.connection = connection;
+    }
+
+    attack(attackType: AttackTypeEnum, victim: Player | Monster) {
+        this.battle.attack(attackType, victim);
     }
 
     sendDetails() {

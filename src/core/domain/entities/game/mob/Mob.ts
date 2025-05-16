@@ -12,6 +12,7 @@ import { MobEnchantEnum } from '@/core/enum/MobEnchantEnum';
 import { MobResistEnum } from '@/core/enum/MobResistEnum';
 import { MobPoints } from './delegate/MobPoints';
 import { PointsEnum } from '@/core/enum/PointsEnum';
+import MobBattle from './delegate/battle/MobBattle';
 
 enum MobSizeEnum {
     RESERVED = 0,
@@ -102,8 +103,9 @@ export abstract class Mob extends Character {
 
     protected group: MonsterGroup;
     protected readonly points: MobPoints;
+    protected readonly battle: MobBattle;
 
-    constructor(params: MobParams, { animationManager }) {
+    constructor(params: MobParams, { animationManager, logger }) {
         super(
             {
                 id: Number(params.proto.vnum),
@@ -192,6 +194,7 @@ export abstract class Mob extends Character {
         this.hpPercentToGetRevive = Number(proto.sp_revive);
         this.direction = Number(params.direction);
         this.points = new MobPoints(params.proto);
+        this.battle = new MobBattle(this, logger);
     }
 
     addPoint(point: PointsEnum, value: number): void {

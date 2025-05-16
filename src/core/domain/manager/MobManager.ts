@@ -15,7 +15,7 @@ import Stone from '../entities/game/mob/Stone';
 import AnimationManager from './AnimationManager';
 import DropManager from './DropManager';
 import ExperienceManager from './ExperienceManager';
-import BattleServiceFactory from '../service/battle/BattleServiceFactory';
+import Logger from '@/core/infra/logger/Logger';
 
 // const MobRankEnum = {
 //     PAWN: 0,
@@ -99,14 +99,14 @@ export default class MobManager {
     private readonly animationManager: AnimationManager;
     private readonly dropManager: DropManager;
     private readonly experienceManager: ExperienceManager;
-    private readonly battleServiceFactory: BattleServiceFactory;
+    private readonly logger: Logger;
 
-    constructor({ config, animationManager, dropManager, experienceManager, battleServiceFactory }) {
+    constructor({ config, animationManager, dropManager, experienceManager, logger }) {
         this.config = config;
         this.animationManager = animationManager;
         this.dropManager = dropManager;
         this.experienceManager = experienceManager;
-        this.battleServiceFactory = battleServiceFactory;
+        this.logger = logger;
     }
 
     load() {
@@ -136,7 +136,7 @@ export default class MobManager {
                         animationManager: this.animationManager,
                         dropManager: this.dropManager,
                         experienceManager: this.experienceManager,
-                        battleServiceFactory: this.battleServiceFactory,
+                        logger: this.logger,
                     },
                 );
             }
@@ -148,7 +148,10 @@ export default class MobManager {
                         positionY,
                         proto,
                     },
-                    { animationManager: this.animationManager },
+                    {
+                        animationManager: this.animationManager,
+                        logger: this.logger,
+                    },
                 );
             }
             case 'STONE': {
@@ -159,7 +162,10 @@ export default class MobManager {
                         positionY,
                         proto,
                     },
-                    { animationManager: this.animationManager },
+                    {
+                        animationManager: this.animationManager,
+                        logger: this.logger,
+                    },
                 );
             }
         }

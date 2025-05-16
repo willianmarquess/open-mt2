@@ -789,6 +789,24 @@ export class PlayerPoints extends Points {
         this.points.set(PointsEnum.STAMINA, {
             get: () => this.stamina,
         });
+        this.points.set(PointsEnum.RESIST_SWORD, {
+            get: () => this.resistSword,
+        });
+        this.points.set(PointsEnum.RESIST_TWOHAND, {
+            get: () => this.resistTwohand,
+        });
+        this.points.set(PointsEnum.RESIST_DAGGER, {
+            get: () => this.resistDagger,
+        });
+        this.points.set(PointsEnum.RESIST_BELL, {
+            get: () => this.resistBell,
+        });
+        this.points.set(PointsEnum.RESIST_FAN, {
+            get: () => this.resistFan,
+        });
+        this.points.set(PointsEnum.RESIST_BOW, {
+            get: () => this.resistBow,
+        });
     }
 
     private addCommonPoint(value: number, pointName: string) {

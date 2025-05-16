@@ -2,13 +2,13 @@ import { Mob, MobParams } from './Mob';
 import { EntityTypeEnum } from '@/core/enum/EntityTypeEnum';
 
 export default class Stone extends Mob {
-    constructor(params: Omit<MobParams, 'virtualId' | 'entityType'>, { animationManager }) {
+    constructor(params: Omit<MobParams, 'virtualId' | 'entityType'>, { animationManager, logger }) {
         super(
             {
                 ...params,
                 entityType: EntityTypeEnum.METIN_STONE,
             },
-            { animationManager },
+            { animationManager, logger },
         );
     }
 
