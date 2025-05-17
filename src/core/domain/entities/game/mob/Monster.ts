@@ -61,6 +61,10 @@ export default class Monster extends Mob {
         this.init();
     }
 
+    getTarget(): Player {
+        return this.target as Player;
+    }
+
     battleStateTick(): void {
         this.behavior.battleState();
     }
@@ -131,6 +135,7 @@ export default class Monster extends Mob {
 
         const amount = Math.floor(this.points.getPoint(PointsEnum.MAX_HEALTH) * (this.regenPercent / 100));
         this.points.addPoint(PointsEnum.HEALTH, Math.max(1, amount));
+        this.broadcastMyTarget();
     }
 
     getHealthPercentage() {
@@ -160,7 +165,7 @@ export default class Monster extends Mob {
     }
 
     private reward() {
-        const attacker = this.behavior.getTarget();
+        const attacker = this.getTarget();
         const drops = this.dropManager.getDrops(attacker, this);
 
         for (const { item, count } of drops) {
@@ -173,10 +178,10 @@ export default class Monster extends Mob {
     private giveExp() {
         const exp = this.getExp();
 
-        const attackersSize = this.behavior.getTargets().size;
-        const mostDamageAttacker = this.behavior.getTarget();
+        const attackersSize = this.behavior.getAttackersSize();
+        const mostDamageAttacker = this.getTarget();
 
-        for (const { player } of this.behavior.getTargets().values()) {
+        for (const { player } of this.behavior.getAttackers()) {
             let playerExp = exp / attackersSize;
 
             if (player === mostDamageAttacker) {
@@ -248,7 +253,7 @@ export default class Monster extends Mob {
 
     reset() {
         this.behaviorInitialized = false;
-        this.behavior.setTarget(null);
+        this.setTarget(undefined);
         this.setPos(PositionEnum.STANDING);
         this.stateMachine.gotoState(EntityStateEnum.IDLE);
         this.points.calcPointsAndResetValues();

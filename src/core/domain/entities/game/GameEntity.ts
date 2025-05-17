@@ -7,8 +7,6 @@ export default abstract class GameEntity {
     protected positionX: number = 0;
     protected positionY: number = 0;
     protected nearbyEntities = new Map<number, GameEntity>();
-
-    //area
     protected area: Area;
 
     constructor({ virtualId, entityType, positionX, positionY }) {

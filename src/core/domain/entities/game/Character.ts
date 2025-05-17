@@ -32,13 +32,13 @@ export default abstract class Character extends GameEntity {
     protected movementStart: number = 0;
     protected movementDuration: number = 0;
 
-    protected emitter = new EventEmitter();
-    protected nearbyEntities = new Map<number, GameEntity>();
+    protected readonly emitter = new EventEmitter();
+    protected readonly nearbyEntities = new Map<number, GameEntity>();
 
     protected target: Character;
-    protected targetedBy = new Map<number, GameEntity>();
+    protected readonly targetedBy = new Map<number, Character>();
 
-    protected affectBitFlag = new AffectBitFlag();
+    protected readonly affectBitFlag = new AffectBitFlag();
 
     protected readonly eventTimerManager = new EventTimerManager();
     protected readonly animationManager: AnimationManager;
@@ -124,12 +124,16 @@ export default abstract class Character extends GameEntity {
         return this.pos === PositionEnum.DEAD;
     }
 
+    removeTarget(): void {
+        this.setTarget(undefined);
+    }
+
     setTarget(target: Character) {
         if (this.target) {
             this.target.removeTargetedBy(this);
         }
         this.target = target;
-        target.addTargetedBy(this);
+        target?.addTargetedBy(this);
     }
 
     removeTargetedBy(entity: Character) {

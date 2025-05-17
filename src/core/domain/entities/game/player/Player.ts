@@ -354,6 +354,7 @@ export default class Player extends Character {
 
     onEquipmentChange() {
         this.points.calcPoints();
+        this.updateView();
     }
 
     onItemEquipped(event: ItemEquippedEvent) {
@@ -509,6 +510,7 @@ export default class Player extends Character {
             messageType: ChatMessageTypeEnum.INFO,
         });
         setTimeout(() => this.connection.close(), 1_000);
+        this.targetedBy.forEach((entity) => entity.removeTarget());
     }
 
     chat({ message, messageType }: { message: string; messageType: ChatMessageTypeEnum }) {

@@ -33,7 +33,6 @@ export default class Behavior {
     private lastAttackPositionY: number = 0;
 
     private readonly damageMap: Map<number, DamageMapType> = new Map();
-    private target: Player;
 
     constructor(monster: Monster) {
         this.monster = monster;
@@ -47,7 +46,7 @@ export default class Behavior {
     }
 
     private getDistanceFromTarget() {
-        return this.getDistance(this.target.getPositionX(), this.target.getPositionY());
+        return this.getDistance(this.monster.getTarget().getPositionX(), this.monster.getTarget().getPositionY());
     }
 
     private getDistance(x: number, y: number) {
@@ -55,7 +54,7 @@ export default class Behavior {
     }
 
     private moveToOriginalPosition() {
-        this.target = undefined;
+        this.monster.setTarget(undefined);
         this.lastAttackTime = undefined;
         this.damageMap.clear();
         this.monster.goto(this.lastAttackPositionX, this.lastAttackPositionY);
@@ -66,10 +65,10 @@ export default class Behavior {
         if (this.monster.isDead()) return;
         if (this.monster.isAffectByFlag(AffectBitsTypeEnum.STUN)) return;
 
-        if (!this.target) return; //TODO: goto idle state
+        if (!this.monster.getTarget()) return; //TODO: goto idle state
 
-        if (this.target.isDead()) {
-            this.damageMap.delete(this.target.getVirtualId());
+        if (this.monster.getTarget().isDead()) {
+            this.damageMap.delete(this.monster.getTarget().getVirtualId());
             //TODO: next target
             return;
         }
@@ -102,7 +101,7 @@ export default class Behavior {
         if (this.monster.isDead()) return;
         if (this.monster.isAffectByFlag(AffectBitsTypeEnum.STUN)) return;
 
-        if (this.target) {
+        if (this.monster.getTarget()) {
             const now = performance.now();
 
             if (this.lastAttackTime) {
@@ -132,7 +131,7 @@ export default class Behavior {
         if (this.monster.isDead()) return;
         if (this.monster.isAffectByFlag(AffectBitsTypeEnum.STUN)) return;
 
-        if (this.target) {
+        if (this.monster.getTarget()) {
             this.monster.setPos(PositionEnum.FIGHTING);
             return;
         }
@@ -145,19 +144,13 @@ export default class Behavior {
     }
 
     private attack() {
-        console.log(
-            this.monster.getFolder(),
-            this.monster.getVirtualId(),
-            'iam attacking the target: ',
-            this.target.getName(),
-        );
-
+        const target = this.monster.getTarget();
         const rotation = MathUtil.calcRotationFromXY(
-            this.target.getPositionX() - this.monster.getPositionX(),
-            this.target.getPositionY() - this.monster.getPositionY(),
+            target.getPositionX() - this.monster.getPositionX(),
+            target.getPositionY() - this.monster.getPositionY(),
         );
         this.monster.setRotation(rotation);
-        this.monster.attack(this.target);
+        this.monster.attack(target);
     }
 
     private calcDelay() {
@@ -172,23 +165,19 @@ export default class Behavior {
         });
 
         if (
-            !this.target ||
-            this.damageMap.get(attacker.getVirtualId()) > this.damageMap.get(this.target.getVirtualId())
+            !this.monster.getTarget() ||
+            this.damageMap.get(attacker.getVirtualId()) > this.damageMap.get(this.monster.getTarget().getVirtualId())
         ) {
-            this.target = attacker;
+            this.monster.setTarget(attacker);
         }
     }
 
-    getTargets() {
-        return this.damageMap;
+    getAttackers() {
+        return this.damageMap.values();
     }
 
-    getTarget() {
-        return this.target;
-    }
-
-    setTarget(target?: Player) {
-        this.target = target;
+    getAttackersSize() {
+        return this.damageMap.size;
     }
 
     private changeAttackPosition({
@@ -244,13 +233,13 @@ export default class Behavior {
     }
 
     private predictTargetMovement(targetX: number, targetY: number, monsterX: number, monsterY: number) {
-        const targetRotation = this.target.getRotation();
+        const targetRotation = this.monster.getTarget().getRotation();
         const rotationDelta = MathUtil.getDegreeDelta(
             targetRotation,
             MathUtil.getDegreeFromPositionXY(monsterX, monsterY, targetX, targetY),
         );
 
-        const targetSpeed = this.target.getMovementSpeed();
+        const targetSpeed = this.monster.getTarget().getMovementSpeed();
         const monsterSpeed = this.monster.getMovementSpeed();
         const distance = MathUtil.distanceSQRT(targetX - monsterX, targetY - monsterY);
         const followSpeed = monsterSpeed - targetSpeed * Math.cos((rotationDelta * Math.PI) / 180);
@@ -260,7 +249,7 @@ export default class Behavior {
 
             if (meetTime * targetSpeed <= 1_00000) {
                 const { dx: yourMoveEstimateX, dy: yourMoveEstimateY } = MathUtil.getDeltaByDegree(
-                    this.target.getRotation(),
+                    this.monster.getTarget().getRotation(),
                     meetTime * targetSpeed,
                 );
 
@@ -285,13 +274,13 @@ export default class Behavior {
     }
 
     private followTarget() {
-        let targetX = this.target.getPositionX();
-        let targetY = this.target.getPositionY();
+        let targetX = this.monster.getTarget().getPositionX();
+        let targetY = this.monster.getTarget().getPositionY();
         const monsterX = this.monster.getPositionX();
         const monsterY = this.monster.getPositionY();
         const minDistance = this.monster.getAttackRange() * 0.9; //90%
 
-        const shouldPredictTargetMovement = this.target.getState() === EntityStateEnum.MOVING;
+        const shouldPredictTargetMovement = this.monster.getTarget().getState() === EntityStateEnum.MOVING;
 
         if (shouldPredictTargetMovement) {
             const { x, y } = this.predictTargetMovement(targetX, targetY, monsterX, monsterY);
