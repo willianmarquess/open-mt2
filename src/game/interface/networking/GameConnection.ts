@@ -1,12 +1,10 @@
 import { ConnectionStateEnum } from '../../../core/enum/ConnectionStateEnum';
 import Connection from '../../../core/interface/networking/Connection';
-import Queue from '../../../core/util/Queue';
 import Player from '@/core/domain/entities/game/player/Player';
 import { GameConfig } from '@/game/infra/config/GameConfig';
 import LogoutService from '@/game/app/service/LogoutService';
 import PacketOut from '@/core/interface/networking/packets/packet/out/PacketOut';
 import PacketBidirectional from '@/core/interface/networking/packets/packet/bidirectional/PacketBidirectional';
-const OUTGOING_MESSAGES_PER_CON_QUEUE_SIZE = 5_000;
 
 // const hexString = (buffer) =>
 //     buffer.reduce((acc, byte, index) => {
@@ -18,7 +16,6 @@ const OUTGOING_MESSAGES_PER_CON_QUEUE_SIZE = 5_000;
 
 export default class GameConnection extends Connection {
     private accountId: number;
-    private outgoingMessages = new Queue(OUTGOING_MESSAGES_PER_CON_QUEUE_SIZE);
     private player: Player;
     private logoutService: LogoutService;
     private config: GameConfig;
@@ -52,13 +49,7 @@ export default class GameConnection extends Connection {
     }
 
     send(packet: PacketOut | PacketBidirectional) {
-        this.outgoingMessages.enqueue(packet.pack());
-    }
-
-    async sendPendingMessages() {
-        for (const message of this.outgoingMessages.dequeueIterator()) {
-            this.socket.write(message);
-        }
+        this.socket.write(packet.pack());
     }
 
     async onClose() {

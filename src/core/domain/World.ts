@@ -2,7 +2,6 @@ import Logger from '@/core/infra/logger/Logger';
 import Grid from '../util/Grid';
 import Area from './Area';
 import Player from './entities/game/player/Player';
-import GameServer from '@/game/interface/server/GameServer';
 import GameEntity from './entities/game/GameEntity';
 import { GameConfig } from '@/game/infra/config/GameConfig';
 import SpawnManager from './manager/SpawnManager';
@@ -21,7 +20,6 @@ const getAbsolutePosition = (pos: number) => (pos > AREA_UNIT ? Math.floor(pos /
 
 export default class World {
     private readonly players = new Map<string, Player>();
-    private server: GameServer;
     private readonly logger: Logger;
     private readonly config: GameConfig;
     private readonly saveCharacterService: SaveCharacterService;
@@ -159,8 +157,7 @@ export default class World {
         }
     }
 
-    async init(server: GameServer) {
-        this.server = server;
+    async init() {
         await this.load();
         this.tick();
     }
@@ -204,15 +201,11 @@ export default class World {
     async tick() {
         const startTickTime = performance.now();
 
-        this.server.processMessages();
-
         for (const area of this.areas.values()) {
             area.tick();
         }
 
         this.privilegeManager.tick();
-
-        this.server.sendPendingMessages();
 
         const delta = performance.now() - startTickTime;
         this.deltas.push(delta);

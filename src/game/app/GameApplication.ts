@@ -4,7 +4,6 @@ import AnimationManager from '@/core/domain/manager/AnimationManager';
 import MobManager from '@/core/domain/manager/MobManager';
 import ItemManager from '@/core/domain/manager/ItemManager';
 import DropManager from '@/core/domain/manager/DropManager';
-import GameServer from '../interface/server/GameServer';
 
 export default class GameApplication extends Application {
     private readonly world: World;
@@ -33,7 +32,7 @@ export default class GameApplication extends Application {
         ]);
         this.mobManager.load();
         await this.server.setup().start();
-        await this.world.init(this.server as GameServer);
+        await this.world.init();
         this.logger.info('[APP] Game application started 🎮🚀');
     }
 
