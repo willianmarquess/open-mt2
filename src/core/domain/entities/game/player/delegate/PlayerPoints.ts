@@ -807,6 +807,15 @@ export class PlayerPoints extends Points {
         this.points.set(PointsEnum.RESIST_BOW, {
             get: () => this.resistBow,
         });
+        this.points.set(PointsEnum.REFLECT_MELEE, {
+            get: () => this.reflectMelee,
+        });
+        this.points.set(PointsEnum.DODGE, {
+            get: () => this.dodge,
+        });
+        this.points.set(PointsEnum.BLOCK, {
+            get: () => this.block,
+        });
     }
 
     private addCommonPoint(value: number, pointName: string) {

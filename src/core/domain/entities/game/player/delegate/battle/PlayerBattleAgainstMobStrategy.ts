@@ -50,31 +50,98 @@ export default class PlayerBattleAgainstMobStrategy extends PlayerBattleStrategy
         }
     }
 
+    private calculateSkillDamage(
+        damage: number,
+        damageType: DamageTypeEnum,
+        damageFlags: BitFlag,
+        victim: Monster,
+    ): number {
+        const isSkillDamage = [
+            DamageTypeEnum.MELEE,
+            DamageTypeEnum.RANGE,
+            DamageTypeEnum.FIRE,
+            DamageTypeEnum.ICE,
+            DamageTypeEnum.ELEC,
+            DamageTypeEnum.MAGIC,
+        ].includes(damageType);
+        if (!isSkillDamage) return damage;
+
+        damage = this.calculateMagicAttackBonus(damage, damageType);
+        damage = this.calculateCriticalDamage(damage, damageFlags);
+        damage = this.calculatePenetrateDamage(damage, damageFlags, victim);
+        damage = this.calculateSkillDamageBonus(damage, victim);
+
+        //validate
+        damage = this.calculateWeaponDamageResistance(damage, victim);
+
+        return damage;
+    }
+
+    private calculatePoisonDamage(
+        damage: number,
+        damageType: DamageTypeEnum,
+        damageFlags: BitFlag,
+        victim: Monster,
+    ): number {
+        const isPoisonDamage = damageType === DamageTypeEnum.POISON;
+        if (!isPoisonDamage) return damage;
+
+        damageFlags.set(DamageFlagEnum.POISON);
+        damage -= damage * (victim.getResist(MobResistEnum.POISON) / 100);
+
+        return damage;
+    }
+
+    private calculateNormalDamage(
+        damage: number,
+        damageType: DamageTypeEnum,
+        damageFlags: BitFlag,
+        victim: Monster,
+    ): number {
+        const isNormalDamage = [DamageTypeEnum.NORMAL, DamageTypeEnum.NORMAL_RANGE].includes(damageType);
+        if (!isNormalDamage) return damage;
+
+        damageFlags.set(DamageFlagEnum.NORMAL);
+
+        damage = this.calculateCriticalDamage(damage, damageFlags);
+        damage = this.calculatePenetrateDamage(damage, damageFlags, victim);
+        this.calculateAndSendHealthSteal(damage, victim);
+        this.calculateAndSendManaSteal(damage, victim);
+        this.calculateAndSendGoldSteal(victim);
+        this.calculateAndSendHealthHitRecovery(damage, victim);
+        this.calculateAndSendManaHitRecovery(damage, victim);
+
+        damage = this.calculateWeaponDamageResistance(damage, victim);
+
+        //TODO: mana burn (pvp only)
+        this.calculateAndApplyDrainSp(victim);
+
+        damage = this.calculateNormalDamageBonus(damage, victim);
+        damage = this.calculateMallAttackBonus(damage);
+        damage = this.calculateStoneSkinner(damage, victim);
+
+        return damage;
+    }
+
     private applyDamage(damage: number, damageType: DamageTypeEnum, victim: Monster) {
-        //TODO: manage entity battle state
-        //TODO verify block attack
-        //TODO verify dodge attack
         const damageFlags = new BitFlag();
 
-        if (damageType === DamageTypeEnum.POISON) {
-            damageFlags.set(DamageFlagEnum.POISON);
-            damage -= damage * (victim.getResist(MobResistEnum.POISON) / 100);
-        } else {
-            damageFlags.set(DamageFlagEnum.NORMAL);
-
-            damage = this.calculateCriticalDamage(damage, damageFlags);
-            damage = this.calculatePenetrateDamage(damage, damageFlags, victim);
-            this.calculateAndSendHealthSteal(damage, victim);
-            this.calculateAndSendManaSteal(damage, victim);
-            this.calculateAndSendGoldSteal(victim);
-            this.calculateAndSendHealthHitRecovery(damage, victim);
-            this.calculateAndSendManaHitRecovery(damage, victim);
-
-            damage = this.calculateWeaponDamageResistance(damage, victim);
-            if (victim.isStoneSkinner()) {
-                //TODO: calculate stoneskin chance, this is not 100%
-                damage /= 2;
-            }
+        switch (damageType) {
+            case DamageTypeEnum.POISON:
+                damage = this.calculatePoisonDamage(damage, damageType, damageFlags, victim);
+                break;
+            case DamageTypeEnum.NORMAL:
+            case DamageTypeEnum.NORMAL_RANGE:
+                damage = this.calculateNormalDamage(damage, damageType, damageFlags, victim);
+                break;
+            case DamageTypeEnum.MELEE:
+            case DamageTypeEnum.RANGE:
+            case DamageTypeEnum.FIRE:
+            case DamageTypeEnum.ICE:
+            case DamageTypeEnum.ELEC:
+            case DamageTypeEnum.MAGIC:
+                damage = this.calculateSkillDamage(damage, damageType, damageFlags, victim);
+                break;
         }
 
         damage = damage > 0 ? Math.round(damage) : MathUtil.getRandomInt(1, 5);
@@ -141,6 +208,78 @@ export default class PlayerBattleAgainstMobStrategy extends PlayerBattleStrategy
         damage += this.calculateBonusRaceDamage(victim);
 
         this.applyDamage(damage, DamageTypeEnum.NORMAL, victim);
+    }
+
+    private calculateSkillDamageBonus(damage: number, victim: Monster): number {
+        const normalHitDamageBonus = this.attacker.getPoint(PointsEnum.SKILL_DAMAGE_BONUS);
+
+        if (normalHitDamageBonus > 0) {
+            damage *= (100 + normalHitDamageBonus) / 100;
+        }
+
+        damage *= (100 - Math.min(99, victim.getPoint(PointsEnum.SKILL_DEFEND_BONUS))) / 100; //TODO: this line of code will be used only for PVP, we will reuse this for inheritance later
+
+        return Math.round(damage);
+    }
+
+    private calculateMagicAttackBonus(damage: number, damageType: DamageTypeEnum): number {
+        if (damageType === DamageTypeEnum.MAGIC) {
+            const magicAttackBonus = this.attacker.getPoint(PointsEnum.MAGIC_ATT_BONUS_PER);
+            const meleeMagicAttackBonus = this.attacker.getPoint(PointsEnum.MELEE_MAGIC_ATT_BONUS_PER);
+            damage *= (100 + magicAttackBonus + meleeMagicAttackBonus) / 100 + 0.5;
+        }
+
+        return Math.round(damage);
+    }
+
+    private calculateStoneSkinner(damage: number, victim: Monster): number {
+        if (victim.isStoneSkinner()) {
+            if (victim.getHealthPercentage() < victim.getHpPercentToGetStoneSkin()) {
+                this.attacker.chat({
+                    messageType: ChatMessageTypeEnum.INFO,
+                    message: `[SYSTEM][STONE_SKINNER] Your damage was reduced from ${damage} to ${damage / 2}`,
+                });
+                damage /= 2;
+            }
+        }
+
+        return Math.round(damage);
+    }
+
+    private calculateMallAttackBonus(damage: number) {
+        const mallAttackBonus = this.attacker.getPoint(PointsEnum.MALL_ATTBONUS);
+
+        if (mallAttackBonus > 0) {
+            damage += Math.min(300, damage * (mallAttackBonus / 100));
+        }
+
+        return Math.round(damage);
+    }
+
+    private calculateNormalDamageBonus(damage: number, victim: Monster) {
+        const normalHitDamageBonus = this.attacker.getPoint(PointsEnum.NORMAL_HIT_DAMAGE_BONUS);
+
+        if (normalHitDamageBonus > 0) {
+            damage *= (100 + normalHitDamageBonus) / 100;
+        }
+
+        damage *= (100 - Math.min(99, victim.getPoint(PointsEnum.NORMAL_HIT_DEFEND_BONUS))) / 100; //TODO: this line of code will be used only for PVP, we will reuse this for inheritance later
+
+        return Math.round(damage);
+    }
+
+    private calculateAndApplyDrainSp(victim: Monster) {
+        const drainSp = victim.getDrainSp();
+        const manaPoints = this.attacker.getPoint(PointsEnum.MANA);
+
+        if (drainSp) {
+            if (drainSp <= manaPoints) {
+                this.attacker.addPoint(PointsEnum.MANA, -drainSp);
+                return;
+            }
+
+            this.attacker.addPoint(PointsEnum.MANA, -manaPoints);
+        }
     }
 
     private calculateWeaponDamageResistance(damage: number, victim: Monster): number {
@@ -258,18 +397,15 @@ export default class PlayerBattleAgainstMobStrategy extends PlayerBattleStrategy
     }
 
     protected applyStun(victim: Monster) {
-        //TODO: reset position
         if (victim.isImmuneByFlag(MobImmuneFlagEnum.STUN)) return;
         if (victim.isAffectByFlag(AffectBitsTypeEnum.STUN)) return;
 
-        victim.setAffectFlag(AffectBitsTypeEnum.STUN);
-        victim.sendUpdateEvent();
+        victim.stun();
 
         victim.addEventTimer({
             id: 'STUN_AFFECT',
             eventFunction: () => {
-                victim.removeAffectFlag(AffectBitsTypeEnum.STUN);
-                victim.sendUpdateEvent();
+                victim.removeStun();
             },
             options: {
                 interval: 5_000,
@@ -336,6 +472,7 @@ export default class PlayerBattleAgainstMobStrategy extends PlayerBattleStrategy
         if (attackerStealHealthValue > 0) {
             const stealHealthChance = 1;
             if (MathUtil.getRandomInt(1, 10) <= stealHealthChance) {
+                //I do not know why this is fixed in 10% (maybe because this is broken)
                 const healthDamage = Math.round(
                     (Math.min(damage, Math.max(0, victim.getPoint(PointsEnum.HEALTH))) * attackerStealHealthValue) /
                         100,

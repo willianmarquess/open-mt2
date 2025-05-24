@@ -2,13 +2,13 @@ import { Mob, MobParams } from './Mob';
 import { EntityTypeEnum } from '@/core/enum/EntityTypeEnum';
 
 export default class NPC extends Mob {
-    constructor(params: Omit<MobParams, 'virtualId' | 'entityType'>, { animationManager, logger }) {
+    constructor(params: Omit<MobParams, 'virtualId' | 'entityType'>, { animationManager }) {
         super(
             {
                 ...params,
                 entityType: EntityTypeEnum.NPC,
             },
-            { animationManager, logger },
+            { animationManager },
         );
     }
 

@@ -12,7 +12,6 @@ import { MobEnchantEnum } from '@/core/enum/MobEnchantEnum';
 import { MobResistEnum } from '@/core/enum/MobResistEnum';
 import { MobPoints } from './delegate/MobPoints';
 import { PointsEnum } from '@/core/enum/PointsEnum';
-import MobBattle from './delegate/battle/MobBattle';
 
 enum MobSizeEnum {
     RESERVED = 0,
@@ -103,9 +102,8 @@ export abstract class Mob extends Character {
 
     protected group: MonsterGroup;
     protected readonly points: MobPoints;
-    protected readonly battle: MobBattle;
 
-    constructor(params: MobParams, { animationManager, logger }) {
+    constructor(params: MobParams, { animationManager }) {
         super(
             {
                 id: Number(params.proto.vnum),
@@ -194,7 +192,6 @@ export abstract class Mob extends Character {
         this.hpPercentToGetRevive = Number(proto.sp_revive);
         this.direction = Number(params.direction);
         this.points = new MobPoints(params.proto);
-        this.battle = new MobBattle(this, logger);
     }
 
     addPoint(point: PointsEnum, value: number): void {
@@ -241,8 +238,12 @@ export abstract class Mob extends Character {
         return this.enchants.find((enchant) => enchant.type === enchantType)?.value || 0;
     }
 
-    isStoneSkinner() {
+    isStoneSkinner(): boolean {
         return this.aiFlag.is(MobAIFlagEnum.STONESKIN);
+    }
+
+    getStoneSkinnerPoint(): number {
+        return this.hpPercentToGetStoneSkin;
     }
 
     isDeathBlower() {

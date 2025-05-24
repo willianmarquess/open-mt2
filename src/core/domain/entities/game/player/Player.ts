@@ -47,6 +47,7 @@ import { PositionEnum } from '@/core/enum/PositionEnum';
 import { PlayerBattle } from './delegate/battle/PlayerBattle';
 import { AttackTypeEnum } from '@/core/enum/AttackTypeEnum';
 import Monster from '../mob/Monster';
+import { AffectBitsTypeEnum } from '@/core/enum/AffectBitsTypeEnum';
 
 const REGEN_INTERVAL = 3000;
 
@@ -198,6 +199,18 @@ export default class Player extends Character {
         this.connection = connection;
     }
 
+    stun() {
+        this.setAffectFlag(AffectBitsTypeEnum.STUN);
+        this.updateView();
+        super.stun();
+        //TODO: send syncPacket
+    }
+
+    removeStun() {
+        super.removeStun();
+        this.updateView();
+    }
+
     attack(attackType: AttackTypeEnum, victim: Player | Monster) {
         this.battle.attack(attackType, victim);
     }
@@ -219,7 +232,7 @@ export default class Player extends Character {
 
     addPoint(point: PointsEnum, value: number) {
         this.points.addPoint(point, value);
-        this.sendPoints();
+        this.sendPoints(); //TODO: maybe we should send only the single point packet or just the points that have side effected.
     }
 
     setPoint(point: PointsEnum, value: number) {

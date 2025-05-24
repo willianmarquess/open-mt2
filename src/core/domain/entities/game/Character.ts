@@ -28,7 +28,6 @@ export default abstract class Character extends GameEntity {
     protected targetPositionY: number = 0;
     protected startPositionX: number = 0;
     protected startPositionY: number = 0;
-    // protected state: EntityStateEnum = EntityStateEnum.IDLE;
     protected movementStart: number = 0;
     protected movementDuration: number = 0;
 
@@ -92,7 +91,6 @@ export default abstract class Character extends GameEntity {
     abstract getHealthPercentage(): number;
     abstract getAttack(): number;
     abstract getDefense(): number;
-    abstract takeDamage(attacker: Character, damage: number): void;
 
     public createFlyEffect(toVirtualId: number, type: FlyEnum) {
         this.area.onFlyEffect(
@@ -197,6 +195,21 @@ export default abstract class Character extends GameEntity {
         if (x === this.positionX && y === this.positionY) return;
         this.positionX = x;
         this.positionY = y;
+    }
+
+    protected stun() {
+        //TODO: verify the necessity to send sync packet
+        if (this.targetPositionX === this.positionX || this.targetPositionY === this.positionY) {
+            this.startPositionX = this.targetPositionX = this.positionX;
+            this.startPositionY = this.targetPositionY = this.positionY;
+            if (this.pos === PositionEnum.FIGHTING) {
+                this.setPos(PositionEnum.STANDING);
+            }
+        }
+    }
+
+    protected removeStun() {
+        this.removeAffectFlag(AffectBitsTypeEnum.STUN);
     }
 
     protected waitInternal(x: number, y: number) {

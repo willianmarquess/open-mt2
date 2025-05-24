@@ -150,7 +150,6 @@ export default class MobManager {
                     },
                     {
                         animationManager: this.animationManager,
-                        logger: this.logger,
                     },
                 );
             }
@@ -164,7 +163,6 @@ export default class MobManager {
                     },
                     {
                         animationManager: this.animationManager,
-                        logger: this.logger,
                     },
                 );
             }

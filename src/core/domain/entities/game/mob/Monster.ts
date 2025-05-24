@@ -17,6 +17,7 @@ import { EntityStateEnum } from '@/core/enum/EntityStateEnum';
 import { AttackTypeEnum } from '@/core/enum/AttackTypeEnum';
 import { MovementTypeEnum } from '@/core/enum/MovementTypeEnum';
 import { PositionEnum } from '@/core/enum/PositionEnum';
+import MonsterBattle from './delegate/battle/MonsterBattle';
 
 const MAX_DISTANCE_TO_GET_EXP = 5_000;
 
@@ -27,6 +28,7 @@ export default class Monster extends Mob {
 
     private readonly dropManager: DropManager;
     private readonly experienceManager: ExperienceManager;
+    protected readonly battle: MonsterBattle;
 
     constructor(
         params: Omit<MobParams, 'virtualId' | 'entityType'>,
@@ -37,11 +39,12 @@ export default class Monster extends Mob {
                 ...params,
                 entityType: EntityTypeEnum.MONSTER,
             },
-            { animationManager, logger },
+            { animationManager },
         );
         this.dropManager = dropManager;
         this.experienceManager = experienceManager;
         this.behavior = new Behavior(this);
+        this.battle = new MonsterBattle(this, logger);
 
         this.stateMachine
             .addState({
@@ -59,6 +62,16 @@ export default class Monster extends Mob {
             })
             .gotoState(EntityStateEnum.IDLE);
         this.init();
+    }
+
+    stun() {
+        super.stun();
+        this.sendUpdateEvent();
+    }
+
+    removeStun() {
+        super.removeStun();
+        this.sendUpdateEvent();
     }
 
     getTarget(): Player {
