@@ -816,6 +816,14 @@ export class PlayerPoints extends Points {
         this.points.set(PointsEnum.BLOCK, {
             get: () => this.block,
         });
+        this.points.set(PointsEnum.MANA_RECOVERY, {
+            get: () => this.manaRecovery,
+            add: (value) => this.addCommonPoint(value, 'manaRecovery'),
+        });
+        this.points.set(PointsEnum.HP_RECOVERY, {
+            get: () => this.hpRecovery,
+            add: (value) => this.addCommonPoint(value, 'hpRecovery'),
+        });
     }
 
     private addCommonPoint(value: number, pointName: string) {

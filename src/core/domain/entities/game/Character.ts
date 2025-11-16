@@ -68,6 +68,10 @@ export default abstract class Character extends GameEntity {
         return this.eventTimerManager.addTimer(params);
     }
 
+    isEventTimerActive(eventName: string) {
+        return this.eventTimerManager.isTimerActive(eventName);
+    }
+
     getAffectFlags() {
         return this.affectBitFlag.getFlags();
     }

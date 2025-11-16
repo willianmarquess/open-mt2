@@ -45,6 +45,7 @@ export default {
     FLY: 0x46,
     AFFECT_ADD: 0x7e,
     SPECIAL_EFFECT: 0x72,
+    ITEM_UPDATE: 0x19,
     INTERNAL_PING: 254,
     INTERNAL_PONG: 253,
 };

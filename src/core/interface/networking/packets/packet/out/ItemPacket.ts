@@ -38,6 +38,7 @@ export default class ItemPacket extends PacketOut {
         new ItemBonus({}),
         new ItemBonus({}),
         new ItemBonus({}),
+        new ItemBonus({}),
     );
 
     constructor({ window, position, id, count, flags, antiFlags, highlight, sockets, bonuses }: ItemPacketParams = {}) {
@@ -61,6 +62,7 @@ export default class ItemPacket extends PacketOut {
         this.highlight = 0;
         this.sockets = new Array(3).fill(0);
         this.bonuses = [
+            new ItemBonus({}),
             new ItemBonus({}),
             new ItemBonus({}),
             new ItemBonus({}),

@@ -96,7 +96,7 @@ type ItemParams = {
 export default class Item {
     private readonly id: number;
     private readonly name: string;
-    private readonly type: number;
+    private readonly type: ItemTypeEnum;
     private readonly subType: number;
     private readonly size: number;
     private readonly antiFlags: BitFlag;
@@ -396,6 +396,14 @@ export default class Item {
 
     getLevelLimit() {
         return this.limits.find((limit) => limit.type === ItemLimitTypeEnum.LEVEL)?.value ?? 0;
+    }
+
+    increaseCount(quantity: number) {
+        this.count += quantity;
+    }
+
+    decreaseCount(quantity: number) {
+        this.count -= quantity;
     }
 
     static create(proto: ItemProto, count: number) {

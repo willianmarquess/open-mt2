@@ -48,6 +48,9 @@ import { PlayerBattle } from './delegate/battle/PlayerBattle';
 import { AttackTypeEnum } from '@/core/enum/AttackTypeEnum';
 import Monster from '../mob/Monster';
 import { AffectBitsTypeEnum } from '@/core/enum/AffectBitsTypeEnum';
+import SpecialEffectPacket from '@/core/interface/networking/packets/packet/out/SpecialEffectPacket';
+import { SpecialEffectTypeEnum } from '@/core/enum/SpecialEffectTypeEnum';
+import UpdateItemPacket from '@/core/interface/networking/packets/packet/out/UpdateItemPacket';
 
 const REGEN_INTERVAL = 3000;
 
@@ -588,6 +591,15 @@ export default class Player extends Character {
         );
     }
 
+    sendSpecialEffect(type: SpecialEffectTypeEnum) {
+        this.connection.send(
+            new SpecialEffectPacket({
+                type,
+                virtualId: this.virtualId,
+            }),
+        );
+    }
+
     updateView() {
         this.connection.send(
             new CharacterUpdatePacket({
@@ -731,6 +743,16 @@ export default class Player extends Character {
                 flags: 0,
                 antiFlags: 0,
                 highlight: 0,
+            }),
+        );
+    }
+
+    sendItemUpdate(item: Item) {
+        this.connection.send(
+            new UpdateItemPacket({
+                position: item.getPosition(),
+                count: item.getCount(),
+                window: item.getWindow(),
             }),
         );
     }

@@ -85,6 +85,7 @@ export default class ItemManager {
     async delete(item: Item) {
         const itemToDatabase = item.toDatabase();
         this.itemCache.setToDelete(itemToDatabase.ownerId, itemToDatabase);
+        await this.flush(itemToDatabase.ownerId);
     }
 
     async flush(ownerId: number) {
