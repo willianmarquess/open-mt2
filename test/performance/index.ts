@@ -1,19 +1,19 @@
 import { authFlow } from './authFlow';
 import GameFlow from './gameFlow';
-import regen from '@/core/infra/config/data/spawn/metin2_map_c1/regen.json';
+import atlasInfo from '@/core/infra/config/data/atlasinfo.json';
 import timers from 'node:timers/promises';
 import { container } from '@/game/Container';
 import MathUtil from '@/core/domain/util/MathUtil';
 
 const SIGNALS = ['SIGINT', 'SIGTERM'];
 const ERRORS = ['unhandledRejection', 'uncaughtException'];
-const MAX_FAKE_PLAYERS = 1_000;
+const MAX_FAKE_PLAYERS = 80;
 
-const users = [];
-const gameFlows = [];
+const users: Array<string> = [];
+const gameFlows: Array<GameFlow> = [];
 const db = container.resolve('databaseManager');
 
-const shutdown = async (signal) => {
+const shutdown = async (signal: string) => {
     console.log(`Signal received: ${signal}`);
     try {
         await closeConnections();
@@ -82,87 +82,98 @@ async function clearData(db) {
     }
 }
 
-/**
- *
- * this test is testing how many concurrently users we can handle at the same place (player range)
- * packet qtd will be like players*players
- */
-// async function createFakePlayers() {
-//     let i = 1;
+import path from 'path';
+import fsSync from 'fs';
+import fs from 'fs/promises';
 
-//     for (const { x, y } of regen as any) {
-//         if (users.length >= MAX_FAKE_PLAYERS) break;
+const DEFAULT_SPAWN_CONFIG_PATH = 'src/core/infra/config/data/spawn';
 
-//         for (let j = 1; j <= 100; j++) {
-//             const posX = MathUtil.getRandomInt(-3000, 3000);
-//             const posY = MathUtil.getRandomInt(-3000, 3000);
-//             const positionX = 921600 + x * 100 + posX;
-//             const positionY = 204800 + y * 100 + posY;
-//             const { user, password } = await createData(db, i * j, positionX, positionY);
-//             users.push(user);
+const BATCH_SIZE = 50; // Number of players to move simultaneously per batch
+const DELAY_BETWEEN_BATCHES = 50; // Milliseconds between batches
 
-//             const token = await authFlow(user, password);
-//             const gameFlow = new GameFlow(user, token);
+const allowedAreas = [
+    'map_a2',
+    'map_n_snowm_01',
+    'metin2_map_a1',
+    'metin2_map_a3',
+    'metin2_map_b1',
+    'metin2_map_b3',
+    'metin2_map_c1',
+    'metin2_map_c3',
+    'metin2_map_deviltower1',
+    'metin2_map_n_desert_01',
+    'metin2_map_n_flame_01',
+    'metin2_map_spiderdungeon',
+    'metin2_map_spiderdungeon_02',
+];
 
-//             await gameFlow.connect();
-//             await gameFlow.basicFlow();
-//             gameFlows.push(gameFlow);
-//         }
-
-//         i++;
-//     }
-
-//     console.log(`Initialized ${users.length} fake players.`);
-//     return gameFlows;
-// }
-
-//TODO: pass test type and quantity of players to test
 async function createFakePlayersSpread() {
-    let i = 1;
+    const currentDir = process.cwd();
+    let i = 0;
+    for (const { mapName, posX, posY, aka } of atlasInfo) {
+        if (!allowedAreas.includes(mapName)) continue;
 
-    for (const { x, y } of regen as any) {
-        if (users.length >= MAX_FAKE_PLAYERS) break;
+        const absoluteFilePath = path.join(currentDir, DEFAULT_SPAWN_CONFIG_PATH + `/${mapName}/regen.json`);
+        if (fsSync.existsSync(absoluteFilePath)) {
+            const fileContent = await fs.readFile(absoluteFilePath, 'utf8');
+            const spawnsData = JSON.parse(fileContent || '');
 
-        const posX = MathUtil.getRandomInt(-3000, 3000);
-        const posY = MathUtil.getRandomInt(-3000, 3000);
-        const positionX = 921600 + x * 100 + posX;
-        const positionY = 204800 + y * 100 + posY;
-        const { user, password } = await createData(db, i, positionX, positionY);
-        users.push(user);
+            console.log(`Creating fake playes at ${mapName}, aka: ${aka}`);
 
-        const token = await authFlow(user, password);
-        const gameFlow = new GameFlow(user, token);
+            let counter = 0;
+            for (const { x, y } of spawnsData) {
+                if (counter >= MAX_FAKE_PLAYERS) break;
 
-        await gameFlow.connect();
-        await gameFlow.basicFlow();
-        gameFlows.push(gameFlow);
+                const posXI = MathUtil.getRandomInt(-5_000, 5_000);
+                const posYI = MathUtil.getRandomInt(-5_000, 5_000);
+                const positionX = posX + x * 100 + posXI;
+                const positionY = posY + y * 100 + posYI;
+                const { user, password } = await createData(db, i, positionX, positionY);
+                users.push(user);
 
-        i++;
+                const token = await authFlow(user, password);
+                const gameFlow = new GameFlow(user, token);
+
+                await gameFlow.connect();
+                await gameFlow.basicFlow();
+                gameFlows.push(gameFlow);
+
+                i++;
+                counter++;
+            }
+
+            console.log(`Initialized ${counter} fake players at ${mapName}, aka: ${aka}.`);
+        }
+
+        console.log(`Total of players fake created ${users.length}`);
     }
-
-    console.log(`Initialized ${users.length} fake players.`);
-    return gameFlows;
 }
 
-async function startRandomMovement(gameFlows) {
-    for (const gameFlow of gameFlows) {
-        setTimeout(
-            () => {
-                gameFlow.moveToRandomLocation();
-                gameFlow.flush();
-            },
-            MathUtil.getRandomInt(500, 1000),
-        );
+async function startRandomMovement() {
+    const totalBatches = Math.ceil(gameFlows.length / BATCH_SIZE);
+
+    for (let batchIndex = 0; batchIndex < totalBatches; batchIndex++) {
+        const start = batchIndex * BATCH_SIZE;
+        const end = Math.min(start + BATCH_SIZE, gameFlows.length);
+        const batchFlows = gameFlows.slice(start, end);
+        const movePromises = batchFlows.map((gameFlow) => gameFlow.moveToRandomLocation());
+
+        await Promise.all(movePromises);
+
+        if (batchIndex < totalBatches - 1) {
+            await timers.setTimeout(DELAY_BETWEEN_BATCHES);
+        }
     }
 
-    await timers.setTimeout(1000);
-    startRandomMovement(gameFlows);
+    await timers.setTimeout(MathUtil.getRandomInt(250, 500));
+
+    startRandomMovement();
 }
 
 async function main() {
     try {
-        const gameFlows = await createFakePlayersSpread();
-        await startRandomMovement(gameFlows);
+        await createFakePlayersSpread();
+        await startRandomMovement();
     } catch (error) {
         console.error('Error in main:', error);
     }

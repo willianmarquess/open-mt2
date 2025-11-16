@@ -1,31 +1,19 @@
 {
-    "compilerOptions": {
-      "resolveJsonModule": true,
-      "outDir": "./dist",
-      "module": "CommonJS",
-      "target": "ES6",
-      "esModuleInterop": true,
-      "skipLibCheck": true,
-      "sourceMap": true,
-      "forceConsistentCasingInFileNames": true,
-      "rootDirs": [
-        "src",
-        "test",
-        "tools"
-      ],
-      "baseUrl": "src",
-      "paths": {
-        "@/*": [
-          "*"
-        ],
-        "@/test/*": ["../test/*"],
-        "@/tools/*": ["../tools/*"],
-      }
-    },
-    "include": [
-      "src",
-      "test",
-      "tools"
-    ],
-    "exclude": []
-  }
+  "compilerOptions": {
+    "resolveJsonModule": true,
+    "outDir": "./dist",
+    "module": "CommonJS",
+    "target": "ES6",
+    "esModuleInterop": true,
+    "skipLibCheck": true,
+    "sourceMap": true,
+    "forceConsistentCasingInFileNames": true,
+
+    "baseUrl": "./src",
+    "paths": {
+      "@/*": ["*"]
+    }
+  },
+  "include": ["src"],
+  "exclude": []
+}

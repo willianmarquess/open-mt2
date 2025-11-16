@@ -222,6 +222,7 @@ export default class GameFlow {
         const rotation = MathUtil.calcRotationFromXY(x - this.#player.positionX, y - this.#player.positionY) / 5;
         const movePacket = createCharacterMovePacket(rotation, x, y);
         this.#client.sendMessage(movePacket);
+        this.flush();
     }
 
     async close() {

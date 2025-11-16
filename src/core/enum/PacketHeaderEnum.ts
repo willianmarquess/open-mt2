@@ -44,4 +44,7 @@ export default {
     CHARACTER_DIED: 0x0e,
     FLY: 0x46,
     AFFECT_ADD: 0x7e,
+    SPECIAL_EFFECT: 0x72,
+    INTERNAL_PING: 254,
+    INTERNAL_PONG: 253,
 };

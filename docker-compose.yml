@@ -1,63 +1,69 @@
 version: "3.8"
 services:
   auth-server:
-      image: node:22
-      container_name: auth-server
-      env_file:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: auth-server
+    env_file:
       - ./.env
-      restart: always
-      ports:
-        - $AUTH_SERVER_PORT:$AUTH_SERVER_PORT
-      environment:
-        - AUTH_SERVER_PORT=$AUTH_SERVER_PORT
-        - AUTH_SERVER_ADDRESS=0.0.0.0
-        - LOG_LEVEL=$LOG_LEVEL
-        - DB_PORT=$DB_PORT
-        - DB_ROOT_PASSWORD=$DB_ROOT_PASSWORD
-        - AUTH_DB_DATABASE_NAME=$AUTH_DB_DATABASE_NAME
-        - DB_USER=$DB_USER
-        - CACHE_PORT=$CACHE_PORT
-        - DB_HOST=database
-        - CACHE_HOST=cache
-      volumes:
-        - .:/usr/app
-      depends_on: 
-        - cache
-        - database
-      working_dir: /usr/app
-      command: bash -c "npm install && npm run migrate && npm run dev:auth"
+    restart: always
+    ports:
+      - "${AUTH_SERVER_PORT}:${AUTH_SERVER_PORT}"
+    environment:
+      AUTH_SERVER_PORT: "${AUTH_SERVER_PORT}"
+      AUTH_SERVER_ADDRESS: "0.0.0.0"
+      LOG_LEVEL: "${LOG_LEVEL}"
+      DB_PORT: "${DB_PORT}"
+      DB_ROOT_PASSWORD: "${DB_ROOT_PASSWORD}"
+      AUTH_DB_DATABASE_NAME: "${AUTH_DB_DATABASE_NAME}"
+      DB_USER: "${DB_USER}"
+      CACHE_PORT: "${CACHE_PORT}"
+      DB_HOST: database
+      CACHE_HOST: cache
+      NODE_ENV: production
+    depends_on:
+      - cache
+      - database
+    command: ["node","src/auth/main.js"]
+    deploy:
+      resources:
+        limits:
+          memory: 200M
+          cpus: "1"
+
   game-server:
-      image: node:22
-      container_name: game-server
-      env_file:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: game-server
+    env_file:
       - ./.env
-      restart: always
-      ports:
-        - $GAME_SERVER_PORT:$GAME_SERVER_PORT
-      environment:
-        - GAME_SERVER_PORT=$GAME_SERVER_PORT
-        - GAME_SERVER_ADDRESS=0.0.0.0
-        - REAL_SERVER_ADDRESS=$GAME_SERVER_ADDRESS
-        - LOG_LEVEL=$LOG_LEVEL
-        - DB_PORT=$DB_PORT
-        - DB_ROOT_PASSWORD=$DB_ROOT_PASSWORD
-        - GAME_DB_DATABASE_NAME=$GAME_DB_DATABASE_NAME
-        - DB_USER=$DB_USER
-        - CACHE_PORT=$CACHE_PORT
-        - DB_HOST=database
-        - CACHE_HOST=cache
-      volumes:
-        - .:/usr/app
-      depends_on: 
-        - cache
-        - database
-      working_dir: /usr/app
-      command: bash -c "npm install && npm run dev:game"
-      # deploy:
-      #   resources:
-      #     limits:
-      #       memory: 900M 
-      #       cpus: "2.5"
+    restart: always
+    ports:
+      - "${GAME_SERVER_PORT}:${GAME_SERVER_PORT}"
+    environment:
+      GAME_SERVER_PORT: "${GAME_SERVER_PORT}"
+      GAME_SERVER_ADDRESS: "0.0.0.0"
+      REAL_SERVER_ADDRESS: "${GAME_SERVER_ADDRESS}"
+      LOG_LEVEL: "${LOG_LEVEL}"
+      DB_PORT: "${DB_PORT}"
+      DB_ROOT_PASSWORD: "${DB_ROOT_PASSWORD}"
+      GAME_DB_DATABASE_NAME: "${GAME_DB_DATABASE_NAME}"
+      DB_USER: "${DB_USER}"
+      CACHE_PORT: "${CACHE_PORT}"
+      DB_HOST: database
+      CACHE_HOST: cache
+      NODE_ENV: production
+    depends_on:
+      - cache
+      - database
+    command: ["node", "src/game/main.js"]
+    deploy:
+      resources:
+        limits:
+          memory: 1024M
+          cpus: "2"
 
   cache:
     image: redis:latest
@@ -66,7 +72,7 @@ services:
     env_file:
       - ./.env
     ports:
-    - $CACHE_PORT:$CACHE_PORT
+      - "${CACHE_PORT}:${CACHE_PORT}"
 
   database:
     image: mysql:5.7
@@ -75,6 +81,17 @@ services:
     env_file:
       - ./.env
     environment:
-      MYSQL_ROOT_PASSWORD: $DB_ROOT_PASSWORD
+      MYSQL_ROOT_PASSWORD: "${DB_ROOT_PASSWORD}"
+      MYSQL_ROOT_HOST: '%'
     ports:
-      - $DB_PORT:$DB_PORT
+      - "${DB_PORT}:${DB_PORT}"
+    volumes:
+      - dbdata:/var/lib/mysql
+    healthcheck:
+      test: ["CMD","mysqladmin","ping","-h","127.0.0.1"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+volumes:
+  dbdata: {}

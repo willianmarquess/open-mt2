@@ -1,8 +1,9 @@
 import { createConnection, Socket } from 'node:net';
 
 export default class SocketClient {
-    private client: Socket;
+    private client!: Socket;
     private data: Buffer<ArrayBufferLike> = Buffer.from([]);
+    private onData!: (data: Buffer<ArrayBufferLike>) => void;
 
     async connect(host: string, port: number) {
         return new Promise((resolve, reject) => {
@@ -13,6 +14,7 @@ export default class SocketClient {
 
             this.client.on('data', (data) => {
                 this.data = Buffer.concat([this.data, data]);
+                this.onData?.(data);
             });
             this.client.on('error', (err) => {
                 console.error(`Connection error: ${err.message}`);
@@ -24,7 +26,7 @@ export default class SocketClient {
         });
     }
 
-    nextMessage(length: number) {
+    nextMessage(length: number): Promise<Buffer<ArrayBufferLike>> {
         return new Promise((resolve) => {
             if (this.data.length >= length) {
                 const data = this.data.subarray(0, length);
@@ -43,7 +45,7 @@ export default class SocketClient {
         });
     }
 
-    sendMessage(message) {
+    sendMessage(message: Buffer<ArrayBufferLike>) {
         this.client.write(message);
     }
 
@@ -59,5 +61,9 @@ export default class SocketClient {
 
     flush() {
         this.data = Buffer.from([]);
+    }
+
+    setOnData(onData: (data: Buffer<ArrayBufferLike>) => void) {
+        this.onData = onData;
     }
 }

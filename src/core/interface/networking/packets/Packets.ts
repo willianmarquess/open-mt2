@@ -35,6 +35,8 @@ import TargetPacket from './packet/in/target/TargetPacket';
 import TargetPacketHandler from './packet/in/target/TargetPacketHandler';
 import Packet from './packet/Packet';
 import PacketHandler from './packet/PacketHandler';
+import InternalPingPacket from './packet/in/internalPing/InternalPingPacket';
+import InternalPingPacketHandler from './packet/in/internalPing/InternalPingPacketHandler';
 
 export type PacketMapValue<T extends Packet> = {
     createPacket: (params?: any) => T;
@@ -159,6 +161,13 @@ const packets: Map<number, PacketMapValue<any>> = new Map<number, PacketMapValue
         {
             createPacket: (params = {}) => new TargetPacket(params),
             createHandler: (params) => new TargetPacketHandler(params),
+        },
+    ],
+    [
+        PacketHeaderEnum.INTERNAL_PING,
+        {
+            createPacket: (params = {}) => new InternalPingPacket(params),
+            createHandler: (params) => new InternalPingPacketHandler(params),
         },
     ],
 ]);
