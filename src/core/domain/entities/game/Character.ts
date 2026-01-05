@@ -1,5 +1,4 @@
 import { EntityStateEnum } from '@/core/enum/EntityStateEnum';
-import { EventEmitter } from 'node:events';
 import AnimationManager from '../../manager/AnimationManager';
 import { AnimationTypeEnum } from '@/core/enum/AnimationTypeEnum';
 import { AnimationSubTypeEnum } from '@/core/enum/AnimationSubTypeEnum';
@@ -11,7 +10,6 @@ import { AffectBitsTypeEnum } from '@/core/enum/AffectBitsTypeEnum';
 import EventTimerManager, { addTimerParam } from '../../manager/EventTimerManager';
 import AffectBitFlag from '@/core/util/AffectBitFlag';
 import { PointsEnum } from '@/core/enum/PointsEnum';
-import FlyEffectCreatedEvent from './shared/event/FlyEffectCreatedEvent';
 import { FlyEnum } from '@/core/enum/FlyEnum';
 import { StateMachine } from '@/core/util/StateMachine';
 import { PositionEnum } from '@/core/enum/PositionEnum';
@@ -24,14 +22,11 @@ export default abstract class Character extends GameEntity {
 
     //movement and animation
     protected rotation: number = 0;
-    protected targetPositionX: number = 0;
-    protected targetPositionY: number = 0;
     protected startPositionX: number = 0;
     protected startPositionY: number = 0;
     protected movementStart: number = 0;
     protected movementDuration: number = 0;
 
-    protected readonly emitter = new EventEmitter();
     protected readonly nearbyEntities = new Map<number, GameEntity>();
 
     protected target: Character;
@@ -97,13 +92,11 @@ export default abstract class Character extends GameEntity {
     abstract getDefense(): number;
 
     public createFlyEffect(toVirtualId: number, type: FlyEnum) {
-        this.area.onFlyEffect(
-            new FlyEffectCreatedEvent({
-                fromVirtualId: this.virtualId,
-                toVirtualId,
-                type,
-            }),
-        );
+        for (const otherEntity of this.nearbyEntities.values()) {
+            if (otherEntity instanceof Player) {
+                otherEntity.showFlyEffect(type, this.virtualId, toVirtualId);
+            }
+        }
     }
 
     setPos(pos: PositionEnum) {
@@ -225,23 +218,6 @@ export default abstract class Character extends GameEntity {
 
     stop() {
         this.stateMachine.gotoState(EntityStateEnum.IDLE);
-    }
-
-    publish<T>(event: T) {
-        const eventName = event.constructor.name;
-        this.emitter.emit(eventName, event);
-    }
-
-    subscribe<T>(eventConstructor: new (args: any) => T, callback: (event: T) => void) {
-        this.emitter.on(eventConstructor.name, callback);
-    }
-
-    unsubscribe<T>(eventConstructor: new (args: any) => T, callback: (event: T) => void) {
-        this.emitter.off(eventConstructor.name, callback);
-    }
-
-    removeAllListeners<T>(eventConstructor: new (args: any) => T) {
-        this.emitter.removeAllListeners(eventConstructor.name);
     }
 
     getMovementSpeed() {

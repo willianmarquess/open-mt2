@@ -7,7 +7,7 @@ import MathUtil from '@/core/domain/util/MathUtil';
 
 const SIGNALS = ['SIGINT', 'SIGTERM'];
 const ERRORS = ['unhandledRejection', 'uncaughtException'];
-const MAX_FAKE_PLAYERS = 80;
+const MAX_FAKE_PLAYERS = 150;
 
 const users: Array<string> = [];
 const gameFlows: Array<GameFlow> = [];
@@ -88,7 +88,7 @@ import fs from 'fs/promises';
 
 const DEFAULT_SPAWN_CONFIG_PATH = 'src/core/infra/config/data/spawn';
 
-const BATCH_SIZE = 50; // Number of players to move simultaneously per batch
+const BATCH_SIZE = 100; // Number of players to move simultaneously per batch
 const DELAY_BETWEEN_BATCHES = 50; // Milliseconds between batches
 
 const allowedAreas = [

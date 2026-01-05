@@ -7,8 +7,6 @@ import { FlyEnum } from '@/core/enum/FlyEnum';
 import { PointsEnum } from '@/core/enum/PointsEnum';
 import MathUtil from '../../../util/MathUtil';
 import Player from '../player/Player';
-import CharacterUpdatedEvent from '../shared/event/CharacterUpdatedEvent';
-import FlyEffectCreatedEvent from '../shared/event/FlyEffectCreatedEvent';
 import Behavior from './Behavior';
 import MonsterDiedEvent from './events/MonsterDiedEvent';
 import MonsterMovedEvent from './events/MonsterMovedEvent';
@@ -125,20 +123,19 @@ export default class Monster extends Mob {
     }
 
     public sendUpdateEvent() {
-        this.area.onCharacterUpdate(
-            new CharacterUpdatedEvent({
-                affects: this.getAffectFlags(),
-                attackSpeed: this.getAttackSpeed(),
-                moveSpeed: this.getMovementSpeed(),
-                bodyId: 0,
-                hairId: 0,
-                weaponId: 0,
-                name: this.name,
-                positionX: this.getPositionX(),
-                positionY: this.getPositionY(),
-                vid: this.getVirtualId(),
-            }),
-        );
+        for (const entity of this.nearbyEntities.values()) {
+            if (entity instanceof Player) {
+                entity.otherEntityUpdated({
+                    affects: this.getAffectFlags(),
+                    attackSpeed: this.getAttackSpeed(),
+                    moveSpeed: this.getMovementSpeed(),
+                    bodyId: 0,
+                    hairId: 0,
+                    weaponId: 0,
+                    vid: this.getVirtualId(),
+                });
+            }
+        }
     }
 
     private regenHealth() {
@@ -221,13 +218,7 @@ export default class Monster extends Mob {
 
             player.addPoint(PointsEnum.EXPERIENCE, expToGive);
 
-            this.area.onFlyEffect(
-                new FlyEffectCreatedEvent({
-                    fromVirtualId: this.virtualId,
-                    toVirtualId: player.getVirtualId(),
-                    type: FlyEnum.EXP,
-                }),
-            );
+            this.createFlyEffect(player.getVirtualId(), FlyEnum.EXP);
         }
     }
 

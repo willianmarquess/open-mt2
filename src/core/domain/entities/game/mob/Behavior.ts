@@ -6,7 +6,7 @@ import { AffectBitsTypeEnum } from '@/core/enum/AffectBitsTypeEnum';
 import { PositionEnum } from '@/core/enum/PositionEnum';
 
 const POSITION_OFFSET = 600;
-const MIN_DELAY = 15000;
+const MIN_DELAY = 5000;
 const MAX_DELAY = 25000;
 const MAX_TIME_WITHOUT_ATTACK = 15_000;
 const MAX_DISTANCE_WITHOUT_ATTACK = 5_000;

@@ -16,7 +16,6 @@ import PlayerState from '../../state/player/PlayerState';
 import Character from '../Character';
 import { SpecialItemEnum } from '@/core/enum/SpecialItemEnum';
 import { FlyEnum } from '@/core/enum/FlyEnum';
-import CharacterUpdatedEvent from '../shared/event/CharacterUpdatedEvent';
 import GameConnection from '@/game/interface/networking/GameConnection';
 import ChatOutPacket from '@/core/interface/networking/packets/packet/out/ChatOutPacket';
 import DamagePacket from '@/core/interface/networking/packets/packet/out/DamagePacket';
@@ -611,20 +610,19 @@ export default class Player extends Character {
             }),
         );
 
-        this.area?.onCharacterUpdate(
-            new CharacterUpdatedEvent({
-                name: this.name,
-                attackSpeed: this.points.getPoint(PointsEnum.ATTACK_SPEED),
-                moveSpeed: this.points.getPoint(PointsEnum.MOVE_SPEED),
-                vid: this.virtualId,
-                positionX: this.positionX,
-                positionY: this.positionY,
-                bodyId: this.getBody()?.getId() ?? 0,
-                weaponId: this.getWeapon()?.getId() ?? 0,
-                hairId: this.getHair()?.getId() ?? 0,
-                affects: this.getAffectFlags(),
-            }),
-        );
+        for (const entity of this.nearbyEntities.values()) {
+            if (entity instanceof Player) {
+                entity.otherEntityUpdated({
+                    attackSpeed: this.points.getPoint(PointsEnum.ATTACK_SPEED),
+                    moveSpeed: this.points.getPoint(PointsEnum.MOVE_SPEED),
+                    vid: this.virtualId,
+                    bodyId: this.getBodyId() ?? 0,
+                    weaponId: this.getWeaponId() ?? 0,
+                    hairId: this.getHairId() ?? 0,
+                    affects: this.getAffectFlags(),
+                });
+            }
+        }
     }
 
     wait({ positionX, positionY, arg, rotation, time, movementType }) {
@@ -867,12 +865,24 @@ export default class Player extends Character {
         return this.inventory.getItemFromSlot(ItemEquipmentSlotEnum.BODY);
     }
 
+    getBodyId() {
+        return this.inventory.getItemFromSlot(ItemEquipmentSlotEnum.BODY).getId();
+    }
+
     getWeapon() {
         return this.inventory.getItemFromSlot(ItemEquipmentSlotEnum.WEAPON);
     }
 
+    getWeaponId() {
+        return this.inventory.getItemFromSlot(ItemEquipmentSlotEnum.WEAPON).getId();
+    }
+
     getHair() {
         return this.inventory.getItemFromSlot(ItemEquipmentSlotEnum.COSTUME_HAIR);
+    }
+
+    getHairId() {
+        return this.inventory.getItemFromSlot(ItemEquipmentSlotEnum.COSTUME_HAIR).getId();
     }
 
     /* 

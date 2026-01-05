@@ -1,5 +1,6 @@
 import { EntityTypeEnum } from '@/core/enum/EntityTypeEnum';
 import Area from '../../Area';
+import { SpatialCell } from '@/core/util/SpatialGrid';
 
 export default abstract class GameEntity {
     protected virtualId: number;
@@ -8,12 +9,15 @@ export default abstract class GameEntity {
     protected positionY: number = 0;
     protected nearbyEntities = new Map<number, GameEntity>();
     protected area: Area;
+    protected cell: SpatialCell;
+    protected targetPositionX: number = 0;
+    protected targetPositionY: number = 0;
 
     constructor({ virtualId, entityType, positionX, positionY }) {
         this.virtualId = virtualId;
         this.entityType = entityType;
-        this.positionX = positionX;
-        this.positionY = positionY;
+        this.targetPositionX = this.positionX = positionX;
+        this.targetPositionY = this.positionY = positionY;
     }
 
     setArea(area: Area) {
@@ -62,5 +66,20 @@ export default abstract class GameEntity {
 
     getNearbyEntities() {
         return this.nearbyEntities;
+    }
+
+    getTargetPosition() {
+        return {
+            x: this.targetPositionX || this.positionX,
+            y: this.targetPositionY || this.positionY,
+        };
+    }
+
+    setCell(newCell: SpatialCell) {
+        this.cell = newCell;
+    }
+
+    getCell() {
+        return this.cell;
     }
 }

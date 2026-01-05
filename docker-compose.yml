@@ -5,6 +5,8 @@ services:
       context: .
       dockerfile: Dockerfile
     container_name: auth-server
+    networks:
+     - server
     env_file:
       - ./.env
     restart: always
@@ -42,6 +44,8 @@ services:
     restart: always
     ports:
       - "${GAME_SERVER_PORT}:${GAME_SERVER_PORT}"
+    networks:
+     - server
     environment:
       GAME_SERVER_PORT: "${GAME_SERVER_PORT}"
       GAME_SERVER_ADDRESS: "0.0.0.0"
@@ -58,17 +62,19 @@ services:
     depends_on:
       - cache
       - database
-    command: ["node", "src/game/main.js"]
+    command: ["node", "--max-old-space-size=2048", "src/game/main.js"]
     deploy:
       resources:
         limits:
-          memory: 1024M
+          memory: 2048M
           cpus: "2"
 
   cache:
     image: redis:latest
     restart: unless-stopped
     container_name: cache
+    networks:
+     - server
     env_file:
       - ./.env
     ports:
@@ -78,6 +84,8 @@ services:
     image: mysql:5.7
     container_name: database
     restart: always
+    networks:
+     - server
     env_file:
       - ./.env
     environment:
@@ -95,3 +103,8 @@ services:
 
 volumes:
   dbdata: {}
+
+networks:
+  server:
+    name: server
+    driver: bridge

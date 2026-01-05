@@ -1,5 +1,4 @@
 import SaveCharacterService from '@/game/domain/service/SaveCharacterService';
-import QuadTree from '../util/QuadTree';
 import Queue from '../util/Queue';
 import GameEntity from './entities/game/GameEntity';
 import DroppedItem from './entities/game/item/DroppedItem';
@@ -11,15 +10,13 @@ import SpawnManager from '@/core/domain/manager/SpawnManager';
 import { EntityTypeEnum } from '@/core/enum/EntityTypeEnum';
 import Character from './entities/game/Character';
 import CharacterMovedEvent from './entities/game/player/events/CharacterMovedEvent';
-import CharacterLevelUpEvent from './entities/game/player/events/CharacterLevelUpEvent';
 import MonsterMovedEvent from './entities/game/mob/events/MonsterMovedEvent';
 import MonsterDiedEvent from './entities/game/mob/events/MonsterDiedEvent';
 import DropItemEvent from './entities/game/player/events/DropItemEvent';
-import FlyEffectCreatedEvent from './entities/game/shared/event/FlyEffectCreatedEvent';
-import CharacterUpdatedEvent from './entities/game/shared/event/CharacterUpdatedEvent';
+import SpatialGrid from '../util/SpatialGrid';
 
 const SIZE_QUEUE = 5_000;
-const CHAR_VIEW_SIZE = 8000;
+const CHAR_VIEW_SIZE = 10000;
 const SAVE_PLAYERS_INTERVAL = 120000;
 const REMOVE_ITEM_FROM_GROUND = 30000;
 const SPAWN_POSITION_MULTIPLIER = 100;
@@ -41,7 +38,7 @@ export default class Area {
     private readonly entities = new Map<number, GameEntity>();
     private readonly entitiesToSpawn = new Queue<GameEntity>(SIZE_QUEUE);
     private readonly entitiesToDespawn = new Queue<GameEntity>(SIZE_QUEUE);
-    private readonly quadTree: QuadTree;
+    private readonly aoi: SpatialGrid;
 
     private readonly saveCharacterService: SaveCharacterService;
     private readonly logger: Logger;
@@ -60,7 +57,8 @@ export default class Area {
         this.height = height;
         this.aka = aka;
         this.goto = goto;
-        this.quadTree = new QuadTree(positionX, positionY, width * 25600, height * 25600, 50);
+        // this.aoi = new QuadTree(positionX, positionY, width * 25600, height * 25600, 50);
+        this.aoi = new SpatialGrid(CHAR_VIEW_SIZE / 2);
 
         this.saveCharacterService = saveCharacterService;
         this.logger = logger;
@@ -157,12 +155,7 @@ export default class Area {
 
     onMonsterDied(monsterDiedEvent: MonsterDiedEvent) {
         const { entity: monster } = monsterDiedEvent;
-        const players = this.quadTree.queryAround(
-            monster.getPositionX(),
-            monster.getPositionY(),
-            CHAR_VIEW_SIZE,
-            EntityTypeEnum.PLAYER,
-        ) as Map<number, Player>;
+        const players = this.aoi.queryAround(monster, CHAR_VIEW_SIZE, EntityTypeEnum.PLAYER) as Map<number, Player>;
 
         for (const player of players.values()) {
             player.otherEntityDied(monster);
@@ -186,11 +179,8 @@ export default class Area {
             entity: monster,
             params: { positionX, positionY, arg, rotation, time, movementType, duration },
         } = monsterMovedEvent;
-        this.quadTree.updatePosition(monster);
-        const players = this.quadTree.queryAround(positionX, positionY, CHAR_VIEW_SIZE, EntityTypeEnum.PLAYER) as Map<
-            number,
-            Player
-        >;
+        this.aoi.updatePosition(monster);
+        const players = this.aoi.queryAround(monster, CHAR_VIEW_SIZE, EntityTypeEnum.PLAYER) as Map<number, Player>;
 
         for (const player of players.values()) {
             if (monster.isNearby(player)) {
@@ -224,13 +214,27 @@ export default class Area {
             params: { positionX, positionY, arg, rotation, time, movementType, duration },
         } = characterMovedEvent;
 
-        this.quadTree.updatePosition(entity);
+        this.aoi.updatePosition(entity);
 
-        const entities = this.quadTree.queryAround(positionX, positionY, CHAR_VIEW_SIZE);
+        const entities = this.aoi.queryAround(entity, CHAR_VIEW_SIZE);
 
         for (const otherEntity of entities.values()) {
             if (otherEntity.getVirtualId() === entity.getVirtualId()) continue;
 
+            if (!entity.isNearby(otherEntity)) {
+                entity.addNearbyEntity(otherEntity);
+                otherEntity.addNearbyEntity(entity);
+            }
+        }
+
+        for (const [virtualId, nearbyEntity] of entity.getNearbyEntities().entries()) {
+            if (!entities.has(virtualId)) {
+                entity.removeNearbyEntity(nearbyEntity);
+                nearbyEntity.removeNearbyEntity(entity);
+            }
+        }
+
+        for (const otherEntity of entity.getNearbyEntities().values()) {
             if (entity.isNearby(otherEntity)) {
                 if (otherEntity instanceof Player) {
                     otherEntity.updateOtherEntity({
@@ -244,83 +248,16 @@ export default class Area {
                         duration,
                     });
                 }
-            } else {
-                if (entity instanceof GameEntity) {
-                    entity.addNearbyEntity(otherEntity);
-                }
-
-                if (otherEntity instanceof GameEntity) {
-                    otherEntity.addNearbyEntity(entity);
-                }
             }
-        }
-
-        for (const [virtualId, nearbyEntity] of entity.getNearbyEntities().entries()) {
-            if (!entities.has(virtualId)) {
-                if (entity instanceof GameEntity) {
-                    entity.removeNearbyEntity(nearbyEntity);
-                }
-
-                if (nearbyEntity instanceof GameEntity) {
-                    nearbyEntity.removeNearbyEntity(entity);
-                }
-            }
-        }
-    }
-
-    onCharacterLevelUp(characterLevelUpEvent: CharacterLevelUpEvent) {
-        const { entity } = characterLevelUpEvent;
-        const entities = this.quadTree.queryAround(
-            entity.getPositionX(),
-            entity.getPositionY(),
-            CHAR_VIEW_SIZE,
-            EntityTypeEnum.PLAYER,
-        ) as Map<number, Player>;
-        for (const otherEntity of entities.values()) {
-            if (otherEntity.getVirtualId() === entity.getVirtualId()) continue;
-
-            otherEntity.otherEntityLevelUp({ virtualId: entity.getVirtualId(), level: entity.getLevel() });
-        }
-    }
-
-    onCharacterUpdate(characterUpdatedEvent: CharacterUpdatedEvent) {
-        const { vid, attackSpeed, moveSpeed, positionX, positionY, bodyId, weaponId, hairId, affects } =
-            characterUpdatedEvent;
-        const entities = this.quadTree.queryAround(positionX, positionY, CHAR_VIEW_SIZE, EntityTypeEnum.PLAYER) as Map<
-            number,
-            Player
-        >;
-        for (const otherEntity of entities.values()) {
-            if (otherEntity.getVirtualId() === vid) continue;
-            otherEntity.otherEntityUpdated({ vid, attackSpeed, moveSpeed, bodyId, weaponId, hairId, affects });
-        }
-    }
-
-    onFlyEffect(flyEffectCreatedEvent: FlyEffectCreatedEvent) {
-        const { type, fromVirtualId, toVirtualId } = flyEffectCreatedEvent;
-        const fromEntity = this.getEntity(fromVirtualId);
-
-        if (!fromEntity) return;
-
-        const entities = this.quadTree.queryAround(
-            fromEntity.getPositionX(),
-            fromEntity.getPositionY(),
-            CHAR_VIEW_SIZE,
-            EntityTypeEnum.PLAYER,
-        ) as Map<number, Player>;
-
-        for (const otherEntity of entities.values()) {
-            otherEntity.showFlyEffect(type, fromVirtualId, toVirtualId);
         }
     }
 
     tick() {
         for (const entity of this.entitiesToSpawn.dequeueIterator()) {
-            this.quadTree.insert(entity);
+            this.aoi.insert(entity);
 
-            const entities = this.quadTree.queryAround(
-                entity.getPositionX(),
-                entity.getPositionY(),
+            const entities = this.aoi.queryAround(
+                entity,
                 CHAR_VIEW_SIZE,
                 entity.getEntityType() !== EntityTypeEnum.PLAYER ? EntityTypeEnum.PLAYER : null,
             );
@@ -342,12 +279,7 @@ export default class Area {
         }
 
         for (const entity of this.entitiesToDespawn.dequeueIterator()) {
-            const entities = this.quadTree.queryAround(
-                entity.getPositionX(),
-                entity.getPositionY(),
-                CHAR_VIEW_SIZE,
-                EntityTypeEnum.PLAYER,
-            ) as Map<number, Player>;
+            const entities = this.aoi.queryAround(entity, CHAR_VIEW_SIZE, EntityTypeEnum.PLAYER) as Map<number, Player>;
 
             for (const otherEntity of entities.values()) {
                 if (entity instanceof Character) {
@@ -360,7 +292,7 @@ export default class Area {
             }
 
             this.entities.delete(entity.getVirtualId());
-            this.quadTree.remove(entity);
+            this.aoi.remove(entity);
         }
 
         for (const entity of this.entities.values()) {
