@@ -95,10 +95,10 @@ In this implementation we are using custom commands, described bellow:
     - Description: teleports you to a <area>, <player> or <location:x,y>.
     - Example: /goto <area, player, location> <areaName, targetName, <x, y>>
 - **/invoke**
-    - Description: invoke a mob with <vnum> and you can pass the quantity.
+    - Description: invoke a mob passing vnum and you can pass the quantity.
     - Example: /invoke <vnum> <quantity>
 - **/item**
-    - Description: create an item with <vnum> and you can pass the quantity.
+    - Description: create an item passing vnum and you can pass the quantity.
     - Example: /item <vnum> <quantity>
 - **/list**
     - Description: list resources <areas, players>.
@@ -132,4 +132,5 @@ This project is licensed under the GNU GENERAL PUBLIC LICENSE - see the [LICENSE
 
 - [Mt2 emulator in C# (Quantum-core-X)](https://github.com/MeikelLP/quantum-core-x)
 - [RuneScape emulator in JS (RUNE JS)](https://github.com/runejs/server)
+
 
