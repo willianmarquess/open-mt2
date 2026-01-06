@@ -54,7 +54,7 @@ export default class World {
     }
 
     generateVirtualId() {
-        return ++this.virtualId;
+        return ++this.virtualId; //TODO: add virtualId manager to reuse old virtualIds
     }
 
     getPlayers() {
