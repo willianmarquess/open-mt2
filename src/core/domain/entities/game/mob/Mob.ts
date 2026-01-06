@@ -242,6 +242,26 @@ export abstract class Mob extends Character {
         return this.aiFlag.is(MobAIFlagEnum.STONESKIN);
     }
 
+    isAggresive(): boolean {
+        return this.aiFlag.is(MobAIFlagEnum.AGGR);
+    }
+
+    isCoward(): boolean {
+        return this.aiFlag.is(MobAIFlagEnum.COWARD);
+    }
+
+    canAttackShinsu(): boolean {
+        return !this.aiFlag.is(MobAIFlagEnum.NOATTACKSHINSU);
+    }
+
+    canAttackChunjo(): boolean {
+        return !this.aiFlag.is(MobAIFlagEnum.NOATTACKCHUNJO);
+    }
+
+    canAttackJinno(): boolean {
+        return !this.aiFlag.is(MobAIFlagEnum.NOATTACKJINNO);
+    }
+
     getStoneSkinnerPoint(): number {
         return this.hpPercentToGetStoneSkin;
     }

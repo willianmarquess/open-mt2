@@ -7,6 +7,8 @@ export interface State {
     name: EntityStateEnum;
 }
 
+//TODO: add state durantion/delay based on tick per second
+
 export class StateMachine {
     private states: Map<EntityStateEnum, State> = new Map();
     private currentState: State;

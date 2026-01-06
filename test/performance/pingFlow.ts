@@ -170,9 +170,7 @@ class PingFlow {
 
     async shutdownAndPrintMetrics() {
         if (this.pingInterval) clearInterval(this.pingInterval);
-        try {
-            await this.close();
-        } catch {}
+        await this.close().catch((err) => console.log('err when try to close connection', err));
 
         const metrics = computeMetrics(this.allPings);
         console.log('\n--- Performance Metrics ---');

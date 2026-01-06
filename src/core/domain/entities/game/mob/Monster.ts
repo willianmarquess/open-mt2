@@ -7,7 +7,7 @@ import { FlyEnum } from '@/core/enum/FlyEnum';
 import { PointsEnum } from '@/core/enum/PointsEnum';
 import MathUtil from '../../../util/MathUtil';
 import Player from '../player/Player';
-import Behavior from './Behavior';
+import Behavior from './behavior/Behavior';
 import MonsterDiedEvent from './events/MonsterDiedEvent';
 import MonsterMovedEvent from './events/MonsterMovedEvent';
 import { Mob, MobParams } from './Mob';

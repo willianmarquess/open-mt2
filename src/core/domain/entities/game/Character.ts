@@ -13,6 +13,7 @@ import { PointsEnum } from '@/core/enum/PointsEnum';
 import { FlyEnum } from '@/core/enum/FlyEnum';
 import { StateMachine } from '@/core/util/StateMachine';
 import { PositionEnum } from '@/core/enum/PositionEnum';
+import { EmpireEnum } from '@/core/enum/EmpireEnum';
 
 export default abstract class Character extends GameEntity {
     protected id: number;
@@ -258,6 +259,18 @@ export default abstract class Character extends GameEntity {
 
     getEmpire(): number {
         return this.empire;
+    }
+
+    isFromShinsu(): boolean {
+        return this.empire === EmpireEnum.RED;
+    }
+
+    isFromChunjo(): boolean {
+        return this.empire === EmpireEnum.YELLOW;
+    }
+
+    isFromJinno(): boolean {
+        return this.empire === EmpireEnum.BLUE;
     }
 
     getClassId() {
