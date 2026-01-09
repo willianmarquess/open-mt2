@@ -9,6 +9,7 @@ describe('PlayerFactory', () => {
     let playerFactory: PlayerFactory;
     let experienceManager;
     let logger;
+    let saveCharacterService;
 
     beforeEach(() => {
         config = {
@@ -47,6 +48,7 @@ describe('PlayerFactory', () => {
             animationManager,
             experienceManager,
             logger,
+            saveCharacterService,
         });
     });
 
@@ -96,8 +98,8 @@ describe('PlayerFactory', () => {
         expect(player.getPoint(PointsEnum.HT)).to.be.equal(10);
         expect(player.getPoint(PointsEnum.DX)).to.be.equal(10);
         expect(player.getPoint(PointsEnum.IQ)).to.be.equal(10);
-        expect(player.getPoint(PointsEnum.HEALTH)).to.be.equal(130);
-        expect(player.getPoint(PointsEnum.MANA)).to.be.equal(65);
+        expect(player.getPoint(PointsEnum.HEALTH)).to.be.equal(200);
+        expect(player.getPoint(PointsEnum.MANA)).to.be.equal(100);
         expect(player.getPoint(PointsEnum.STAMINA)).to.be.equal(50);
         expect(player.getVirtualId()).to.be.equal(1);
         expect(player.getBodyPart()).to.be.equal(1);

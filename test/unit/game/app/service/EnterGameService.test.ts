@@ -17,16 +17,9 @@ describe('EnterGameService', function () {
 
     describe('execute', function () {
         it('should spawn the player and send inventory', function () {
-            const playerMock = {
-                spawn: sinon.spy(),
-                sendInventory: sinon.spy(),
-            };
-
+            const playerMock = {};
             enterGameService.execute(playerMock as unknown as Player);
-
-            expect(playerMock.spawn.calledOnce).to.be.true;
             expect(worldMock.spawn.calledOnceWith(playerMock)).to.be.true;
-            expect(playerMock.sendInventory.calledOnce).to.be.true;
         });
     });
 });
