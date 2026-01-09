@@ -22,8 +22,8 @@ export default abstract class GameEntity {
         this.targetPositionY = this.positionY = positionY;
     }
 
-    abstract onSpawn(): void;
-    abstract onDespawn(): void;
+    abstract onSpawn(): Promise<void> | void;
+    abstract onDespawn(): Promise<void> | void;
 
     setArea(area: Area) {
         this.area = area;
