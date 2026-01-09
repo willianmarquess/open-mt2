@@ -5,8 +5,8 @@ import Player from './entities/game/player/Player';
 import GameEntity from './entities/game/GameEntity';
 import { GameConfig } from '@/game/infra/config/GameConfig';
 import SpawnManager from './manager/SpawnManager';
-import SaveCharacterService from '@/game/domain/service/SaveCharacterService';
 import { PrivilegeManager } from './manager/PrivilegeManager';
+import SaveCharacterService from '@/game/domain/service/SaveCharacterService';
 
 const TICKS_PER_SECONDS = 15;
 const AREA_UNIT = 25600;
@@ -196,6 +196,14 @@ export default class World {
         }
 
         area.despawn(entity);
+    }
+
+    close() {
+        const promises = [];
+        for (const area of this.areas.values()) {
+            promises.push(area.savePlayers());
+        }
+        return Promise.allSettled(promises);
     }
 
     async tick() {

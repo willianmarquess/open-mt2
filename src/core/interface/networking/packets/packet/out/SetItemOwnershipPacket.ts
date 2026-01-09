@@ -19,7 +19,7 @@ export default class SetItemOwnershipPacket extends PacketOut {
             size: 5 + PLAYER_NAME_MAX_LENGTH,
         });
         this.virtualId = virtualId;
-        this.ownerName = ownerName;
+        this.ownerName = ownerName || '\0';
     }
 
     pack() {

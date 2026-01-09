@@ -1,4 +1,3 @@
-import SaveCharacterService from '@/game/domain/service/SaveCharacterService';
 import Queue from '../util/Queue';
 import GameEntity from './entities/game/GameEntity';
 import DroppedItem from './entities/game/item/DroppedItem';
@@ -11,14 +10,13 @@ import { EntityTypeEnum } from '@/core/enum/EntityTypeEnum';
 import Character from './entities/game/Character';
 import CharacterMovedEvent from './entities/game/player/events/CharacterMovedEvent';
 import MonsterMovedEvent from './entities/game/mob/events/MonsterMovedEvent';
-import MonsterDiedEvent from './entities/game/mob/events/MonsterDiedEvent';
 import DropItemEvent from './entities/game/player/events/DropItemEvent';
 import SpatialGrid from '../util/SpatialGrid';
+import SaveCharacterService from '@/game/domain/service/SaveCharacterService';
 
 const SIZE_QUEUE = 5_000;
 const CHAR_VIEW_SIZE = 10000;
 const SAVE_PLAYERS_INTERVAL = 120000;
-const REMOVE_ITEM_FROM_GROUND = 30000;
 const SPAWN_POSITION_MULTIPLIER = 100;
 
 export default class Area {
@@ -120,12 +118,6 @@ export default class Area {
             positionY,
         });
         this.spawn(droppedItem);
-        //TODO: add logic to removed onwer first, then after 3 min remove item from ground
-        setTimeout(() => {
-            if (this.entities.has(virtualId)) {
-                this.despawn(droppedItem);
-            }
-        }, REMOVE_ITEM_FROM_GROUND);
     }
 
     async savePlayers() {
@@ -140,7 +132,7 @@ export default class Area {
             }
         }
         //TODO: refact this sending to a queue and save behind scenes (other process)
-        return Promise.all(promises).catch((error) =>
+        return Promise.allSettled(promises).catch((error) =>
             this.logger.error('[AREA] Error when try to save player: ', error),
         );
     }
@@ -151,27 +143,6 @@ export default class Area {
 
     despawn(entity: GameEntity) {
         this.entitiesToDespawn.enqueue(entity);
-    }
-
-    onMonsterDied(monsterDiedEvent: MonsterDiedEvent) {
-        const { entity: monster } = monsterDiedEvent;
-        const players = this.aoi.queryAround(monster, CHAR_VIEW_SIZE, EntityTypeEnum.PLAYER) as Map<number, Player>;
-
-        for (const player of players.values()) {
-            player.otherEntityDied(monster);
-        }
-
-        this.despawn(monster);
-        const respawnTime = monster.getRespawnTimeInMs();
-
-        if (!respawnTime) return;
-
-        //TODO: verify if all monsters in group are dead.
-
-        setTimeout(() => {
-            monster.reset();
-            this.spawn(monster);
-        }, respawnTime);
     }
 
     onMonsterMove(monsterMovedEvent: MonsterMovedEvent) {
@@ -254,6 +225,7 @@ export default class Area {
 
     tick() {
         for (const entity of this.entitiesToSpawn.dequeueIterator()) {
+            entity.onSpawn();
             this.aoi.insert(entity);
 
             const entities = this.aoi.queryAround(
@@ -265,7 +237,7 @@ export default class Area {
             for (const otherEntity of entities.values()) {
                 if (otherEntity.getVirtualId() === entity.getVirtualId()) continue;
 
-                if (entity instanceof Character) {
+                if (entity instanceof GameEntity) {
                     entity.addNearbyEntity(otherEntity);
                 }
 
@@ -293,6 +265,7 @@ export default class Area {
 
             this.entities.delete(entity.getVirtualId());
             this.aoi.remove(entity);
+            entity.onDespawn();
         }
 
         for (const entity of this.entities.values()) {

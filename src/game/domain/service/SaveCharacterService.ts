@@ -12,6 +12,9 @@ export default class SaveCharacterService {
     }
 
     async execute(player: Player) {
-        return Promise.all([this.playerRepository.update(player.toDatabase()), this.itemManager.flush(player.getId())]);
+        return Promise.allSettled([
+            this.playerRepository.update(player.toDatabase()),
+            this.itemManager.flush(player.getId()),
+        ]);
     }
 }

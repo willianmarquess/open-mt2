@@ -1,4 +1,4 @@
-type EventCallback = () => void;
+type EventCallback = (count: number) => void | Promise<void>;
 
 type TimerOptions = {
     interval: number;
@@ -19,8 +19,9 @@ export default class EventTimerManager {
 
     addTimer(params: addTimerParam): void {
         const { id, options, eventFunction, onEndEventFunction } = params;
+
         if (this.timers.has(id)) {
-            throw new Error(`Timer with ID "${id}" already exists.`);
+            this.removeTimer(id);
         }
 
         const { interval, duration, repeatCount } = options;
@@ -28,16 +29,16 @@ export default class EventTimerManager {
         const endTime = duration ? startTime + duration : undefined;
         let executedCount = 0;
 
-        const timer = setInterval(() => {
+        const timer = setInterval(async () => {
             const now = Date.now();
 
-            eventFunction();
             executedCount++;
+            await eventFunction(executedCount);
 
             if ((endTime && now >= endTime) || (repeatCount && executedCount >= repeatCount)) {
                 this.removeTimer(id);
                 if (onEndEventFunction) {
-                    onEndEventFunction();
+                    await onEndEventFunction(executedCount);
                 }
             }
         }, interval);

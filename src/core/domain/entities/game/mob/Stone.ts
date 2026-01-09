@@ -12,6 +12,10 @@ export default class Stone extends Mob {
         );
     }
 
+    onDespawn(): void {}
+
+    onSpawn(): void {}
+
     applyPoison(): void {
         throw new Error('Method not implemented.');
     }

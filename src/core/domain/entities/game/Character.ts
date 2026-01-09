@@ -7,7 +7,6 @@ import AnimationUtil from '../../util/AnimationUtil';
 import Player from './player/Player';
 import GameEntity from './GameEntity';
 import { AffectBitsTypeEnum } from '@/core/enum/AffectBitsTypeEnum';
-import EventTimerManager, { addTimerParam } from '../../manager/EventTimerManager';
 import AffectBitFlag from '@/core/util/AffectBitFlag';
 import { PointsEnum } from '@/core/enum/PointsEnum';
 import { FlyEnum } from '@/core/enum/FlyEnum';
@@ -34,8 +33,6 @@ export default abstract class Character extends GameEntity {
     protected readonly targetedBy = new Map<number, Character>();
 
     protected readonly affectBitFlag = new AffectBitFlag();
-
-    protected readonly eventTimerManager = new EventTimerManager();
     protected readonly animationManager: AnimationManager;
 
     protected readonly stateMachine: StateMachine = new StateMachine();
@@ -59,14 +56,6 @@ export default abstract class Character extends GameEntity {
     abstract addPoint(point: PointsEnum, value: number): void;
     abstract setPoint(point: PointsEnum, value: number): void;
     abstract getPoint(point: PointsEnum): number;
-
-    addEventTimer(params: addTimerParam) {
-        return this.eventTimerManager.addTimer(params);
-    }
-
-    isEventTimerActive(eventName: string) {
-        return this.eventTimerManager.isTimerActive(eventName);
-    }
 
     getAffectFlags() {
         return this.affectBitFlag.getFlags();
@@ -101,14 +90,7 @@ export default abstract class Character extends GameEntity {
     }
 
     setPos(pos: PositionEnum) {
-        if (pos === PositionEnum.FIGHTING) {
-            this.pos = pos;
-            this.stateMachine.gotoState(EntityStateEnum.BATTLE);
-            return;
-        }
-
         this.pos = pos;
-        this.stateMachine.gotoState(EntityStateEnum.IDLE);
     }
 
     die() {
@@ -122,6 +104,10 @@ export default abstract class Character extends GameEntity {
 
     removeTarget(): void {
         this.setTarget(undefined);
+    }
+
+    getTarget() {
+        return this.target;
     }
 
     setTarget(target: Character) {

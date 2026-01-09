@@ -832,7 +832,7 @@ export class PlayerPoints extends Points {
 
         //TODO: should i allow to use negative values? I think so
 
-        this[pointName] += value;
+        this[pointName] = Math.max(0, this[pointName] + value);
     }
 
     calcPointsAndResetValues() {
@@ -861,11 +861,11 @@ export class PlayerPoints extends Points {
     }
 
     private addHealth(value: number) {
-        this.health = Math.min(this.health + value, this.maxHealth);
+        this.health = Math.max(0, Math.min(this.health + value, this.maxHealth));
     }
 
     private addMana(value: number) {
-        this.mana = Math.min(this.mana + value, this.maxMana);
+        this.mana = Math.max(0, Math.min(this.mana + value, this.maxMana));
     }
 
     private addGold(value: number = 1) {
@@ -951,7 +951,7 @@ export class PlayerPoints extends Points {
         if (this.level + validatedValue > this.config.MAX_LEVEL) return;
         if (validatedValue < 1) return;
 
-        //add skill point
+        //TODO: add skill point
         this.level += validatedValue;
     }
 
@@ -960,7 +960,7 @@ export class PlayerPoints extends Points {
         if (validatedValue < 1 || validatedValue > this.config.MAX_LEVEL) return;
 
         this.level = validatedValue;
-        //reset skills
+        //TODO: reset skills
 
         this.givenStatusPoints = 0;
         this.availableStatusPoints = 0;

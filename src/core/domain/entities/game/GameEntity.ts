@@ -1,6 +1,7 @@
 import { EntityTypeEnum } from '@/core/enum/EntityTypeEnum';
 import Area from '../../Area';
 import { SpatialCell } from '@/core/util/SpatialGrid';
+import EventTimerManager, { addTimerParam } from '../../manager/EventTimerManager';
 
 export default abstract class GameEntity {
     protected virtualId: number;
@@ -12,6 +13,7 @@ export default abstract class GameEntity {
     protected cell: SpatialCell;
     protected targetPositionX: number = 0;
     protected targetPositionY: number = 0;
+    protected readonly eventTimerManager = new EventTimerManager();
 
     constructor({ virtualId, entityType, positionX, positionY }) {
         this.virtualId = virtualId;
@@ -19,6 +21,9 @@ export default abstract class GameEntity {
         this.targetPositionX = this.positionX = positionX;
         this.targetPositionY = this.positionY = positionY;
     }
+
+    abstract onSpawn(): void;
+    abstract onDespawn(): void;
 
     setArea(area: Area) {
         this.area = area;
@@ -81,5 +86,13 @@ export default abstract class GameEntity {
 
     getCell() {
         return this.cell;
+    }
+
+    addEventTimer(params: addTimerParam) {
+        return this.eventTimerManager.addTimer(params);
+    }
+
+    isEventTimerActive(eventName: string) {
+        return this.eventTimerManager.isTimerActive(eventName);
     }
 }

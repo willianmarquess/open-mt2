@@ -1,14 +1,14 @@
+import World from '@/core/domain/World';
 import Server from '../../../core/interface/server/Server';
 import GameConnection from '@/game/interface/networking/GameConnection';
 import { Socket } from 'net';
-import LogoutService from '@/game/app/service/LogoutService';
 
 export default class GameServer extends Server {
-    private readonly logoutService: LogoutService;
+    private readonly world: World;
 
     constructor(container) {
         super(container);
-        this.logoutService = container.logoutService;
+        this.world = container.world;
     }
 
     async onData(connection: GameConnection, data: Buffer) {
@@ -34,15 +34,11 @@ export default class GameServer extends Server {
         return new GameConnection({
             socket,
             logger: this.logger,
-            logoutService: this.logoutService,
-            config: this.config,
         });
     }
 
-    async onClose(connection: GameConnection) {
-        super.onClose(connection);
-        if (!this.isShuttingDown) {
-            await connection.onClose();
-        }
+    async close(): Promise<void> {
+        await this.world.close();
+        return super.close();
     }
 }

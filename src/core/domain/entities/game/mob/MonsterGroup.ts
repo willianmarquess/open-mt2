@@ -1,9 +1,10 @@
 import SpawnConfig from '@/core/domain/entities/game/mob/spawn/SpawnConfig';
-import { Mob } from '@/core/domain/entities/game/mob/Mob';
+import Monster from '@/core/domain/entities/game/mob/Monster';
+import Player from '../player/Player';
 
 export default class MonsterGroup {
-    private leader: Mob;
-    private members: Array<Mob> = [];
+    private leader: Monster;
+    private members: Array<Monster> = [];
     private spawnConfig: SpawnConfig;
 
     constructor({ spawnConfig }) {
@@ -14,7 +15,7 @@ export default class MonsterGroup {
         return this.leader;
     }
 
-    setMembers(value: Array<Mob>) {
+    setMembers(value: Array<Monster>) {
         this.members = value;
     }
 
@@ -30,13 +31,40 @@ export default class MonsterGroup {
         return this.spawnConfig;
     }
 
-    setLeader(leader: Mob) {
+    setLeader(leader: Monster) {
         this.addMember(leader);
         this.leader = leader;
     }
 
-    addMember(monster: Mob) {
+    addMember(monster: Monster) {
         this.members.push(monster);
         monster.setGroup(this);
+    }
+
+    hasAnyAlive(): boolean {
+        for (const member of this.members) {
+            if (!member.isDead()) return true;
+        }
+        return false;
+    }
+
+    allDead(): boolean {
+        return !this.hasAnyAlive();
+    }
+
+    createRespawnEvent() {
+        for (const member of this.members) {
+            if (member.isDead()) {
+                member.createRespawnEvent();
+            }
+        }
+    }
+
+    triggerAll(target: Player) {
+        for (const member of this.members) {
+            if (!member.getTarget()) {
+                member.setTarget(target);
+            }
+        }
     }
 }

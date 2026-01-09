@@ -19,6 +19,8 @@ import PrivilegeCommand from './command/privilege/PrivilegeCommand';
 import PrivilegeCommandHandler from './command/privilege/PrivilegeCommandHandler';
 import QuitCommand from './command/quit/QuitCommand';
 import QuitCommandHandler from './command/quit/QuitCommandHandler';
+import SelectCommand from './command/select/SelectCommand';
+import SelectCommandHandler from './command/select/SelectCommandHandler';
 import StatCommand from './command/stat/StatCommand';
 import StatCommandHandler from './command/stat/StatCommandHandler';
 import CommandHandler from './CommandHandler';
@@ -112,6 +114,13 @@ export default () =>
             {
                 command: PrivilegeCommand,
                 createHandler: (params) => new PrivilegeCommandHandler(params),
+            },
+        ],
+        [
+            SelectCommand.getName(),
+            {
+                command: SelectCommand,
+                createHandler: () => new SelectCommandHandler(),
             },
         ],
     ]);

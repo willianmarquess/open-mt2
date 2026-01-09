@@ -1,9 +1,9 @@
 import { createServer, Server as SocketServer, Socket } from 'node:net';
-import GameConnection from '../../../game/interface/networking/GameConnection';
 import Connection from '@/core/interface/networking/Connection';
 import Logger from '@/core/infra/logger/Logger';
 import { PacketMapValue } from '@/core/interface/networking/packets/Packets';
 import { GameConfig } from '@/game/infra/config/GameConfig';
+import { ConnectionStateEnum } from '@/core/enum/ConnectionStateEnum';
 
 export default abstract class Server {
     protected server: SocketServer;
@@ -38,7 +38,13 @@ export default abstract class Server {
 
         socket.on('close', this.onClose.bind(this, connection));
         socket.on('data', this.onData.bind(this, connection));
-        socket.on('error', (err) => this.logger.error(err));
+        socket.on('error', this.onError.bind(this, connection));
+    }
+
+    async onError(connection: Connection, err: Error) {
+        this.logger.debug(`[IN][ERROR SOCKET EVENT] Closing connection: ID: ${connection.getId()}`);
+        this.logger.debug(`[IN][ERROR SOCKET EVENT] Error ${err.message || err}`);
+        connection.setState(ConnectionStateEnum.CLOSE);
     }
 
     async onClose(connection: Connection) {
@@ -57,12 +63,6 @@ export default abstract class Server {
 
     async close(): Promise<void> {
         this.isShuttingDown = true;
-
-        for (const connection of this.connections.values()) {
-            if (connection instanceof GameConnection) {
-                await connection.saveAndDestroy();
-            }
-        }
 
         if (!this.server.listening || this.isShuttingDown) return;
 

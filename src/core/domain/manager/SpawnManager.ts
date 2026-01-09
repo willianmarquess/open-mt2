@@ -115,7 +115,7 @@ export default class SpawnManager {
                     break;
                 }
 
-                monsterGroup.setLeader(leader);
+                monsterGroup.setLeader(leader as Monster);
                 entitiesToSpawn.push(leader);
 
                 for (const monsterConfig of groupConfig.mobs) {

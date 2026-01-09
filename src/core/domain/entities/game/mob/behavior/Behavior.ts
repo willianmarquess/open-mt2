@@ -9,7 +9,7 @@ import { MobImmuneFlagEnum } from '@/core/enum/MobImmuneFlagEnum';
 const POSITION_OFFSET = 600;
 const MIN_DELAY = 5000;
 const MAX_DELAY = 25000;
-const MAX_TIME_WITHOUT_ATTACK = 15_000;
+const MAX_TIME_WITHOUT_ATTACK = 10_000;
 const MAX_DISTANCE_WITHOUT_ATTACK = 5_000;
 const BASE_NEXT_TIME_TO_ATTACK = 2_000;
 const MIN_NEXT_TIME_TO_ATTACK = 1_000;
@@ -44,6 +44,8 @@ export default class Behavior {
         this.initialPositionY = this.monster.getPositionY();
         this.nextMove = this.calcDelay();
         this.enable = true;
+        this.monster.setTarget(undefined);
+        this.damageMap.clear();
     }
 
     private getDistanceFromTarget() {
@@ -171,6 +173,11 @@ export default class Behavior {
         ) {
             this.monster.setTarget(attacker);
         }
+
+        const group = this.monster.getGroup();
+        if (!group) return;
+
+        group.triggerAll(attacker);
     }
 
     getAttackers() {

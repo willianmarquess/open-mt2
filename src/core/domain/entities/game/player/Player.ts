@@ -50,8 +50,15 @@ import { AffectBitsTypeEnum } from '@/core/enum/AffectBitsTypeEnum';
 import SpecialEffectPacket from '@/core/interface/networking/packets/packet/out/SpecialEffectPacket';
 import { SpecialEffectTypeEnum } from '@/core/enum/SpecialEffectTypeEnum';
 import UpdateItemPacket from '@/core/interface/networking/packets/packet/out/UpdateItemPacket';
+import { ConnectionStateEnum } from '@/core/enum/ConnectionStateEnum';
+import { Mob } from '../mob/Mob';
+import MathUtil from '@/core/domain/util/MathUtil';
+import SaveCharacterService from '@/game/domain/service/SaveCharacterService';
 
 const REGEN_INTERVAL = 3000;
+const MAX_DISTANCE_FROM_TARGET = 3500;
+const TIMED_EVENT = 'TIMED_EVENT';
+const MAX_TIME_IDLE_IN_FIGHTING = 5_000;
 
 export default class Player extends Character {
     private readonly accountId: number;
@@ -73,6 +80,12 @@ export default class Player extends Character {
 
     //connection
     private connection: GameConnection;
+
+    //save
+    private readonly saveCharacterService: SaveCharacterService;
+
+    //pos
+    private lastTimeInBattle: number = 0;
 
     constructor(
         {
@@ -115,7 +128,7 @@ export default class Player extends Character {
             baseAttackSpeed = 0,
             baseMovementSpeed = 0,
         },
-        { animationManager, experienceManager, config, logger },
+        { animationManager, experienceManager, config, logger, saveCharacterService },
     ) {
         super(
             {
@@ -182,6 +195,8 @@ export default class Player extends Character {
         );
         this.battle = new PlayerBattle(this, logger);
 
+        this.saveCharacterService = saveCharacterService;
+
         this.stateMachine
             .addState({
                 name: EntityStateEnum.IDLE,
@@ -193,8 +208,44 @@ export default class Player extends Character {
                 onTick: this.movingStateTick.bind(this),
             })
             .gotoState(EntityStateEnum.IDLE);
+    }
 
+    onSpawn(): void {
         this.init();
+        this.lastPlayTime = performance.now();
+
+        this.showEntity({
+            virtualId: this.getVirtualId(),
+            playerClass: this.getPlayerClass(),
+            entityType: this.getEntityType(),
+            attackSpeed: this.getAttackSpeed(),
+            movementSpeed: this.getMovementSpeed(),
+            positionX: this.getPositionX(),
+            positionY: this.getPositionY(),
+            empireId: this.getEmpire(),
+            level: this.getLevel(),
+            name: this.getName(),
+            rotation: this.getRotation(),
+        });
+
+        this.chat({
+            messageType: ChatMessageTypeEnum.INFO,
+            message: '[SYSTEM] Welcome to Open Metin2 - An Open Source Project',
+        });
+
+        this.sendInventory();
+    }
+
+    async onDespawn(): Promise<void> {
+        this.eventTimerManager.clearAllTimers();
+        this.forgetMeAsTarget();
+        //TODO: logout from party
+        //TODO: logout from guild
+        //TODO: save affect
+        //TODO: call quest disconnect callback
+        //TODO: close safebox, close mall
+        //TODO: remove from pvp instance
+        await this.saveCharacterService.execute(this);
     }
 
     setConnection(connection: GameConnection) {
@@ -214,6 +265,12 @@ export default class Player extends Character {
     }
 
     attack(attackType: AttackTypeEnum, victim: Player | Monster) {
+        if (victim.isDead()) {
+            this.setPos(PositionEnum.STANDING);
+            return;
+        }
+        this.setPos(PositionEnum.FIGHTING);
+        this.lastTimeInBattle = performance.now();
         this.battle.attack(attackType, victim);
     }
 
@@ -261,8 +318,9 @@ export default class Player extends Character {
         return this.inventory.getArmorValues();
     }
 
-    init() {
+    private init() {
         this.points.calcPointsAndResetValues();
+        this.sendPoints();
 
         this.eventTimerManager.addTimer({
             id: 'REGEN_HEALTH',
@@ -277,7 +335,21 @@ export default class Player extends Character {
     }
 
     takeDamage(attacker: Character, damage: number): void {
-        console.log(attacker.getName());
+        if (attacker.isDead()) return;
+
+        this.setPos(PositionEnum.FIGHTING);
+        this.lastTimeInBattle = performance.now();
+
+        if (!this.target || (this.target.isDead() && this.target.getVirtualId() !== attacker.getVirtualId())) {
+            this.setTarget(attacker);
+        }
+
+        const attackerName =
+            attacker instanceof Mob ? `${attacker.getFolder()}:${attacker.getVirtualId()}` : attacker.getName();
+        this.chat({
+            messageType: ChatMessageTypeEnum.INFO,
+            message: `[SYSTEM] You has been attacked by ${attackerName}`,
+        });
         this.addPoint(PointsEnum.HEALTH, -damage);
 
         if (this.points.getPoint(PointsEnum.HEALTH) <= 0) {
@@ -308,11 +380,11 @@ export default class Player extends Character {
         this.sendTargetUpdated(target);
     }
 
-    sendTargetUpdated(target: Character) {
+    sendTargetUpdated(target?: Character) {
         this.connection.send(
             new TargetUpdatedPacket({
-                virtualId: target.getVirtualId(),
-                healthPercentage: target.getHealthPercentage(),
+                virtualId: target?.getVirtualId() || 0,
+                healthPercentage: target?.getHealthPercentage() || 0,
             }),
         );
     }
@@ -338,7 +410,8 @@ export default class Player extends Character {
     }
 
     regenHealth() {
-        if (this.pos === PositionEnum.DEAD) return;
+        if (this.isAffectByFlag(AffectBitsTypeEnum.STUN)) return;
+        if (this.isDead()) return;
         if (this.points.getPoint(PointsEnum.HEALTH) >= this.points.getPoint(PointsEnum.MAX_HEALTH)) return;
 
         let percent = this.stateMachine.getCurrentStateName() === EntityStateEnum.IDLE ? 5 : 1;
@@ -353,7 +426,8 @@ export default class Player extends Character {
     }
 
     regenMana() {
-        if (this.pos === PositionEnum.DEAD) return;
+        if (this.isAffectByFlag(AffectBitsTypeEnum.STUN)) return;
+        if (this.isDead()) return;
         if (this.points.getPoint(PointsEnum.MANA) >= this.points.getPoint(PointsEnum.MAX_MANA)) return;
 
         let percent = this.stateMachine.getCurrentStateName() === EntityStateEnum.IDLE ? 5 : 1;
@@ -437,29 +511,6 @@ export default class Player extends Character {
         );
     }
 
-    spawn() {
-        this.lastPlayTime = performance.now();
-
-        this.showEntity({
-            virtualId: this.getVirtualId(),
-            playerClass: this.getPlayerClass(),
-            entityType: this.getEntityType(),
-            attackSpeed: this.getAttackSpeed(),
-            movementSpeed: this.getMovementSpeed(),
-            positionX: this.getPositionX(),
-            positionY: this.getPositionY(),
-            empireId: this.getEmpire(),
-            level: this.getLevel(),
-            name: this.getName(),
-            rotation: this.getRotation(),
-        });
-
-        this.chat({
-            messageType: ChatMessageTypeEnum.INFO,
-            message: '[SYSTEM] Welcome to Open Metin2 - An Open Source Project',
-        });
-    }
-
     private showOtherEntity({
         virtualId,
         playerClass,
@@ -519,13 +570,108 @@ export default class Player extends Character {
         );
     }
 
-    logout() {
+    idleStateTick() {
+        super.idleStateTick();
+        if (!this.target) return;
+        if (
+            this.target.isDead() ||
+            MathUtil.calcDistance(
+                this.positionX,
+                this.positionY,
+                this.target.getPositionX(),
+                this.target.getPositionY(),
+            ) >= MAX_DISTANCE_FROM_TARGET
+        ) {
+            this.setTarget(undefined);
+        }
+    }
+
+    forgetMeAsTarget() {
+        for (const entity of this.targetedBy.values()) {
+            if (entity.getTarget().getVirtualId() === this.getVirtualId()) {
+                entity.setTarget(undefined);
+            }
+        }
+    }
+
+    private createTimedEvent(command: 'QUIT' | 'SELECT' | 'LOGOUT', prefix: string) {
+        if (this.eventTimerManager.isTimerActive(TIMED_EVENT)) {
+            this.eventTimerManager.removeTimer(TIMED_EVENT);
+            this.chat({
+                message: `[SYSTEM] ${prefix} canceled`,
+                messageType: ChatMessageTypeEnum.INFO,
+            });
+            return;
+        }
+
         this.chat({
-            message: '[SYSTEM] Leaving game',
+            message: `[SYSTEM] ${prefix} in few seconds`,
             messageType: ChatMessageTypeEnum.INFO,
         });
-        setTimeout(() => this.connection.close(), 1_000);
-        this.targetedBy.forEach((entity) => entity.removeTarget());
+
+        const SECONDS_TO_LEAVE = 10;
+
+        this.eventTimerManager.addTimer({
+            eventFunction: (count: number) => {
+                if (
+                    !this.isPosOneOf([
+                        PositionEnum.STANDING,
+                        PositionEnum.MOUNTING,
+                        PositionEnum.SLEEPING,
+                        PositionEnum.SITTING,
+                        PositionEnum.RESTING,
+                    ])
+                ) {
+                    this.eventTimerManager.removeTimer(TIMED_EVENT);
+                    this.chat({
+                        message: `[SYSTEM] ${prefix} canceled`,
+                        messageType: ChatMessageTypeEnum.INFO,
+                    });
+                    return;
+                }
+                const countDown = SECONDS_TO_LEAVE - count;
+                if (countDown <= 0) {
+                    this.area.despawn(this);
+                    switch (command) {
+                        case 'QUIT':
+                            this.chat({
+                                message: 'quit',
+                                messageType: ChatMessageTypeEnum.COMMAND,
+                            });
+                            break;
+                        case 'LOGOUT':
+                            this.connection.setState(ConnectionStateEnum.CLOSE);
+                            break;
+                        case 'SELECT':
+                            this.connection.setState(ConnectionStateEnum.SELECT);
+                            break;
+                    }
+                    return;
+                }
+
+                this.chat({
+                    message: `[SYSTEM] ${prefix} in ${countDown} seconds`,
+                    messageType: ChatMessageTypeEnum.INFO,
+                });
+            },
+            id: TIMED_EVENT,
+            options: {
+                interval: 1_000,
+                repeatCount: SECONDS_TO_LEAVE,
+            },
+        });
+    }
+
+    quit() {
+        return this.createTimedEvent('QUIT', 'Leaving');
+    }
+
+    logout() {
+        return this.createTimedEvent('LOGOUT', 'Logout');
+    }
+
+    backToSelect() {
+        return this.createTimedEvent('SELECT', 'Back to Select');
     }
 
     chat({ message, messageType }: { message: string; messageType: ChatMessageTypeEnum }) {
@@ -845,6 +991,13 @@ export default class Player extends Character {
             }),
         );
 
+        this.sendSetItemOwnership({
+            ownerName,
+            virtualId,
+        });
+    }
+
+    sendSetItemOwnership({ ownerName, virtualId }: { ownerName: string; virtualId: number }) {
         this.connection.send(
             new SetItemOwnershipPacket({
                 ownerName,
@@ -866,7 +1019,7 @@ export default class Player extends Character {
     }
 
     getBodyId() {
-        return this.inventory.getItemFromSlot(ItemEquipmentSlotEnum.BODY).getId();
+        return this.inventory.getItemFromSlot(ItemEquipmentSlotEnum.BODY)?.getId();
     }
 
     getWeapon() {
@@ -874,7 +1027,7 @@ export default class Player extends Character {
     }
 
     getWeaponId() {
-        return this.inventory.getItemFromSlot(ItemEquipmentSlotEnum.WEAPON).getId();
+        return this.inventory.getItemFromSlot(ItemEquipmentSlotEnum.WEAPON)?.getId();
     }
 
     getHair() {
@@ -882,7 +1035,7 @@ export default class Player extends Character {
     }
 
     getHairId() {
-        return this.inventory.getItemFromSlot(ItemEquipmentSlotEnum.COSTUME_HAIR).getId();
+        return this.inventory.getItemFromSlot(ItemEquipmentSlotEnum.COSTUME_HAIR)?.getId();
     }
 
     /* 
@@ -960,6 +1113,24 @@ export default class Player extends Character {
         );
     }
 
+    getPos() {
+        if (
+            this.pos === PositionEnum.FIGHTING &&
+            performance.now() - this.lastTimeInBattle >= MAX_TIME_IDLE_IN_FIGHTING
+        ) {
+            this.pos = PositionEnum.STANDING;
+        }
+        return this.pos;
+    }
+
+    isPos(pos: PositionEnum): boolean {
+        return this.getPos() === pos;
+    }
+
+    isPosOneOf(poses: Array<PositionEnum>): boolean {
+        return poses.includes(this.getPos());
+    }
+
     static create(
         {
             id,
@@ -1001,7 +1172,7 @@ export default class Player extends Character {
             baseAttackSpeed,
             baseMovementSpeed,
         },
-        { animationManager, config, experienceManager, logger },
+        { animationManager, config, experienceManager, logger, saveCharacterService },
     ) {
         return new Player(
             {
@@ -1044,7 +1215,7 @@ export default class Player extends Character {
                 baseAttackSpeed,
                 baseMovementSpeed,
             },
-            { animationManager, config, experienceManager, logger },
+            { animationManager, config, experienceManager, logger, saveCharacterService },
         );
     }
 

@@ -12,6 +12,8 @@ import { MobEnchantEnum } from '@/core/enum/MobEnchantEnum';
 import { MobResistEnum } from '@/core/enum/MobResistEnum';
 import { MobPoints } from './delegate/MobPoints';
 import { PointsEnum } from '@/core/enum/PointsEnum';
+import { PositionEnum } from '@/core/enum/PositionEnum';
+import { EntityStateEnum } from '@/core/enum/EntityStateEnum';
 
 enum MobSizeEnum {
     RESERVED = 0,
@@ -389,5 +391,14 @@ export abstract class Mob extends Character {
 
     setGroup(value: MonsterGroup) {
         this.group = value;
+    }
+
+    setPos(pos: PositionEnum) {
+        super.setPos(pos);
+        if (pos === PositionEnum.FIGHTING) {
+            this.stateMachine.gotoState(EntityStateEnum.BATTLE);
+            return;
+        }
+        this.stateMachine.gotoState(EntityStateEnum.IDLE);
     }
 }

@@ -31,6 +31,9 @@ export default abstract class Connection {
     setState(value: ConnectionStateEnum) {
         this.state = value;
         this.updateState();
+        if (this.state === ConnectionStateEnum.CLOSE) {
+            this.close();
+        }
     }
 
     getId() {

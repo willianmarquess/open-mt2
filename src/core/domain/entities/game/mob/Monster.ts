@@ -8,7 +8,6 @@ import { PointsEnum } from '@/core/enum/PointsEnum';
 import MathUtil from '../../../util/MathUtil';
 import Player from '../player/Player';
 import Behavior from './behavior/Behavior';
-import MonsterDiedEvent from './events/MonsterDiedEvent';
 import MonsterMovedEvent from './events/MonsterMovedEvent';
 import { Mob, MobParams } from './Mob';
 import { EntityStateEnum } from '@/core/enum/EntityStateEnum';
@@ -22,7 +21,6 @@ const MAX_DISTANCE_TO_GET_EXP = 5_000;
 export default class Monster extends Mob {
     private readonly behavior: Behavior;
     private behaviorInitialized: boolean = false;
-    // private health: number = 0;
 
     private readonly dropManager: DropManager;
     private readonly experienceManager: ExperienceManager;
@@ -59,7 +57,6 @@ export default class Monster extends Mob {
                 onTick: this.battleStateTick.bind(this),
             })
             .gotoState(EntityStateEnum.IDLE);
-        this.init();
     }
 
     stun() {
@@ -98,18 +95,57 @@ export default class Monster extends Mob {
         super.idleStateStart();
     }
 
-    die() {
-        super.die();
-        this.area.onMonsterDied(
-            new MonsterDiedEvent({
-                entity: this,
-            }),
-        );
+    createRespawnEvent() {
+        const event = 'RESPAWN';
+
+        if (this.eventTimerManager.isTimerActive(event)) return;
+
+        const respawnTime = this.getRespawnTimeInMs();
+
+        this.eventTimerManager.addTimer({
+            id: event,
+            eventFunction: () => {
+                this.area.spawn(this);
+            },
+            options: {
+                repeatCount: 1,
+                interval: respawnTime,
+                duration: respawnTime,
+            },
+        });
     }
 
-    private init() {
-        this.points.calcPoints();
-        this.initEvents();
+    die() {
+        super.die();
+
+        for (const entity of this.getNearbyEntities().values()) {
+            if (entity instanceof Player) {
+                entity.otherEntityDied(this);
+            }
+        }
+
+        this.addEventTimer({
+            eventFunction: () => {
+                this.area.despawn(this);
+            },
+            id: 'DESPAWN',
+            options: {
+                repeatCount: 1,
+                duration: 2_000,
+                interval: 2_000,
+            },
+        });
+    }
+
+    onSpawn(): void {
+        this.reset();
+    }
+
+    onDespawn(): void {
+        this.eventTimerManager.clearAllTimers();
+        if (this.group.allDead()) {
+            this.group.createRespawnEvent();
+        }
     }
 
     private initEvents() {
@@ -161,6 +197,8 @@ export default class Monster extends Mob {
     }
 
     takeDamage(attacker: Player, damage: number) {
+        if (attacker.isDead()) return;
+        if (this.isDead()) return;
         this.points.addPoint(PointsEnum.HEALTH, -damage);
         this.behavior.onDamage(attacker, damage);
 

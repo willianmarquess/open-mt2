@@ -12,6 +12,10 @@ export default class NPC extends Mob {
         );
     }
 
+    onDespawn(): void {}
+
+    onSpawn(): void {}
+
     applyPoison(): void {
         throw new Error('Method not implemented.');
     }
