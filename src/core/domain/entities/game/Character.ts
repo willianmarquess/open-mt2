@@ -93,7 +93,8 @@ export default abstract class Character extends GameEntity {
         this.pos = pos;
     }
 
-    die() {
+    // eslint-disable-next-line
+    die(_killer?: Character) {
         this.pos = PositionEnum.DEAD;
         this.eventTimerManager.clearAllTimers();
     }

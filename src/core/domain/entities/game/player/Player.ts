@@ -227,6 +227,7 @@ export default class Player extends Character {
             name: this.getName(),
             rotation: this.getRotation(),
         });
+        this.applyInvisibleAffect(3);
 
         this.chat({
             messageType: ChatMessageTypeEnum.INFO,
@@ -234,6 +235,33 @@ export default class Player extends Character {
         });
 
         this.sendInventory();
+    }
+
+    private applyInvisibleAffect(durationInSecs: number) {
+        if (this.isAffectByFlag(AffectBitsTypeEnum.REVIVE_INVISIBLE)) return;
+        this.setAffectFlag(AffectBitsTypeEnum.REVIVE_INVISIBLE);
+        this.updateView();
+        //TODO: add removeaffect, create and demore affect are used to show the icon on the client
+        // this.sendAffect({
+        //     type: AffectTypeEnum.EXP_BONUS,
+        //     apply: PointsEnum.NONE,
+        //     duration: 500,
+        //     flag: AffectBitsTypeEnum.NONE,
+        //     manaCost: 0,
+        //     value: 200
+        // });
+        this.eventTimerManager.addTimer({
+            id: 'INVISIBLE',
+            eventFunction: () => {
+                this.removeAffectFlag(AffectBitsTypeEnum.REVIVE_INVISIBLE);
+                this.updateView();
+            },
+            options: {
+                duration: durationInSecs * 1_000,
+                interval: durationInSecs * 1_000,
+                repeatCount: 1,
+            },
+        });
     }
 
     async onDespawn(): Promise<void> {
@@ -246,6 +274,63 @@ export default class Player extends Character {
         //TODO: close safebox, close mall
         //TODO: remove from pvp instance
         await this.saveCharacterService.execute(this);
+    }
+
+    die(killer: Character) {
+        super.die(killer);
+
+        //TODO: death penalty
+        this.eventTimerManager.removeTimer('STUN');
+        this.eventTimerManager.removeTimer('POISON');
+        this.eventTimerManager.removeTimer('FIRE');
+        this.eventTimerManager.removeTimer('SLOW');
+
+        //TODO: reset killer mode
+        this.connection.setState(ConnectionStateEnum.DEAD);
+
+        this.sendIamDead();
+        for (const entity of this.nearbyEntities.values()) {
+            if (entity instanceof Player) {
+                entity.otherEntityDied(this);
+            }
+        }
+
+        for (const entity of this.targetedBy.values()) {
+            if (entity.getTarget().getVirtualId() === this.getVirtualId()) {
+                entity.setTarget(undefined);
+            }
+        }
+
+        const killerName = killer instanceof Mob ? `${killer.getFolder()}:${killer.getVirtualId()}` : killer.getName();
+        this.chat({
+            messageType: ChatMessageTypeEnum.INFO,
+            message: `[SYSTEM] You were killed by ${killerName}`,
+        });
+
+        //TODO: resend the affects
+        //TODO: close shop/safebox
+    }
+
+    sendIamDead() {
+        this.connection.send(new CharacterDiedPacket({ virtualId: this.getVirtualId() }));
+    }
+
+    restart(type: 'TOWN' | 'HERE') {
+        this.chat({
+            messageType: ChatMessageTypeEnum.COMMAND,
+            message: 'CloseRestartWindow',
+        });
+        this.connection.setState(ConnectionStateEnum.GAME);
+
+        if (type === 'TOWN') {
+            const { x, y } = this.area.getStartPositionByEmpire(this.empire);
+            if (x && y) {
+                this.setPositionX(x);
+                this.setPositionY(y);
+            }
+        }
+
+        this.area.spawn(this);
     }
 
     setConnection(connection: GameConnection) {
@@ -353,8 +438,8 @@ export default class Player extends Character {
         this.addPoint(PointsEnum.HEALTH, -damage);
 
         if (this.points.getPoint(PointsEnum.HEALTH) <= 0) {
-            this.points.calcPointsAndResetValues();
-            //TODO: player death
+            // this.points.calcPointsAndResetValues();
+            this.die(attacker);
             return;
         }
     }

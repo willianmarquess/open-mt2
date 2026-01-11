@@ -60,7 +60,8 @@ export default class Behavior {
         this.monster.setTarget(undefined);
         this.lastAttackTime = undefined;
         this.damageMap.clear();
-        this.monster.goto(this.lastAttackPositionX, this.lastAttackPositionY);
+        this.monster.goto(this.initialPositionX, this.initialPositionY);
+        this.monster.setState(EntityStateEnum.IDLE);
     }
 
     battleState() {

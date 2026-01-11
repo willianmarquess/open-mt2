@@ -19,6 +19,10 @@ import PrivilegeCommand from './command/privilege/PrivilegeCommand';
 import PrivilegeCommandHandler from './command/privilege/PrivilegeCommandHandler';
 import QuitCommand from './command/quit/QuitCommand';
 import QuitCommandHandler from './command/quit/QuitCommandHandler';
+import RestartHereCommand from './command/restartHere/RestartHereCommand';
+import RestartHereCommandHandler from './command/restartHere/RestartHereCommandHandler';
+import RestartTownCommand from './command/restartTown/RestartTownCommand';
+import RestartTownCommandHandler from './command/restartTown/RestartTownCommandHandler';
 import SelectCommand from './command/select/SelectCommand';
 import SelectCommandHandler from './command/select/SelectCommandHandler';
 import StatCommand from './command/stat/StatCommand';
@@ -121,6 +125,20 @@ export default () =>
             {
                 command: SelectCommand,
                 createHandler: () => new SelectCommandHandler(),
+            },
+        ],
+        [
+            RestartHereCommand.getName(),
+            {
+                command: RestartHereCommand,
+                createHandler: () => new RestartHereCommandHandler(),
+            },
+        ],
+        [
+            RestartTownCommand.getName(),
+            {
+                command: RestartTownCommand,
+                createHandler: () => new RestartTownCommandHandler(),
             },
         ],
     ]);

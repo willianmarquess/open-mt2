@@ -13,6 +13,8 @@ import MonsterMovedEvent from './entities/game/mob/events/MonsterMovedEvent';
 import DropItemEvent from './entities/game/player/events/DropItemEvent';
 import SpatialGrid from '../util/SpatialGrid';
 import SaveCharacterService from '@/game/domain/service/SaveCharacterService';
+import { EmpireEnum } from '../enum/EmpireEnum';
+import EmpireUtil from './util/EmpireUtil';
 
 const SIZE_QUEUE = 5_000;
 const CHAR_VIEW_SIZE = 10000;
@@ -100,6 +102,15 @@ export default class Area {
     }
     getGoto() {
         return this.goto;
+    }
+
+    getStartPositionByEmpire(empire: EmpireEnum) {
+        const empireName = EmpireUtil.getEmpireName(empire);
+        const [x, y] = this.goto[empireName] || this.goto.default || [];
+        return {
+            x,
+            y,
+        };
     }
 
     getEntity(virtualId: number) {
