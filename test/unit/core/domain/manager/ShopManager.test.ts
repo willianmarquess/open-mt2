@@ -7,19 +7,18 @@ import ItemManager from '@/core/domain/manager/ItemManager';
 import { makeGameConfig } from '@/game/infra/config/GameConfig';
 
 describe('ShopManager', () => {
-    let loggerStub;
-    let itemManagerStub;
+    let loggerStub: sinon.SinonStubbedInstance<WinstonLoggerAdapter>;
+    let itemManagerStub: sinon.SinonStubbedInstance<ItemManager>;
     let manager: ShopManager;
 
     beforeEach(() => {
         loggerStub = sinon.createStubInstance(WinstonLoggerAdapter);
-        itemManagerStub = {
-            getItem: sinon.stub().returns({ getShopPrice: () => 100 }),
-        };
+        itemManagerStub = sinon.createStubInstance(ItemManager);
+        itemManagerStub.getItem.returns({ getShopPrice: () => 100 } as any);
         manager = new ShopManager({
             config: makeGameConfig(),
             logger: loggerStub,
-            itemManager: itemManagerStub as unknown as ItemManager,
+            itemManager: itemManagerStub,
         });
     });
 
@@ -33,9 +32,7 @@ describe('ShopManager', () => {
 
     it('should load shops from npc_shop.json', () => {
         // Mock itemManager.getItem to return valid items
-        itemManagerStub.getItem = sinon.stub().returns({
-            getShopPrice: () => 100,
-        });
+        itemManagerStub.getItem.returns({ getShopPrice: () => 100 } as any);
 
         manager.load();
 
@@ -46,9 +43,7 @@ describe('ShopManager', () => {
     });
 
     it('should return correct shop for valid NPC vnum', () => {
-        itemManagerStub.getItem = sinon.stub().returns({
-            getShopPrice: () => 100,
-        });
+        itemManagerStub.getItem.returns({ getShopPrice: () => 100 } as any);
 
         manager.load();
 
@@ -58,9 +53,7 @@ describe('ShopManager', () => {
     });
 
     it('should return undefined for invalid NPC vnum', () => {
-        itemManagerStub.getItem = sinon.stub().returns({
-            getShopPrice: () => 100,
-        });
+        itemManagerStub.getItem.returns({ getShopPrice: () => 100 } as any);
 
         manager.load();
 
@@ -69,9 +62,7 @@ describe('ShopManager', () => {
     });
 
     it('should indicate shop exists for loaded NPCs', () => {
-        itemManagerStub.getItem = sinon.stub().returns({
-            getShopPrice: () => 100,
-        });
+        itemManagerStub.getItem.returns({ getShopPrice: () => 100 } as any);
 
         manager.load();
 
@@ -80,9 +71,7 @@ describe('ShopManager', () => {
     });
 
     it('should load all expected shops', () => {
-        itemManagerStub.getItem = sinon.stub().returns({
-            getShopPrice: () => 100,
-        });
+        itemManagerStub.getItem.returns({ getShopPrice: () => 100 } as any);
 
         manager.load();
 
@@ -93,9 +82,7 @@ describe('ShopManager', () => {
     });
 
     it('should load shop items correctly', () => {
-        itemManagerStub.getItem = sinon.stub().returns({
-            getShopPrice: () => 500,
-        });
+        itemManagerStub.getItem.returns({ getShopPrice: () => 500 } as any);
 
         manager.load();
 
