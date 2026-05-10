@@ -98,7 +98,6 @@ export default class Player extends Character {
     private readonly quests: Map<number, AbstractQuest> = new Map();
     private currentQuest: AbstractQuest;
 
-    //shop
     private currentShop: Shop | null = null;
 
     constructor(
