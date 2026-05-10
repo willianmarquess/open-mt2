@@ -32,7 +32,9 @@ describe('ShopService', () => {
             getItem: sinon.stub(),
             getInventory: sinon.stub(),
             sendItemRemoved: sinon.stub(),
-            send: sinon.stub(),
+            sendCurrentShop: sinon.stub(),
+            sendShopClose: sinon.stub(),
+            sendShopResult: sinon.stub(),
         };
 
         npcStub = {
@@ -54,7 +56,7 @@ describe('ShopService', () => {
             await service.openShop(playerStub, npcStub);
 
             expect(playerStub.setCurrentShop.calledOnceWith(shop)).to.be.true;
-            expect(playerStub.send.calledOnce).to.be.true;
+            expect(playerStub.sendCurrentShop.calledOnce).to.be.true;
         });
 
         it('should not open shop if NPC has no shop', async () => {
@@ -63,7 +65,7 @@ describe('ShopService', () => {
             await service.openShop(playerStub, npcStub);
 
             expect(playerStub.setCurrentShop.called).to.be.false;
-            expect(playerStub.send.called).to.be.false;
+            expect(playerStub.sendCurrentShop.called).to.be.false;
         });
     });
 
@@ -75,7 +77,7 @@ describe('ShopService', () => {
             await service.closeShop(playerStub);
 
             expect(playerStub.setCurrentShop.calledOnceWith(null)).to.be.true;
-            expect(playerStub.send.calledOnce).to.be.true;
+            expect(playerStub.sendShopClose.calledOnce).to.be.true;
         });
 
         it('should do nothing if player has no open shop', async () => {
@@ -84,7 +86,7 @@ describe('ShopService', () => {
             await service.closeShop(playerStub);
 
             expect(playerStub.setCurrentShop.called).to.be.false;
-            expect(playerStub.send.called).to.be.false;
+            expect(playerStub.sendShopClose.called).to.be.false;
         });
     });
 
@@ -95,7 +97,7 @@ describe('ShopService', () => {
             await service.buy(playerStub, 0);
 
             expect(playerStub.addPoint.called).to.be.false;
-            expect(playerStub.send.called).to.be.false;
+            expect(playerStub.sendShopResult.called).to.be.false;
         });
 
         it('should send INVALID_POS if slot is empty', async () => {
@@ -104,8 +106,7 @@ describe('ShopService', () => {
 
             await service.buy(playerStub, 5);
 
-            const sentPacket = playerStub.send.firstCall.args[0];
-            expect(sentPacket.pack().readUInt8(3)).to.equal(ShopSubHeaderGC.INVALID_POS);
+            expect(playerStub.sendShopResult.calledOnceWith({ result: ShopSubHeaderGC.INVALID_POS })).to.be.true;
         });
 
         it('should send NOT_ENOUGH_MONEY if player cannot afford item', async () => {
@@ -116,8 +117,7 @@ describe('ShopService', () => {
 
             await service.buy(playerStub, 0);
 
-            const sentPacket = playerStub.send.firstCall.args[0];
-            expect(sentPacket.pack().readUInt8(3)).to.equal(ShopSubHeaderGC.NOT_ENOUGH_MONEY);
+            expect(playerStub.sendShopResult.calledOnceWith({ result: ShopSubHeaderGC.NOT_ENOUGH_MONEY })).to.be.true;
             expect(playerStub.addPoint.called).to.be.false;
         });
 
@@ -130,8 +130,7 @@ describe('ShopService', () => {
 
             await service.buy(playerStub, 0);
 
-            const sentPacket = playerStub.send.firstCall.args[0];
-            expect(sentPacket.pack().readUInt8(3)).to.equal(ShopSubHeaderGC.SOLD_OUT);
+            expect(playerStub.sendShopResult.calledOnceWith({ result: ShopSubHeaderGC.SOLD_OUT })).to.be.true;
         });
 
         it('should send INVENTORY_FULL if player cannot add item', async () => {
@@ -145,8 +144,7 @@ describe('ShopService', () => {
 
             await service.buy(playerStub, 0);
 
-            const sentPacket = playerStub.send.firstCall.args[0];
-            expect(sentPacket.pack().readUInt8(3)).to.equal(ShopSubHeaderGC.INVENTORY_FULL);
+            expect(playerStub.sendShopResult.calledOnceWith({ result: ShopSubHeaderGC.INVENTORY_FULL })).to.be.true;
             expect(playerStub.addPoint.called).to.be.false;
         });
 
@@ -163,8 +161,7 @@ describe('ShopService', () => {
 
             expect(playerStub.addPoint.calledOnceWith(PointsEnum.GOLD, -200)).to.be.true;
             expect(itemManagerStub.save.calledOnceWith(mockItem)).to.be.true;
-            const sentPacket = playerStub.send.firstCall.args[0];
-            expect(sentPacket.pack().readUInt8(3)).to.equal(ShopSubHeaderGC.OK);
+            expect(playerStub.sendShopResult.calledOnceWith({ result: ShopSubHeaderGC.OK })).to.be.true;
         });
     });
 
@@ -184,8 +181,7 @@ describe('ShopService', () => {
 
             await service.sell(playerStub, 1, 1);
 
-            const sentPacket = playerStub.send.firstCall.args[0];
-            expect(sentPacket.pack().readUInt8(3)).to.equal(ShopSubHeaderGC.INVALID_POS);
+            expect(playerStub.sendShopResult.calledOnceWith({ result: ShopSubHeaderGC.INVALID_POS })).to.be.true;
         });
 
         it('should send INVALID_POS if item has ANTI_SELL flag', async () => {
@@ -201,8 +197,7 @@ describe('ShopService', () => {
 
             await service.sell(playerStub, 1, 1);
 
-            const sentPacket = playerStub.send.firstCall.args[0];
-            expect(sentPacket.pack().readUInt8(3)).to.equal(ShopSubHeaderGC.INVALID_POS);
+            expect(playerStub.sendShopResult.calledOnceWith({ result: ShopSubHeaderGC.INVALID_POS })).to.be.true;
             expect(playerStub.addPoint.called).to.be.false;
         });
 
@@ -243,8 +238,7 @@ describe('ShopService', () => {
             expect(inventoryStub.removeItem.calledOnceWith(2, 1)).to.be.true;
             expect(playerStub.sendItemRemoved.calledOnce).to.be.true;
             expect(itemManagerStub.delete.calledOnceWith(mockItem)).to.be.true;
-            const sentPacket = playerStub.send.firstCall.args[0];
-            expect(sentPacket.pack().readUInt8(3)).to.equal(ShopSubHeaderGC.OK);
+            expect(playerStub.sendShopResult.calledOnceWith({ result: ShopSubHeaderGC.OK })).to.be.true;
         });
 
         it('should cap sell count to item count', async () => {
