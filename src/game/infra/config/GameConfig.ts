@@ -228,7 +228,7 @@ const gameConfig: GameConfig = {
     REAL_SERVER_ADDRESS: process.env.REAL_SERVER_ADDRESS,
     DB_DATABASE_NAME: process.env.GAME_DB_DATABASE_NAME,
     atlas,
-    npcShops: npcShops as Array<NpcShopsProto>,
+    npcShops,
     mobs,
     groups,
     groupsCollection,
