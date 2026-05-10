@@ -30,7 +30,7 @@ export default class ShopService {
     async openShop(player: Player, npc: NPC) {
         const shop = this.shopManager.getShop(npc.getId());
         if (!shop) {
-            this.logger.info(`[ShopService] NPC vnum ${npc.getId()} has no shop`);
+            this.logger.debug(`[ShopService] NPC vnum ${npc.getId()} has no shop`);
             return;
         }
 
@@ -58,7 +58,7 @@ export default class ShopService {
     async buy(player: Player, pos: number) {
         const shop = player.getCurrentShop();
         if (!shop) {
-            this.logger.info(`[ShopService] buy: player ${player.getName()} has no open shop`);
+            this.logger.debug(`[ShopService] buy: player ${player.getName()} has no open shop`);
             return;
         }
 
@@ -94,14 +94,14 @@ export default class ShopService {
         player.sendShopResult({ result: ShopSubHeaderGC.OK });
 
         this.logger.info(
-            `[ShopService] Player ${player.getName()} bought vnum ${shopItem.vnum} ×${shopItem.count} for ${price}g`,
+            `[ShopService] Player ${player.getName()} bought vnum ${shopItem.vnum} x${shopItem.count} for ${price}g`,
         );
     }
 
     async sell(player: Player, pos: number, count: number) {
         const shop = player.getCurrentShop();
         if (!shop) {
-            this.logger.info(`[ShopService] sell: player ${player.getName()} has no open shop`);
+            this.logger.debug(`[ShopService] sell: player ${player.getName()} has no open shop`);
             return;
         }
 
@@ -129,6 +129,6 @@ export default class ShopService {
 
         player.sendShopResult({ result: ShopSubHeaderGC.OK });
 
-        this.logger.info(`[ShopService] Player ${player.getName()} sold pos=${pos} ×${sellCount} for ${sellPrice}g`);
+        this.logger.info(`[ShopService] Player ${player.getName()} sold pos=${pos} x${sellCount} for ${sellPrice}g`);
     }
 }
