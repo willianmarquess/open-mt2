@@ -45,17 +45,11 @@ export default class ShopStartPacket extends PacketOut {
         // Write all 40 item slots; empty slots are zeros
         for (let i = 0; i < SHOP_MAX_ITEMS; i++) {
             const shopItem = this.items?.[i];
-            if (shopItem) {
-                this.bufferWriter.writeUint32LE(shopItem.vnum);
-                this.bufferWriter.writeUint32LE(shopItem.price);
-                this.bufferWriter.writeUint8(shopItem.count);
-                this.bufferWriter.writeUint8(i); // display_pos = slot index
-            } else {
-                this.bufferWriter.writeUint32LE(0); // vnum
-                this.bufferWriter.writeUint32LE(0); // price
-                this.bufferWriter.writeUint8(0); // count
-                this.bufferWriter.writeUint8(i); // display_pos (empty but still indexed)
-            }
+
+            this.bufferWriter.writeUint32LE(shopItem?.vnum || 0);
+            this.bufferWriter.writeUint32LE(shopItem?.price || 0);
+            this.bufferWriter.writeUint8(shopItem?.count || 0);
+            this.bufferWriter.writeUint8(i || 0); // display_pos = slot index
 
             // Write 3 sockets (all zero for shop items)
             for (let s = 0; s < SOCKETS_COUNT; s++) {
