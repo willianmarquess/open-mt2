@@ -12,7 +12,7 @@ describe('ShopEndPacket', () => {
     });
 
     it('should initialize with correct header', () => {
-        expect(packet.getHeader()).to.equal(PacketHeaderEnum.GC_SHOP);
+        expect(packet.getHeader()).to.equal(PacketHeaderEnum.SHOP_OUT);
         expect(packet.getName()).to.equal('ShopEndPacket');
     });
 
@@ -36,7 +36,7 @@ describe('ShopEndPacket', () => {
 describe('ShopResultPacket', () => {
     it('should initialize with correct header', () => {
         const packet = new ShopResultPacket({ result: ShopSubHeaderGC.OK });
-        expect(packet.getHeader()).to.equal(PacketHeaderEnum.GC_SHOP);
+        expect(packet.getHeader()).to.equal(PacketHeaderEnum.SHOP_OUT);
     });
 
     it('should pack OK result', () => {

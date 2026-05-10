@@ -200,7 +200,7 @@ const packets: Map<number, PacketMapValue<any>> = new Map<number, PacketMapValue
         },
     ],
     [
-        PacketHeaderEnum.SHOP,
+        PacketHeaderEnum.SHOP_IN,
         {
             createPacket: () => new ShopPacket(),
             createHandler: (params) => new ShopPacketHandler(params),

@@ -31,7 +31,7 @@ export default class ShopStartPacket extends PacketOut {
     private readonly items?: ShopItem[];
 
     constructor({ ownerVid, items }: ShopStartPacketParams) {
-        super({ header: PacketHeaderEnum.GC_SHOP, size: PACKET_SIZE, name: 'ShopStartPacket' });
+        super({ header: PacketHeaderEnum.SHOP_OUT, size: PACKET_SIZE, name: 'ShopStartPacket' });
         this.ownerVid = ownerVid;
         this.items = items;
     }

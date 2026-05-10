@@ -12,7 +12,7 @@ export default class ShopPacket extends PacketIn {
 
     constructor() {
         super({
-            header: PacketHeaderEnum.SHOP,
+            header: PacketHeaderEnum.SHOP_IN,
             name: 'ShopPacket',
             size: 4,
             validator: ShopPacketValidator,

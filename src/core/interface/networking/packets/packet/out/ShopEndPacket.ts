@@ -7,7 +7,7 @@ const PACKET_SIZE = 4;
 
 export default class ShopEndPacket extends PacketOut {
     constructor() {
-        super({ header: PacketHeaderEnum.GC_SHOP, size: PACKET_SIZE, name: 'ShopEndPacket' });
+        super({ header: PacketHeaderEnum.SHOP_OUT, size: PACKET_SIZE, name: 'ShopEndPacket' });
     }
 
     pack(): Buffer {

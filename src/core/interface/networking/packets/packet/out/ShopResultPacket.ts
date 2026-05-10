@@ -13,7 +13,7 @@ export default class ShopResultPacket extends PacketOut {
     private readonly result: ShopSubHeaderGC;
 
     constructor({ result }: ShopResultPacketParams) {
-        super({ header: PacketHeaderEnum.GC_SHOP, size: PACKET_SIZE, name: 'ShopResultPacket' });
+        super({ header: PacketHeaderEnum.SHOP_OUT, size: PACKET_SIZE, name: 'ShopResultPacket' });
         this.result = result;
     }
 

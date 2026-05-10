@@ -17,13 +17,13 @@ describe('ShopPacket', () => {
     });
 
     it('should initialize with correct header and name', () => {
-        expect(packet.getHeader()).to.equal(PacketHeaderEnum.SHOP);
+        expect(packet.getHeader()).to.equal(PacketHeaderEnum.SHOP_IN);
         expect(packet.getName()).to.equal('ShopPacket');
     });
 
     it('should unpack BUY command correctly', () => {
         const buffer = Buffer.alloc(4);
-        buffer.writeUInt8(PacketHeaderEnum.SHOP, 0); // header (skipped by BufferReader)
+        buffer.writeUInt8(PacketHeaderEnum.SHOP_IN, 0); // header (skipped by BufferReader)
         buffer.writeUInt8(ShopSubHeaderCG.BUY, 1); // subheader
         buffer.writeUInt8(0, 2); // unused padding
         buffer.writeUInt8(5, 3); // pos
@@ -36,7 +36,7 @@ describe('ShopPacket', () => {
 
     it('should unpack SELL command correctly', () => {
         const buffer = Buffer.alloc(3);
-        buffer.writeUInt8(PacketHeaderEnum.SHOP, 0); // header (skipped)
+        buffer.writeUInt8(PacketHeaderEnum.SHOP_IN, 0); // header (skipped)
         buffer.writeUInt8(ShopSubHeaderCG.SELL, 1); // subheader
         buffer.writeUInt8(10, 2); // pos
 
@@ -48,7 +48,7 @@ describe('ShopPacket', () => {
 
     it('should unpack SELL2 command correctly', () => {
         const buffer = Buffer.alloc(4);
-        buffer.writeUInt8(PacketHeaderEnum.SHOP, 0); // header (skipped)
+        buffer.writeUInt8(PacketHeaderEnum.SHOP_IN, 0); // header (skipped)
         buffer.writeUInt8(ShopSubHeaderCG.SELL2, 1); // subheader
         buffer.writeUInt8(15, 2); // pos
         buffer.writeUInt8(3, 3); // count
@@ -62,7 +62,7 @@ describe('ShopPacket', () => {
 
     it('should unpack END command correctly', () => {
         const buffer = Buffer.alloc(2); // header + subheader
-        buffer.writeUInt8(PacketHeaderEnum.SHOP, 0); // header (skipped)
+        buffer.writeUInt8(PacketHeaderEnum.SHOP_IN, 0); // header (skipped)
         buffer.writeUInt8(ShopSubHeaderCG.END, 1); // subheader
 
         packet.unpack(buffer);
@@ -72,7 +72,7 @@ describe('ShopPacket', () => {
 
     it('should default pos to 0 for END command', () => {
         const buffer = Buffer.alloc(2);
-        buffer.writeUInt8(PacketHeaderEnum.SHOP, 0);
+        buffer.writeUInt8(PacketHeaderEnum.SHOP_IN, 0);
         buffer.writeUInt8(ShopSubHeaderCG.END, 1);
 
         packet.unpack(buffer);

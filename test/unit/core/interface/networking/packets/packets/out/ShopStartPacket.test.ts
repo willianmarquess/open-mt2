@@ -16,7 +16,7 @@ describe('ShopStartPacket', () => {
     });
 
     it('should initialize with correct header', () => {
-        expect(packet.getHeader()).to.equal(PacketHeaderEnum.GC_SHOP);
+        expect(packet.getHeader()).to.equal(PacketHeaderEnum.SHOP_OUT);
         expect(packet.getName()).to.equal('ShopStartPacket');
     });
 
@@ -27,7 +27,7 @@ describe('ShopStartPacket', () => {
 
     it('should pack header correctly', () => {
         const buffer = packet.pack();
-        expect(buffer.readUInt8(0)).to.equal(PacketHeaderEnum.GC_SHOP);
+        expect(buffer.readUInt8(0)).to.equal(PacketHeaderEnum.SHOP_OUT);
     });
 
     it('should pack packet size correctly', () => {
