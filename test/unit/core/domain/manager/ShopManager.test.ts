@@ -4,6 +4,7 @@ import WinstonLoggerAdapter from '@/core/infra/logger/WinstonLoggerAdapter';
 import ShopManager from '@/core/domain/shop/ShopManager';
 import Shop from '@/core/domain/shop/Shop';
 import ItemManager from '@/core/domain/manager/ItemManager';
+import { makeGameConfig } from '@/game/infra/config/GameConfig';
 
 describe('ShopManager', () => {
     let loggerStub;
@@ -15,7 +16,11 @@ describe('ShopManager', () => {
         itemManagerStub = {
             getItem: sinon.stub().returns({ getShopPrice: () => 100 }),
         };
-        manager = new ShopManager({ logger: loggerStub, itemManager: itemManagerStub as unknown as ItemManager });
+        manager = new ShopManager({
+            config: makeGameConfig(),
+            logger: loggerStub,
+            itemManager: itemManagerStub as unknown as ItemManager,
+        });
     });
 
     afterEach(() => {
