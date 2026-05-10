@@ -232,7 +232,7 @@ const gameConfig: GameConfig = {
     mobs,
     groups,
     groupsCollection,
-    items: items as Array<ItemProto>,
+    items,
     animations: animations as Array<Animation>,
     commonDrops,
     dropDeltaBoss,
