@@ -7,9 +7,6 @@ import { PointsEnum } from '@/core/enum/PointsEnum';
 import { ItemAntiFlagEnum } from '@/core/enum/ItemAntiFlagEnum';
 import { ShopSubHeaderGC } from '@/core/enum/ShopSubHeaderEnum';
 import { WindowTypeEnum } from '@/core/enum/WindowTypeEnum';
-import ShopStartPacket from '@/core/interface/networking/packets/packet/out/ShopStartPacket';
-import ShopEndPacket from '@/core/interface/networking/packets/packet/out/ShopEndPacket';
-import ShopResultPacket from '@/core/interface/networking/packets/packet/out/ShopResultPacket';
 
 export default class ShopService {
     private readonly shopManager: ShopManager;
@@ -39,12 +36,10 @@ export default class ShopService {
 
         player.setCurrentShop(shop);
 
-        player.send(
-            new ShopStartPacket({
-                ownerVid: npc.getVirtualId(),
-                items: shop.getItems(),
-            }),
-        );
+        player.sendCurrentShop({
+            ownerVid: npc.getVirtualId(),
+            items: shop.getItems(),
+        });
 
         this.logger.info(
             `[ShopService] Player ${player.getName()} opened shop "${shop.getShopName()}" (NPC ${npc.getId()})`,
@@ -55,7 +50,7 @@ export default class ShopService {
         if (!player.getCurrentShop()) return;
 
         player.setCurrentShop(null);
-        player.send(new ShopEndPacket());
+        player.sendShopClose();
 
         this.logger.info(`[ShopService] Player ${player.getName()} closed shop`);
     }
@@ -69,7 +64,7 @@ export default class ShopService {
 
         const shopItem = shop.getItemAtSlot(pos);
         if (!shopItem) {
-            player.send(new ShopResultPacket({ result: ShopSubHeaderGC.INVALID_POS }));
+            player.sendShopResult({ result: ShopSubHeaderGC.INVALID_POS });
             return;
         }
 
@@ -77,26 +72,26 @@ export default class ShopService {
         const playerGold = player.getPoint(PointsEnum.GOLD);
 
         if (playerGold < price) {
-            player.send(new ShopResultPacket({ result: ShopSubHeaderGC.NOT_ENOUGH_MONEY }));
+            player.sendShopResult({ result: ShopSubHeaderGC.NOT_ENOUGH_MONEY });
             return;
         }
 
         // Build a fresh item instance from proto
         const item = this.itemManager.getItem(shopItem.vnum, shopItem.count);
         if (!item) {
-            player.send(new ShopResultPacket({ result: ShopSubHeaderGC.SOLD_OUT }));
+            player.sendShopResult({ result: ShopSubHeaderGC.SOLD_OUT });
             return;
         }
 
         if (!player.addItem(item)) {
-            player.send(new ShopResultPacket({ result: ShopSubHeaderGC.INVENTORY_FULL }));
+            player.sendShopResult({ result: ShopSubHeaderGC.INVENTORY_FULL });
             return;
         }
 
         player.addPoint(PointsEnum.GOLD, -price);
         await this.itemManager.save(item);
 
-        player.send(new ShopResultPacket({ result: ShopSubHeaderGC.OK }));
+        player.sendShopResult({ result: ShopSubHeaderGC.OK });
 
         this.logger.info(
             `[ShopService] Player ${player.getName()} bought vnum ${shopItem.vnum} ×${shopItem.count} for ${price}g`,
@@ -112,13 +107,13 @@ export default class ShopService {
 
         const item = player.getItem(pos);
         if (!item) {
-            player.send(new ShopResultPacket({ result: ShopSubHeaderGC.INVALID_POS }));
+            player.sendShopResult({ result: ShopSubHeaderGC.INVALID_POS });
             return;
         }
 
         // Cannot sell items flagged as anti-sell
         if (item.getAntiFlags().is(ItemAntiFlagEnum.ANTI_SELL)) {
-            player.send(new ShopResultPacket({ result: ShopSubHeaderGC.INVALID_POS }));
+            player.sendShopResult({ result: ShopSubHeaderGC.INVALID_POS });
             return;
         }
 
@@ -132,7 +127,7 @@ export default class ShopService {
 
         player.addPoint(PointsEnum.GOLD, sellPrice);
 
-        player.send(new ShopResultPacket({ result: ShopSubHeaderGC.OK }));
+        player.sendShopResult({ result: ShopSubHeaderGC.OK });
 
         this.logger.info(`[ShopService] Player ${player.getName()} sold pos=${pos} ×${sellCount} for ${sellPrice}g`);
     }

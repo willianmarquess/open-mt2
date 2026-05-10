@@ -21,11 +21,16 @@ const BONUSES_COUNT = 7;
 const ITEM_BYTES = 4 + 4 + 1 + 1 + SOCKETS_COUNT * 4 + BONUSES_COUNT * 3; // 43
 const PACKET_SIZE = 1 + 2 + 1 + 4 + SHOP_MAX_ITEMS * ITEM_BYTES; // 1728
 
+export type ShopStartPacketParams = {
+    ownerVid: number;
+    items?: ShopItem[];
+};
+
 export default class ShopStartPacket extends PacketOut {
     private readonly ownerVid: number;
-    private readonly items: ShopItem[];
+    private readonly items?: ShopItem[];
 
-    constructor({ ownerVid, items }: { ownerVid: number; items: ShopItem[] }) {
+    constructor({ ownerVid, items }: ShopStartPacketParams) {
         super({ header: PacketHeaderEnum.GC_SHOP, size: PACKET_SIZE, name: 'ShopStartPacket' });
         this.ownerVid = ownerVid;
         this.items = items;
@@ -39,7 +44,7 @@ export default class ShopStartPacket extends PacketOut {
 
         // Write all 40 item slots; empty slots are zeros
         for (let i = 0; i < SHOP_MAX_ITEMS; i++) {
-            const shopItem = this.items[i];
+            const shopItem = this.items?.[i];
             if (shopItem) {
                 this.bufferWriter.writeUint32LE(shopItem.vnum);
                 this.bufferWriter.writeUint32LE(shopItem.price);

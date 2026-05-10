@@ -60,6 +60,11 @@ import { QuestStatusEnum } from '@/core/domain/quests/decorators/QuestDecorator'
 import QuestInfoPacket from '@/core/interface/networking/packets/packet/out/QuestInfoPacket';
 import { BlockFlagEnum } from '@/core/enum/BlockFlagEnum';
 import Shop from '@/core/domain/shop/Shop';
+import ShopStartPacket, { ShopStartPacketParams } from '@/core/interface/networking/packets/packet/out/ShopStartPacket';
+import ShopEndPacket from '@/core/interface/networking/packets/packet/out/ShopEndPacket';
+import ShopResultPacket, {
+    ShopResultPacketParams,
+} from '@/core/interface/networking/packets/packet/out/ShopResultPacket';
 
 const REGEN_INTERVAL = 3000;
 const MAX_DISTANCE_FROM_TARGET = 3500;
@@ -395,13 +400,21 @@ export default class Player extends Character {
         );
     }
 
+    sendCurrentShop(shop: ShopStartPacketParams) {
+        this.connection.send(new ShopStartPacket(shop));
+    }
+
+    sendShopResult(result: ShopResultPacketParams) {
+        this.connection.send(new ShopResultPacket(result));
+    }
+
+    sendShopClose() {
+        this.connection.send(new ShopEndPacket());
+    }
+
     addPoint(point: PointsEnum, value: number) {
         this.points.addPoint(point, value);
         this.sendPoints(); //TODO: maybe we should send only the single point packet or just the points that have side effected.
-    }
-
-    send(packet: Parameters<GameConnection['send']>[0]) {
-        this.connection.send(packet);
     }
 
     setPoint(point: PointsEnum, value: number) {
