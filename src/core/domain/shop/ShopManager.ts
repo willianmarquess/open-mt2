@@ -2,34 +2,36 @@ import Shop from '@/core/domain/shop/Shop';
 import { ShopItem } from '@/core/domain/shop/ShopItem';
 import Logger from '@/core/infra/logger/Logger';
 import ItemManager from '@/core/domain/manager/ItemManager';
-import npcShops from '@/core/infra/config/data/npc_shop.json';
+import { GameConfig } from '@/game/infra/config/GameConfig';
 
-type NpcShopEntry = {
-    npcVnum: number;
-    shopName: string;
-    items: Array<{ vnum: number; count: number }>;
+type ShopManagerParams = {
+    config: GameConfig;
+    logger: Logger;
+    itemManager: ItemManager;
 };
 
 export default class ShopManager {
+    private readonly config: GameConfig;
     private readonly logger: Logger;
     private readonly itemManager: ItemManager;
 
     // vnum → Shop (NPC shops loaded from config)
     private readonly shops: Map<number, Shop> = new Map();
 
-    constructor({ logger, itemManager }: { logger: Logger; itemManager: ItemManager }) {
+    constructor({ config, logger, itemManager }: ShopManagerParams) {
+        this.config = config;
         this.logger = logger;
         this.itemManager = itemManager;
     }
 
     load() {
-        (npcShops as NpcShopEntry[]).forEach((entry) => {
+        this.config.npcShops.forEach((shopEntry) => {
             const shopItems: ShopItem[] = [];
 
-            entry.items.forEach(({ vnum, count }) => {
+            shopEntry.items.forEach(({ vnum, count }) => {
                 const item = this.itemManager.getItem(vnum, count);
                 if (!item) {
-                    this.logger.info(`[ShopManager] Unknown item vnum ${vnum} in shop for NPC ${entry.npcVnum}`);
+                    this.logger.info(`[ShopManager] Unknown item vnum ${vnum} in shop for NPC ${shopEntry.npcVnum}`);
                     return;
                 }
 
@@ -42,14 +44,14 @@ export default class ShopManager {
             });
 
             const shop = new Shop({
-                npcVnum: entry.npcVnum,
-                shopName: entry.shopName,
+                npcVnum: shopEntry.npcVnum,
+                shopName: shopEntry.shopName,
                 items: shopItems,
             });
 
-            this.shops.set(entry.npcVnum, shop);
+            this.shops.set(shopEntry.npcVnum, shop);
             this.logger.info(
-                `[ShopManager] Loaded shop for NPC vnum ${entry.npcVnum} "${entry.shopName}" with ${shopItems.length} item(s)`,
+                `[ShopManager] Loaded shop for NPC vnum ${shopEntry.npcVnum} "${shopEntry.shopName}" with ${shopItems.length} item(s)`,
             );
         });
     }
