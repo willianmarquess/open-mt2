@@ -1,0 +1,247 @@
+[
+    {
+        "npcVnum": 9001,
+        "shopName": "Arms",
+        "items": [
+            { "vnum": 1000, "count": 1 },
+            { "vnum": 1010, "count": 1 },
+            { "vnum": 1020, "count": 1 },
+            { "vnum": 1030, "count": 1 },
+            { "vnum": 1040, "count": 1 },
+            { "vnum": 1050, "count": 1 },
+            { "vnum": 1060, "count": 1 },
+            { "vnum": 1070, "count": 1 },
+            { "vnum": 1080, "count": 1 },
+            { "vnum": 1090, "count": 1 },
+            { "vnum": 4000, "count": 1 },
+            { "vnum": 4010, "count": 1 },
+            { "vnum": 4020, "count": 1 }
+        ]
+    },
+    {
+        "npcVnum": 9002,
+        "shopName": "Defence",
+        "items": [
+            { "vnum": 11200, "count": 1 },
+            { "vnum": 11210, "count": 1 },
+            { "vnum": 11220, "count": 1 },
+            { "vnum": 11230, "count": 1 },
+            { "vnum": 11240, "count": 1 },
+            { "vnum": 11250, "count": 1 },
+            { "vnum": 11260, "count": 1 },
+            { "vnum": 11400, "count": 1 },
+            { "vnum": 11410, "count": 1 },
+            { "vnum": 11420, "count": 1 },
+            { "vnum": 11430, "count": 1 },
+            { "vnum": 11440, "count": 1 },
+            { "vnum": 11450, "count": 1 },
+            { "vnum": 11460, "count": 1 },
+            { "vnum": 11600, "count": 1 },
+            { "vnum": 11610, "count": 1 },
+            { "vnum": 11620, "count": 1 },
+            { "vnum": 11630, "count": 1 },
+            { "vnum": 11640, "count": 1 },
+            { "vnum": 11650, "count": 1 },
+            { "vnum": 11660, "count": 1 },
+            { "vnum": 11800, "count": 1 },
+            { "vnum": 11810, "count": 1 },
+            { "vnum": 11820, "count": 1 },
+            { "vnum": 11830, "count": 1 },
+            { "vnum": 11840, "count": 1 },
+            { "vnum": 11850, "count": 1 },
+            { "vnum": 11860, "count": 1 }
+        ]
+    },
+    {
+        "npcVnum": 9003,
+        "shopName": "Goods",
+        "items": [
+            { "vnum": 27001, "count": 1 },
+            { "vnum": 27002, "count": 1 },
+            { "vnum": 27003, "count": 1 },
+            { "vnum": 27004, "count": 1 },
+            { "vnum": 27005, "count": 1 },
+            { "vnum": 27006, "count": 1 },
+            { "vnum": 50200, "count": 1 },
+            { "vnum": 50901, "count": 10 },
+            { "vnum": 71113, "count": 20 }
+        ]
+    },
+    {
+        "npcVnum": 9004,
+        "shopName": "Bank",
+        "items": [
+            { "vnum": 27001, "count": 5 },
+            { "vnum": 27001, "count": 20 },
+            { "vnum": 27001, "count": 200 },
+            { "vnum": 27002, "count": 5 },
+            { "vnum": 27002, "count": 20 },
+            { "vnum": 27002, "count": 200 },
+            { "vnum": 27003, "count": 5 },
+            { "vnum": 27003, "count": 20 },
+            { "vnum": 27003, "count": 200 },
+            { "vnum": 27004, "count": 5 },
+            { "vnum": 27004, "count": 20 },
+            { "vnum": 27004, "count": 200 },
+            { "vnum": 27005, "count": 5 },
+            { "vnum": 27005, "count": 20 },
+            { "vnum": 27005, "count": 200 },
+            { "vnum": 27006, "count": 5 },
+            { "vnum": 27006, "count": 20 },
+            { "vnum": 27006, "count": 200 },
+            { "vnum": 50200, "count": 1 },
+            { "vnum": 50901, "count": 10 },
+            { "vnum": 71113, "count": 20 }
+        ]
+    },
+    {
+        "npcVnum": 9005,
+        "shopName": "Hotel Grandpa",
+        "items": [
+            { "vnum": 27400, "count": 1 },
+            { "vnum": 27600, "count": 1 },
+            { "vnum": 27610, "count": 1 },
+            { "vnum": 27800, "count": 5 },
+            { "vnum": 27800, "count": 50 },
+            { "vnum": 27801, "count": 5 },
+            { "vnum": 27801, "count": 50 }
+        ]
+    },
+    {
+        "npcVnum": 9006,
+        "shopName": "Hotel Grandma",
+        "items": [
+            { "vnum": 27400, "count": 1 },
+            { "vnum": 27600, "count": 1 },
+            { "vnum": 27610, "count": 1 },
+            { "vnum": 27800, "count": 5 },
+            { "vnum": 27800, "count": 50 },
+            { "vnum": 27801, "count": 5 },
+            { "vnum": 27801, "count": 50 }
+        ]
+    },
+    {
+        "npcVnum": 9007,
+        "shopName": "Arms",
+        "items": [
+            { "vnum": 2000, "count": 1 },
+            { "vnum": 2010, "count": 1 },
+            { "vnum": 2020, "count": 1 },
+            { "vnum": 2030, "count": 1 },
+            { "vnum": 2040, "count": 1 },
+            { "vnum": 2050, "count": 1 },
+            { "vnum": 2060, "count": 1 },
+            { "vnum": 2070, "count": 1 },
+            { "vnum": 2080, "count": 1 },
+            { "vnum": 2090, "count": 1 },
+            { "vnum": 2100, "count": 1 },
+            { "vnum": 2110, "count": 1 },
+            { "vnum": 2120, "count": 1 },
+            { "vnum": 8000, "count": 50 },
+            { "vnum": 8000, "count": 200 }
+        ]
+    },
+    {
+        "npcVnum": 9008,
+        "shopName": "Defence",
+        "items": [
+            { "vnum": 12200, "count": 1 },
+            { "vnum": 12220, "count": 1 },
+            { "vnum": 12240, "count": 1 },
+            { "vnum": 12340, "count": 1 },
+            { "vnum": 12360, "count": 1 },
+            { "vnum": 12380, "count": 1 },
+            { "vnum": 12480, "count": 1 },
+            { "vnum": 12500, "count": 1 },
+            { "vnum": 12520, "count": 1 },
+            { "vnum": 12620, "count": 1 },
+            { "vnum": 12640, "count": 1 },
+            { "vnum": 12660, "count": 1 },
+            { "vnum": 13000, "count": 1 },
+            { "vnum": 13040, "count": 1 }
+        ]
+    },
+    {
+        "npcVnum": 9009,
+        "shopName": "Sailor",
+        "items": [
+            { "vnum": 3000, "count": 1 },
+            { "vnum": 3010, "count": 1 },
+            { "vnum": 3020, "count": 1 },
+            { "vnum": 3030, "count": 1 },
+            { "vnum": 3040, "count": 1 },
+            { "vnum": 3050, "count": 1 },
+            { "vnum": 3060, "count": 1 },
+            { "vnum": 3070, "count": 1 },
+            { "vnum": 3080, "count": 1 },
+            { "vnum": 3090, "count": 1 },
+            { "vnum": 3100, "count": 1 },
+            { "vnum": 3110, "count": 1 },
+            { "vnum": 3120, "count": 1 }
+        ]
+    },
+    {
+        "npcVnum": 9010,
+        "shopName": "Goods",
+        "items": [
+            { "vnum": 5000, "count": 1 },
+            { "vnum": 5010, "count": 1 },
+            { "vnum": 5020, "count": 1 },
+            { "vnum": 5030, "count": 1 },
+            { "vnum": 5040, "count": 1 },
+            { "vnum": 5050, "count": 1 },
+            { "vnum": 5060, "count": 1 },
+            { "vnum": 5070, "count": 1 },
+            { "vnum": 5080, "count": 1 }
+        ]
+    },
+    {
+        "npcVnum": 9011,
+        "shopName": "Bank",
+        "items": [
+            { "vnum": 7000, "count": 1 },
+            { "vnum": 7010, "count": 1 },
+            { "vnum": 7020, "count": 1 },
+            { "vnum": 7030, "count": 1 },
+            { "vnum": 7040, "count": 1 },
+            { "vnum": 7050, "count": 1 },
+            { "vnum": 7060, "count": 1 },
+            { "vnum": 7070, "count": 1 },
+            { "vnum": 7080, "count": 1 },
+            { "vnum": 7090, "count": 1 },
+            { "vnum": 7100, "count": 1 },
+            { "vnum": 7110, "count": 1 },
+            { "vnum": 7120, "count": 1 }
+        ]
+    },
+    {
+        "npcVnum": 9012,
+        "shopName": "Oldster",
+        "items": [
+            { "vnum": 14000, "count": 1 },
+            { "vnum": 14020, "count": 1 },
+            { "vnum": 14040, "count": 1 },
+            { "vnum": 14060, "count": 1 },
+            { "vnum": 14080, "count": 1 },
+            { "vnum": 14140, "count": 1 },
+            { "vnum": 15000, "count": 1 },
+            { "vnum": 15020, "count": 1 },
+            { "vnum": 15040, "count": 1 },
+            { "vnum": 15060, "count": 1 },
+            { "vnum": 15080, "count": 1 },
+            { "vnum": 15160, "count": 1 },
+            { "vnum": 16000, "count": 1 },
+            { "vnum": 16020, "count": 1 },
+            { "vnum": 16040, "count": 1 },
+            { "vnum": 16060, "count": 1 },
+            { "vnum": 16080, "count": 1 },
+            { "vnum": 16180, "count": 1 },
+            { "vnum": 17000, "count": 1 },
+            { "vnum": 17020, "count": 1 },
+            { "vnum": 17040, "count": 1 },
+            { "vnum": 17060, "count": 1 },
+            { "vnum": 17080, "count": 1 },
+            { "vnum": 17180, "count": 1 }
+        ]
+    }
+]

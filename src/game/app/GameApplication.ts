@@ -5,6 +5,7 @@ import MobManager from '@/core/domain/manager/MobManager';
 import ItemManager from '@/core/domain/manager/ItemManager';
 import DropManager from '@/core/domain/manager/DropManager';
 import { QuestManager } from '@/core/domain/quests/QuestManager';
+import ShopManager from '@/core/domain/shop/ShopManager';
 
 export default class GameApplication extends Application {
     private readonly world: World;
@@ -13,6 +14,7 @@ export default class GameApplication extends Application {
     private readonly itemManager: ItemManager;
     private readonly dropManager: DropManager;
     private readonly questManager: QuestManager;
+    private readonly shopManager: ShopManager;
 
     constructor(container) {
         super(container);
@@ -22,6 +24,7 @@ export default class GameApplication extends Application {
         this.itemManager = container.itemManager;
         this.dropManager = container.dropManager;
         this.questManager = container.questManager;
+        this.shopManager = container.shopManager;
     }
 
     async start() {
@@ -35,6 +38,7 @@ export default class GameApplication extends Application {
         ]);
         this.mobManager.load();
         this.questManager.load();
+        this.shopManager.load();
         await this.server.setup().start();
         await this.world.init();
         this.logger.info('[APP] Game application started 🎮🚀');

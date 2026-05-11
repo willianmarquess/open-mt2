@@ -1,5 +1,6 @@
 import { Config, makeConfig } from '@/core/infra/config/Config';
 import atlas from '../../../core/infra/config/data/atlasinfo.json';
+import npcShops from '../../../core/infra/config/data/npc_shops.json';
 import mobs from '../../../core/infra/config/data/mobs.json';
 import items from '../../../core/infra/config/data/items.json';
 import groups from '../../../core/infra/config/data/spawn/group.json';
@@ -25,6 +26,17 @@ type Atlas = {
         blue?: Array<number>;
         default?: Array<number>;
     };
+};
+
+export type NpcShopItem = {
+    vnum: number;
+    count: number;
+};
+
+export type NpcShopsProto = {
+    npcVnum: number;
+    shopName: string;
+    items: Array<NpcShopItem>;
 };
 
 export type MobsProto = {
@@ -189,6 +201,7 @@ export type GameConfig = Config & {
     REAL_SERVER_ADDRESS: string;
     DB_DATABASE_NAME: string;
     atlas: Array<Atlas>;
+    npcShops: Array<NpcShopsProto>;
     mobs: Array<MobsProto>;
     groups: Array<Groups>;
     groupsCollection: Array<GroupCollection>;
@@ -215,10 +228,11 @@ const gameConfig: GameConfig = {
     REAL_SERVER_ADDRESS: process.env.REAL_SERVER_ADDRESS,
     DB_DATABASE_NAME: process.env.GAME_DB_DATABASE_NAME,
     atlas,
+    npcShops,
     mobs,
     groups,
     groupsCollection,
-    items: items as Array<ItemProto>,
+    items,
     animations: animations as Array<Animation>,
     commonDrops,
     dropDeltaBoss,
