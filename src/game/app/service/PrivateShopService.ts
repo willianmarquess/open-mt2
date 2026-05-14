@@ -10,7 +10,6 @@ import ItemManager from '@/core/domain/manager/ItemManager';
 
 /** Maximum yang price a seller can set per item. */
 const MAX_ITEM_PRICE = 2_000_000_000;
-import { ShopItem } from '@/core/domain/shop/ShopItem';
 
 export default class PrivateShopService {
     private readonly itemManager: ItemManager;
@@ -244,7 +243,7 @@ export default class PrivateShopService {
 
         // Verify the item is still in the owner's inventory at the expected slot
         const ownerItem = owner.getItem(entry.inventoryPos);
-        if (!ownerItem || ownerItem.getId() !== item.getId()) {
+        if (ownerItem?.getId() !== item.getId()) {
             shop.removeItemAtDisplaySlot(displaySlot);
             guest.sendShopResult({ result: ShopSubHeaderGC.SOLD_OUT });
             return;

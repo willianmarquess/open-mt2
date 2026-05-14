@@ -130,7 +130,7 @@ describe('PrivateShopService', () => {
             await service.openPrivateShop(player, 'S', entries);
 
             const shop: PrivateShop = player.setPrivateShop.firstCall.args[0];
-            expect(shop.getItemAtDisplaySlot(0)!.price).to.equal(2_000_000_000);
+            expect(shop.getItemAtDisplaySlot(0)?.price).to.equal(2_000_000_000);
         });
 
         // #2 – duplicate slot rejection

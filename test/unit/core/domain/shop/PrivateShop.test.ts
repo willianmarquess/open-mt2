@@ -1,6 +1,9 @@
 import { expect } from 'chai';
-import PrivateShop, { PRIVATE_SHOP_MAX_ITEMS, PRIVATE_SHOP_SIGN_MAX_LEN } from '@/core/domain/shop/PrivateShop';
-import { PrivateShopItem } from '@/core/domain/shop/PrivateShop';
+import PrivateShop, {
+    PRIVATE_SHOP_MAX_ITEMS,
+    PRIVATE_SHOP_SIGN_MAX_LEN,
+    PrivateShopItem,
+} from '@/core/domain/shop/PrivateShop';
 
 const makeItem = (id = 1) =>
     ({
