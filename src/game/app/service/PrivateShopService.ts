@@ -198,7 +198,7 @@ export default class PrivateShopService {
                 price: entry.price,
                 item: entry.item,
                 displayPos: entry.displayPos,
-            } as ShopItem;
+            };
         });
 
         guest.sendCurrentShop({
