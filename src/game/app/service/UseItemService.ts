@@ -147,8 +147,22 @@ export default class UseItemService {
                 }
                 break;
 
+            case ItemUseSubTypeEnum.USE_SPECIAL:
+                return this.useSpecialItem(player, item);
+
             default:
+                this.logger.info(
+                    `[UseItemService] unhandled item use — vnum: ${item.getId()}, type: ${item.getType()}, subType: ${item.getSubType()}, player: ${player.getName()}`,
+                );
                 break;
+        }
+    }
+
+    private useSpecialItem(player: Player, item: Item) {
+        if (item.getId() === 50200) {
+            // The client opens the private shop UI when it receives a CHAT_TYPE_COMMAND
+            // packet with the string "OpenPrivateShop" — matching the original server behaviour.
+            player.chat({ messageType: ChatMessageTypeEnum.COMMAND, message: 'OpenPrivateShop' });
         }
     }
 

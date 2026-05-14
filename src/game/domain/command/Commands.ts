@@ -1,6 +1,8 @@
 import Command from './Command';
 import BlockModeCommand from './command/blockMode/BlockModeCommand';
 import BlockModeCommandHandler from './command/blockMode/BlockModeCommandHandler';
+import CloseShopCommand from './command/closeShop/CloseShopCommand';
+import CloseShopCommandHandler from './command/closeShop/CloseShopCommandHandler';
 import ExperienceCommand from './command/exp/ExperienceCommand';
 import ExperienceCommandHandler from './command/exp/ExperienceCommandHandler';
 import GoldCommand from './command/gold/GoldCommand';
@@ -148,6 +150,13 @@ export default () =>
             {
                 command: BlockModeCommand,
                 createHandler: (params) => new BlockModeCommandHandler(params),
+            },
+        ],
+        [
+            CloseShopCommand.getName(),
+            {
+                command: CloseShopCommand,
+                createHandler: (params) => new CloseShopCommandHandler(params),
             },
         ],
     ]);

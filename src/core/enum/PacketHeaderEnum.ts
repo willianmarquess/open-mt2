@@ -55,4 +55,6 @@ export default {
     QUEST_INFO: 0x51,
     SHOP_IN: 0x32,
     SHOP_OUT: 0x26,
+    PLAYER_SHOP_IN: 0x37,
+    PLAYER_SHOP_OUT: 0x27,
 };

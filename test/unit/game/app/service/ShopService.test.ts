@@ -20,12 +20,18 @@ describe('ShopService', () => {
         shopManagerStub = { getShop: sinon.stub(), hasShop: sinon.stub() };
         itemManagerStub = { getItem: sinon.stub(), save: sinon.stub().resolves(), delete: sinon.stub().resolves() };
 
-        service = new ShopService({ logger: loggerStub, shopManager: shopManagerStub, itemManager: itemManagerStub });
+        service = new ShopService({
+            logger: loggerStub,
+            shopManager: shopManagerStub,
+            itemManager: itemManagerStub,
+            privateShopService: {} as any,
+        });
 
         playerStub = {
             getName: sinon.stub().returns('TestPlayer'),
             setCurrentShop: sinon.stub(),
             getCurrentShop: sinon.stub(),
+            getCurrentPrivateShopOwner: sinon.stub().returns(null),
             getPoint: sinon.stub(),
             addPoint: sinon.stub(),
             addItem: sinon.stub(),

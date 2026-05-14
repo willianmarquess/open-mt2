@@ -67,6 +67,11 @@ import ShopResultPacket, {
     ShopResultPacketParams,
 } from '@/core/interface/networking/packets/packet/out/ShopResultPacket';
 import ShopEndPacket from '@/core/interface/networking/packets/packet/out/ShopEndPacket';
+import PrivateShop from '@/core/domain/shop/PrivateShop';
+import ShopSignPacket, { ShopSignPacketParams } from '@/core/interface/networking/packets/packet/out/ShopSignPacket';
+import ShopUpdateItemPacket, {
+    ShopUpdateItemParams,
+} from '@/core/interface/networking/packets/packet/out/ShopUpdateItemPacket';
 
 const REGEN_INTERVAL = 3000;
 const MAX_DISTANCE_FROM_TARGET = 3500;
@@ -106,6 +111,8 @@ export default class Player extends Character {
     private currentQuest: AbstractQuest | null = null;
 
     private currentShop: Shop | null = null;
+    private privateShop: PrivateShop | null = null;
+    private currentPrivateShopOwner: Player | null = null;
 
     constructor(
         {
@@ -465,6 +472,14 @@ export default class Player extends Character {
 
     sendShopClose() {
         this.connection?.send(new ShopEndPacket());
+    }
+
+    sendShopSign(params: ShopSignPacketParams) {
+        this.connection?.send(new ShopSignPacket(params));
+    }
+
+    sendShopUpdateItem(params: ShopUpdateItemParams) {
+        this.connection?.send(new ShopUpdateItemPacket(params));
     }
 
     addPoint(point: PointsEnum, value: number) {
@@ -1490,6 +1505,26 @@ export default class Player extends Character {
 
     setCurrentShop(shop: Shop | null) {
         this.currentShop = shop;
+    }
+
+    getPrivateShop(): PrivateShop | null {
+        return this.privateShop;
+    }
+
+    setPrivateShop(shop: PrivateShop | null) {
+        this.privateShop = shop;
+    }
+
+    isRunningPrivateShop(): boolean {
+        return this.privateShop !== null;
+    }
+
+    getCurrentPrivateShopOwner(): Player | null {
+        return this.currentPrivateShopOwner;
+    }
+
+    setCurrentPrivateShopOwner(owner: Player | null) {
+        this.currentPrivateShopOwner = owner;
     }
 
     getQuestByStatus(status: QuestStatusEnum) {

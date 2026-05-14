@@ -7,23 +7,28 @@ import { PointsEnum } from '@/core/enum/PointsEnum';
 import { ItemAntiFlagEnum } from '@/core/enum/ItemAntiFlagEnum';
 import { ShopSubHeaderGC } from '@/core/enum/ShopSubHeaderEnum';
 import { WindowTypeEnum } from '@/core/enum/WindowTypeEnum';
+import PrivateShopService from './PrivateShopService';
 
 export default class ShopService {
     private readonly shopManager: ShopManager;
     private readonly itemManager: ItemManager;
+    private readonly privateShopService: PrivateShopService;
     private readonly logger: Logger;
 
     constructor({
         shopManager,
         itemManager,
+        privateShopService,
         logger,
     }: {
         shopManager: ShopManager;
         itemManager: ItemManager;
+        privateShopService: PrivateShopService;
         logger: Logger;
     }) {
         this.shopManager = shopManager;
         this.itemManager = itemManager;
+        this.privateShopService = privateShopService;
         this.logger = logger;
     }
 
@@ -50,6 +55,16 @@ export default class ShopService {
     }
 
     async closeShop(player: Player) {
+        // If browsing a private shop, leave it gracefully
+        const privateOwner = player.getCurrentPrivateShopOwner();
+        if (privateOwner) {
+            privateOwner.getPrivateShop()?.removeGuest(player);
+            player.setCurrentPrivateShopOwner(null);
+            player.sendShopClose();
+            this.logger.info(`[ShopService] Player ${player.getName()} left private shop of ${privateOwner.getName()}`);
+            return;
+        }
+
         if (!player.getCurrentShop()) return;
 
         player.setCurrentShop(null);
@@ -59,6 +74,12 @@ export default class ShopService {
     }
 
     async buy(player: Player, pos: number) {
+        // Route to private shop service if the player is browsing a private shop
+        if (player.getCurrentPrivateShopOwner()) {
+            await this.privateShopService.buy(player, pos);
+            return;
+        }
+
         const shop = player.getCurrentShop();
         if (!shop) {
             this.logger.debug(`[ShopService] buy: player ${player.getName()} has no open shop`);
