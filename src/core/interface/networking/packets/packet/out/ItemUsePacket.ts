@@ -6,8 +6,8 @@ import PacketOut from './PacketOut';
 const PACKET_SIZE = 4;
 
 export default class ItemUsePacket extends PacketOut {
-    private window: number;
-    private position: number;
+    private readonly window: number;
+    private readonly position: number;
 
     constructor({ window, position }: { window: number; position: number }) {
         super({ header: PacketHeaderEnum.ITEM_USE, size: PACKET_SIZE, name: 'ItemUsePacket' });
