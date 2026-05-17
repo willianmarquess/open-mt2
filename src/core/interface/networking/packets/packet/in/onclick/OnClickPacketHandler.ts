@@ -81,7 +81,7 @@ export default class OnClickPacketHandler extends PacketHandler<OnClickPacket> {
                     await this.privateShopService.openShopForOwner(player);
                     return;
                 }
-                this.logger.info(
+                this.logger.debug(
                     `[OnClickPacketHandler] ${player.getName()} clicked private shop owner: ${target.getName()}`,
                 );
                 await this.privateShopService.openShopForGuest(player, target);

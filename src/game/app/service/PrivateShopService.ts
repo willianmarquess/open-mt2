@@ -27,12 +27,12 @@ export default class PrivateShopService {
      */
     async openPrivateShop(player: Player, sign: string, itemEntries: MyShopItemEntry[]) {
         if (player.isRunningPrivateShop()) {
-            this.logger.info(`[PrivateShopService] ${player.getName()} tried to open a shop but already has one open`);
+            this.logger.debug(`[PrivateShopService] ${player.getName()} tried to open a shop but already has one open`);
             return;
         }
 
         if (player.getCurrentShop()) {
-            this.logger.info(
+            this.logger.debug(
                 `[PrivateShopService] ${player.getName()} tried to open a shop while browsing an NPC shop`,
             );
             return;
@@ -91,14 +91,14 @@ export default class PrivateShopService {
         }
 
         if (shopItems.length === 0) {
-            this.logger.info(`[PrivateShopService] ${player.getName()} tried to open an empty/invalid private shop`);
+            this.logger.debug(`[PrivateShopService] ${player.getName()} tried to open an empty/invalid private shop`);
             return;
         }
 
         const privateShop = new PrivateShop({ owner: player, sign, items: shopItems });
         player.setPrivateShop(privateShop);
 
-        this.logger.info(
+        this.logger.debug(
             `[PrivateShopService] ${player.getName()} opened private shop "${sign}" (${shopItems.length} item(s))`,
         );
 
@@ -127,7 +127,7 @@ export default class PrivateShopService {
         // Send SHOP_END to the owner to close the shop UI on their client
         player.sendShopClose();
 
-        this.logger.info(`[PrivateShopService] ${player.getName()} closed their private shop`);
+        this.logger.debug(`[PrivateShopService] ${player.getName()} closed their private shop`);
 
         // Broadcast empty sign to remove the shop marker for nearby players
         this.broadcastShopSign(player, '');
@@ -157,7 +157,7 @@ export default class PrivateShopService {
             items: shopItemsForPacket as any,
         });
 
-        this.logger.info(`[PrivateShopService] ${owner.getName()} re-opened their own private shop UI`);
+        this.logger.debug(`[PrivateShopService] ${owner.getName()} re-opened their own private shop UI`);
     }
 
     /**
@@ -205,7 +205,7 @@ export default class PrivateShopService {
             items: shopItemsForPacket,
         });
 
-        this.logger.info(`[PrivateShopService] ${guest.getName()} opened private shop of ${owner.getName()}`);
+        this.logger.debug(`[PrivateShopService] ${guest.getName()} opened private shop of ${owner.getName()}`);
     }
 
     /**
