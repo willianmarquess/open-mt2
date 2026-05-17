@@ -272,6 +272,7 @@ export default class PrivateShopService {
         // Remove entry from shop and notify all guests that this slot is now empty
         shop.removeItemAtDisplaySlot(displaySlot);
         this.broadcastUpdateItem(shop, displaySlot);
+        this.openShopForOwner(owner);
 
         guest.sendShopResult({ result: ShopSubHeaderGC.OK });
 
