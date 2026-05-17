@@ -152,7 +152,7 @@ export default class UseItemService {
 
             default:
                 this.logger.info(
-                    `[UseItemService] unhandled item use — vnum: ${item.getId()}, type: ${item.getType()}, subType: ${item.getSubType()}, player: ${player.getName()}`,
+                    `[UseItemService] unhandled item use - vnum: ${item.getId()}, type: ${item.getType()}, subType: ${item.getSubType()}, player: ${player.getName()}`,
                 );
                 break;
         }
@@ -161,7 +161,7 @@ export default class UseItemService {
     private useSpecialItem(player: Player, item: Item) {
         if (item.getId() === 50200) {
             // The client opens the private shop UI when it receives a CHAT_TYPE_COMMAND
-            // packet with the string "OpenPrivateShop" — matching the original server behaviour.
+            // packet with the string "OpenPrivateShop" - matching the original server behaviour.
             player.chat({ messageType: ChatMessageTypeEnum.COMMAND, message: 'OpenPrivateShop' });
         }
     }

@@ -77,7 +77,7 @@ export default class OnClickPacketHandler extends PacketHandler<OnClickPacket> {
         if (target instanceof Player) {
             if (target.isRunningPrivateShop()) {
                 if (target === player) {
-                    // Owner clicked themselves — re-send the shop listing to open the management UI
+                    // Owner clicked themselves - re-send the shop listing to open the management UI
                     await this.privateShopService.openShopForOwner(player);
                     return;
                 }

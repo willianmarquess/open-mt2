@@ -11,7 +11,7 @@ export type PrivateShopItem = {
     inventoryPos: number;
     /** Price the buyer must pay (in yang). */
     price: number;
-    /** Reference to the actual item — stays in the owner's inventory but is locked. */
+    /** Reference to the actual item - stays in the owner's inventory but is locked. */
     item: Item;
 };
 

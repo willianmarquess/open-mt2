@@ -20,8 +20,8 @@ export type MyShopItemEntry = {
 
 // CG_MYSHOP wire layout (variable-length):
 //  [1B  header=0x37]
-//  [33B szSign        — null-terminated, SHOP_SIGN_MAX_LEN+1 bytes]
-//  [1B  bCount        — 0 means close shop]
+//  [33B szSign        - null-terminated, SHOP_SIGN_MAX_LEN+1 bytes]
+//  [1B  bCount        - 0 means close shop]
 //  bCount × TShopItemTable {
 //    [4B  vnum        LE]
 //    [1B  count           ]

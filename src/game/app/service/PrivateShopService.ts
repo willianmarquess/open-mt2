@@ -185,7 +185,7 @@ export default class PrivateShopService {
             guest.sendShopClose();
         }
 
-        // Already browsing this same shop — just re-send the listing
+        // Already browsing this same shop - just re-send the listing
         shop.addGuest(guest);
         guest.setCurrentPrivateShopOwner(owner);
 
