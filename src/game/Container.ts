@@ -36,7 +36,6 @@ import WinstonLoggerAdapter from '@/core/infra/logger/WinstonLoggerAdapter';
 import RedisCacheProvider from '@/core/infra/cache/RedisCacheProvider';
 import { PrivilegeManager } from '@/core/domain/manager/PrivilegeManager';
 import { QuestManager } from '@/core/domain/quests/QuestManager';
-
 import ShopManager from '@/core/domain/shop/ShopManager';
 import ShopService from './app/service/ShopService';
 import PrivateShopService from './app/service/PrivateShopService';
