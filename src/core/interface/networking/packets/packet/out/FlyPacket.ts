@@ -1,12 +1,6 @@
 import PacketHeaderEnum from '@/core/enum/PacketHeaderEnum';
 import PacketOut from '@/core/interface/networking/packets/packet/out/PacketOut';
 
-type FlyPacketParams = {
-    type?: number;
-    fromVirtualId?: number;
-    toVirtualId?: number;
-};
-
 /**
  * @packet
  * @type Out
@@ -26,7 +20,7 @@ export default class FlyPacket extends PacketOut {
     private fromVirtualId: number;
     private toVirtualId: number;
 
-    constructor({ type, fromVirtualId, toVirtualId }: FlyPacketParams = {}) {
+    constructor({ type, fromVirtualId, toVirtualId }: { type: number; fromVirtualId: number; toVirtualId: number }) {
         super({
             header: PacketHeaderEnum.FLY,
             name: 'FlyPacket',

@@ -21,6 +21,17 @@ export default class CharacterUpdatedEvent {
         weaponId,
         hairId,
         affects = new Array(2).fill(0),
+    }: {
+        vid: number;
+        attackSpeed: number;
+        moveSpeed: number;
+        positionX: number;
+        positionY: number;
+        name: string;
+        bodyId: number;
+        weaponId: number;
+        hairId: number;
+        affects?: number[];
     }) {
         this.vid = vid;
         this.attackSpeed = attackSpeed;

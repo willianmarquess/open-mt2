@@ -9,9 +9,23 @@ const REMOVE_OWNER_ITEM_FROM_GROUND = 15000;
 export default class DroppedItem extends GameEntity {
     private readonly item: Item;
     private readonly count: number;
-    private ownerName: string;
+    private ownerName: string | null;
 
-    constructor({ item, count, ownerName, virtualId, positionX, positionY }) {
+    constructor({
+        item,
+        count,
+        ownerName,
+        virtualId,
+        positionX,
+        positionY,
+    }: {
+        item: Item;
+        count: number;
+        ownerName: string;
+        virtualId: number;
+        positionX: number;
+        positionY: number;
+    }) {
         super({
             virtualId,
             entityType: EntityTypeEnum.DROPPED_ITEM,
@@ -38,7 +52,7 @@ export default class DroppedItem extends GameEntity {
             eventFunction: () => {
                 for (const entity of this.getNearbyEntities().values()) {
                     if (entity instanceof Player) {
-                        this.ownerName = undefined;
+                        this.ownerName = null;
                         entity.sendSetItemOwnership({
                             ownerName: '\0',
                             virtualId: this.getVirtualId(),
@@ -55,7 +69,7 @@ export default class DroppedItem extends GameEntity {
         });
         this.eventTimerManager.addTimer({
             eventFunction: () => {
-                this.area.despawn(this);
+                this.area?.despawn(this);
             },
             options: {
                 interval: REMOVE_ITEM_FROM_GROUND,
@@ -70,7 +84,21 @@ export default class DroppedItem extends GameEntity {
         this.eventTimerManager.clearAllTimers();
     }
 
-    static create({ item, count, ownerName, virtualId, positionX, positionY }) {
+    static create({
+        item,
+        count,
+        ownerName,
+        virtualId,
+        positionX,
+        positionY,
+    }: {
+        item: Item;
+        count: number;
+        ownerName: string;
+        virtualId: number;
+        positionX: number;
+        positionY: number;
+    }) {
         return new DroppedItem({
             item,
             count,

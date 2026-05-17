@@ -11,7 +11,7 @@ export default class EnterGamePacketHandler extends PacketHandler<EnterGamePacke
     private readonly enterGameService: EnterGameService;
     private readonly logger: Logger;
 
-    constructor({ enterGameService, logger }) {
+    constructor({ enterGameService, logger }: { enterGameService: EnterGameService; logger: Logger }) {
         super();
         this.enterGameService = enterGameService;
         this.logger = logger;

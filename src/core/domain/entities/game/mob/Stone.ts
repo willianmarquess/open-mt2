@@ -1,8 +1,13 @@
+import { QuestManager } from '@/core/domain/quests/QuestManager';
 import { Mob, MobParams } from './Mob';
 import { EntityTypeEnum } from '@/core/enum/EntityTypeEnum';
+import AnimationManager from '@/core/domain/manager/AnimationManager';
 
 export default class Stone extends Mob {
-    constructor(params: Omit<MobParams, 'virtualId' | 'entityType'>, { animationManager, questManager }) {
+    constructor(
+        params: Omit<MobParams, 'virtualId' | 'entityType'>,
+        { animationManager, questManager }: { animationManager: AnimationManager; questManager: QuestManager },
+    ) {
         super(
             {
                 ...params,

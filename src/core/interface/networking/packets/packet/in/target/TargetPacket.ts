@@ -5,7 +5,7 @@ import TargetPacketValidator from './TargetPacketValidator';
 export default class TargetPacket extends PacketIn {
     private targetVirtualId: number;
 
-    constructor({ targetVirtualId }) {
+    constructor({ targetVirtualId }: { targetVirtualId: number }) {
         super({
             header: PacketHeaderEnum.TARGET,
             name: 'TargetPacket',

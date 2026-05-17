@@ -8,14 +8,14 @@ export default class AuthServer extends Server {
         this.logger.debug(`[IN][DATA SOCKET EVENT] Data received from ID: ${connection.getId()}`);
 
         const header = data[0];
-        const packetExists = this.packets.has(header);
+        const packetBuilder = this.packets.get(header);
 
-        if (!packetExists) {
+        if (!packetBuilder) {
             this.logger.debug(`[IN][PACKET] Unknown header packet: ${data[0]}`);
             return;
         }
 
-        const { createPacket, createHandler } = this.packets.get(header);
+        const { createPacket, createHandler } = packetBuilder;
         const packet = createPacket({});
         const handler = createHandler(this.container);
         this.logger.debug(`[IN][PACKET] name: ${handler.constructor.name}`);

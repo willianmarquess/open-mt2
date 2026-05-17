@@ -5,7 +5,21 @@ export default class AccountStatus extends StateEntity {
     private readonly allowLogin: boolean;
     private readonly description: number;
 
-    constructor({ id, clientStatus, allowLogin, description, createdAt, updatedAt }) {
+    constructor({
+        id,
+        clientStatus,
+        allowLogin,
+        description,
+        createdAt,
+        updatedAt,
+    }: {
+        id: number;
+        clientStatus: string;
+        allowLogin: boolean;
+        description: number;
+        createdAt?: Date;
+        updatedAt?: Date;
+    }) {
         super(id, createdAt, updatedAt);
         this.clientStatus = clientStatus;
         this.allowLogin = allowLogin;
@@ -24,7 +38,21 @@ export default class AccountStatus extends StateEntity {
         return this.description;
     }
 
-    static create({ id, clientStatus, allowLogin, description, createdAt, updatedAt }) {
+    static create({
+        id,
+        clientStatus,
+        allowLogin,
+        description,
+        createdAt,
+        updatedAt,
+    }: {
+        id: number;
+        clientStatus: string;
+        allowLogin: boolean;
+        description: number;
+        createdAt?: Date;
+        updatedAt?: Date;
+    }) {
         return new AccountStatus({ id, clientStatus, allowLogin, description, createdAt, updatedAt });
     }
 }

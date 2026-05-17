@@ -827,12 +827,11 @@ export class PlayerPoints extends Points {
     }
 
     private addCommonPoint(value: number, pointName: string) {
-        if (this[pointName] === undefined || this[pointName] === null)
+        const currentValue = (this as Record<string, any>)[pointName];
+        if (currentValue === undefined || currentValue === null || typeof currentValue !== 'number')
             throw new Error(`The field ${pointName} is invalid on Points`);
 
-        //TODO: should i allow to use negative values? I think so
-
-        this[pointName] = Math.max(0, this[pointName] + value);
+        (this as Record<string, any>)[pointName] = Math.max(0, currentValue + value);
     }
 
     calcPointsAndResetValues() {
@@ -933,13 +932,8 @@ export class PlayerPoints extends Points {
         const validatedValue = MathUtil.toUnsignedNumber(value);
         if (validatedValue === 0 || validatedValue > this.availableStatusPoints) return;
 
-        let realValue = 0;
-        if (this[stat] + validatedValue > this.config.MAX_POINTS) {
-            const diff = this.config.MAX_POINTS - this[stat];
-            realValue = diff;
-        } else {
-            realValue = validatedValue;
-        }
+        const realValue =
+            this[stat] + validatedValue > this.config.MAX_POINTS ? this.config.MAX_POINTS - this[stat] : validatedValue;
 
         this[stat] += realValue;
         this.givenStatusPoints += realValue;

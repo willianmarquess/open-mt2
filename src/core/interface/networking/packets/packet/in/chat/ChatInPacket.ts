@@ -6,7 +6,7 @@ export default class ChatInPacket extends PacketIn {
     private messageType: number;
     private message: string;
 
-    constructor({ message, messageType }) {
+    constructor({ message, messageType }: { message: string; messageType: number }) {
         super({
             header: PacketHeaderEnum.CHAT_IN,
             name: 'ChatInPacket',

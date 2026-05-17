@@ -5,7 +5,7 @@ export default class ClientVersionPacket extends PacketIn {
     private clientName: string;
     private timeStamp: string;
 
-    constructor({ clientName, timeStamp }) {
+    constructor({ clientName, timeStamp }: { clientName: string; timeStamp: string }) {
         super({
             header: PacketHeaderEnum.CLIENT_VERSION,
             name: 'ClientVersionPacket',

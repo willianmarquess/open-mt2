@@ -26,7 +26,15 @@ export default class DropManager {
     private readonly itemManager: ItemManager;
     private readonly privilegeManager: PrivilegeManager;
 
-    constructor({ config, itemManager, privilegeManager }) {
+    constructor({
+        config,
+        itemManager,
+        privilegeManager,
+    }: {
+        config: GameConfig;
+        itemManager: ItemManager;
+        privilegeManager: PrivilegeManager;
+    }) {
         this.config = config;
         this.itemManager = itemManager;
         this.privilegeManager = privilegeManager;
@@ -34,18 +42,19 @@ export default class DropManager {
 
     load() {
         Object.keys(this.config.commonDrops).forEach((rank) => {
-            this.commonDrops.set(rank as unknown as MobRankEnum, this.config.commonDrops[rank]);
+            const rankEnum = rank as unknown as MobRankEnum;
+            this.commonDrops.set(rankEnum, this.config.commonDrops[rankEnum]);
         });
     }
 
     getCommonDrops(player: Player, monster: Monster, delta: number, range: number) {
-        const drops = [];
+        const drops: DropItem[] = [];
         const commonDrops = this.commonDrops.get(monster.getRank() as MobRankEnum);
 
         if (!commonDrops) return drops;
 
         const possibleDrops = commonDrops.filter(
-            (drop) => drop.minLevel <= player.getLevel() && drop.maxLevel >= player.getLevel(),
+            (drop) => drop.minLevel! <= player.getLevel() && drop.maxLevel! >= player.getLevel(),
         );
 
         for (const drop of possibleDrops) {
@@ -54,6 +63,7 @@ export default class DropManager {
 
             if (percent >= target) {
                 const item = this.itemManager.getItem(drop.vnum);
+                if (!item) continue;
                 drops.push(new DropItem(item, 1));
             }
         }
@@ -62,10 +72,11 @@ export default class DropManager {
     }
 
     getDefaultMonsterDrop(monster: Monster) {
-        const drops = [];
+        const drops: DropItem[] = [];
 
         if (monster.getDropItem() > 0) {
             const item = this.itemManager.getItem(monster.getDropItem());
+            if (!item) return drops;
             drops.push(new DropItem(item, 1));
         }
 
@@ -73,15 +84,12 @@ export default class DropManager {
     }
 
     calcDropPercent(player: Player, monster: Monster) {
-        let delta = 0;
-        let range = 0;
         const levelDelta = monster.getLevel() + 15 - player.getLevel();
 
-        if (monster.getRank() === MobRankEnum.BOSS) {
-            delta = this.config.dropDeltaBoss[MathUtil.minMax(0, levelDelta, this.config.dropDeltaBoss.length)];
-        } else {
-            delta = this.config.dropDeltaLevel[MathUtil.minMax(0, levelDelta, this.config.dropDeltaLevel.length)];
-        }
+        let delta =
+            monster.getRank() === MobRankEnum.BOSS
+                ? this.config.dropDeltaBoss[MathUtil.minMax(0, levelDelta, this.config.dropDeltaBoss.length)]
+                : this.config.dropDeltaLevel[MathUtil.minMax(0, levelDelta, this.config.dropDeltaLevel.length)];
 
         if (1 === MathUtil.getRandomInt(1, 50_000)) {
             delta += 1000;
@@ -101,40 +109,29 @@ export default class DropManager {
             ? 100
             : 0;
 
-        range = 4_000_000;
-        range = (range * 100) / (100 + empireDropBonus + itemDropBonus + privilegeDropBonus + uniqueGlovesDropBonus);
+        const range =
+            (4_000_000 * 100) / (100 + empireDropBonus + itemDropBonus + privilegeDropBonus + uniqueGlovesDropBonus);
 
-        return {
-            delta,
-            range,
-        };
+        return { delta, range };
     }
 
-    getGoldDrop(player: Player, monster: Monster) {
+    getGoldDrop(player: Player, monster: Monster): DropItem | null {
         const goldPercent =
             this.config.dropGoldByRank[monster.getRank()] || this.config.dropGoldByRank[MobRankEnum.PAWN];
-        let percent = 0;
-        let goldMult = 1;
         const levelDelta = monster.getLevel() + 15 - player.getLevel();
 
-        if (monster.getRank() === MobRankEnum.BOSS) {
-            percent =
-                (goldPercent *
-                    this.config.dropDeltaBoss[MathUtil.minMax(0, levelDelta, this.config.dropDeltaBoss.length)]) /
-                100;
-        } else {
-            percent =
-                (goldPercent *
-                    this.config.dropDeltaLevel[MathUtil.minMax(0, levelDelta, this.config.dropDeltaLevel.length)]) /
-                100;
-        }
+        let percent =
+            (goldPercent *
+                (monster.getRank() === MobRankEnum.BOSS
+                    ? this.config.dropDeltaBoss[MathUtil.minMax(0, levelDelta, this.config.dropDeltaBoss.length)]
+                    : this.config.dropDeltaLevel[MathUtil.minMax(0, levelDelta, this.config.dropDeltaLevel.length)])) /
+            100;
 
         percent += this.privilegeManager.getEmpirePrivilege(player.getEmpire(), PrivilegeTypeEnum.GOLD);
         percent += this.privilegeManager.getPlayerPrivilege(player, PrivilegeTypeEnum.GOLD);
-
         percent = Math.max(100, percent);
 
-        if (MathUtil.getRandomInt(1, 100) > percent) return;
+        if (MathUtil.getRandomInt(1, 100) > percent) return null;
 
         const capToMultGoldBy50 = 50_000;
         const percentToMultGoldBy50EmpireBonus = this.privilegeManager.getEmpirePrivilege(
@@ -174,6 +171,8 @@ export default class DropManager {
         const percentToMultGoldBy5 =
             this.config.PERCENT_TO_MULT_GOLD_BY_5 + percentToMultGoldBy5PlayerBonus + percentToMultGoldBy5EmpireBonus;
 
+        let goldMult = 1;
+
         switch (true) {
             case (capToMultGoldBy50 / 100) * percentToMultGoldBy50 >= MathUtil.getRandomInt(1, capToMultGoldBy50): {
                 goldMult += 50;
@@ -203,17 +202,21 @@ export default class DropManager {
         //TODO: verify auto loot and premium stats
 
         const item = this.itemManager.getItem(SpecialItemEnum.GOLD);
-        return new DropItem(item, gold);
+        return new DropItem(item!, gold);
     }
 
     getDrops(player: Player, monster: Monster): Array<DropItem> {
-        const drops = [];
+        const drops: DropItem[] = [];
 
         const { delta, range } = this.calcDropPercent(player, monster);
 
         drops.push(...this.getCommonDrops(player, monster, delta, range));
         drops.push(...this.getDefaultMonsterDrop(monster));
-        drops.push(this.getGoldDrop(player, monster));
+
+        const goldDrop = this.getGoldDrop(player, monster);
+        if (goldDrop) {
+            drops.push(goldDrop);
+        }
 
         return drops;
     }

@@ -5,8 +5,8 @@ export default class StateEntity {
 
     constructor(id: number, createdAt?: Date, updatedAt?: Date) {
         this.id = id;
-        this.createdAt = createdAt;
-        this.updatedAt = updatedAt;
+        this.createdAt = createdAt || new Date();
+        this.updatedAt = updatedAt || new Date();
     }
 
     getId() {

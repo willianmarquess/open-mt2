@@ -42,6 +42,16 @@ export default class CharacterInfoPacket extends PacketOut {
         rankPoints,
         pkMode,
         mountId,
+    }: {
+        vid: number;
+        playerName: string;
+        parts?: Array<number>;
+        empireId: number;
+        guildId: number;
+        level: number;
+        rankPoints: number;
+        pkMode: number;
+        mountId: number;
     }) {
         super({
             header: PacketHeaderEnum.CHARACTER_INFO,

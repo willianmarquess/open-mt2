@@ -5,7 +5,11 @@ import Result from '@/core/domain/util/Result';
 import { ErrorTypesEnum } from '@/core/enum/ErrorTypesEnum';
 
 describe('LoginService', function () {
-    let accountRepository, logger, cacheProvider, encryptionProvider, loginService;
+    let accountRepository: any;
+    let logger: any;
+    let cacheProvider: any;
+    let encryptionProvider: any;
+    let loginService: LoginService;
 
     beforeEach(function () {
         accountRepository = {
@@ -13,11 +17,19 @@ describe('LoginService', function () {
         };
         logger = {
             info: sinon.spy(),
+            error: sinon.spy(),
+            debug: sinon.spy(),
         };
         cacheProvider = {
+            init: sinon.stub().resolves(),
             set: sinon.stub().resolves(),
+            get: sinon.stub().resolves(),
+            delete: sinon.stub().resolves(),
+            close: sinon.stub().resolves(),
+            exists: sinon.stub().resolves(false),
         };
         encryptionProvider = {
+            hash: sinon.stub().resolves('hashed'),
             compare: sinon.stub(),
         };
         loginService = new LoginService({ accountRepository, logger, cacheProvider, encryptionProvider });
@@ -33,7 +45,7 @@ describe('LoginService', function () {
     });
 
     it('should return an error if password is invalid', async function () {
-        const account = { getId: () => 1, getUsername: () => 'user', getPassword: () => 'hashedPassword' };
+        const account = { id: 1, getId: () => 1, getUsername: () => 'user', getPassword: () => 'hashedPassword' };
         accountRepository.findByUsername.resolves(account);
         encryptionProvider.compare.resolves(false);
 
@@ -44,7 +56,7 @@ describe('LoginService', function () {
     });
 
     it('should return a key and cache the token if credentials are valid', async function () {
-        const account = { getId: () => 1, getUsername: () => 'user', getPassword: () => 'hashedPassword' };
+        const account = { id: 1, getId: () => 1, getUsername: () => 'user', getPassword: () => 'hashedPassword' };
         accountRepository.findByUsername.resolves(account);
         encryptionProvider.compare.resolves(true);
 

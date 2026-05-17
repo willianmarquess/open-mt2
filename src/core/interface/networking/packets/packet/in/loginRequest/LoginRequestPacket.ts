@@ -7,7 +7,7 @@ export default class LoginRequestPacket extends PacketIn {
     private password: string;
     private key: number;
 
-    constructor({ username, password, key }) {
+    constructor({ username, password, key }: { username: string; password: string; key: number }) {
         super({
             header: PacketHeaderEnum.LOGIN_REQUEST,
             name: 'LoginRequestPacket',

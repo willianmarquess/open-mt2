@@ -1,16 +1,21 @@
 import Player from '@/core/domain/entities/game/player/Player';
 import PlayerFactory from '@/core/domain/factories/PlayerFactory';
 import { PointsEnum } from '@/core/enum/PointsEnum';
+import Logger from '@/core/infra/logger/Logger';
 import { expect } from 'chai';
 
 describe('PlayerFactory', () => {
-    let config;
-    let animationManager;
+    let config: any;
+    let animationManager: any;
     let playerFactory: PlayerFactory;
-    let experienceManager;
-    let logger;
-    let saveCharacterService;
-    let questManager;
+    let experienceManager: any;
+    const logger: Logger = {
+        info: () => {},
+        error: () => {},
+        debug: () => {},
+    };
+    const saveCharacterService: any = {};
+    let questManager: any = {};
 
     beforeEach(() => {
         config = {

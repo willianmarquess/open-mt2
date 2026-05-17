@@ -1,5 +1,5 @@
 import { Config, makeConfig } from '@/core/infra/config/Config';
-import atlas from '../../../core/infra/config/data/atlasinfo.json';
+import atlasJson from '../../../core/infra/config/data/atlasinfo.json';
 import mobs from '../../../core/infra/config/data/mobs.json';
 import items from '../../../core/infra/config/data/items.json';
 import groups from '../../../core/infra/config/data/spawn/group.json';
@@ -11,20 +11,23 @@ import dropDeltaLevel from '../../../core/infra/config/data/drop/dropDeltaLevel'
 import expDeltaLevel from '../../../core/infra/config/data/exp/expDeltaLevel';
 import dropGoldByRank from '../../../core/infra/config/data/drop/dropGoldByRank';
 import general from '../../../core/infra/config/data/general.json';
+import { MobRankEnum } from '@/core/enum/MobRankEnum';
 
-type Atlas = {
+type AtlasInfo = {
     mapName: string;
     posX: number;
     posY: number;
     width: number;
     height: number;
     aka?: string;
-    goto?: {
-        red?: Array<number>;
-        yellow?: Array<number>;
-        blue?: Array<number>;
-        default?: Array<number>;
-    };
+    goto?: AtlasInfoGoto;
+};
+
+export type AtlasInfoGoto = {
+    red?: [number, number];
+    yellow?: [number, number];
+    blue?: [number, number];
+    default?: [number, number];
 };
 
 export type MobsProto = {
@@ -156,27 +159,14 @@ export type ItemProto = {
 type Animation = {
     MotionDuration: number;
     key: string;
-    Accumulation?: Array<{
-        accX: number;
-        accY: number;
-        accZ: number;
-    }>;
+    Accumulation?: Array<number>;
 };
 
 export type CommonDrop = {
-    minLevel?: number;
-    maxLevel?: number;
-    percentage?: number;
-    vnum?: number;
-};
-
-type CommonDrops = {
-    PAWN: Array<CommonDrop>;
-    S_PAWN: Array<CommonDrop>;
-    KNIGHT: Array<CommonDrop>;
-    S_KNIGHT: Array<CommonDrop>;
-    BOSS: Array<CommonDrop>;
-    KING: Array<CommonDrop>;
+    minLevel: number;
+    maxLevel: number;
+    percentage: number;
+    vnum: number;
 };
 
 type DropGoldByRank = {
@@ -188,13 +178,13 @@ export type GameConfig = Config & {
     SERVER_ADDRESS: string;
     REAL_SERVER_ADDRESS: string;
     DB_DATABASE_NAME: string;
-    atlas: Array<Atlas>;
+    atlas: Array<AtlasInfo>;
     mobs: Array<MobsProto>;
     groups: Array<Groups>;
     groupsCollection: Array<GroupCollection>;
     items: Array<ItemProto>;
     animations: Array<Animation>;
-    commonDrops: CommonDrops;
+    commonDrops: Record<MobRankEnum, Array<CommonDrop>>;
     dropDeltaBoss: Array<number>;
     dropDeltaLevel: Array<number>;
     expDeltaLevel: Array<number>;
@@ -208,19 +198,21 @@ export type GameConfig = Config & {
     PERCENT_TO_MULT_GOLD_BY_5: number;
 };
 
+const atlas = atlasJson as Array<AtlasInfo>;
+
 const gameConfig: GameConfig = {
     ...makeConfig(),
-    SERVER_PORT: process.env.GAME_SERVER_PORT,
-    SERVER_ADDRESS: process.env.GAME_SERVER_ADDRESS,
-    REAL_SERVER_ADDRESS: process.env.REAL_SERVER_ADDRESS,
-    DB_DATABASE_NAME: process.env.GAME_DB_DATABASE_NAME,
+    SERVER_PORT: process.env.GAME_SERVER_PORT!,
+    SERVER_ADDRESS: process.env.GAME_SERVER_ADDRESS!,
+    REAL_SERVER_ADDRESS: process.env.REAL_SERVER_ADDRESS!,
+    DB_DATABASE_NAME: process.env.GAME_DB_DATABASE_NAME!,
     atlas,
     mobs,
     groups,
     groupsCollection,
     items: items as Array<ItemProto>,
     animations: animations as Array<Animation>,
-    commonDrops,
+    commonDrops: commonDrops as unknown as Record<MobRankEnum, Array<CommonDrop>>,
     dropDeltaBoss,
     dropDeltaLevel,
     dropGoldByRank,

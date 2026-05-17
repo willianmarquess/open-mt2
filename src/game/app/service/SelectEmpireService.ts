@@ -8,7 +8,7 @@ export default class SelectEmpireService {
     private readonly logger: Logger;
     private readonly cacheProvider: CacheProvider;
 
-    constructor({ logger, cacheProvider }) {
+    constructor({ logger, cacheProvider }: { logger: Logger; cacheProvider: CacheProvider }) {
         this.logger = logger;
         this.cacheProvider = cacheProvider;
     }

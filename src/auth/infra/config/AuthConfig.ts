@@ -8,9 +8,9 @@ export type AuthConfig = Config & {
 
 const authConfig: AuthConfig = {
     ...makeConfig(),
-    SERVER_PORT: process.env.AUTH_SERVER_PORT,
-    SERVER_ADDRESS: process.env.AUTH_SERVER_ADDRESS,
-    DB_DATABASE_NAME: process.env.AUTH_DB_DATABASE_NAME,
+    SERVER_PORT: process.env.AUTH_SERVER_PORT!,
+    SERVER_ADDRESS: process.env.AUTH_SERVER_ADDRESS!,
+    DB_DATABASE_NAME: process.env.AUTH_DB_DATABASE_NAME!,
 };
 
 export const makeAuthConfig = () => authConfig;

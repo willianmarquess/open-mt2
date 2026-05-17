@@ -1,7 +1,7 @@
 import { container } from '@/auth/Container';
 import AuthApplication from '@/auth/app/AuthApplication';
 
-const app = new AuthApplication(container.cradle);
+const app = new AuthApplication(container.cradle as any);
 
 app.start().catch((error) => {
     console.error('error when start application', error);

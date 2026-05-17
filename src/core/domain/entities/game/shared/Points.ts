@@ -50,7 +50,7 @@ export abstract class Points {
 
         const point = this.points.get(pointType);
 
-        return point.get() ?? 0;
+        return point?.get() ?? 0;
     }
 
     abstract calcPointsAndResetValues(): void;

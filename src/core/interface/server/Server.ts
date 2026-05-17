@@ -6,7 +6,7 @@ import { GameConfig } from '@/game/infra/config/GameConfig';
 import { ConnectionStateEnum } from '@/core/enum/ConnectionStateEnum';
 
 export default abstract class Server {
-    protected server: SocketServer;
+    protected server!: SocketServer;
     protected readonly connections = new Map<string, Connection>();
     protected readonly logger: Logger;
     protected readonly config: GameConfig;
@@ -67,7 +67,7 @@ export default abstract class Server {
         if (!this.server.listening || this.isShuttingDown) return;
 
         return new Promise((resolve, reject) => {
-            this.server.close((err: Error) => {
+            this.server.close((err: Error | undefined) => {
                 if (err) {
                     this.logger.error('[SERVER] Error when try to close server:', err);
                     reject(err);

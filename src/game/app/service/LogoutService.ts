@@ -4,7 +4,7 @@ import LeaveGameService from '@/game/domain/service/LeaveGameService';
 export default class LogoutService {
     private readonly leaveGameService: LeaveGameService;
 
-    constructor({ leaveGameService }) {
+    constructor({ leaveGameService }: { leaveGameService: LeaveGameService }) {
         this.leaveGameService = leaveGameService;
     }
 

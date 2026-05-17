@@ -7,6 +7,7 @@ import { ErrorTypesEnum } from '@/core/enum/ErrorTypesEnum';
 import Logger from '@/core/infra/logger/Logger';
 import { IPlayerRepository } from '@/core/domain/repository/IPlayerRepository';
 import GameConnection from '@/game/interface/networking/GameConnection';
+import Item from '@/core/domain/entities/game/item/Item';
 
 export default class SelectCharacterService {
     private readonly logger: Logger;
@@ -15,7 +16,19 @@ export default class SelectCharacterService {
     private readonly world: World;
     private readonly itemManager: ItemManager;
 
-    constructor({ playerRepository, logger, playerFactory, world, itemManager }) {
+    constructor({
+        playerRepository,
+        logger,
+        playerFactory,
+        world,
+        itemManager,
+    }: {
+        playerRepository: IPlayerRepository;
+        logger: Logger;
+        playerFactory: PlayerFactory;
+        world: World;
+        itemManager: ItemManager;
+    }) {
         this.logger = logger;
         this.playerRepository = playerRepository;
         this.playerFactory = playerFactory;
@@ -45,7 +58,11 @@ export default class SelectCharacterService {
 
         const items = await this.itemManager.getItems(player.getId());
 
-        player.addItems(items);
+        if (items.length > 0) {
+            this.logger.debug(`[SelectCharacterService] Player ${player.getName()} has ${items.length} items to load.`);
+            player.addItems(items as Item[]);
+        }
+
         player.sendPoints();
 
         return Result.ok(player);

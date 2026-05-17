@@ -23,6 +23,7 @@ import { ItemMetinSubTypeEnum } from '@/core/enum/ItemMetinSubTypeEnum';
 import { ItemUseSubTypeEnum } from '@/core/enum/ItemUseSubTypeEnum';
 import { ItemExtractSubTypeEnum } from '@/core/enum/ItemExtractSubTypeEnum';
 import { ItemToolSubTypeEnum } from '@/core/enum/ItemToolSubTypeEnum';
+import { WindowTypeEnum } from '@/core/enum/WindowTypeEnum';
 
 const parseFlags = (flags: string, enumType: any) => {
     const bitFlag = new BitFlag();
@@ -35,7 +36,145 @@ const parseFlags = (flags: string, enumType: any) => {
     return bitFlag;
 };
 
-const itemTypeSubTypeMapper = {
+const itemTypeMapper: Record<string, ItemTypeEnum> = {
+    ITEM_NONE: ItemTypeEnum.ITEM_NONE,
+    ITEM_WEAPON: ItemTypeEnum.ITEM_WEAPON,
+    ITEM_ARMOR: ItemTypeEnum.ITEM_ARMOR,
+    ITEM_USE: ItemTypeEnum.ITEM_USE,
+    ITEM_AUTOUSE: ItemTypeEnum.ITEM_AUTOUSE,
+    ITEM_MATERIAL: ItemTypeEnum.ITEM_MATERIAL,
+    ITEM_SPECIAL: ItemTypeEnum.ITEM_SPECIAL,
+    ITEM_TOOL: ItemTypeEnum.ITEM_TOOL,
+    ITEM_LOTTERY: ItemTypeEnum.ITEM_LOTTERY,
+    ITEM_ELK: ItemTypeEnum.ITEM_ELK,
+    ITEM_METIN: ItemTypeEnum.ITEM_METIN,
+    ITEM_CONTAINER: ItemTypeEnum.ITEM_CONTAINER,
+    ITEM_FISH: ItemTypeEnum.ITEM_FISH,
+    ITEM_ROD: ItemTypeEnum.ITEM_ROD,
+    ITEM_RESOURCE: ItemTypeEnum.ITEM_RESOURCE,
+    ITEM_CAMPFIRE: ItemTypeEnum.ITEM_CAMPFIRE,
+    ITEM_UNIQUE: ItemTypeEnum.ITEM_UNIQUE,
+    ITEM_SKILLBOOK: ItemTypeEnum.ITEM_SKILLBOOK,
+    ITEM_QUEST: ItemTypeEnum.ITEM_QUEST,
+    ITEM_POLYMORPH: ItemTypeEnum.ITEM_POLYMORPH,
+    ITEM_TREASURE_BOX: ItemTypeEnum.ITEM_TREASURE_BOX,
+    ITEM_TREASURE_KEY: ItemTypeEnum.ITEM_TREASURE_KEY,
+    ITEM_SKILLFORGET: ItemTypeEnum.ITEM_SKILLFORGET,
+    ITEM_GIFTBOX: ItemTypeEnum.ITEM_GIFTBOX,
+    ITEM_PICK: ItemTypeEnum.ITEM_PICK,
+    ITEM_HAIR: ItemTypeEnum.ITEM_HAIR,
+    ITEM_TOTEM: ItemTypeEnum.ITEM_TOTEM,
+    ITEM_BLEND: ItemTypeEnum.ITEM_BLEND,
+    ITEM_COSTUME: ItemTypeEnum.ITEM_COSTUME,
+    ITEM_DS: ItemTypeEnum.ITEM_DS,
+    ITEM_SPECIAL_DS: ItemTypeEnum.ITEM_SPECIAL_DS,
+    ITEM_EXTRACT: ItemTypeEnum.ITEM_EXTRACT,
+    ITEM_SECONDARY_COIN: ItemTypeEnum.ITEM_SECONDARY_COIN,
+    ITEM_RING: ItemTypeEnum.ITEM_RING,
+    ITEM_BELT: ItemTypeEnum.ITEM_BELT,
+};
+
+const itemLimitMapper: Record<string, ItemLimitTypeEnum> = {
+    NONE: ItemLimitTypeEnum.NONE,
+    LEVEL: ItemLimitTypeEnum.LEVEL,
+};
+
+const applyTypeMapper: Record<string, ApplyTypeEnum> = {
+    NONE: ApplyTypeEnum.NONE,
+    MAX_HP: ApplyTypeEnum.MAX_HP,
+    MAX_SP: ApplyTypeEnum.MAX_SP,
+    CON: ApplyTypeEnum.CON,
+    INT: ApplyTypeEnum.INT,
+    STR: ApplyTypeEnum.STR,
+    DEX: ApplyTypeEnum.DEX,
+    ATT_SPEED: ApplyTypeEnum.ATT_SPEED,
+    MOV_SPEED: ApplyTypeEnum.MOV_SPEED,
+    CAST_SPEED: ApplyTypeEnum.CAST_SPEED,
+    HP_REGEN: ApplyTypeEnum.HP_REGEN,
+    SP_REGEN: ApplyTypeEnum.SP_REGEN,
+    POISON_PCT: ApplyTypeEnum.POISON_PCT,
+    STUN_PCT: ApplyTypeEnum.STUN_PCT,
+    SLOW_PCT: ApplyTypeEnum.SLOW_PCT,
+    CRITICAL_PCT: ApplyTypeEnum.CRITICAL_PCT,
+    PENETRATE_PCT: ApplyTypeEnum.PENETRATE_PCT,
+    ATTBONUS_HUMAN: ApplyTypeEnum.ATTBONUS_HUMAN,
+    ATTBONUS_ANIMAL: ApplyTypeEnum.ATTBONUS_ANIMAL,
+    ATTBONUS_ORC: ApplyTypeEnum.ATTBONUS_ORC,
+    ATTBONUS_MILGYO: ApplyTypeEnum.ATTBONUS_MILGYO,
+    ATTBONUS_UNDEAD: ApplyTypeEnum.ATTBONUS_UNDEAD,
+    ATTBONUS_DEVIL: ApplyTypeEnum.ATTBONUS_DEVIL,
+    STEAL_HP: ApplyTypeEnum.STEAL_HP,
+    STEAL_SP: ApplyTypeEnum.STEAL_SP,
+    MANA_BURN_PCT: ApplyTypeEnum.MANA_BURN_PCT,
+    DAMAGE_SP_RECOVER: ApplyTypeEnum.DAMAGE_SP_RECOVER,
+    BLOCK: ApplyTypeEnum.BLOCK,
+    DODGE: ApplyTypeEnum.DODGE,
+    RESIST_SWORD: ApplyTypeEnum.RESIST_SWORD,
+    RESIST_TWOHAND: ApplyTypeEnum.RESIST_TWOHAND,
+    RESIST_DAGGER: ApplyTypeEnum.RESIST_DAGGER,
+    RESIST_BELL: ApplyTypeEnum.RESIST_BELL,
+    RESIST_FAN: ApplyTypeEnum.RESIST_FAN,
+    RESIST_BOW: ApplyTypeEnum.RESIST_BOW,
+    RESIST_FIRE: ApplyTypeEnum.RESIST_FIRE,
+    RESIST_ELEC: ApplyTypeEnum.RESIST_ELEC,
+    RESIST_MAGIC: ApplyTypeEnum.RESIST_MAGIC,
+    RESIST_WIND: ApplyTypeEnum.RESIST_WIND,
+    REFLECT_MELEE: ApplyTypeEnum.REFLECT_MELEE,
+    REFLECT_CURSE: ApplyTypeEnum.REFLECT_CURSE,
+    POISON_REDUCE: ApplyTypeEnum.POISON_REDUCE,
+    KILL_SP_RECOVER: ApplyTypeEnum.KILL_SP_RECOVER,
+    EXP_DOUBLE_BONUS: ApplyTypeEnum.EXP_DOUBLE_BONUS,
+    GOLD_DOUBLE_BONUS: ApplyTypeEnum.GOLD_DOUBLE_BONUS,
+    ITEM_DROP_BONUS: ApplyTypeEnum.ITEM_DROP_BONUS,
+    POTION_BONUS: ApplyTypeEnum.POTION_BONUS,
+    KILL_HP_RECOVER: ApplyTypeEnum.KILL_HP_RECOVER,
+    IMMUNE_STUN: ApplyTypeEnum.IMMUNE_STUN,
+    IMMUNE_SLOW: ApplyTypeEnum.IMMUNE_SLOW,
+    IMMUNE_FALL: ApplyTypeEnum.IMMUNE_FALL,
+    SKILL: ApplyTypeEnum.SKILL,
+    BOW_DISTANCE: ApplyTypeEnum.BOW_DISTANCE,
+    ATT_GRADE_BONUS: ApplyTypeEnum.ATT_GRADE_BONUS,
+    DEF_GRADE_BONUS: ApplyTypeEnum.DEF_GRADE_BONUS,
+    MAGIC_ATT_GRADE: ApplyTypeEnum.MAGIC_ATT_GRADE,
+    MAGIC_DEF_GRADE: ApplyTypeEnum.MAGIC_DEF_GRADE,
+    CURSE_PCT: ApplyTypeEnum.CURSE_PCT,
+    MAX_STAMINA: ApplyTypeEnum.MAX_STAMINA,
+    ATTBONUS_WARRIOR: ApplyTypeEnum.ATTBONUS_WARRIOR,
+    ATTBONUS_ASSASSIN: ApplyTypeEnum.ATTBONUS_ASSASSIN,
+    ATTBONUS_SURA: ApplyTypeEnum.ATTBONUS_SURA,
+    ATTBONUS_SHAMAN: ApplyTypeEnum.ATTBONUS_SHAMAN,
+    ATTBONUS_MONSTER: ApplyTypeEnum.ATTBONUS_MONSTER,
+    MALL_ATTBONUS: ApplyTypeEnum.MALL_ATTBONUS,
+    MALL_DEFBONUS: ApplyTypeEnum.MALL_DEFBONUS,
+    MALL_EXPBONUS: ApplyTypeEnum.MALL_EXPBONUS,
+    MALL_ITEMBONUS: ApplyTypeEnum.MALL_ITEMBONUS,
+    MALL_GOLDBONUS: ApplyTypeEnum.MALL_GOLDBONUS,
+    MAX_HP_PCT: ApplyTypeEnum.MAX_HP_PCT,
+    MAX_SP_PCT: ApplyTypeEnum.MAX_SP_PCT,
+    SKILL_DAMAGE_BONUS: ApplyTypeEnum.SKILL_DAMAGE_BONUS,
+    NORMAL_HIT_DAMAGE_BONUS: ApplyTypeEnum.NORMAL_HIT_DAMAGE_BONUS,
+    SKILL_DEFEND_BONUS: ApplyTypeEnum.SKILL_DEFEND_BONUS,
+    NORMAL_HIT_DEFEND_BONUS: ApplyTypeEnum.NORMAL_HIT_DEFEND_BONUS,
+    PC_BANG_EXP_BONUS: ApplyTypeEnum.PC_BANG_EXP_BONUS,
+    PC_BANG_DROP_BONUS: ApplyTypeEnum.PC_BANG_DROP_BONUS,
+    EXTRACT_HP_PCT: ApplyTypeEnum.EXTRACT_HP_PCT,
+    RESIST_WARRIOR: ApplyTypeEnum.RESIST_WARRIOR,
+    RESIST_ASSASSIN: ApplyTypeEnum.RESIST_ASSASSIN,
+    RESIST_SURA: ApplyTypeEnum.RESIST_SURA,
+    RESIST_SHAMAN: ApplyTypeEnum.RESIST_SHAMAN,
+    ENERGY: ApplyTypeEnum.ENERGY,
+    DEF_GRADE: ApplyTypeEnum.DEF_GRADE,
+    COSTUME_ATTR_BONUS: ApplyTypeEnum.COSTUME_ATTR_BONUS,
+    MAGIC_ATTBONUS_PER: ApplyTypeEnum.MAGIC_ATTBONUS_PER,
+    MELEE_MAGIC_ATTBONUS_PER: ApplyTypeEnum.MELEE_MAGIC_ATTBONUS_PER,
+    RESIST_ICE: ApplyTypeEnum.RESIST_ICE,
+    RESIST_EARTH: ApplyTypeEnum.RESIST_EARTH,
+    RESIST_DARK: ApplyTypeEnum.RESIST_DARK,
+    ANTI_CRITICAL_PCT: ApplyTypeEnum.ANTI_CRITICAL_PCT,
+    ANTI_PENETRATE_PCT: ApplyTypeEnum.ANTI_PENETRATE_PCT,
+};
+
+const itemTypeSubTypeMapper: Record<any, any> = {
     [ItemTypeEnum.ITEM_ARMOR]: ItemArmorSubTypeEnum,
     [ItemTypeEnum.ITEM_WEAPON]: ItemWeaponSubTypeEnum,
     [ItemTypeEnum.ITEM_AUTOUSE]: ItemAutoUseSubTypeEnum,
@@ -52,45 +191,45 @@ const itemTypeSubTypeMapper = {
 };
 
 type ItemParams = {
-    id?: number;
-    name?: string;
-    type?: number;
-    subType?: number;
-    size?: number;
-    antiFlags?: BitFlag;
-    flags?: BitFlag;
-    wearFlags?: BitFlag;
-    immuneFlags?: BitFlag;
-    gold?: number;
-    shopPrice?: number;
-    refineId?: number;
-    refineSet?: number;
-    magicPercent?: number;
-    limits?: Array<ItemLimit>;
-    applies?: Array<ItemApply>;
-    values?: Array<number>;
-    specular?: number;
-    socket?: number;
-    addon?: number;
-    count?: number;
-    socket0?: number;
-    socket1?: number;
-    socket2?: number;
-    attributeType0?: number;
-    attributeValue0?: number;
-    attributeType1?: number;
-    attributeValue1?: number;
-    attributeType2?: number;
-    attributeValue2?: number;
-    attributeType3?: number;
-    attributeValue3?: number;
-    attributeType4?: number;
-    attributeValue4?: number;
-    attributeType5?: number;
-    attributeValue5?: number;
-    attributeType6?: number;
-    attributeValue6?: number;
-    dbId?: number;
+    id: number;
+    name: string;
+    type: ItemTypeEnum;
+    subType: number;
+    size: number;
+    antiFlags: BitFlag;
+    flags: BitFlag;
+    wearFlags: BitFlag;
+    immuneFlags: BitFlag;
+    gold: number;
+    shopPrice: number;
+    refineId: number;
+    refineSet: number;
+    magicPercent: number;
+    limits: Array<ItemLimit>;
+    applies: Array<ItemApply>;
+    values: Array<number>;
+    specular: number;
+    socket: number;
+    addon: number;
+    count: number;
+    socket0: number;
+    socket1: number;
+    socket2: number;
+    attributeType0: number;
+    attributeValue0: number;
+    attributeType1: number;
+    attributeValue1: number;
+    attributeType2: number;
+    attributeValue2: number;
+    attributeType3: number;
+    attributeValue3: number;
+    attributeType4: number;
+    attributeValue4: number;
+    attributeType5: number;
+    attributeValue5: number;
+    attributeType6: number;
+    attributeValue6: number;
+    dbId?: number | null;
 };
 
 export default class Item {
@@ -116,10 +255,10 @@ export default class Item {
     private readonly addon: number;
     private count: number;
 
-    private dbId: number;
-    private ownerId: number;
-    private position: number;
-    private window: number;
+    private dbId: number | null = null;
+    private ownerId: number | null = null;
+    private position: number | null = null;
+    private window: WindowTypeEnum = WindowTypeEnum.INVENTORY;
     private socket0: number;
     private socket1: number;
     private socket2: number;
@@ -178,7 +317,7 @@ export default class Item {
         attributeValue5 = 0,
         attributeType6 = 0,
         attributeValue6 = 0,
-        dbId,
+        dbId = null,
     }: ItemParams) {
         this.id = id;
         this.name = name;
@@ -295,9 +434,9 @@ export default class Item {
         this.ownerId = value;
     }
     getPosition() {
-        return this.position;
+        return this.position!;
     }
-    setPosition(value) {
+    setPosition(value: number | null) {
         this.position = value;
     }
     getDbId() {
@@ -411,7 +550,7 @@ export default class Item {
         const flagsBitFlag = parseFlags(proto.flag, ItemFlagEnum);
         const immuneFlagsBitFlag = parseFlags(proto.immune, ItemImmuneFlagEnum);
         const wearFlagsBitFlag = parseFlags(proto.item_wear, ItemWearFlagEnum);
-        const itemType = ItemTypeEnum[proto.item_type] || ItemTypeEnum.ITEM_NONE;
+        const itemType: ItemTypeEnum = itemTypeMapper[proto.item_type] || ItemTypeEnum.ITEM_NONE;
         const itemSubTypeEnum = itemTypeSubTypeMapper[itemType];
         const itemSubType = itemSubTypeEnum && itemSubTypeEnum[proto.sub_type] ? itemSubTypeEnum[proto.sub_type] : 0;
 
@@ -435,26 +574,26 @@ export default class Item {
             wearFlags: wearFlagsBitFlag,
             limits: [
                 new ItemLimit({
-                    type: ItemLimitTypeEnum[`${proto.limit_type0.split('LIMIT_')[1]}`] || ItemLimitTypeEnum.NONE,
-                    value: proto.limit_value0,
+                    type: itemLimitMapper[`${proto.limit_type0.split('LIMIT_')[1]}`] || ItemLimitTypeEnum.NONE,
+                    value: Number(proto.limit_value0),
                 }),
                 new ItemLimit({
-                    type: ItemLimitTypeEnum[`${proto.limit_type1.split('LIMIT_')[1]}`] || ItemLimitTypeEnum.NONE,
-                    value: proto.limit_value1,
+                    type: itemLimitMapper[`${proto.limit_type1.split('LIMIT_')[1]}`] || ItemLimitTypeEnum.NONE,
+                    value: Number(proto.limit_value1),
                 }),
             ],
             applies: [
                 new ItemApply({
-                    type: ApplyTypeEnum[`${proto.addon_type0.split('APPLY_')[1]}`] || ApplyTypeEnum.NONE,
-                    value: proto.addon_value0,
+                    type: applyTypeMapper[`${proto.addon_type0.split('APPLY_')[1]}`] || ApplyTypeEnum.NONE,
+                    value: Number(proto.addon_value0),
                 }),
                 new ItemApply({
-                    type: ApplyTypeEnum[`${proto.addon_type1.split('APPLY_')[1]}`] || ApplyTypeEnum.NONE,
-                    value: proto.addon_value1,
+                    type: applyTypeMapper[`${proto.addon_type1.split('APPLY_')[1]}`] || ApplyTypeEnum.NONE,
+                    value: Number(proto.addon_value1),
                 }),
                 new ItemApply({
-                    type: ApplyTypeEnum[`${proto.addon_type2.split('APPLY_')[1]}`] || ApplyTypeEnum.NONE,
-                    value: proto.addon_value2,
+                    type: applyTypeMapper[`${proto.addon_type2.split('APPLY_')[1]}`] || ApplyTypeEnum.NONE,
+                    value: Number(proto.addon_value2),
                 }),
             ],
             values: [
@@ -466,6 +605,23 @@ export default class Item {
                 Number(proto.value5),
             ],
             count: flagsBitFlag.is(ItemFlagEnum.ITEM_STACKABLE) ? count : 1,
+            attributeType0: 0,
+            attributeValue0: 0,
+            attributeType1: 0,
+            attributeValue1: 0,
+            attributeType2: 0,
+            attributeValue2: 0,
+            attributeType3: 0,
+            attributeValue3: 0,
+            attributeType4: 0,
+            attributeValue4: 0,
+            attributeType5: 0,
+            attributeValue5: 0,
+            attributeType6: 0,
+            attributeValue6: 0,
+            socket0: 0,
+            socket1: 0,
+            socket2: 0,
         });
     }
 
@@ -494,6 +650,31 @@ export default class Item {
         attributeType6,
         attributeValue6,
         proto,
+    }: {
+        id: number;
+        ownerId: number;
+        window: WindowTypeEnum;
+        position: number;
+        count: number;
+        protoId: number;
+        socket0: number;
+        socket1: number;
+        socket2: number;
+        attributeType0: number;
+        attributeValue0: number;
+        attributeType1: number;
+        attributeValue1: number;
+        attributeType2: number;
+        attributeValue2: number;
+        attributeType3: number;
+        attributeValue3: number;
+        attributeType4: number;
+        attributeValue4: number;
+        attributeType5: number;
+        attributeValue5: number;
+        attributeType6: number;
+        attributeValue6: number;
+        proto: ItemProto;
     }) {
         const item = this.create(proto, count);
         item.dbId = id;
@@ -523,10 +704,10 @@ export default class Item {
 
     toDatabase() {
         return new ItemState({
-            id: this.dbId,
-            ownerId: this.ownerId,
+            id: this.dbId!,
+            ownerId: this.ownerId!,
             window: this.window,
-            position: this.position,
+            position: this.position!,
             count: this.count,
             protoId: this.id,
             socket0: this.socket0,

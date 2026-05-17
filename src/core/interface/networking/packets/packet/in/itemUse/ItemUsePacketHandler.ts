@@ -8,7 +8,7 @@ export default class ItemUsePacketHandler extends PacketHandler<ItemUsePacket> {
     private readonly logger: Logger;
     private readonly useItemService: UseItemService;
 
-    constructor({ logger, useItemService }) {
+    constructor({ logger, useItemService }: { logger: Logger; useItemService: UseItemService }) {
         super();
         this.logger = logger;
         this.useItemService = useItemService;
@@ -22,9 +22,18 @@ export default class ItemUsePacketHandler extends PacketHandler<ItemUsePacket> {
             return;
         }
 
+        const player = connection.getPlayer();
+
+        if (!player) {
+            this.logger.info(
+                `[ItemUsePacketHandler] The connection does not have a player selected, this cannot happen`,
+            );
+            connection.close();
+            return;
+        }
+
         const window = packet.getWindow();
         const position = packet.getPosition();
-        const player = connection.getPlayer();
 
         this.useItemService.execute(player, window, position);
     }

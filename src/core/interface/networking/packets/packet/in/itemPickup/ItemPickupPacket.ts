@@ -5,7 +5,7 @@ import ItemPickupPacketValidator from './ItemPickupPacketValidator';
 export default class ItemPickupPacket extends PacketIn {
     private virtualId: number;
 
-    constructor({ virtualId }) {
+    constructor({ virtualId }: { virtualId: number }) {
         super({
             header: PacketHeaderEnum.ITEM_PICKUP,
             name: 'ItemPickupPacket',

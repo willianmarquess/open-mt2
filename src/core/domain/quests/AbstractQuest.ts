@@ -9,15 +9,15 @@ import ItemManager from '../manager/ItemManager';
 import MathUtil from '../util/MathUtil';
 
 export abstract class AbstractQuest {
-    private readonly id: number;
-    private name: string;
+    private readonly id!: number;
+    private name!: string;
     private readonly states: Map<string, State> = new Map();
     private src: string = '';
     private skin: QuestSkinEnum = QuestSkinEnum.NORMAL;
     private currentChoicePromise: { promise: Promise<any>; resolve: (value?: number) => void | Promise<void> } =
         {} as any;
     private nextPagePromise: { promise: Promise<any>; resolve: (value?: number) => void | Promise<void> } = {} as any;
-    private currentState: State;
+    private currentState: State | undefined;
     private values: Map<string, any> = new Map();
     private hasReward: boolean = false;
     private status: QuestStatusEnum = QuestStatusEnum.NONE;
@@ -25,7 +25,7 @@ export abstract class AbstractQuest {
 
     private readonly player: Player;
     private readonly playerQuest: PlayerQuest;
-    private readonly itemManager: ItemManager;
+    private readonly itemManager!: ItemManager;
 
     constructor({ player }: { player: Player }) {
         this.player = player;
@@ -61,7 +61,7 @@ export abstract class AbstractQuest {
             for (const routine of tasks) {
                 try {
                     const withFunc = routine.with ? routine.with({ player: this.playerQuest, ...context }) : true;
-                    let callbackResult: TaskResult;
+                    let callbackResult: TaskResult | undefined;
 
                     try {
                         const result = await withFunc;
@@ -141,12 +141,13 @@ export abstract class AbstractQuest {
         const src = this.button(title);
         this.skin = QuestSkinEnum.NO_WINDOW;
         this.setStart();
-        this.setTitle(this.currentState.title || this.name);
+        this.setTitle(this.currentState?.title || this.name);
         this.send(src);
         this.skin = QuestSkinEnum.NORMAL;
     }
 
     protected clearLetter() {
+        if (!this.currentState) return;
         this.currentState.wasStarted = false;
         this.questFlags.set(QuestFlagEnum.ISBEGIN);
     }
@@ -209,7 +210,7 @@ export abstract class AbstractQuest {
         return result;
     }
 
-    private async endRunning(result: TaskResult) {
+    private async endRunning(result?: TaskResult) {
         if (this.hasReward) {
             //TODO: save
         }
@@ -219,7 +220,7 @@ export abstract class AbstractQuest {
             this.sendInfoPacket();
         }
 
-        if (result && result.nextState && result.nextState !== this.currentState.name) {
+        if (result && result.nextState && result.nextState !== this.currentState?.name) {
             await this.setState(result.nextState);
             await this.runState({ eventType: QuestEventEnum.LETTER });
         }
@@ -243,42 +244,50 @@ export abstract class AbstractQuest {
     }
 
     protected setTitle(title: string) {
+        if (!this.currentState) return;
         this.currentState.title = title;
         this.questFlags.set(QuestFlagEnum.TITLE);
     }
 
     protected setStart() {
+        if (!this.currentState) return;
         this.currentState.wasStarted = true;
         this.questFlags.set(QuestFlagEnum.ISBEGIN);
     }
 
     protected setClockName(name: string) {
+        if (!this.currentState) return;
         this.currentState.clockName = name;
         this.questFlags.set(QuestFlagEnum.CLOCK_NAME);
     }
 
     protected setClockValue(value: number) {
+        if (!this.currentState) return;
         this.currentState.clockValue = value;
         this.questFlags.set(QuestFlagEnum.CLOCK_VALUE);
     }
 
     protected setCounterName(name: string) {
+        if (!this.currentState) return;
         this.currentState.counterName = name;
         this.questFlags.set(QuestFlagEnum.COUNTER_NAME);
     }
 
     protected setCounterValue(value: number) {
+        if (!this.currentState) return;
         this.currentState.counterValue = value;
         this.questFlags.set(QuestFlagEnum.COUNTER_VALUE);
     }
 
     protected setIconFile(src: string) {
+        if (!this.currentState) return;
         this.currentState.iconFile = src;
         this.questFlags.set(QuestFlagEnum.ICON_FILE);
     }
 
     private resetStateValues() {
         this.questFlags.reset();
+        if (!this.currentState) return;
         this.currentState.wasStarted = false;
         this.currentState.title = undefined;
         this.currentState.clockName = undefined;
@@ -292,19 +301,25 @@ export abstract class AbstractQuest {
         this.player.sendQuestInfoPacket({
             id: this.id,
             flags: this.questFlags.getFlag(),
-            title: this.currentState.title,
-            wasStarted: this.currentState.wasStarted ? 1 : 0,
-            clockName: this.currentState.clockName,
-            clockValue: this.currentState.clockValue,
-            counterName: this.currentState.counterName,
-            counterValue: this.currentState.counterValue,
-            iconFile: this.currentState.iconFile,
+            title: this.currentState?.title || this.name,
+            wasStarted: this.currentState?.wasStarted ? 1 : 0,
+            clockName: this.currentState?.clockName,
+            clockValue: this.currentState?.clockValue,
+            counterName: this.currentState?.counterName,
+            counterValue: this.currentState?.counterValue,
+            iconFile: this.currentState?.iconFile,
         });
         this.questFlags.reset();
     }
 
     protected async giveItem(id: number, quantity: number = 1) {
         const item = this.itemManager.getItem(Number(id), Math.min(Number(quantity), MathUtil.MAX_TINY));
+
+        if (!item) {
+            //TODO: add log
+            return;
+        }
+
         if (this.player.addItem(item)) {
             await this.itemManager.save(item);
         } else {

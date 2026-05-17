@@ -6,7 +6,7 @@ import CommandHandler from '../../CommandHandler';
 export default class BlockModeCommandHandler extends CommandHandler<BlockModeCommand> {
     private readonly logger: Logger;
 
-    constructor({ logger }) {
+    constructor({ logger }: { logger: Logger }) {
         super();
         this.logger = logger;
     }

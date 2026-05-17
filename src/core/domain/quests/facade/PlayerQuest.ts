@@ -5,7 +5,7 @@ import { ChatMessageTypeEnum } from '@/core/enum/ChatMessageTypeEnum';
 export class PlayerQuest {
     private readonly player: Player;
 
-    constructor({ player }) {
+    constructor({ player }: { player: Player }) {
         this.player = player;
     }
 

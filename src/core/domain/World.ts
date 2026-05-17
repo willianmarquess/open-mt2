@@ -28,14 +28,26 @@ export default class World {
 
     private virtualId = 0;
 
-    private deltas = [];
+    private deltas: number[] = [];
 
     private readonly areas = new Map<string, Area>();
     private width = 0;
     private height = 0;
-    private grid: Grid<Area>;
+    private grid!: Grid<Area>;
 
-    constructor({ logger, config, saveCharacterService, spawnManager, privilegeManager }) {
+    constructor({
+        logger,
+        config,
+        saveCharacterService,
+        spawnManager,
+        privilegeManager,
+    }: {
+        logger: Logger;
+        config: GameConfig;
+        saveCharacterService: SaveCharacterService;
+        spawnManager: SpawnManager;
+        privilegeManager: PrivilegeManager;
+    }) {
         this.logger = logger;
         this.config = config;
         this.saveCharacterService = saveCharacterService;
@@ -199,7 +211,7 @@ export default class World {
     }
 
     close() {
-        const promises = [];
+        const promises: Array<Promise<void>> = [];
         for (const area of this.areas.values()) {
             promises.push(area.savePlayers());
         }

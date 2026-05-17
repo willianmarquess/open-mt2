@@ -6,7 +6,13 @@ export default class RedisCacheProvider implements CacheProvider {
     private readonly client: redis.RedisClientType;
     private readonly logger: Logger;
 
-    constructor({ logger, config }) {
+    constructor({
+        logger,
+        config,
+    }: {
+        logger: Logger;
+        config: { CACHE_HOST: string; CACHE_PORT: number; CACHE_PING_INTERVAL: number };
+    }) {
         this.client = redis.createClient({
             socket: {
                 host: config.CACHE_HOST,

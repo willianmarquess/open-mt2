@@ -3,11 +3,11 @@ import Monster from '@/core/domain/entities/game/mob/Monster';
 import Player from '../player/Player';
 
 export default class MonsterGroup {
-    private leader: Monster;
+    private leader!: Monster;
     private members: Array<Monster> = [];
     private spawnConfig: SpawnConfig;
 
-    constructor({ spawnConfig }) {
+    constructor({ spawnConfig }: { spawnConfig: SpawnConfig }) {
         this.spawnConfig = spawnConfig;
     }
 

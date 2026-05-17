@@ -2,7 +2,7 @@ import Command from '../../Command';
 import LevelCommandValidator from './LevelCommandValidator';
 
 export default class LevelCommand extends Command {
-    constructor({ args }) {
+    constructor({ args }: { args: Array<string> }) {
         super({ args, validator: LevelCommandValidator });
     }
 

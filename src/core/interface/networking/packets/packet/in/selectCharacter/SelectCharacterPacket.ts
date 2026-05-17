@@ -5,7 +5,7 @@ import SelectCharacterPacketValidator from './SelectCharacterPacketValidator';
 export default class SelectCharacterPacket extends PacketIn {
     private slot: number;
 
-    constructor({ slot }) {
+    constructor({ slot }: { slot: number }) {
         super({
             header: PacketHeaderEnum.SELECT_CHARACTER,
             name: 'SelectCharacterPacket',

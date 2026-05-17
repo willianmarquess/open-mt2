@@ -5,7 +5,7 @@ import OnClickPacketValidator from './OnClickPacketValidator';
 export default class OnClickPacket extends PacketIn {
     private targetVirtualId: number;
 
-    constructor({ targetVirtualId }) {
+    constructor({ targetVirtualId }: { targetVirtualId: number }) {
         super({
             header: PacketHeaderEnum.ON_CLICK,
             name: 'OnClickPacket',

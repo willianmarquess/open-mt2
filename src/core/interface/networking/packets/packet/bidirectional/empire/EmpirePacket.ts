@@ -5,7 +5,7 @@ import EmpirePacketValidator from './EmpirePacketValidator';
 export default class EmpirePacket extends PacketBidirectional {
     private empireId: number;
 
-    constructor({ empireId }) {
+    constructor({ empireId }: { empireId: number }) {
         super({
             header: PacketHeaderEnum.EMPIRE,
             name: 'EmpirePacket',

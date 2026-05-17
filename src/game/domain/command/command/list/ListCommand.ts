@@ -2,7 +2,7 @@ import Command from '../../Command';
 import ListCommandValidator from './ListCommandValidator';
 
 export default class ListCommand extends Command {
-    constructor({ args }) {
+    constructor({ args }: { args: Array<string> }) {
         super({ args, validator: ListCommandValidator });
     }
 

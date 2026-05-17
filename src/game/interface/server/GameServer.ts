@@ -2,11 +2,19 @@ import World from '@/core/domain/World';
 import Server from '../../../core/interface/server/Server';
 import GameConnection from '@/game/interface/networking/GameConnection';
 import { Socket } from 'net';
+import { Logger } from 'winston';
+import { GameConfig } from '@/game/infra/config/GameConfig';
+import { PacketMapValue } from '@/core/interface/networking/packets/Packets';
 
 export default class GameServer extends Server {
     private readonly world: World;
 
-    constructor(container) {
+    constructor(container: {
+        logger: Logger;
+        config: GameConfig;
+        packets: Map<number, PacketMapValue<any>>;
+        world: World;
+    }) {
         super(container);
         this.world = container.world;
     }
@@ -16,14 +24,14 @@ export default class GameServer extends Server {
         this.logger.debug(`[IN][DATA SOCKET EVENT] Data received from ID: ${connection.getId()}`);
 
         const header = data[0];
-        const packetExists = this.packets.has(header);
+        const packetBuilder = this.packets.get(header);
 
-        if (!packetExists) {
+        if (!packetBuilder) {
             this.logger.info(`[IN][PACKET] Unknown header packet: ${data[0]}`);
             return;
         }
 
-        const { createPacket, createHandler } = this.packets.get(header);
+        const { createPacket, createHandler } = packetBuilder;
         const packet = createPacket({});
         const handler = createHandler(this.container);
         this.logger.debug(`[IN][PACKET] processing packet: ${handler.constructor.name}`);

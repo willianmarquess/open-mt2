@@ -2,7 +2,7 @@ import Command from '../../Command';
 import ItemCommandValidator from './ItemCommandValidator';
 
 export default class ItemCommand extends Command {
-    constructor({ args }) {
+    constructor({ args }: { args: Array<string> }) {
         super({ args, validator: ItemCommandValidator });
     }
 

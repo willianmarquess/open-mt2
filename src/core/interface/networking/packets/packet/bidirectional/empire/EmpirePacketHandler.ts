@@ -9,16 +9,16 @@ export default class EmpirePacketHandler extends PacketHandler<EmpirePacket> {
     private readonly selectEmpireService: SelectEmpireService;
     private readonly logger: Logger;
 
-    constructor({ selectEmpireService, logger }) {
+    constructor({ selectEmpireService, logger }: { selectEmpireService: SelectEmpireService; logger: Logger }) {
         super();
         this.selectEmpireService = selectEmpireService;
         this.logger = logger;
     }
 
-    async execute(connection: GameConnection, packet: EmpirePacket) {
+    async execute(connection: GameConnection, packet: EmpirePacket): Promise<void> {
         if (!packet.isValid()) {
             this.logger.error(`[AuthTokenPacketHandler] Packet invalid`);
-            this.logger.error(packet.getErrorMessage());
+            this.logger.error(packet.getErrorMessage()!);
             connection.close();
             return;
         }

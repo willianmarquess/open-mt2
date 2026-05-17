@@ -10,7 +10,7 @@ export default class LevelCommandHandler extends CommandHandler<LevelCommand> {
     private readonly logger: Logger;
     private readonly world: World;
 
-    constructor({ logger, world }) {
+    constructor({ logger, world }: { logger: Logger; world: World }) {
         super();
         this.logger = logger;
         this.world = world;

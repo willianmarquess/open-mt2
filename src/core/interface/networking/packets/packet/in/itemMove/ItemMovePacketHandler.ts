@@ -8,7 +8,7 @@ export default class ItemMovePacketHandler extends PacketHandler<ItemMovePacket>
     private logger: Logger;
     private moveItemService: MoveItemService;
 
-    constructor({ logger, moveItemService }) {
+    constructor({ logger, moveItemService }: { logger: Logger; moveItemService: MoveItemService }) {
         super();
         this.logger = logger;
         this.moveItemService = moveItemService;
@@ -22,8 +22,18 @@ export default class ItemMovePacketHandler extends PacketHandler<ItemMovePacket>
             return;
         }
 
+        const player = connection.getPlayer();
+
+        if (!player) {
+            this.logger.info(
+                `[ItemMovePacketHandler] The connection does not have a player selected, this cannot happen`,
+            );
+            connection.close();
+            return;
+        }
+
         this.moveItemService.execute({
-            player: connection.getPlayer(),
+            player,
             fromWindow: packet.getFromWindow(),
             fromPosition: packet.getFromPosition(),
             toWindow: packet.getToWindow(),

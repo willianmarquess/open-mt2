@@ -9,7 +9,7 @@ export default class PickupItemService {
     private readonly world: World;
     private readonly itemRepository: IItemRepository;
 
-    constructor({ world, itemRepository }) {
+    constructor({ world, itemRepository }: { world: World; itemRepository: IItemRepository }) {
         this.world = world;
         this.itemRepository = itemRepository;
     }

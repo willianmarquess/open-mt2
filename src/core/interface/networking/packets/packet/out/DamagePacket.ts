@@ -1,12 +1,6 @@
 import PacketHeaderEnum from '@/core/enum/PacketHeaderEnum';
 import PacketOut from '@/core/interface/networking/packets/packet/out/PacketOut';
 
-type DamagePacketParams = {
-    virtualId?: number;
-    damageFlags?: number;
-    damage?: number;
-};
-
 /**
  * @packet
  * @type Out
@@ -26,7 +20,7 @@ export default class DamagePacket extends PacketOut {
     private damageFlags: number;
     private damage: number;
 
-    constructor({ virtualId, damageFlags, damage }: DamagePacketParams = {}) {
+    constructor({ virtualId, damageFlags, damage }: { virtualId: number; damageFlags: number; damage: number }) {
         super({
             header: PacketHeaderEnum.DAMAGE,
             name: 'DamagePacket',

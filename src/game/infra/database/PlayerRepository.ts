@@ -1,12 +1,14 @@
 import DatabaseManager from '@/core/infra/database/DatabaseManager';
-import { ResultSetHeader } from 'mysql2';
+import { ResultSetHeader, RowDataPacket } from 'mysql2';
 import PlayerState from '@/core/domain/entities/state/player/PlayerState';
 import { IPlayerRepository } from '@/core/domain/repository/IPlayerRepository';
+
+type PlayerRow = RowDataPacket & PlayerState;
 
 export default class PlayerRepository implements IPlayerRepository {
     private readonly databaseManager: DatabaseManager;
 
-    constructor({ databaseManager }) {
+    constructor({ databaseManager }: { databaseManager: DatabaseManager }) {
         this.databaseManager = databaseManager;
     }
 
@@ -77,19 +79,19 @@ export default class PlayerRepository implements IPlayerRepository {
         return result.insertId;
     }
 
-    async nameAlreadyExists(name: string) {
-        const [players] = await this.databaseManager.getConnection().query(
+    async nameAlreadyExists(name: string): Promise<boolean> {
+        const [players] = await this.databaseManager.getConnection().query<PlayerRow[]>(
             `
         SELECT * FROM game.player WHERE name = ?;
         `,
             [name],
         );
 
-        return !!players[0];
+        return players.length > 0;
     }
 
     async update(player: PlayerState) {
-        await this.databaseManager.getConnection().query(
+        await this.databaseManager.getConnection().query<ResultSetHeader>(
             `
         UPDATE game.player SET 
             accountId = ?, 
@@ -150,8 +152,8 @@ export default class PlayerRepository implements IPlayerRepository {
         );
     }
 
-    async getById(id: number) {
-        const [players] = await this.databaseManager.getConnection().query(
+    async getById(id: number): Promise<PlayerState | null> {
+        const [players] = await this.databaseManager.getConnection().query<PlayerRow[]>(
             `
         SELECT * FROM game.player WHERE id = ?;
         `,
@@ -161,19 +163,19 @@ export default class PlayerRepository implements IPlayerRepository {
         return this.mapToEntity(players[0]);
     }
 
-    async getByAccountId(accountId: number) {
-        const [players] = await this.databaseManager.getConnection().query(
+    async getByAccountId(accountId: number): Promise<PlayerState[]> {
+        const [players] = await this.databaseManager.getConnection().query<PlayerRow[]>(
             `
         SELECT * FROM game.player WHERE accountId = ?;
         `,
             [accountId],
         );
 
-        return (players as Array<PlayerState>).map((p) => this.mapToEntity(p));
+        return players.map((p) => this.mapToEntity(p)) as PlayerState[];
     }
 
-    async getByAccountIdAndSlot(accountId: number, slot: number) {
-        const [players] = await this.databaseManager.getConnection().query(
+    async getByAccountIdAndSlot(accountId: number, slot: number): Promise<PlayerState | null> {
+        const [players] = await this.databaseManager.getConnection().query<PlayerRow[]>(
             `
         SELECT * FROM game.player WHERE accountId = ? and slot = ?;
         `,
@@ -183,8 +185,8 @@ export default class PlayerRepository implements IPlayerRepository {
         return this.mapToEntity(players[0]);
     }
 
-    private mapToEntity(player: PlayerState) {
-        if (!player) return;
+    private mapToEntity(player?: PlayerRow): PlayerState | null {
+        if (!player) return null;
 
         const {
             id,

@@ -1,7 +1,7 @@
 import GameApplication from './app/GameApplication';
 import { container } from './Container';
 
-const app = new GameApplication(container.cradle);
+const app = new GameApplication(container.cradle as any);
 
 app.start().catch((error) => {
     console.error('error when start application', error);

@@ -3,18 +3,17 @@ import { Socket } from 'node:net';
 import ConnectionStatePacket from './packets/packet/out/ConnectionStatePacket';
 import { ConnectionStateEnum } from '../../enum/ConnectionStateEnum';
 import Logger from '@/core/infra/logger/Logger';
-import Packet from '@/core/interface/networking/packets/packet/Packet';
 import HandshakePacket from './packets/packet/bidirectional/handshake/HandshakePacket';
 
 export default abstract class Connection {
     protected id: string;
-    protected state: ConnectionStateEnum;
+    protected state: ConnectionStateEnum = ConnectionStateEnum.CLOSE;
     protected socket: Socket;
     protected logger: Logger;
 
-    private lastHandshake: HandshakePacket;
+    private lastHandshake: HandshakePacket | null = null;
 
-    constructor({ socket, logger }) {
+    constructor({ socket, logger }: { socket: Socket; logger: Logger }) {
         this.id = randomUUID();
         this.socket = socket;
         this.logger = logger;
@@ -58,7 +57,7 @@ export default abstract class Connection {
     }
 
     abstract onHandshakeSuccess(): void;
-    abstract send(data: Packet): void;
+    abstract send<T>(packet: T): void;
 
     close() {
         this.socket.destroy();

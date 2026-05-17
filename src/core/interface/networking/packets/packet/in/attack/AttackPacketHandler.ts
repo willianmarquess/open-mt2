@@ -8,7 +8,13 @@ export default class AttackPacketHandler extends PacketHandler<AttackPacket> {
     private readonly logger: Logger;
     private readonly characterAttackService: CharacterAttackService;
 
-    constructor({ logger, characterAttackService }) {
+    constructor({
+        logger,
+        characterAttackService,
+    }: {
+        logger: Logger;
+        characterAttackService: CharacterAttackService;
+    }) {
         super();
         this.logger = logger;
         this.characterAttackService = characterAttackService;
@@ -17,7 +23,7 @@ export default class AttackPacketHandler extends PacketHandler<AttackPacket> {
     async execute(connection: GameConnection, packet: AttackPacket) {
         if (!packet.isValid()) {
             this.logger.error(`[AttackPacketHandler] Packet invalid`);
-            this.logger.error(packet.getErrorMessage());
+            this.logger.error(packet.getErrorMessage()!);
             connection.close();
             return;
         }

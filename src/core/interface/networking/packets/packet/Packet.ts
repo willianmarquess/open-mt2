@@ -7,7 +7,19 @@ export default abstract class Packet {
     protected name: string;
     protected validator?: PacketValidator<this>;
 
-    constructor({ header, subHeader = 0, size, name, validator = undefined }) {
+    constructor({
+        header,
+        subHeader = 0,
+        size,
+        name,
+        validator = undefined,
+    }: {
+        header: number;
+        subHeader?: number;
+        size: number;
+        name: string;
+        validator?: new (packet: any) => PacketValidator<any>;
+    }) {
         this.header = header;
         this.subHeader = subHeader;
         this.size = size;
@@ -48,7 +60,7 @@ export default abstract class Packet {
     }
 
     getErrorMessage() {
-        return this.validator.getFormattedErrorMessage();
+        return this.validator?.getFormattedErrorMessage() || 'Invalid packet';
     }
 
     validate() {

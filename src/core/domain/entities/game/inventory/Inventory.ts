@@ -6,6 +6,7 @@ import { WindowTypeEnum } from '@/core/enum/WindowTypeEnum';
 import { ItemEquipmentSlotEnum } from '@/core/enum/ItemEquipmentSlotEnum';
 import ItemEquippedEvent from '@/core/domain/entities/game/inventory/events/ItemEquippedEvent';
 import ItemUnequippedEvent from '@/core/domain/entities/game/inventory/events/ItemUnequippedEvent';
+import { GameConfig } from '@/game/infra/config/GameConfig';
 
 const DEFAULT_INVENTORY_WIDTH = 5;
 const DEFAULT_INVENTORY_HEIGHT = 9;
@@ -19,7 +20,7 @@ export default class Inventory {
     private readonly items: Map<number, Item>;
     private readonly ownerId: number;
 
-    constructor({ config, ownerId }) {
+    constructor({ config, ownerId }: { config: GameConfig; ownerId: number }) {
         for (let i = 0; i < config.INVENTORY_PAGES; i++) {
             this.pages.push(new Page(this.width, this.height));
         }
@@ -57,7 +58,7 @@ export default class Inventory {
                 item.setWindow(
                     this.isEquipmentPosition(realPosition) ? WindowTypeEnum.EQUIPMENT : WindowTypeEnum.INVENTORY,
                 );
-                this.items.set(item.getDbId(), item);
+                this.items.set(item.getDbId()!, item);
                 return realPosition;
             }
         }
@@ -71,7 +72,7 @@ export default class Inventory {
             item.setPosition(position);
             item.setOwnerId(this.ownerId);
             item.setWindow(this.isEquipmentPosition(position) ? WindowTypeEnum.EQUIPMENT : WindowTypeEnum.INVENTORY);
-            this.items.set(item.getDbId(), item);
+            this.items.set(item.getDbId()!, item);
             this.publish(ItemEquippedEvent.type, new ItemEquippedEvent({ item, slot: position - this.size() }));
             return;
         }
@@ -84,7 +85,7 @@ export default class Inventory {
             item.setWindow(
                 this.isEquipmentPosition(pagePosition) ? WindowTypeEnum.EQUIPMENT : WindowTypeEnum.INVENTORY,
             );
-            this.items.set(item.getDbId(), item);
+            this.items.set(item.getDbId()!, item);
         }
     }
 
@@ -125,10 +126,10 @@ export default class Inventory {
 
         if (this.isFromEquipmentSlots(position)) {
             const unequippedItem = this.equipment.removeItem(position);
-            this.items.delete(item.getDbId());
+            this.items.delete(item.getDbId()!);
             this.publish(
                 ItemUnequippedEvent.type,
-                new ItemUnequippedEvent({ item: unequippedItem, slot: position - this.size() }),
+                new ItemUnequippedEvent({ item: unequippedItem!, slot: position - this.size() }),
             );
             return;
         }
@@ -136,7 +137,7 @@ export default class Inventory {
         const page = this.calcPage(position);
         const pagePosition = this.calcPagePosition(page, position);
         this.pages[page].removeItem(pagePosition, size);
-        this.items.delete(item.getDbId());
+        this.items.delete(item.getDbId()!);
     }
 
     haveAvailablePosition(position: number, size: number) {
@@ -149,7 +150,7 @@ export default class Inventory {
         return this.pages[page].haveAvailablePosition(pagePosition, size);
     }
 
-    isValidPosition(position) {
+    isValidPosition(position: number) {
         return position >= 0 && position < this.size() + this.equipment.size();
     }
 
@@ -165,7 +166,7 @@ export default class Inventory {
         this.emitter.emit(eventName, event);
     }
 
-    subscribe(eventName: string | symbol, callback: VoidFunction) {
+    subscribe(eventName: string | symbol, callback: (...args: any[]) => void) {
         this.emitter.on(eventName, callback);
     }
 

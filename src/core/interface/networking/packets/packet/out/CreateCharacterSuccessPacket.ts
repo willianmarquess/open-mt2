@@ -21,11 +21,6 @@ type CharacterParams = {
     skillGroup: number;
 };
 
-type CreateCharacterSuccessPacketParams = {
-    slot?: number;
-    character?: CharacterParams;
-};
-
 const defaultCharacterInfo: CharacterParams = {
     id: 0,
     name: '',
@@ -50,7 +45,7 @@ export default class CreateCharacterSuccessPacket extends PacketOut {
     private slot: number;
     private character: CharacterParams;
 
-    constructor({ slot, character = defaultCharacterInfo }: CreateCharacterSuccessPacketParams = {}) {
+    constructor({ slot, character = defaultCharacterInfo }: { slot: number; character?: CharacterParams }) {
         super({
             header: PacketHeaderEnum.CREATE_CHARACTER_SUCCESS,
             name: 'CreateCharacterSuccessPacket',

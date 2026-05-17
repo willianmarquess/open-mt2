@@ -1,12 +1,12 @@
 export default class Grid<T> {
     private width: number;
     private height: number;
-    private grid: Array<Array<T>>;
+    private grid: Array<Array<T | undefined>>;
 
-    constructor(width: number, height: number, defaultValue: string | number = 0) {
+    constructor(width: number, height: number, defaultValue?: T) {
         this.width = width;
         this.height = height;
-        this.grid = Array.from({ length: width }, () => Array(height).fill(defaultValue));
+        this.grid = Array.from({ length: width }, () => Array<T | undefined>(height).fill(defaultValue));
     }
 
     getHeight() {
@@ -35,7 +35,7 @@ export default class Grid<T> {
 
     printGrid() {
         for (let y = 0; y < this.height; y++) {
-            const row = [];
+            const row: Array<T | undefined> = [];
             for (let x = 0; x < this.width; x++) {
                 row.push(this.grid[x][y]);
             }

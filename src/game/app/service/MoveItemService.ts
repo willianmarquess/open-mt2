@@ -15,7 +15,7 @@ export default class MoveItemService {
     private readonly logger: Logger;
     private readonly itemManager: ItemManager;
 
-    constructor({ logger, itemManager }) {
+    constructor({ logger, itemManager }: { logger: Logger; itemManager: ItemManager }) {
         this.logger = logger;
         this.itemManager = itemManager;
     }

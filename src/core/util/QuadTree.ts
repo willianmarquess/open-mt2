@@ -27,10 +27,10 @@ export default class QuadTree {
     private bounds: Rectangle;
     private subdivided: boolean;
     private entities: Map<number, GameEntity>;
-    private _nw: QuadTree;
-    private _ne: QuadTree;
-    private _sw: QuadTree;
-    private _se: QuadTree;
+    private _nw: QuadTree | null;
+    private _ne: QuadTree | null;
+    private _sw: QuadTree | null;
+    private _se: QuadTree | null;
 
     constructor(x: number, y: number, width: number, height: number, capacity: number) {
         this.x = x;
@@ -55,7 +55,7 @@ export default class QuadTree {
         return this.subdivided;
     }
 
-    insert(entity: GameEntity) {
+    insert(entity: GameEntity): boolean {
         if (!this.bounds.contains(entity.getPositionX(), entity.getPositionY())) {
             return false;
         }
@@ -69,20 +69,24 @@ export default class QuadTree {
             this.subdivide();
         }
 
-        return this._nw.insert(entity) || this._ne.insert(entity) || this._sw.insert(entity) || this._se.insert(entity);
+        return (this._nw?.insert(entity) ||
+            this._ne?.insert(entity) ||
+            this._sw?.insert(entity) ||
+            this._se?.insert(entity))!;
     }
 
-    remove(entity: GameEntity) {
+    remove(entity: GameEntity): boolean {
         if (this.subdivided) {
-            return (
-                this._nw.remove(entity) || this._ne.remove(entity) || this._sw.remove(entity) || this._se.remove(entity)
-            );
+            return (this._nw?.remove(entity) ||
+                this._ne?.remove(entity) ||
+                this._sw?.remove(entity) ||
+                this._se?.remove(entity))!;
         }
 
         return this.entities.delete(entity.getVirtualId());
     }
 
-    queryAround(x: number, y: number, radius: number, filter: number = null) {
+    queryAround(x: number, y: number, radius: number, filter: number | null = null) {
         const entities = new Map<number, GameEntity>();
         this.queryAroundInternal(entities, x, y, radius, filter);
         return entities;
@@ -93,17 +97,17 @@ export default class QuadTree {
         x: number,
         y: number,
         radius: number,
-        filter: number = null,
+        filter: number | null = null,
     ) {
         if (!this.circleIntersects(x, y, radius)) {
             return;
         }
 
         if (this.subdivided) {
-            this._ne.queryAroundInternal(entities, x, y, radius, filter);
-            this._nw.queryAroundInternal(entities, x, y, radius, filter);
-            this._se.queryAroundInternal(entities, x, y, radius, filter);
-            this._sw.queryAroundInternal(entities, x, y, radius, filter);
+            this._ne?.queryAroundInternal(entities, x, y, radius, filter);
+            this._nw?.queryAroundInternal(entities, x, y, radius, filter);
+            this._se?.queryAroundInternal(entities, x, y, radius, filter);
+            this._sw?.queryAroundInternal(entities, x, y, radius, filter);
         } else {
             for (const entity of this.entities.values()) {
                 if (filter !== null && entity.getEntityType() !== filter) {

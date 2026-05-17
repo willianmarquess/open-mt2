@@ -6,7 +6,7 @@ import GameConnection from '@/game/interface/networking/GameConnection';
 export default class ClientVersionPacketHandler extends PacketHandler<ClientVersionPacket> {
     private readonly logger: Logger;
 
-    constructor({ logger }) {
+    constructor({ logger }: { logger: Logger }) {
         super();
         this.logger = logger;
     }

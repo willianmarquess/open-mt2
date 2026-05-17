@@ -6,7 +6,7 @@ import sinon from 'sinon';
 
 describe('AccountRepository', () => {
     let accountRepository: AccountRepository;
-    let databaseManagerMock = {};
+    let databaseManagerMock: any = {};
 
     afterEach(() => {
         sinon.restore();
@@ -43,11 +43,12 @@ describe('AccountRepository', () => {
 
             const result = await accountRepository.findByUsername('testuser');
 
+            expect(result).to.not.be.null;
             expect(result).to.be.an.instanceOf(Account);
             expect(result).to.have.property('username', 'testuser');
             expect(result).to.have.property('email', 'testuser@example.com');
-            expect(result.getAccountStatus()).to.be.an.instanceOf(AccountStatus);
-            expect(result.getAccountStatus()).to.have.property('description', 'Active');
+            expect(result!.getAccountStatus()).to.be.an.instanceOf(AccountStatus);
+            expect(result!.getAccountStatus()).to.have.property('description', 'Active');
         });
 
         it('should return undefined if account not found', async () => {
@@ -60,7 +61,7 @@ describe('AccountRepository', () => {
             accountRepository = new AccountRepository({ databaseManager: databaseManagerMock });
 
             const result = await accountRepository.findByUsername('nonexistentuser');
-            expect(result).to.be.undefined;
+            expect(result).to.be.null;
         });
     });
 });

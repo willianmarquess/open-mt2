@@ -7,13 +7,14 @@ import { ChatMessageTypeEnum } from '@/core/enum/ChatMessageTypeEnum';
 import { PrivilegeManager, PrivilegeTypeEnum } from '@/core/domain/manager/PrivilegeManager';
 import { EmpireEnum } from '@/core/enum/EmpireEnum';
 
-const empireMapper = {
+const empireMapper: { [key in EmpireEnum]: string } = {
     [EmpireEnum.BLUE]: 'blue',
     [EmpireEnum.RED]: 'red',
     [EmpireEnum.YELLOW]: 'yellow',
+    [EmpireEnum.NEUTRAL]: 'neutral',
 };
 
-const privilegeMapper = {
+const privilegeMapper: { [key in PrivilegeTypeEnum]: string } = {
     [PrivilegeTypeEnum.DROP]: 'drop',
     [PrivilegeTypeEnum.EXP]: 'exp',
     [PrivilegeTypeEnum.GOLD]: 'gold',
@@ -27,7 +28,15 @@ export default class ListCommandHandler extends CommandHandler<ListCommand> {
     private readonly world: World;
     private readonly privilegeManager: PrivilegeManager;
 
-    constructor({ logger, world, privilegeManager }) {
+    constructor({
+        logger,
+        world,
+        privilegeManager,
+    }: {
+        logger: Logger;
+        world: World;
+        privilegeManager: PrivilegeManager;
+    }) {
         super();
         this.logger = logger;
         this.world = world;

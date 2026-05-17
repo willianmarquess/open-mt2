@@ -8,7 +8,7 @@ export default class CharacterMovePacketHandler extends PacketHandler<CharacterM
     private readonly logger: Logger;
     private readonly characterMoveService: CharacterMoveService;
 
-    constructor({ logger, characterMoveService }) {
+    constructor({ logger, characterMoveService }: { logger: Logger; characterMoveService: CharacterMoveService }) {
         super();
         this.logger = logger;
         this.characterMoveService = characterMoveService;

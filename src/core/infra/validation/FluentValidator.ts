@@ -31,7 +31,7 @@ export default class FluentValidator {
     getFormattedErrorMessage() {
         const errors = this.getErrors();
         return errors.reduce((prev, curr) => {
-            const fieldErrors = curr.errors.reduce((msg, err) => (msg += ` | ${err.error}`), `field: ${curr.name}`);
+            const fieldErrors = curr.errors.reduce((msg, err) => `${msg} | ${err.error}`, `field: ${curr.name}`);
             return prev + fieldErrors + '\n';
         }, '');
     }

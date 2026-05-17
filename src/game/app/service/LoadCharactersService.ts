@@ -5,11 +5,11 @@ import { IPlayerRepository } from '@/core/domain/repository/IPlayerRepository';
 export default class LoadCharactersService {
     private readonly playerRepository: IPlayerRepository;
 
-    constructor({ playerRepository }) {
+    constructor({ playerRepository }: { playerRepository: IPlayerRepository }) {
         this.playerRepository = playerRepository;
     }
 
-    async execute({ accountId }): Promise<Result<Array<PlayerState>, void>> {
+    async execute({ accountId }: { accountId: number }): Promise<Result<Array<PlayerState>, void>> {
         const players = await this.playerRepository.getByAccountId(accountId);
         return Result.ok(players);
     }

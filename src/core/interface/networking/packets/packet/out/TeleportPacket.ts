@@ -1,20 +1,23 @@
 import PacketHeaderEnum from '@/core/enum/PacketHeaderEnum';
 import PacketOut from '@/core/interface/networking/packets/packet/out/PacketOut';
 
-type TeleportPacketParams = {
-    positionX?: number;
-    positionY?: number;
-    address?: number;
-    port?: number;
-};
-
 export default class TeleportPacket extends PacketOut {
     private positionX: number;
     private positionY: number;
     private address: number;
     private port: number;
 
-    constructor({ positionX, positionY, address, port }: TeleportPacketParams = {}) {
+    constructor({
+        positionX,
+        positionY,
+        address,
+        port,
+    }: {
+        positionX: number;
+        positionY: number;
+        address: number;
+        port: number;
+    }) {
         super({
             header: PacketHeaderEnum.TELEPORT,
             name: 'TeleportPacket',

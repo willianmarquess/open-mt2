@@ -113,7 +113,7 @@ export class PrivilegeManager {
         if (!privileges) return 0;
 
         const privilege = privileges.find((privilege) => privilege.target.getId() === target.getId());
-        return privilege?.value;
+        return privilege?.value || 0;
     }
 
     getEmpirePrivilege(target: EmpireEnum, type: PrivilegeTypeEnum): number {
@@ -121,7 +121,7 @@ export class PrivilegeManager {
         if (!privileges) return 0;
 
         const privilege = privileges.find((privilege) => privilege.target === target);
-        return privilege?.value;
+        return privilege?.value || 0;
     }
 
     getEmpiresPrivileges() {

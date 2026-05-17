@@ -6,8 +6,9 @@ import { PrivilegeManager, PrivilegeTypeEnum } from '@/core/domain/manager/Privi
 import { EmpireEnum } from '@/core/enum/EmpireEnum';
 import World from '@/core/domain/World';
 import { ChatMessageTypeEnum } from '@/core/enum/ChatMessageTypeEnum';
+import { EmpireName } from '@/core/domain/util/EmpireUtil';
 
-const privilegeTypeMapper = {
+const privilegeTypeMapper: { [key: string]: PrivilegeTypeEnum } = {
     gold: PrivilegeTypeEnum.GOLD,
     drop: PrivilegeTypeEnum.DROP,
     gold5: PrivilegeTypeEnum.GOLD_5,
@@ -16,10 +17,11 @@ const privilegeTypeMapper = {
     exp: PrivilegeTypeEnum.EXP,
 };
 
-const empireMapper = {
+const empireMapper: { [key in EmpireName]: EmpireEnum } = {
     red: EmpireEnum.RED,
     blue: EmpireEnum.BLUE,
     yellow: EmpireEnum.YELLOW,
+    neutral: EmpireEnum.NEUTRAL,
 };
 
 export default class PrivilegeCommandHandler extends CommandHandler<PrivilegeCommand> {
@@ -27,7 +29,15 @@ export default class PrivilegeCommandHandler extends CommandHandler<PrivilegeCom
     private readonly privilegeManager: PrivilegeManager;
     private readonly world: World;
 
-    constructor({ logger, privilegeManager, world }) {
+    constructor({
+        logger,
+        privilegeManager,
+        world,
+    }: {
+        logger: Logger;
+        privilegeManager: PrivilegeManager;
+        world: World;
+    }) {
         super();
         this.logger = logger;
         this.privilegeManager = privilegeManager;
@@ -66,7 +76,7 @@ export default class PrivilegeCommandHandler extends CommandHandler<PrivilegeCom
                 break;
             }
             case 'empire': {
-                const empire = empireMapper[name];
+                const empire = empireMapper[name as unknown as EmpireEnum];
                 if (!empire) {
                     player.sendCommandErrors(['Invalid empire name: empire must be red, blue or yellow']);
                     return;

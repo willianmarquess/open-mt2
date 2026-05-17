@@ -6,20 +6,31 @@ import GameConnection from '@/game/interface/networking/GameConnection';
 export default class HandshakePacketHandler extends PacketHandler<HandshakePacket> {
     private readonly logger: Logger;
 
-    constructor({ logger }) {
+    constructor({ logger }: { logger: Logger }) {
         super();
         this.logger = logger;
     }
 
-    async execute(connection: GameConnection, packet: HandshakePacket) {
+    async execute(connection: GameConnection, packet: HandshakePacket): Promise<void> {
         if (!packet.isValid()) {
             this.logger.error(`[AuthTokenPacketHandler] Packet invalid`);
-            this.logger.error(packet.getErrorMessage());
+            this.logger.error(packet.getErrorMessage()!);
             connection.close();
             return;
         }
 
-        if (packet.getId() !== connection.getLastHandshake().getId()) {
+        const lastHandshake = connection.getLastHandshake();
+
+        if (!lastHandshake) {
+            this.logger.info(
+                `[HANDSHAKE] No handshake was sent to the client, but a handshake response was received..`,
+            );
+            this.logger.info(`[HANDSHAKE] Send close connection..`);
+            connection.close();
+            return;
+        }
+
+        if (packet.getId() !== lastHandshake.getId()) {
             this.logger.info(`[HANDSHAKE] A different package was received than the one sent..`);
             this.logger.info(`[HANDSHAKE] Send close connection..`);
             connection.close();
@@ -43,9 +54,9 @@ export default class HandshakePacketHandler extends PacketHandler<HandshakePacke
 
         if (newDelta < 0) {
             this.logger.info(
-                `[HANDSHAKE] Is too low ${Math.floor(delta)}, calculating new delta using this value: ${connection.getLastHandshake().getTime()}`,
+                `[HANDSHAKE] Is too low ${Math.floor(delta)}, calculating new delta using this value: ${lastHandshake.getTime()}`,
             );
-            newDelta = (currentTime - connection.getLastHandshake().getTime()) / 2;
+            newDelta = (currentTime - lastHandshake.getTime()) / 2;
         }
 
         const handshake = new HandshakePacket({

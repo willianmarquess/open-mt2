@@ -13,7 +13,7 @@ export default class ExperienceManager {
     private readonly config: GameConfig;
     private readonly privilegeManager: PrivilegeManager;
 
-    constructor({ config, privilegeManager }) {
+    constructor({ config, privilegeManager }: { config: GameConfig; privilegeManager: PrivilegeManager }) {
         this.config = config;
         this.privilegeManager = privilegeManager;
     }

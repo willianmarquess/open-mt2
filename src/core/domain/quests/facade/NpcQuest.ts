@@ -3,7 +3,7 @@ import NPC from '../../entities/game/mob/NPC';
 export class NpcQuest {
     private readonly npc: NPC;
 
-    constructor({ npc }) {
+    constructor({ npc }: { npc: NPC }) {
         this.npc = npc;
     }
 

@@ -30,7 +30,25 @@ export default class CharacterDetailsPacket extends PacketOut {
     private empireId: number;
     private skillGroup: number;
 
-    constructor({ vid, playerClass, playerName, positionX, positionY, positionZ, empireId, skillGroup }) {
+    constructor({
+        vid,
+        playerClass,
+        playerName,
+        positionX,
+        positionY,
+        positionZ,
+        empireId,
+        skillGroup,
+    }: {
+        vid: number;
+        playerClass: number;
+        playerName: string;
+        positionX: number;
+        positionY: number;
+        positionZ: number;
+        empireId: number;
+        skillGroup: number;
+    }) {
         super({
             header: PacketHeaderEnum.CHARACTER_DETAILS,
             name: 'CharacterDetailsPacket',

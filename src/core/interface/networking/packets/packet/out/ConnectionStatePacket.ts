@@ -1,14 +1,10 @@
 import PacketHeaderEnum from '@/core/enum/PacketHeaderEnum';
 import PacketOut from '@/core/interface/networking/packets/packet/out/PacketOut';
 
-type ConnectionStatePacketParams = {
-    state?: number;
-};
-
 export default class ConnectionStatePacket extends PacketOut {
-    state;
+    private readonly state: number;
 
-    constructor({ state }: ConnectionStatePacketParams = {}) {
+    constructor({ state }: { state: number }) {
         super({
             header: PacketHeaderEnum.CONNECTION_STATE,
             name: 'ConnectionStatePacket',

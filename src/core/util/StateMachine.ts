@@ -11,7 +11,7 @@ export interface State {
 
 export class StateMachine {
     private states: Map<EntityStateEnum, State> = new Map();
-    private currentState: State;
+    private currentState: State | null = null;
 
     addState(state: State) {
         this.states.set(state.name, state);
@@ -23,11 +23,11 @@ export class StateMachine {
     }
 
     getCurrentStateName() {
-        return this.currentState.name;
+        return this.currentState?.name;
     }
 
     overrideState(state: Partial<State>) {
-        const oldState = this.states.get(state.name);
+        const oldState = this.states.get(state.name!);
 
         if (!oldState) return;
 

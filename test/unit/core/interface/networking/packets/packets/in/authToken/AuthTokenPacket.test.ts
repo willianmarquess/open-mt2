@@ -38,7 +38,7 @@ describe('AuthTokenPacket', function () {
         const unpackedPacket = new AuthTokenPacket({
             key: 0,
             username: '',
-            xteaKeys: 0,
+            xteaKeys: [0, 0, 0, 0],
         });
         unpackedPacket.unpack(buffer);
 

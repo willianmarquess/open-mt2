@@ -9,7 +9,7 @@ export default class OnClickPacketHandler extends PacketHandler<OnClickPacket> {
     private readonly logger: Logger;
     private readonly questManager: QuestManager;
 
-    constructor({ logger, questManager }) {
+    constructor({ logger, questManager }: { logger: Logger; questManager: QuestManager }) {
         super();
         this.logger = logger;
         this.questManager = questManager;

@@ -2,7 +2,7 @@ import Command from '../../Command';
 import PrivilegeCommandValidator from './PrivilegeCommandValidator';
 
 export default class PrivilegeCommand extends Command {
-    constructor({ args }) {
+    constructor({ args }: { args: Array<string> }) {
         super({ args, validator: PrivilegeCommandValidator });
     }
 

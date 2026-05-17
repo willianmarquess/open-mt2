@@ -1,5 +1,7 @@
 import { JobEnum } from '@/core/enum/JobEnum';
 
+type ClassName = 'warrior' | 'assassin' | 'sura' | 'shaman';
+
 const jobFromClassId = {
     [JobEnum.WARRIOR_MALE]: 0,
     [JobEnum.WARRIOR_FEMALE]: 0,
@@ -11,7 +13,7 @@ const jobFromClassId = {
     [JobEnum.SHAMAN_FEMALE]: 3,
 };
 
-const classNameFromClassId = {
+const classNameFromClassId: Record<JobEnum, ClassName> = {
     [JobEnum.WARRIOR_MALE]: 'warrior',
     [JobEnum.WARRIOR_FEMALE]: 'warrior',
     [JobEnum.ASSASSIN_MALE]: 'assassin',
@@ -23,7 +25,7 @@ const classNameFromClassId = {
 };
 
 export default class JobUtil {
-    static getClassNameFromClassId(classId: JobEnum) {
+    static getClassNameFromClassId(classId: JobEnum): ClassName {
         return classNameFromClassId[classId] || classNameFromClassId[JobEnum.WARRIOR_MALE];
     }
 

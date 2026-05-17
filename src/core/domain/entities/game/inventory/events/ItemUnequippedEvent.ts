@@ -11,7 +11,7 @@ export default class ItemUnequippedEvent {
     private readonly item: Item;
     private readonly slot: ItemEquipmentSlotEnum;
 
-    constructor({ item, slot }) {
+    constructor({ item, slot }: { item: Item; slot: ItemEquipmentSlotEnum }) {
         this.item = item;
         this.slot = slot;
     }

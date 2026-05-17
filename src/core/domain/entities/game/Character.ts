@@ -14,6 +14,7 @@ import { StateMachine } from '@/core/util/StateMachine';
 import { PositionEnum } from '@/core/enum/PositionEnum';
 import { EmpireEnum } from '@/core/enum/EmpireEnum';
 import { QuestManager } from '../../quests/QuestManager';
+import { EntityTypeEnum } from '@/core/enum/EntityTypeEnum';
 
 export default abstract class Character extends GameEntity {
     protected id: number;
@@ -30,7 +31,7 @@ export default abstract class Character extends GameEntity {
 
     protected readonly nearbyEntities = new Map<number, GameEntity>();
 
-    protected target: Character;
+    protected target: Character | null = null;
     protected readonly targetedBy = new Map<number, Character>();
 
     protected readonly affectBitFlag = new AffectBitFlag();
@@ -42,8 +43,26 @@ export default abstract class Character extends GameEntity {
     protected readonly questManager: QuestManager;
 
     constructor(
-        { id, classId, virtualId, entityType, positionX, positionY, name, empire },
-        { animationManager, questManager },
+        {
+            id,
+            classId,
+            virtualId,
+            entityType,
+            positionX,
+            positionY,
+            name,
+            empire,
+        }: {
+            id: number;
+            classId: number;
+            virtualId: number;
+            entityType: EntityTypeEnum;
+            positionX: number;
+            positionY: number;
+            name: string;
+            empire: number;
+        },
+        { animationManager, questManager }: { animationManager: AnimationManager; questManager: QuestManager },
     ) {
         super({
             entityType,
@@ -111,7 +130,7 @@ export default abstract class Character extends GameEntity {
     }
 
     removeTarget(): void {
-        this.setTarget(undefined);
+        this.target = null;
     }
 
     getTarget() {

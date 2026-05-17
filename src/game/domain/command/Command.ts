@@ -48,7 +48,7 @@ export default abstract class Command {
     }
 
     getErrorMessage() {
-        return this.validator.getFormattedErrorMessage();
+        return this.validator?.getFormattedErrorMessage() || 'Invalid command';
     }
 
     private createValidator(ValidatorClass: new (command: this) => CommandValidator): CommandValidator {

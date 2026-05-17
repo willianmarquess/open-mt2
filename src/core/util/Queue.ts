@@ -1,20 +1,20 @@
 export default class Queue<T = any> {
     private maxSize: number;
-    private items: object;
+    private items: { [key: number]: T };
     private frontPos: number;
     private rearPos: number;
     private length: number;
 
     constructor(size = Number.MAX_SAFE_INTEGER) {
         this.maxSize = size;
-        this.items = {};
+        this.items = {} as { [key: number]: T };
         this.frontPos = 0;
         this.rearPos = -1;
         this.length = 0;
     }
 
-    dequeue(): T {
-        if (this.isEmpty()) return;
+    dequeue(): T | null {
+        if (this.isEmpty()) return null;
         const dequeued = this.front();
         delete this.items[(this.frontPos %= this.maxSize)];
         this.frontPos++;
@@ -43,12 +43,12 @@ export default class Queue<T = any> {
         return this.length < 1;
     }
 
-    rear() {
+    rear(): T | null {
         return this.items[this.rearPos];
     }
 
     front() {
-        if (this.isEmpty()) return;
+        if (this.isEmpty()) return null;
         return this.items[this.frontPos % this.maxSize];
     }
 

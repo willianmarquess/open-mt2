@@ -44,7 +44,7 @@ export default class Behavior {
         this.initialPositionY = this.monster.getPositionY();
         this.nextMove = this.calcDelay();
         this.enable = true;
-        this.monster.setTarget(undefined);
+        this.monster.removeTarget();
         this.damageMap.clear();
     }
 
@@ -57,8 +57,8 @@ export default class Behavior {
     }
 
     private moveToOriginalPosition() {
-        this.monster.setTarget(undefined);
-        this.lastAttackTime = undefined;
+        this.monster.removeTarget();
+        this.lastAttackTime = 0;
         this.damageMap.clear();
         this.monster.goto(this.initialPositionX, this.initialPositionY);
         this.monster.setState(EntityStateEnum.IDLE);
@@ -170,7 +170,7 @@ export default class Behavior {
 
         if (
             !this.monster.getTarget() ||
-            this.damageMap.get(attacker.getVirtualId()) > this.damageMap.get(this.monster.getTarget().getVirtualId())
+            this.damageMap.get(attacker.getVirtualId())! > this.damageMap.get(this.monster.getTarget().getVirtualId())!
         ) {
             this.monster.setTarget(attacker);
         }
@@ -367,5 +367,7 @@ export default class Behavior {
                 return true;
             }
         }
+
+        return false;
     }
 }

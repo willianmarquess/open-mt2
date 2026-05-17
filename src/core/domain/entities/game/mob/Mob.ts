@@ -14,6 +14,8 @@ import { MobPoints } from './delegate/MobPoints';
 import { PointsEnum } from '@/core/enum/PointsEnum';
 import { PositionEnum } from '@/core/enum/PositionEnum';
 import { EntityStateEnum } from '@/core/enum/EntityStateEnum';
+import { QuestManager } from '@/core/domain/quests/QuestManager';
+import AnimationManager from '@/core/domain/manager/AnimationManager';
 
 enum MobSizeEnum {
     RESERVED = 0,
@@ -26,7 +28,7 @@ class MobResist {
     public readonly type: MobResistEnum;
     public readonly value: number;
 
-    constructor({ type, value }) {
+    constructor({ type, value }: { type: MobResistEnum; value: number }) {
         this.type = type;
         this.value = value;
     }
@@ -36,7 +38,7 @@ class MobEnchant {
     public readonly type: MobEnchantEnum;
     public readonly value: number;
 
-    constructor({ type, value }) {
+    constructor({ type, value }: { type: MobEnchantEnum; value: number }) {
         this.type = type;
         this.value = value;
     }
@@ -46,7 +48,7 @@ class MobSkill {
     public readonly id: number;
     public readonly level: number;
 
-    constructor({ id, level }) {
+    constructor({ id, level }: { id: number; level: number }) {
         this.id = id;
         this.level = level;
     }
@@ -59,6 +61,73 @@ export type MobParams = {
     entityType: EntityTypeEnum;
     virtualId?: number;
     direction: number;
+};
+
+const rankMapper: { [key: string]: MobRankEnum } = {
+    PAWN: MobRankEnum.PAWN,
+    S_PAWN: MobRankEnum.S_PAWN,
+    KNIGHT: MobRankEnum.KNIGHT,
+    S_KNIGHT: MobRankEnum.S_KNIGHT,
+    BOSS: MobRankEnum.BOSS,
+    KING: MobRankEnum.KING,
+};
+
+const battleTypeMapper: { [key: string]: BattleTypeEnum } = {
+    MELEE: BattleTypeEnum.MELEE,
+    RANGE: BattleTypeEnum.RANGE,
+    MAGIC: BattleTypeEnum.MAGIC,
+    SPECIAL: BattleTypeEnum.SPECIAL,
+    POWER: BattleTypeEnum.POWER,
+    TANKER: BattleTypeEnum.TANKER,
+    SUPER_POWER: BattleTypeEnum.SUPER_POWER,
+    SUPER_TANKER: BattleTypeEnum.SUPER_TANKER,
+};
+
+const aiFlagMapper: { [key: string]: MobAIFlagEnum } = {
+    AGGR: MobAIFlagEnum.AGGR,
+    NOMOVE: MobAIFlagEnum.NOMOVE,
+    COWARD: MobAIFlagEnum.COWARD,
+    NOATTACKSHINSU: MobAIFlagEnum.NOATTACKSHINSU,
+    NOATTACKJINNO: MobAIFlagEnum.NOATTACKJINNO,
+    NOATTACKCHUNJO: MobAIFlagEnum.NOATTACKCHUNJO,
+    ATTACKMOB: MobAIFlagEnum.ATTACKMOB,
+    BERSERK: MobAIFlagEnum.BERSERK,
+    STONESKIN: MobAIFlagEnum.STONESKIN,
+    GODSPEED: MobAIFlagEnum.GODSPEED,
+    DEATHBLOW: MobAIFlagEnum.DEATHBLOW,
+    REVIVE: MobAIFlagEnum.REVIVE,
+    DEFAULT: MobAIFlagEnum.DEFAULT,
+};
+
+const raceFlagMapper: { [key: string]: MobRaceFlagEnum } = {
+    ANIMAL: MobRaceFlagEnum.ANIMAL,
+    UNDEAD: MobRaceFlagEnum.UNDEAD,
+    DEVIL: MobRaceFlagEnum.DEVIL,
+    HUMAN: MobRaceFlagEnum.HUMAN,
+    ORC: MobRaceFlagEnum.ORC,
+    MILGYO: MobRaceFlagEnum.MILGYO,
+    INSECT: MobRaceFlagEnum.INSECT,
+    FIRE: MobRaceFlagEnum.FIRE,
+    ICE: MobRaceFlagEnum.ICE,
+    DESERT: MobRaceFlagEnum.DESERT,
+    TREE: MobRaceFlagEnum.TREE,
+    ATT_ELEC: MobRaceFlagEnum.ATT_ELEC,
+    ATT_FIRE: MobRaceFlagEnum.ATT_FIRE,
+    ATT_ICE: MobRaceFlagEnum.ATT_ICE,
+    ATT_WIND: MobRaceFlagEnum.ATT_WIND,
+    ATT_EARTH: MobRaceFlagEnum.ATT_EARTH,
+    ATT_DARK: MobRaceFlagEnum.ATT_DARK,
+    DEFAULT: MobRaceFlagEnum.DEFAULT,
+};
+
+const immuneFlagMapper: { [key: string]: MobImmuneFlagEnum } = {
+    STUN: MobImmuneFlagEnum.STUN,
+    SLOW: MobImmuneFlagEnum.SLOW,
+    FALL: MobImmuneFlagEnum.FALL,
+    CURSE: MobImmuneFlagEnum.CURSE,
+    POISON: MobImmuneFlagEnum.POISON,
+    TERROR: MobImmuneFlagEnum.TERROR,
+    REFLECT: MobImmuneFlagEnum.REFLECT,
 };
 
 export abstract class Mob extends Character {
@@ -102,10 +171,13 @@ export abstract class Mob extends Character {
     protected readonly percentToGetDeathblow: number;
     protected readonly hpPercentToGetRevive: number;
 
-    protected group: MonsterGroup;
+    protected group: MonsterGroup | null = null;
     protected readonly points: MobPoints;
 
-    constructor(params: MobParams, { animationManager, questManager }) {
+    constructor(
+        params: MobParams,
+        { animationManager, questManager }: { animationManager: AnimationManager; questManager: QuestManager },
+    ) {
         super(
             {
                 id: Number(params.proto.vnum),
@@ -121,18 +193,18 @@ export abstract class Mob extends Character {
         );
         const proto = params.proto;
 
-        this.rank = MobRankEnum[String(proto.rank)] || MobRankEnum.KNIGHT;
-        this.battleType = BattleTypeEnum[proto.battle_type] || BattleTypeEnum.MELEE;
+        this.rank = rankMapper[String(proto.rank)] || MobRankEnum.KNIGHT;
+        this.battleType = battleTypeMapper[String(proto.battle_type)] || BattleTypeEnum.MELEE;
 
         const aiFlags = proto.ai_flag?.split(',');
-        aiFlags?.forEach((aiFlag) => MobAIFlagEnum[aiFlag] && this.aiFlag.set(MobAIFlagEnum[aiFlag]));
+        aiFlags?.forEach((aiFlag) => aiFlagMapper[aiFlag] && this.aiFlag.set(aiFlagMapper[aiFlag]));
 
         const raceFlags = proto.race_flag?.split(',');
-        raceFlags?.forEach((raceFlag) => MobRaceFlagEnum[raceFlag] && this.raceFlag.set(MobRaceFlagEnum[raceFlag]));
+        raceFlags?.forEach((raceFlag) => raceFlagMapper[raceFlag] && this.raceFlag.set(raceFlagMapper[raceFlag]));
 
         const immuneFlags = proto.immune_flag?.split(',');
         immuneFlags?.forEach(
-            (immuneFlag) => MobImmuneFlagEnum[immuneFlag] && this.immuneFlag.set(MobImmuneFlagEnum[immuneFlag]),
+            (immuneFlag) => immuneFlagMapper[immuneFlag] && this.immuneFlag.set(immuneFlagMapper[immuneFlag]),
         );
 
         if (proto.enchant_curse) this.addEnchant(MobEnchantEnum.CURSE, Number(proto.enchant_curse));

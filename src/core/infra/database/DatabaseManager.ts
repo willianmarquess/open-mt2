@@ -5,11 +5,11 @@ import Logger from '@/core/infra/logger/Logger';
 import { Config } from '@/core/infra/config/Config';
 
 export default class DatabaseManager {
-    private connection: Pool;
+    private connection!: Pool;
     private logger: Logger;
     private config: Config;
 
-    constructor({ config, logger }) {
+    constructor({ config, logger }: { config: Config; logger: Logger }) {
         this.logger = logger;
         this.config = config;
     }
@@ -23,7 +23,7 @@ export default class DatabaseManager {
             dbName: this.config.DB_DATABASE_NAME,
             dbPass: this.config.DB_ROOT_PASSWORD,
             dbUser: this.config.DB_USER,
-            dbPort: this.config.DB_PORT,
+            dbPort: +this.config.DB_PORT,
         });
 
         return this.connection;

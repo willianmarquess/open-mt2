@@ -16,7 +16,7 @@ describe('LoadCharactersService', function () {
 
     describe('execute', function () {
         it('should return players for the given accountId', async function () {
-            const accountId = 'test-account-id';
+            const accountId = 1;
             const players = [];
             playerRepositoryMock.getByAccountId.resolves(players);
 
@@ -28,7 +28,7 @@ describe('LoadCharactersService', function () {
         });
 
         it('should handle no players found', async function () {
-            const accountId = 'test-account-id';
+            const accountId = 1;
             playerRepositoryMock.getByAccountId.resolves([]);
 
             const result = await loadCharactersService.execute({ accountId });

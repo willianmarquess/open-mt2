@@ -7,7 +7,7 @@ export default class AuthTokenPacket extends PacketIn {
     private key: number;
     private xteaKeys: number[];
 
-    constructor({ username, key, xteaKeys }) {
+    constructor({ username, key, xteaKeys }: { username: string; key: number; xteaKeys: number[] }) {
         super({
             header: PacketHeaderEnum.TOKEN,
             name: 'AuthTokenPacket',

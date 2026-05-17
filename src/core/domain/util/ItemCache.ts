@@ -1,7 +1,7 @@
 import ItemState from '../entities/state/item/ItemState';
 
 export default class ItemCache {
-    cache: Map<number, { update: Map<number, ItemState>; delete: Map<number, ItemState> }> = new Map();
+    readonly cache: Map<number, { update: Map<number, ItemState>; delete: Map<number, ItemState> }> = new Map();
 
     private get(ownerId: number) {
         if (!this.cache.has(ownerId)) {
@@ -10,7 +10,7 @@ export default class ItemCache {
                 delete: new Map(),
             });
         }
-        return this.cache.get(ownerId);
+        return this.cache.get(ownerId)!;
     }
 
     has(ownerId: number) {
@@ -19,15 +19,15 @@ export default class ItemCache {
 
     setToUpdate(ownerId: number, item: ItemState) {
         const cache = this.get(ownerId);
-        cache.update.set(item.id, item);
+        cache?.update.set(item.id, item);
     }
 
     setToDelete(ownerId: number, item: ItemState) {
         const cache = this.get(ownerId);
-        if (cache.update.has(item.id)) {
+        if (cache?.update.has(item.id)) {
             cache.update.delete(item.id);
         }
-        cache.delete.set(item.id, item);
+        cache?.delete.set(item.id, item);
     }
 
     getItemsToUpdate(ownerId: number) {
@@ -42,7 +42,7 @@ export default class ItemCache {
 
     clear(ownerId: number) {
         const cache = this.get(ownerId);
-        cache.update.clear();
-        cache.delete.clear();
+        cache?.update.clear();
+        cache?.delete.clear();
     }
 }

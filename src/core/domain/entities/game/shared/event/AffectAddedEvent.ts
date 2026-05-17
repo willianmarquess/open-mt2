@@ -6,7 +6,21 @@ export default class AffectAddedEvent {
     public readonly duration: number;
     public readonly manaCost: number;
 
-    constructor({ type, apply, value, flag, duration, manaCost }) {
+    constructor({
+        type,
+        apply,
+        value,
+        flag,
+        duration,
+        manaCost,
+    }: {
+        type: number;
+        apply: number;
+        value: number;
+        flag: number;
+        duration: number;
+        manaCost: number;
+    }) {
         this.type = type;
         this.apply = apply;
         this.value = value;

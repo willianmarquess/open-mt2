@@ -6,7 +6,7 @@ import Player from '@/core/domain/entities/game/player/Player';
 export default class QuitCommandHandler extends CommandHandler<QuitCommand> {
     private readonly logger: Logger;
 
-    constructor({ logger }) {
+    constructor({ logger }: { logger: Logger }) {
         super();
         this.logger = logger;
     }

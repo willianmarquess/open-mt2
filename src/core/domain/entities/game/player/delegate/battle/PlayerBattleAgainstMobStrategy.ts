@@ -18,13 +18,15 @@ import MathUtil from '@/core/domain/util/MathUtil';
 import { FlyEnum } from '@/core/enum/FlyEnum';
 import PlayerBattleStrategy from './PlayerBattleStrategy';
 
-const weaponResistanceMapper = {
+const weaponResistanceMapper: { [key in ItemWeaponSubTypeEnum]: MobResistEnum } = {
     [ItemWeaponSubTypeEnum.WEAPON_BELL]: MobResistEnum.BELL,
     [ItemWeaponSubTypeEnum.WEAPON_DAGGER]: MobResistEnum.DAGGER,
     [ItemWeaponSubTypeEnum.WEAPON_FAN]: MobResistEnum.FAN,
     [ItemWeaponSubTypeEnum.WEAPON_SWORD]: MobResistEnum.SWORD,
     [ItemWeaponSubTypeEnum.WEAPON_TWO_HANDED]: MobResistEnum.TWOHAND,
     [ItemWeaponSubTypeEnum.WEAPON_BOW]: MobResistEnum.BOW,
+    [ItemWeaponSubTypeEnum.WEAPON_MOUNT_SPEAR]: MobResistEnum.SWORD,
+    [ItemWeaponSubTypeEnum.WEAPON_ARROW]: MobResistEnum.BOW,
 };
 
 const MAX_DISTANCE = 500; //TODO: this should be calculated by player weapon, hackers can use this fixed value to attack with 500 of range for daggers, sword, bell, fan etc
@@ -286,7 +288,8 @@ export default class PlayerBattleAgainstMobStrategy extends PlayerBattleStrategy
         const attackerWeapon = this.attacker.getWeapon();
         if (!attackerWeapon) return damage;
 
-        const resistanceType = weaponResistanceMapper[attackerWeapon.getSubType()];
+        const resistanceType: MobResistEnum =
+            weaponResistanceMapper[attackerWeapon.getSubType() as ItemWeaponSubTypeEnum];
         if (resistanceType >= 0) {
             return this.applyResistance(damage, victim.getResist(resistanceType));
         }

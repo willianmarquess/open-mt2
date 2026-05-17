@@ -1,14 +1,6 @@
 import PacketHeaderEnum from '@/core/enum/PacketHeaderEnum';
 import PacketOut from '@/core/interface/networking/packets/packet/out/PacketOut';
 
-type ItemDroppedPacketParams = {
-    positionX?: number;
-    positionY?: number;
-    positionZ?: number;
-    virtualId?: number;
-    id?: number;
-};
-
 export default class ItemDroppedPacket extends PacketOut {
     private positionX: number;
     private positionY: number;
@@ -16,7 +8,17 @@ export default class ItemDroppedPacket extends PacketOut {
     private virtualId: number;
     private id: number;
 
-    constructor({ id, positionX, positionY, virtualId }: ItemDroppedPacketParams = {}) {
+    constructor({
+        id,
+        positionX,
+        positionY,
+        virtualId,
+    }: {
+        id: number;
+        positionX: number;
+        positionY: number;
+        virtualId: number;
+    }) {
         super({
             header: PacketHeaderEnum.ITEM_DROPPED,
             name: 'ItemDroppedPacket',

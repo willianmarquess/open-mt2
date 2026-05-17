@@ -12,7 +12,15 @@ export default class ItemCommandHandler extends CommandHandler<ItemCommand> {
     private readonly itemManager: ItemManager;
     private readonly itemRepository: IItemRepository;
 
-    constructor({ logger, itemManager, itemRepository }) {
+    constructor({
+        logger,
+        itemManager,
+        itemRepository,
+    }: {
+        logger: Logger;
+        itemManager: ItemManager;
+        itemRepository: IItemRepository;
+    }) {
         super();
         this.logger = logger;
         this.itemManager = itemManager;
@@ -29,7 +37,7 @@ export default class ItemCommandHandler extends CommandHandler<ItemCommand> {
 
         const [vnum, quantity = 1] = itemCommand.getArgs();
 
-        if (!this.itemManager.hasItem(vnum)) {
+        if (!this.itemManager.hasItem(Number(vnum))) {
             player.chat({
                 message: `Item: ${vnum} not found.`,
                 messageType: ChatMessageTypeEnum.INFO,
@@ -38,6 +46,15 @@ export default class ItemCommandHandler extends CommandHandler<ItemCommand> {
         }
 
         const item = this.itemManager.getItem(Number(vnum), Math.min(Number(quantity), MathUtil.MAX_TINY));
+
+        if (!item) {
+            player.chat({
+                message: `Failed to create item with vnum ${vnum}.`,
+                messageType: ChatMessageTypeEnum.INFO,
+            });
+            return;
+        }
+
         if (player.addItem(item)) {
             await this.itemManager.save(item);
         }

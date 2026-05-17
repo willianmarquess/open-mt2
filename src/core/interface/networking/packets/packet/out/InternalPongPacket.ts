@@ -16,7 +16,7 @@ import PacketOut from '@/core/interface/networking/packets/packet/out/PacketOut'
 export default class InternalPongPacket extends PacketOut {
     private time: number;
 
-    constructor({ time }) {
+    constructor({ time }: { time: number }) {
         super({
             header: PacketHeaderEnum.INTERNAL_PONG,
             name: 'SpecialEffectPacket',

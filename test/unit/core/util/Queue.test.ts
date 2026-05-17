@@ -18,12 +18,12 @@ describe('CORE -> DATA STRUCTURE -> Queue', () => {
         });
 
         it('should return undefined for front() and rear()', () => {
-            expect(queue.front()).to.be.undefined;
+            expect(queue.front()).to.be.null;
             expect(queue.rear()).to.be.undefined;
         });
 
         it('should not dequeue items', () => {
-            expect(queue.dequeue()).to.be.undefined;
+            expect(queue.dequeue()).to.be.null;
         });
     });
 

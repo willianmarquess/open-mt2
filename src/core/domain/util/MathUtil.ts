@@ -57,17 +57,11 @@ export default class MathUtil {
     }
 
     static calcDeltaByDegree(degree: number, distance: number) {
-        let x: number = 0;
-        let y: number = 0;
-
         const radian = degree * (Math.PI / 180);
 
-        x = distance * Math.sin(radian);
-        y = distance * Math.cos(radian);
-
         return {
-            x,
-            y,
+            x: distance * Math.sin(radian),
+            y: distance * Math.cos(radian),
         };
     }
 

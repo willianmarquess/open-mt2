@@ -25,7 +25,21 @@ export default class AffectAddPacket extends PacketOut {
     private duration: number;
     private manaCost: number;
 
-    constructor({ type, apply, value, flag, duration, manaCost = 0 }) {
+    constructor({
+        type,
+        apply,
+        value,
+        flag,
+        duration,
+        manaCost = 0,
+    }: {
+        type: number;
+        apply: number;
+        value: number;
+        flag: number;
+        duration: number;
+        manaCost?: number;
+    }) {
         super({
             header: PacketHeaderEnum.AFFECT_ADD,
             name: 'AffectAddPacket',

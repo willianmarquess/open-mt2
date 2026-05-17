@@ -5,7 +5,7 @@ import QuestButtonPacketValidator from './QuestButtonPacketValidator';
 export default class QuestButtonPacket extends PacketIn {
     private questId: number;
 
-    constructor({ questId }) {
+    constructor({ questId }: { questId: number }) {
         super({
             header: PacketHeaderEnum.QUEST_BUTTON,
             name: 'QuestButtonPacket',

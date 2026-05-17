@@ -8,13 +8,13 @@ import World from '@/core/domain/World';
 import SpawnManager from '@/core/domain/manager/SpawnManager';
 import { EntityTypeEnum } from '@/core/enum/EntityTypeEnum';
 import Character from './entities/game/Character';
-import CharacterMovedEvent from './entities/game/player/events/CharacterMovedEvent';
 import MonsterMovedEvent from './entities/game/mob/events/MonsterMovedEvent';
-import DropItemEvent from './entities/game/player/events/DropItemEvent';
 import SpatialGrid from '../util/SpatialGrid';
 import SaveCharacterService from '@/game/domain/service/SaveCharacterService';
 import { EmpireEnum } from '../enum/EmpireEnum';
 import EmpireUtil from './util/EmpireUtil';
+import Item from './entities/game/item/Item';
+import { AtlasInfoGoto } from '@/game/infra/config/GameConfig';
 
 const SIZE_QUEUE = 5_000;
 const CHAR_VIEW_SIZE = 10000;
@@ -27,13 +27,8 @@ export default class Area {
     private readonly positionY: number;
     private readonly width: number;
     private readonly height: number;
-    private readonly aka: string;
-    private readonly goto?: {
-        red: Array<number>;
-        yellow: Array<number>;
-        blue: Array<number>;
-        default: Array<number>;
-    };
+    private readonly aka?: string;
+    private readonly goto?: AtlasInfoGoto | undefined;
 
     private readonly entities = new Map<number, GameEntity>();
     private readonly entitiesToSpawn = new Queue<GameEntity>(SIZE_QUEUE);
@@ -47,8 +42,29 @@ export default class Area {
     private readonly spawnManager: SpawnManager;
 
     constructor(
-        { name, positionX, positionY, width, height, aka, goto },
-        { saveCharacterService, logger, world, spawnManager },
+        {
+            name,
+            positionX,
+            positionY,
+            width,
+            height,
+            aka,
+            goto,
+        }: {
+            name: string;
+            positionX: number;
+            positionY: number;
+            width: number;
+            height: number;
+            aka?: string;
+            goto?: AtlasInfoGoto | undefined;
+        },
+        {
+            saveCharacterService,
+            logger,
+            world,
+            spawnManager,
+        }: { saveCharacterService: SaveCharacterService; logger: Logger; world: World; spawnManager: SpawnManager },
     ) {
         this.name = name;
         this.positionX = positionX;
@@ -106,7 +122,7 @@ export default class Area {
 
     getStartPositionByEmpire(empire: EmpireEnum) {
         const empireName = EmpireUtil.getEmpireName(empire);
-        const [x, y] = this.goto[empireName] || this.goto.default || [];
+        const [x, y] = this.goto?.[empireName] || this.goto?.default || [];
         return {
             x,
             y,
@@ -117,7 +133,7 @@ export default class Area {
         return this.entities.get(virtualId);
     }
 
-    onItemDrop(itemDropEvent: DropItemEvent) {
+    onItemDrop(itemDropEvent: { item: Item; count: number; positionX: number; positionY: number; ownerName: string }) {
         const { item, count, positionX, positionY, ownerName } = itemDropEvent;
         const virtualId = this.world.generateVirtualId();
         const droppedItem = DroppedItem.create({
@@ -131,10 +147,10 @@ export default class Area {
         this.spawn(droppedItem);
     }
 
-    async savePlayers() {
+    async savePlayers(): Promise<void> {
         if (this.entities.size < 1) return;
 
-        const promises = [];
+        const promises: Array<Promise<PromiseSettledResult<unknown>[]>> = [];
 
         for (const entity of this.entities.values()) {
             if (entity instanceof Player) {
@@ -142,8 +158,8 @@ export default class Area {
                 promises.push(this.saveCharacterService.execute(entity));
             }
         }
-        //TODO: refact this sending to a queue and save behind scenes (other process)
-        return Promise.allSettled(promises).catch((error) =>
+        //TODO: refactor this sending to a queue and save behind scenes (other process)
+        await Promise.allSettled(promises).catch((error) =>
             this.logger.error('[AREA] Error when try to save player: ', error),
         );
     }
@@ -190,7 +206,18 @@ export default class Area {
         }
     }
 
-    onCharacterMove(characterMovedEvent: CharacterMovedEvent) {
+    onCharacterMove(characterMovedEvent: {
+        entity: GameEntity;
+        params: {
+            positionX: number;
+            positionY: number;
+            arg: number;
+            rotation: number;
+            time: number;
+            movementType: number;
+            duration: number;
+        };
+    }) {
         const {
             entity,
             params: { positionX, positionY, arg, rotation, time, movementType, duration },
@@ -236,13 +263,14 @@ export default class Area {
 
     tick() {
         for (const entity of this.entitiesToSpawn.dequeueIterator()) {
+            if (!entity) continue;
             entity.onSpawn();
             this.aoi.insert(entity);
 
             const entities = this.aoi.queryAround(
                 entity,
                 CHAR_VIEW_SIZE,
-                entity.getEntityType() !== EntityTypeEnum.PLAYER ? EntityTypeEnum.PLAYER : null,
+                entity.getEntityType() !== EntityTypeEnum.PLAYER ? EntityTypeEnum.PLAYER : undefined,
             );
 
             for (const otherEntity of entities.values()) {
@@ -262,6 +290,7 @@ export default class Area {
         }
 
         for (const entity of this.entitiesToDespawn.dequeueIterator()) {
+            if (!entity) continue;
             const entities = this.aoi.queryAround(entity, CHAR_VIEW_SIZE, EntityTypeEnum.PLAYER) as Map<number, Player>;
 
             for (const otherEntity of entities.values()) {

@@ -9,7 +9,13 @@ export default class SelectCharacterPacketHandler extends PacketHandler<SelectCh
     private readonly selectCharacterService: SelectCharacterService;
     private readonly logger: Logger;
 
-    constructor({ selectCharacterService, logger }) {
+    constructor({
+        selectCharacterService,
+        logger,
+    }: {
+        selectCharacterService: SelectCharacterService;
+        logger: Logger;
+    }) {
         super();
         this.selectCharacterService = selectCharacterService;
         this.logger = logger;

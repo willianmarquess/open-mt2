@@ -11,7 +11,17 @@ export default class ItemManager {
     private readonly logger: Logger;
     private readonly itemCache: ItemCache;
 
-    constructor({ config, itemRepository, logger, itemCache }) {
+    constructor({
+        config,
+        itemRepository,
+        logger,
+        itemCache,
+    }: {
+        config: GameConfig;
+        itemRepository: IItemRepository;
+        logger: Logger;
+        itemCache: ItemCache;
+    }) {
         this.config = config;
         this.itemRepository = itemRepository;
         this.logger = logger;
@@ -24,26 +34,26 @@ export default class ItemManager {
         });
     }
 
-    hasItem(id) {
+    hasItem(id: number) {
         return this.items.has(Number(id));
     }
 
-    getItem(id: number, count: number = 1) {
-        if (!this.hasItem(Number(id))) {
-            return;
-        }
-
+    getItem(id: number, count: number = 1): Item | null {
         const proto = this.items.get(Number(id));
+
+        if (!proto) {
+            return null;
+        }
 
         return Item.create(proto, count);
     }
 
-    async getItems(ownerId: number) {
+    async getItems(ownerId: number): Promise<Array<Item | null>> {
         const items = await this.itemRepository.getByOwner(ownerId);
 
         return items.map((item) => {
             if (!this.hasItem(item.protoId)) {
-                return;
+                return null;
             }
 
             const proto = this.items.get(item.protoId);
@@ -72,7 +82,7 @@ export default class ItemManager {
                 attributeValue5: item.attributeValue5,
                 attributeType6: item.attributeType6,
                 attributeValue6: item.attributeValue6,
-                proto,
+                proto: proto!,
             });
         });
     }
@@ -101,8 +111,8 @@ export default class ItemManager {
         const itemsToUpdate = this.itemCache.getItemsToUpdate(ownerId);
         const itemsToDelete = this.itemCache.getItemsToDelete(ownerId);
 
-        const updatePromises = Array.from(itemsToUpdate).map((item) => this.itemRepository.update(item));
-        const deletePromises = Array.from(itemsToDelete).map((item) => this.itemRepository.delete(item));
+        const updatePromises = Array.from(itemsToUpdate || []).map((item) => this.itemRepository.update(item));
+        const deletePromises = Array.from(itemsToDelete || []).map((item) => this.itemRepository.delete(item));
 
         if (updatePromises.length === 0 && deletePromises.length === 0) return;
 

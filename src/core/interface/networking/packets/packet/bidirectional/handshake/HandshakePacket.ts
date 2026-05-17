@@ -7,7 +7,7 @@ export default class HandshakePacket extends PacketBidirectional {
     private time: number;
     private delta: number;
 
-    constructor({ id, time, delta }) {
+    constructor({ id, time, delta }: { id: number; time: number; delta: number }) {
         super({
             header: PacketHeaderEnum.HANDSHAKE,
             name: 'HandshakePacket',

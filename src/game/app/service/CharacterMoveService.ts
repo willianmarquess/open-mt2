@@ -16,7 +16,7 @@ type CharacterMoveServiceParams = {
 export default class CharacterMoveService {
     private readonly logger: Logger;
 
-    constructor({ logger }) {
+    constructor({ logger }: { logger: Logger }) {
         this.logger = logger;
     }
 

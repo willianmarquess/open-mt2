@@ -5,12 +5,13 @@ import World from '@/core/domain/World';
 import Player from '@/core/domain/entities/game/player/Player';
 import { ChatMessageTypeEnum } from '@/core/enum/ChatMessageTypeEnum';
 import EmpireUtil from '@/core/domain/util/EmpireUtil';
+import Area from '@/core/domain/Area';
 
 export default class GotoCommandHandler extends CommandHandler<GotoCommand> {
     private readonly logger: Logger;
     private readonly world: World;
 
-    constructor({ logger, world }) {
+    constructor({ logger, world }: { logger: Logger; world: World }) {
         super();
         this.logger = logger;
         this.world = world;
@@ -27,38 +28,29 @@ export default class GotoCommandHandler extends CommandHandler<GotoCommand> {
         const [type, ...params] = gotoCommand.getArgs();
 
         switch (type) {
-            case 'area': {
-                const [areaName] = params;
-                const areaByName = this.world.getAreaByName(areaName);
+            case 'area':
+                {
+                    const [areaName] = params;
+                    const areaByName = this.world.getAreaByName(areaName);
 
-                if (!areaByName) {
-                    player.chat({
-                        message: `Area: ${areaName} not found.`,
-                        messageType: ChatMessageTypeEnum.INFO,
-                    });
-                    return;
+                    if (!areaByName) {
+                        player.chat({
+                            message: `Area: ${areaName} not found.`,
+                            messageType: ChatMessageTypeEnum.INFO,
+                        });
+                        return;
+                    }
+
+                    const [x, y] = this.getAreaCoordinates(areaByName, player);
+
+                    this.logger.debug(
+                        `[GotoCommandHandler] Teleport ${player.getName()} to area: ${areaByName.getName()}, x: ${x}, y: ${y}`,
+                    );
+
+                    this.world.despawn(player);
+                    player.teleport(x, y);
                 }
-
-                let x: number = 0,
-                    y: number = 0;
-                if (areaByName.getGoto()) {
-                    const empireName = EmpireUtil.getEmpireName(player.getEmpire());
-                    const [posX, posY] = areaByName.getGoto()[empireName] || areaByName.getGoto().default;
-                    x = posX;
-                    y = posY;
-                } else {
-                    x = areaByName.getPositionX() + (areaByName.getWidth() * 25600) / 2;
-                    y = areaByName.getPositionY() + (areaByName.getHeight() * 25600) / 2;
-                }
-
-                this.logger.debug(
-                    `[GotoCommandHandler] Teleport ${player.getName()} to area: ${areaByName.getName()}, x: ${x}, y: ${y}`,
-                );
-
-                this.world.despawn(player);
-                player.teleport(x, y);
                 break;
-            }
 
             case 'player': {
                 const [targetName] = params;
@@ -94,5 +86,17 @@ export default class GotoCommandHandler extends CommandHandler<GotoCommand> {
                 break;
             }
         }
+    }
+
+    private getAreaCoordinates(area: Area, player: Player): [number, number] {
+        const goto = area.getGoto();
+        if (goto) {
+            const empireName = EmpireUtil.getEmpireName(player.getEmpire());
+            return goto[empireName] || goto.default!;
+        }
+        return [
+            area.getPositionX() + (area.getWidth() * 25600) / 2,
+            area.getPositionY() + (area.getHeight() * 25600) / 2,
+        ];
     }
 }

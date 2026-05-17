@@ -9,7 +9,7 @@ export default class AttackPacket extends PacketIn {
     private unknown1: number = 0;
     private unknown2: number = 0;
 
-    constructor({ attackType, victimVirtualId }) {
+    constructor({ attackType, victimVirtualId }: { attackType: AttackTypeEnum; victimVirtualId: number }) {
         super({
             header: PacketHeaderEnum.ATTACK,
             name: 'AttackPacket',

@@ -9,7 +9,7 @@ export default class ChatInPacketHandler extends PacketHandler<ChatInPacket> {
     private logger: Logger;
     private commandManager: CommandManager;
 
-    constructor({ logger, commandManager }) {
+    constructor({ logger, commandManager }: { logger: Logger; commandManager: CommandManager }) {
         super();
         this.logger = logger;
         this.commandManager = commandManager;
@@ -41,13 +41,13 @@ export default class ChatInPacketHandler extends PacketHandler<ChatInPacket> {
                     this.commandManager.execute({ message, player });
                 }
 
-                //send normal message to other players in map
+                //TODO: send normal message to other players in map
 
                 break;
             case ChatMessageTypeEnum.SHOUT:
                 this.logger.debug(`[ChatInPacketHandler] SHOUT CHAT: ${message}`);
-                //validate 15 sec countdown between shout
-                //validate level min for shout
+                //TODO: validate 15 sec countdown between shout
+                //TODO: validate level min for shout
                 break;
             case ChatMessageTypeEnum.COMMAND:
                 this.logger.debug(`[ChatInPacketHandler] COMMAND CHAT: ${message}`);

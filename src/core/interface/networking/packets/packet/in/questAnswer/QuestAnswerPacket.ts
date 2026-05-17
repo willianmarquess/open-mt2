@@ -5,7 +5,7 @@ import QuestAnswerPacketValidator from './QuestAnswerPacketValidator';
 export default class QuestAnswerPacket extends PacketIn {
     private answer: number;
 
-    constructor({ answer }) {
+    constructor({ answer }: { answer: number }) {
         super({
             header: PacketHeaderEnum.QUEST_ANSWER,
             name: 'QuestAnswerPacket',

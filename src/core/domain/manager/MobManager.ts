@@ -103,7 +103,21 @@ export default class MobManager {
     private readonly logger: Logger;
     private readonly questManager: QuestManager;
 
-    constructor({ config, animationManager, dropManager, experienceManager, logger, questManager }) {
+    constructor({
+        config,
+        animationManager,
+        dropManager,
+        experienceManager,
+        logger,
+        questManager,
+    }: {
+        config: GameConfig;
+        animationManager: AnimationManager;
+        dropManager: DropManager;
+        experienceManager: ExperienceManager;
+        logger: Logger;
+        questManager: QuestManager;
+    }) {
         this.config = config;
         this.animationManager = animationManager;
         this.dropManager = dropManager;

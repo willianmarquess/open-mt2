@@ -30,6 +30,7 @@ describe('AnimationManager', function () {
 
         const animation1 = animationManager.getAnimation('job1', 'type1', 'sub1');
         expect(animation1).to.be.instanceOf(Animation);
+        if (!animation1) throw new Error('Expected animation1 to be defined');
         expect(animation1.getDuration()).to.equal(500);
         expect(animation1.getAccX()).to.equal(1);
         expect(animation1.getAccY()).to.equal(2);
@@ -37,6 +38,7 @@ describe('AnimationManager', function () {
 
         const animation2 = animationManager.getAnimation('job2', 'type2', 'sub2');
         expect(animation2).to.be.instanceOf(Animation);
+        if (!animation2) throw new Error('Expected animation2 to be defined');
         expect(animation2.getDuration()).to.equal(700);
         expect(animation2.getAccX()).to.equal(0);
         expect(animation2.getAccY()).to.equal(0);
@@ -51,6 +53,7 @@ describe('AnimationManager', function () {
 
         const animation = animationManager.getAnimation('job1', 'type1', 'sub1');
         expect(animation).to.be.instanceOf(Animation);
+        if (!animation) throw new Error('Expected animation to be defined');
         expect(animation.getDuration()).to.equal(500);
     });
 

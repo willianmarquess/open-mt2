@@ -5,9 +5,9 @@ import { MobsProto } from '@/game/infra/config/GameConfig';
 
 export class MobPoints extends Points {
     private mobProto: MobsProto;
-    private attack: number;
-    private defense: number;
-    private health: number;
+    private attack: number = 0;
+    private defense: number = 0;
+    private health: number = 0;
 
     constructor(mobProto: MobsProto) {
         super();

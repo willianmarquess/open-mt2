@@ -14,7 +14,7 @@ export default class LoginRequestPacketHandler extends PacketHandler<LoginReques
     private readonly loginService: LoginService;
     private readonly logger: Logger;
 
-    constructor({ loginService, logger }) {
+    constructor({ loginService, logger }: { loginService: LoginService; logger: Logger }) {
         super();
         this.loginService = loginService;
         this.logger = logger;
@@ -60,7 +60,7 @@ export default class LoginRequestPacketHandler extends PacketHandler<LoginReques
 
         connection.send(
             new LoginSuccessPacket({
-                key,
+                key: key!,
                 result: LOGIN_SUCCESS_RESULT,
             }),
         );

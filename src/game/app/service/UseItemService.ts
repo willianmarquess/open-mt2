@@ -13,7 +13,7 @@ export default class UseItemService {
     private logger: Logger;
     private itemManager: ItemManager;
 
-    constructor({ logger, itemManager }) {
+    constructor({ logger, itemManager }: { logger: Logger; itemManager: ItemManager }) {
         this.logger = logger;
         this.itemManager = itemManager;
     }

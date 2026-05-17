@@ -70,7 +70,8 @@ describe('SelectCharacterService', () => {
         const result = await selectCharacterService.execute(1, 123, connectionStub);
 
         expect(result.isOk()).to.be.true;
-        expect(result.getData().getId()).to.equal(playerData.id);
+        expect(result.getData()).to.exist;
+        expect(result.getData()!.getId()).to.equal(playerData.id);
         expect(worldStub.generateVirtualId.calledOnce).to.be.true;
         expect(itemManagerStub.getItems.calledOnce).to.be.true;
         expect(playerData.setVirtualId.calledOnceWith(100)).to.be.true;

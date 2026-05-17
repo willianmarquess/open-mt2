@@ -2,7 +2,7 @@ import Command from '../../Command';
 import InvokeCommandValidator from './InvokeCommandValidator';
 
 export default class InvokeCommand extends Command {
-    constructor({ args }) {
+    constructor({ args }: { args: Array<string> }) {
         super({ args, validator: InvokeCommandValidator });
     }
 

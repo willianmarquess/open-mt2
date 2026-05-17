@@ -15,7 +15,7 @@ export default class InvokeCommandHandler extends CommandHandler<InvokeCommand> 
     private readonly world: World;
     private readonly mobManager: MobManager;
 
-    constructor({ logger, world, mobManager }) {
+    constructor({ logger, world, mobManager }: { logger: Logger; world: World; mobManager: MobManager }) {
         super();
         this.logger = logger;
         this.world = world;
@@ -50,6 +50,12 @@ export default class InvokeCommandHandler extends CommandHandler<InvokeCommand> 
                 player.getPositionY() + MAX_MOB_INVOKE_DISTANCE,
             );
             const mob = this.mobManager.getMob(Number(vnum), positionX, positionY);
+
+            if (!mob) {
+                this.logger.error(`[InvokeCommandHandler] Failed to create mob with vnum ${vnum}`);
+                continue;
+            }
+
             mob.setVirtualId(this.world.generateVirtualId());
             this.world.spawn(mob);
         }

@@ -6,7 +6,7 @@ export default class SaveCharacterService {
     private readonly playerRepository: IPlayerRepository;
     private readonly itemManager: ItemManager;
 
-    constructor({ playerRepository, itemManager }) {
+    constructor({ playerRepository, itemManager }: { playerRepository: IPlayerRepository; itemManager: ItemManager }) {
         this.playerRepository = playerRepository;
         this.itemManager = itemManager;
     }

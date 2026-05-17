@@ -8,7 +8,7 @@ export default class AnimationManager {
     private readonly logger: Logger;
     private readonly config: GameConfig;
 
-    constructor({ logger, config }) {
+    constructor({ logger, config }: { logger: Logger; config: GameConfig }) {
         this.logger = logger;
         this.config = config;
     }

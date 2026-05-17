@@ -5,6 +5,10 @@ import MobManager from '@/core/domain/manager/MobManager';
 import ItemManager from '@/core/domain/manager/ItemManager';
 import DropManager from '@/core/domain/manager/DropManager';
 import { QuestManager } from '@/core/domain/quests/QuestManager';
+import CacheProvider from '@/core/infra/cache/CacheProvider';
+import DatabaseManager from '@/core/infra/database/DatabaseManager';
+import Server from '@/core/interface/server/Server';
+import Logger from '@/core/infra/logger/Logger';
 
 export default class GameApplication extends Application {
     private readonly world: World;
@@ -14,7 +18,18 @@ export default class GameApplication extends Application {
     private readonly dropManager: DropManager;
     private readonly questManager: QuestManager;
 
-    constructor(container) {
+    constructor(container: {
+        logger: Logger;
+        server: Server;
+        databaseManager: DatabaseManager;
+        cacheProvider: CacheProvider;
+        world: World;
+        animationManager: AnimationManager;
+        mobManager: MobManager;
+        itemManager: ItemManager;
+        dropManager: DropManager;
+        questManager: QuestManager;
+    }) {
         super(container);
         this.world = container.world;
         this.animationManager = container.animationManager;

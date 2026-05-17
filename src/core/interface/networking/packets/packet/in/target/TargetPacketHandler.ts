@@ -8,7 +8,13 @@ export default class TargetPacketHandler extends PacketHandler<TargetPacket> {
     private logger: Logger;
     private characterUpdateTargetService: CharacterUpdateTargetService;
 
-    constructor({ logger, characterUpdateTargetService }) {
+    constructor({
+        logger,
+        characterUpdateTargetService,
+    }: {
+        logger: Logger;
+        characterUpdateTargetService: CharacterUpdateTargetService;
+    }) {
         super();
         this.logger = logger;
         this.characterUpdateTargetService = characterUpdateTargetService;

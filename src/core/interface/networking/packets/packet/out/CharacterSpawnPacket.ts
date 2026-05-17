@@ -1,20 +1,6 @@
 import PacketHeaderEnum from '@/core/enum/PacketHeaderEnum';
 import PacketOut from '@/core/interface/networking/packets/packet/out/PacketOut';
 
-type CharacterSpawnPacketParams = {
-    vid?: number;
-    rotation?: number;
-    positionX?: number;
-    positionY?: number;
-    positionZ?: number;
-    entityType?: number;
-    playerClass?: number;
-    movementSpeed?: number;
-    attackSpeed?: number;
-    state?: number;
-    affects?: Array<number>;
-};
-
 export default class CharacterSpawnPacket extends PacketOut {
     private vid: number;
     private rotation: number = 0;
@@ -39,8 +25,20 @@ export default class CharacterSpawnPacket extends PacketOut {
         movementSpeed,
         attackSpeed,
         state,
-        affects,
-    }: CharacterSpawnPacketParams = {}) {
+        affects = new Array(2).fill(0),
+    }: {
+        vid: number;
+        rotation: number;
+        positionX: number;
+        positionY: number;
+        positionZ: number;
+        entityType: number;
+        playerClass: number;
+        movementSpeed: number;
+        attackSpeed: number;
+        state: number;
+        affects: Array<number>;
+    }) {
         super({
             header: PacketHeaderEnum.CHARACTER_SPAWN,
             name: 'CharacterSpawnPacket',

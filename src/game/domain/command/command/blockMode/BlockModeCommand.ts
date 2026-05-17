@@ -2,7 +2,7 @@ import Command from '../../Command';
 import BlockModeCommandValidator from './BlockModeCommandValidator';
 
 export default class BlockModeCommand extends Command {
-    constructor({ args }) {
+    constructor({ args }: { args: Array<string> }) {
         super({ args, validator: BlockModeCommandValidator });
     }
 

@@ -9,13 +9,23 @@ export default abstract class GameEntity {
     protected positionX: number = 0;
     protected positionY: number = 0;
     protected nearbyEntities = new Map<number, GameEntity>();
-    protected area: Area;
-    protected cell: SpatialCell;
+    protected area: Area | null = null;
+    protected cell: SpatialCell | null = null;
     protected targetPositionX: number = 0;
     protected targetPositionY: number = 0;
     protected readonly eventTimerManager = new EventTimerManager();
 
-    constructor({ virtualId, entityType, positionX, positionY }) {
+    constructor({
+        virtualId,
+        entityType,
+        positionX,
+        positionY,
+    }: {
+        virtualId: number;
+        entityType: EntityTypeEnum;
+        positionX: number;
+        positionY: number;
+    }) {
         this.virtualId = virtualId;
         this.entityType = entityType;
         this.targetPositionX = this.positionX = positionX;
@@ -80,7 +90,7 @@ export default abstract class GameEntity {
         };
     }
 
-    setCell(newCell: SpatialCell) {
+    setCell(newCell: SpatialCell | null) {
         this.cell = newCell;
     }
 

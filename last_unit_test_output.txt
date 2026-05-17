@@ -1,0 +1,472 @@
+
+> mt2-server-javascript@1.0.0 test:unit
+> mocha -r tsconfig-paths/register --config test/.mocharc.unit.json --exit
+
+
+[0m[0m
+[0m  LoginService[0m
+  [32m  Ô£ö[0m[90m should return an error if username is not found[0m
+  [32m  Ô£ö[0m[90m should return an error if password is invalid[0m
+  [32m  Ô£ö[0m[90m should return a key and cache the token if credentials are valid[0m
+
+[0m  AccountRepository[0m
+[0m    findByUsername[0m
+    [32m  Ô£ö[0m[90m should return account correctly[0m
+    [31m  1) should return undefined if account not found[0m
+
+[0m  Result[0m
+[0m    Static methods[0m
+    [32m  Ô£ö[0m[90m should create an instance using ok method[0m
+    [32m  Ô£ö[0m[90m should create an instance using error method[0m
+
+[0m  PlayerApplies[0m
+[0m    addItemApplies[0m
+    [32m  Ô£ö[0m[90m should apply valid item effects to the player[0m
+    [32m  Ô£ö[0m[90m should log debug message for unimplemented applies[0m
+[0m    removeItemApplies[0m
+    [32m  Ô£ö[0m[90m should remove valid item effects from the player[0m
+    [32m  Ô£ö[0m[90m should log debug message for unimplemented applies[0m
+
+[0m  PlayerFactory[0m
+  [32m  Ô£ö[0m[90m should create a player with default values[0m
+  [32m  Ô£ö[0m[90m should create a player with config default values when params are missing[0m
+
+[0m  AnimationManager[0m
+  [32m  Ô£ö[0m[90m should load animations correctly[0m
+  [32m  Ô£ö[0m[90m should return the correct animation using getAnimation[0m
+  [32m  Ô£ö[0m[90m should return undefined for a non-existing animation[0m
+  [32m  Ô£ö[0m[90m should return the animations map[0m
+
+[0m  EventTimerManager[0m
+  [32m  Ô£ö[0m[90m should execute onEndEventFunction when the timer ends due to duration[0m
+  [32m  Ô£ö[0m[90m should execute onEndEventFunction when the timer ends due to repeatCount[0m
+  [32m  Ô£ö[0m[90m should not execute onEndEventFunction if the timer is removed early[0m
+  [32m  Ô£ö[0m[90m should handle multiple timers and execute their onEndEventFunction independently[0m
+  [32m  Ô£ö[0m[90m should not throw errors when no onEndEventFunction is provided[0m
+
+[0m  PrivilegeManager[0m
+  [32m  Ô£ö[0m[90m should add and retrieve a player privilege[0m
+  [32m  Ô£ö[0m[90m should add and retrieve an empire privilege[0m
+  [32m  Ô£ö[0m[90m should expire player privileges after the specified time[0m
+  [32m  Ô£ö[0m[90m should expire empire privileges after the specified time[0m
+  [32m  Ô£ö[0m[90m should throw an error for invalid player privilege parameters[0m
+  [32m  Ô£ö[0m[90m should throw an error for invalid empire privilege parameters[0m
+  [31m  2) should remove expired privileges and keep others intact[0m
+
+[0m  AnimationUtil[0m
+  [32m  Ô£ö[0m[90m should calculate animation duration[0m
+  [32m  Ô£ö[0m[90m should create animation key[0m
+
+[0m  ItemCache[0m
+  [32m  Ô£ö[0m[90m should initialize cache for owner if not present[0m
+  [32m  Ô£ö[0m[90m should check if owner exists in cache[0m
+  [32m  Ô£ö[0m[90m should set item to update[0m
+  [32m  Ô£ö[0m[90m should set item to delete[0m
+  [32m  Ô£ö[0m[90m should remove item from update cache when set to delete[0m
+  [32m  Ô£ö[0m[90m should get items to update[0m
+
+[0m  JobUtil[0m
+  [32m  Ô£ö[0m[90m should return correct class name from class ID[0m
+  [32m  Ô£ö[0m[90m should return default class name for invalid class ID[0m
+  [32m  Ô£ö[0m[90m should return correct job ID from class ID[0m
+  [32m  Ô£ö[0m[90m should return default job ID for invalid class ID[0m
+
+[0m  MathUtil[0m
+  [32m  Ô£ö[0m[90m should return MAX_UINT[0m
+  [32m  Ô£ö[0m[90m should return MAX_TINY[0m
+  [32m  Ô£ö[0m[90m should calculate distance between two points[0m
+  [32m  Ô£ö[0m[90m should calculate rotation from direction[0m
+  [32m  Ô£ö[0m[90m should calculate random rotation if direction is 0[0m
+  [32m  Ô£ö[0m[90m should convert to unsigned number[0m
+  [32m  Ô£ö[0m[90m should convert to number[0m
+  [32m  Ô£ö[0m[90m should generate random integer between min and max[0m
+
+[0m  RedisCacheProvider[0m
+  [32m  Ô£ö[0m[90m should initialize the client and log success[0m
+  [32m  Ô£ö[0m[90m should log an error when there is a connection error[0m
+  [32m  Ô£ö[0m[90m should set a value with an expiration[0m
+  [32m  Ô£ö[0m[90m should set a value without an expiration[0m
+  [32m  Ô£ö[0m[90m should get a value[0m
+  [32m  Ô£ö[0m[90m should delete a value[0m
+  [32m  Ô£ö[0m[90m should close the connection[0m
+  [32m  Ô£ö[0m[90m should check if a key exists[0m
+
+[0m  EncryptionProvider[0m
+[0m    hash[0m
+    [32m  Ô£ö[0m[90m should hash the value with bcryptjs[0m
+[0m    compare[0m
+    [32m  Ô£ö[0m[90m should compare the value with the encrypted value using bcryptjs[0m
+    [32m  Ô£ö[0m[90m should return false when the comparison fails[0m
+
+[0m  WinstonLoggerAdapter[0m
+  [32m  Ô£ö[0m[90m should log info messages[0m
+  [32m  Ô£ö[0m[90m should log error messages with string[0m
+  [32m  Ô£ö[0m[90m should log error messages with Error object[0m
+  [32m  Ô£ö[0m[90m should log debug messages[0m
+
+[0m  RuleBuilder[0m
+[0m    Validation Methods[0m
+    [32m  Ô£ö[0m[90m should validate isString[0m
+    [32m  Ô£ö[0m[90m should invalidate isString[0m
+    [32m  Ô£ö[0m[90m should validate isNumber[0m
+    [32m  Ô£ö[0m[90m should validate isNumber with string number[0m
+    [32m  Ô£ö[0m[90m should invalidate isNumber[0m
+    [32m  Ô£ö[0m[90m should validate isArray[0m
+    [32m  Ô£ö[0m[90m should invalidate isArray[0m
+    [32m  Ô£ö[0m[90m should validate isBoolean[0m
+    [32m  Ô£ö[0m[90m should invalidate isBoolean[0m
+[0m    Presence Validation[0m
+    [32m  Ô£ö[0m[90m should validate isRequired[0m
+    [32m  Ô£ö[0m[90m should invalidate isRequired[0m
+    [32m  Ô£ö[0m[90m should validate isRequiredIf[0m
+    [32m  Ô£ö[0m[90m should invalidate isRequiredIf[0m
+[0m    Equality and Inequality Validation[0m
+    [32m  Ô£ö[0m[90m should validate isEqual[0m
+    [32m  Ô£ö[0m[90m should invalidate isEqual[0m
+    [32m  Ô£ö[0m[90m should validate isNotEqual[0m
+    [32m  Ô£ö[0m[90m should invalidate isNotEqual[0m
+[0m    Numeric Validation[0m
+    [32m  Ô£ö[0m[90m should validate isBetween[0m
+    [32m  Ô£ö[0m[90m should invalidate isBetween[0m
+    [32m  Ô£ö[0m[90m should validate isGreaterThan[0m
+    [32m  Ô£ö[0m[90m should invalidate isGreaterThan[0m
+    [32m  Ô£ö[0m[90m should validate isGreaterThanOrEqual[0m
+    [32m  Ô£ö[0m[90m should invalidate isGreaterThanOrEqual[0m
+    [32m  Ô£ö[0m[90m should validate isLessThan[0m
+    [32m  Ô£ö[0m[90m should invalidate isLessThan[0m
+    [32m  Ô£ö[0m[90m should validate isLessThanOrEqual[0m
+    [32m  Ô£ö[0m[90m should invalidate isLessThanOrEqual[0m
+[0m    Enum Validation[0m
+    [32m  Ô£ö[0m[90m should validate isInEnum[0m
+    [32m  Ô£ö[0m[90m should invalidate isInEnum[0m
+[0m    Custom Validation[0m
+    [32m  Ô£ö[0m[90m should validate isMust[0m
+    [32m  Ô£ö[0m[90m should invalidate isMust[0m
+
+[0m  BufferReader[0m
+  [32m  Ô£ö[0m[90m should set buffer and skip header if skippHeader is true[0m
+  [32m  Ô£ö[0m[90m should set buffer and not skip header if skippHeader is false[0m
+  [32m  Ô£ö[0m[90m should read a 32-bit unsigned integer in little-endian format[0m
+  [32m  Ô£ö[0m[90m should read a 16-bit unsigned integer in little-endian format[0m
+  [32m  Ô£ö[0m[90m should read an 8-bit unsigned integer[0m
+  [32m  Ô£ö[0m[90m should read a string of specified size[0m
+  [32m  Ô£ö[0m[90m should read a null-terminated string if size is not specified[0m
+  [32m  Ô£ö[0m[90m should read a string until the null character if size is larger than the string length[0m
+
+[0m  BufferWriter[0m
+  [32m  Ô£ö[0m[90m should initialize buffer with correct header[0m
+  [32m  Ô£ö[0m[90m should write an 8-bit unsigned integer[0m
+  [32m  Ô£ö[0m[90m should write a 16-bit unsigned integer in little-endian format[0m
+  [32m  Ô£ö[0m[90m should write a 32-bit unsigned integer in little-endian format[0m
+  [32m  Ô£ö[0m[90m should write a 64-bit unsigned integer in little-endian format[0m
+  [32m  Ô£ö[0m[90m should write a string of specified length[0m
+  [32m  Ô£ö[0m[90m should write a float in little-endian format[0m
+
+[0m  PacketHandlerMap[0m
+  [32m  Ô£ö[0m[90m should create a map with correct handlers and packets for HANDSHAKE[0m
+  [32m  Ô£ö[0m[90m should create a map with correct handlers and packets for LOGIN_REQUEST[0m
+  [32m  Ô£ö[0m[90m should create a map with correct handlers and packets for SERVER_STATUS_REQUEST[0m
+  [32m  Ô£ö[0m[90m should create a map with correct handlers and packets for TOKEN[0m
+  [32m  Ô£ö[0m[90m should create a map with correct handlers and packets for EMPIRE[0m
+  [32m  Ô£ö[0m[90m should create a map with correct handlers and packets for CREATE_CHARACTER[0m
+  [32m  Ô£ö[0m[90m should create a map with correct handlers and packets for SELECT_CHARACTER[0m
+  [32m  Ô£ö[0m[90m should create a map with correct handlers and packets for CLIENT_VERSION[0m
+  [32m  Ô£ö[0m[90m should create a map with correct handlers and packets for ENTER_GAME[0m
+  [32m  Ô£ö[0m[90m should create a map with correct handlers and packets for CHARACTER_MOVE[0m
+
+[0m  EmpirePacket[0m
+  [32m  Ô£ö[0m[90m should initialize with correct header, name, and size[0m
+  [32m  Ô£ö[0m[90m should initialize empireId correctly[0m
+  [32m  Ô£ö[0m[90m should pack data correctly[0m
+  [32m  Ô£ö[0m[90m should unpack data correctly[0m
+
+[0m  EmpirePacketHandler[0m
+  [32m  Ô£ö[0m[90m should terminate the connection and register an error if packet is invalid[0m
+  [32m  Ô£ö[0m[90m should terminate the connection if accountId not exists[0m
+  [32m  Ô£ö[0m[90m should terminate the connection if empire is invalid[0m
+  [32m  Ô£ö[0m[90m should not terminate the connection if everything is ok[0m
+
+[0m  HandshakePacket[0m
+  [32m  Ô£ö[0m[90m should initialize with correct header, name, and size[0m
+  [32m  Ô£ö[0m[90m should initialize properties correctly[0m
+  [32m  Ô£ö[0m[90m should pack data correctly[0m
+  [32m  Ô£ö[0m[90m should unpack data correctly[0m
+
+[0m  HandshakePacketHandler[0m
+  [32m  Ô£ö[0m[90m should close the connection and log an error if the packet is invalid[0m
+  [32m  Ô£ö[0m[90m should close the connection if packet ID does not match the last handshake ID[0m
+  [32m  Ô£ö[0m[90m should confirm handshake success if server and client are synchronized within delta range[0m
+  [32m  Ô£ö[0m[90m should resend handshake if synchronization delta is outside allowed range[0m
+  [32m  Ô£ö[0m[90m should recalculate delta if the new delta is below 0[0m
+
+[0m  PacketBidirectional[0m
+  [32m  Ô£ö[0m[90m should initialize bufferWriter with correct header and size[0m
+  [32m  Ô£ö[0m[90m should initialize bufferReader correctly[0m
+  [32m  Ô£ö[0m[90m should throw error when pack method is not overwritten[0m
+  [32m  Ô£ö[0m[90m should throw error when unpack method is not overwritten[0m
+
+[0m  AuthTokenPacket[0m
+  [32m  Ô£ö[0m[90m should initialize with correct header, name, and size[0m
+  [32m  Ô£ö[0m[90m should initialize properties correctly[0m
+  [32m  Ô£ö[0m[90m should unpack data correctly[0m
+
+[0m  AuthTokenPacketHandler[0m
+  [32m  Ô£ö[0m[90m should close connection and log error if packet is invalid[0m
+  [32m  Ô£ö[0m[90m should close connection if authentication fails[0m
+  [32m  Ô£ö[0m[90m should set connection accountId and send EmpirePacket if authentication succeeds and characters exist[0m
+  [32m  Ô£ö[0m[90m should set connection state to SELECT after execution[0m
+
+[0m  CharacterMovePacket[0m
+  [32m  Ô£ö[0m[90m should initialize with correct header, name, and size[0m
+  [32m  Ô£ö[0m[90m should initialize properties correctly[0m
+  [32m  Ô£ö[0m[90m should unpack data correctly[0m
+
+[0m  CharacterMovePacketHandler[0m
+  [32m  Ô£ö[0m[90m should log an error and close the connection if the packet is invalid[0m
+  [32m  Ô£ö[0m[90m should log an info message and close the connection if there is no player in the connection[0m
+  [32m  Ô£ö[0m[90m should call characterMoveService with correct parameters when packet is valid and player exists[0m
+
+[0m  ChatInPacket[0m
+  [32m  Ô£ö[0m[90m should initialize with correct header, name, and size[0m
+  [32m  Ô£ö[0m[90m should initialize properties correctly[0m
+  [32m  Ô£ö[0m[90m should unpack data correctly[0m
+
+[0m  ClientVersionPacket[0m
+  [32m  Ô£ö[0m[90m should initialize with correct header, name, and size[0m
+  [32m  Ô£ö[0m[90m should initialize properties correctly[0m
+  [32m  Ô£ö[0m[90m should unpack data correctly[0m
+
+[0m  ClientVersionPacketHandler[0m
+  [32m  Ô£ö[0m[90m should log the client version information correctly[0m
+
+[0m  CreateCharacterPacket[0m
+  [32m  Ô£ö[0m[90m should initialize with correct header, name, and size[0m
+  [32m  Ô£ö[0m[90m should initialize properties correctly[0m
+  [32m  Ô£ö[0m[90m should unpack data correctly[0m
+
+[0m  CreateCharacterPacketHandler[0m
+  [32m  Ô£ö[0m[90m should close connection if packet is invalid[0m
+  [32m  Ô£ö[0m[90m should send CreateCharacterFailurePacket if name already exists[0m
+  [32m  Ô£ö[0m[90m should close connection if account is full[0m
+  [32m  Ô£ö[0m[90m should send CreateCharacterSuccessPacket with correct data on success[0m
+
+[0m  EnterGamePacket[0m
+  [32m  Ô£ö[0m[90m should initialize with correct header, name, and size[0m
+  [32m  Ô£ö[0m[90m should unpack correctly[0m
+
+[0m  EnterGamePacketHandler[0m
+  [32m  Ô£ö[0m[90m should log and close connection if player is not selected[0m
+  [32m  Ô£ö[0m[90m should set connection state to GAME[0m
+  [32m  Ô£ö[0m[90m should send GameTimePacket with current time[0m
+  [32m  Ô£ö[0m[90m should send ChannelPacket with channel 1[0m
+  [32m  Ô£ö[0m[90m should call enterGameService.execute with the player[0m
+
+[0m  LoginRequestPacket[0m
+  [32m  Ô£ö[0m[90m should initialize with correct header, name, and size[0m
+  [32m  Ô£ö[0m[90m should initialize properties correctly[0m
+  [32m  Ô£ö[0m[90m should unpack data correctly[0m
+
+[0m  PacketIn[0m
+  [32m  Ô£ö[0m[90m should initialize bufferReader[0m
+  [32m  Ô£ö[0m[90m should throw error when unpack method is not overwritten[0m
+
+[0m  SelectCharacterPacket[0m
+  [32m  Ô£ö[0m[90m should initialize with correct header, name, and size[0m
+  [32m  Ô£ö[0m[90m should initialize properties correctly[0m
+  [32m  Ô£ö[0m[90m should unpack data correctly[0m
+
+[0m  PacketOut[0m
+  [32m  Ô£ö[0m[90m should initialize bufferWriter with correct header and size[0m
+  [32m  Ô£ö[0m[90m should throw error when pack method is not overwritten[0m
+
+[0m  AffectBitFlag[0m
+  [32m  Ô£ö[0m[90m should initialize with all bits unset[0m
+  [32m  Ô£ö[0m[90m should set a flag correctly[0m
+  [32m  Ô£ö[0m[90m should reset a flag correctly[0m
+  [32m  Ô£ö[0m[90m should toggle a flag correctly[0m
+  [32m  Ô£ö[0m[90m should ignore flags outside the valid range[0m
+  [32m  Ô£ö[0m[90m should return the correct flag values[0m
+  [32m  Ô£ö[0m[90m should work with the constructor for initial values[0m
+
+[0m  Grid[0m
+  [32m  Ô£ö[0m[90m should initialize with the correct dimensions[0m
+  [32m  Ô£ö[0m[90m should initialize with the default value[0m
+  [32m  Ô£ö[0m[90m should set and get a value correctly[0m
+  [32m  Ô£ö[0m[90m should not set a value out of bounds[0m
+  [32m  Ô£ö[0m[90m should return undefined for out of bounds get[0m
+  [32m  Ô£ö[0m[90m should validate positions correctly[0m
+
+[0m  Ip[0m
+[0m    toInt[0m
+    [32m  Ô£ö[0m[90m should convert IP address "0.0.0.0" to integer 0[0m
+    [32m  Ô£ö[0m[90m should convert IP address "127.0.0.1" to integer 16777343[0m
+    [32m  Ô£ö[0m[90m should convert IP address "192.168.0.1" to integer 16820416[0m
+    [32m  Ô£ö[0m[90m should convert IP address "255.255.255.255" to integer -1[0m
+    [32m  Ô£ö[0m[90m should handle single-digit IP parts correctly[0m
+
+[0m  QuadTree[0m
+  [32m  Ô£ö[0m[90m should insert entities within its bounds[0m
+  [32m  Ô£ö[0m[90m should not insert entities outside its bounds[0m
+  [32m  Ô£ö[0m[90m should subdivide when capacity is reached[0m
+  [32m  Ô£ö[0m[90m should remove entities correctly[0m
+  [32m  Ô£ö[0m[90m should query entities within a radius[0m
+  [32m  Ô£ö[0m[90m should handle entity updates correctly[0m
+
+[0m  CORE -> DATA STRUCTURE -> Queue[0m
+[0m    when queue is empty[0m
+    [32m  Ô£ö[0m[90m should return true for isEmpty()[0m
+    [32m  Ô£ö[0m[90m should return false for isFull()[0m
+    [31m  3) should return undefined for front() and rear()[0m
+    [31m  4) should not dequeue items[0m
+[0m    when queue is full[0m
+    [32m  Ô£ö[0m[90m should return false for isEmpty()[0m
+    [32m  Ô£ö[0m[90m should return true for isFull()[0m
+    [32m  Ô£ö[0m[90m should not enqueue items[0m
+[0m    when queue is not empty[0m
+    [32m  Ô£ö[0m[90m should return false for isEmpty()[0m
+    [32m  Ô£ö[0m[90m should return correct size()[0m
+    [32m  Ô£ö[0m[90m should dequeue items[0m
+
+[0m  CommandManager[0m
+  [32m  Ô£ö[0m[90m should list all commands when /help is used[0m
+  [32m  Ô£ö[0m[90m should handle invalid command[0m
+  [32m  Ô£ö[0m[90m should execute valid command[0m
+
+[0m  CharacterAttackService[0m
+  [32m  Ô£ö[0m[90m should log info when area is not found[0m
+  [32m  Ô£ö[0m[90m should log info when victim is not found[0m
+  [32m  Ô£ö[0m[90m should execute battle service when victim is found[0m
+
+[0m  CharacterMoveService[0m
+[0m    execute[0m
+    [32m  Ô£ö[0m[90m should add experience and move the player for MOVE movement type[0m
+    [32m  Ô£ö[0m[90m should call wait on the player for WAIT movement type[0m
+    [32m  Ô£ö[0m[90m should call sync on the player for ATTACK or COMBO movement type[0m
+
+[0m  CharacterUpdateTargetService[0m
+[0m    execute[0m
+    [32m  Ô£ö[0m[90m should log and return if area is not found[0m
+    [32m  Ô£ö[0m[90m should log and return if target is not found[0m
+    [32m  Ô£ö[0m[90m should update the target if area and target are found[0m
+
+[0m  CreateCharacterService[0m
+[0m    execute[0m
+    [32m  Ô£ö[0m[90m should return error if the player name already exists[0m
+    [32m  Ô£ö[0m[90m should return error if the account is full[0m
+    [32m  Ô£ö[0m[90m should return error if the empire is not selected[0m
+    [32m  Ô£ö[0m[90m should create a player successfully[0m
+
+[0m  DropItemService[0m
+[0m    execute[0m
+    [32m  Ô£ö[0m[90m should drop gold if gold is greater than 0[0m
+    [32m  Ô£ö[0m[90m should not drop more gold than the player has[0m
+    [32m  Ô£ö[0m[90m should drop item completely if count matches item count[0m
+    [32m  Ô£ö[0m[90m should update item count if count is less than item count[0m
+    [32m  Ô£ö[0m[90m should do nothing if item is not found[0m
+
+[0m  EnterGameService[0m
+[0m    execute[0m
+    [32m  Ô£ö[0m[90m should spawn the player and send inventory[0m
+
+[0m  LoadCharactersService[0m
+[0m    execute[0m
+    [32m  Ô£ö[0m[90m should return players for the given accountId[0m
+    [32m  Ô£ö[0m[90m should handle no players found[0m
+
+[0m  LogoutService[0m
+[0m    execute[0m
+    [32m  Ô£ö[0m[90m should call leaveGameService.execute with the player[0m
+
+[0m  MoveItemService[0m
+[0m    execute[0m
+    [32m  Ô£ö[0m[90m should log the move and update the item if moveItem returns an item[0m
+    [32m  Ô£ö[0m[90m should log the move and not call update if moveItem returns undefined[0m
+
+[0m  PickupItemService[0m
+[0m    execute[0m
+    [32m  Ô£ö[0m[90m should add gold to the player and despawn the item if it is gold[0m
+    [32m  Ô£ö[0m[90m should add item to the player and despawn the item if it is not gold and can be picked up[0m
+    [32m  Ô£ö[0m[90m should not allow the player to pick up the item if it is not theirs[0m
+    [32m  Ô£ö[0m[90m should do nothing if the area is not found[0m
+    [32m  Ô£ö[0m[90m should do nothing if the dropped item is not found[0m
+
+[0m  SelectCharacterService[0m
+  [32m  Ô£ö[0m[90m should return PLAYER_NOT_FOUND error if player is not found[0m
+  [32m  Ô£ö[0m[90m should return player if found[0m
+
+[0m  SelectEmpireService[0m
+  [32m  Ô£ö[0m[90m should return INVALID_EMPIRE error if empireId is invalid[0m
+  [32m  Ô£ö[0m[90m should set empireId in cache if empireId is valid[0m
+
+[0m  UseItemService[0m
+  [32m  Ô£ö[0m[90m should not use item if not found in inventory[0m
+  [32m  Ô£ö[0m[90m should equip a wearable item from inventory[0m
+  [32m  Ô£ö[0m[90m should not equip a wearable item if inventory is full[0m
+  [32m  Ô£ö[0m[90m should equip wearable from non-equipment slot - no item equipped[0m
+  [32m  Ô£ö[0m[90m should equip wearable from non-equipment slot - item equipped and inventory full[0m
+  [32m  Ô£ö[0m[90m should equip wearable from non-equipment slot - item equipped and inventory not full[0m
+
+[0m  PrivilegeCommandHandler[0m
+  [32m  Ô£ö[0m[90m should log an error and send command errors if the command is invalid[0m
+  [32m  Ô£ö[0m[90m should add a player privilege if the kind is 'player' when player exists[0m
+  [32m  Ô£ö[0m[90m should not add a player privilege if the kind is 'player' when player not exists[0m
+  [31m  5) should add an empire privilege if the kind is 'empire' and name is valid[0m
+  [32m  Ô£ö[0m[90m should send command errors if the kind is 'empire' and name is invalid[0m
+  [32m  Ô£ö[0m[90m should send command errors if the kind is 'guild'[0m
+  [32m  Ô£ö[0m[90m should not throw if the privilege type is invalid[0m
+
+[0m  PrivilegeCommandValidator[0m
+  [32m  Ô£ö[0m[90m should validate successfully with valid arguments[0m
+  [32m  Ô£ö[0m[90m should fail if 'kind' is missing[0m
+  [32m  Ô£ö[0m[90m should fail if 'kind' is not in the enum[0m
+  [32m  Ô£ö[0m[90m should fail if 'playerName, empireName, guildName' is missing[0m
+  [32m  Ô£ö[0m[90m should fail if 'type' is missing[0m
+  [32m  Ô£ö[0m[90m should fail if 'type' is not in the enum[0m
+  [32m  Ô£ö[0m[90m should fail if 'value' is missing[0m
+  [32m  Ô£ö[0m[90m should fail if 'value' is not a number or less than 1[0m
+  [32m  Ô£ö[0m[90m should fail if 'timeInSeconds' is missing[0m
+  [32m  Ô£ö[0m[90m should fail if 'timeInSeconds' is not a number or less than 1[0m
+
+
+[92m [0m[32m 273 passing[0m[90m (323ms)[0m
+[31m  5 failing[0m
+
+[0m  1) AccountRepository
+       findByUsername
+         should return undefined if account not found:
+[0m[31m     AssertionError: expected null to be undefined[0m[90m
+      at Context.<anonymous> (test\unit\auth\infra\database\AccountRepository.test.ts:64:33)
+[0m
+[0m  2) PrivilegeManager
+       should remove expired privileges and keep others intact:
+[0m[31m     AssertionError: expected +0 to be undefined[0m[90m
+      at Context.<anonymous> (test\unit\core\domain\manager\PrivilegeManager.test.ts:89:39)
+      at processImmediate (node:internal/timers:485:21)
+[0m
+[0m  3) CORE -> DATA STRUCTURE -> Queue
+       when queue is empty
+         should return undefined for front() and rear():
+[0m[31m     AssertionError: expected null to be undefined[0m[90m
+      at Context.<anonymous> (test\unit\core\util\Queue.test.ts:21:40)
+      at processImmediate (node:internal/timers:485:21)
+[0m
+[0m  4) CORE -> DATA STRUCTURE -> Queue
+       when queue is empty
+         should not dequeue items:
+[0m[31m     AssertionError: expected null to be undefined[0m[90m
+      at Context.<anonymous> (test\unit\core\util\Queue.test.ts:26:42)
+      at processImmediate (node:internal/timers:485:21)
+[0m
+[0m  5) PrivilegeCommandHandler
+       should add an empire privilege if the kind is 'empire' and name is valid:
+
+      [31mAssertionError: expected false to be true[0m
+      [32m+ expected[0m [31m- actual[0m
+
+      [31m-false[0m
+      [32m+true[0m
+      [0m[90m
+      at Context.<anonymous> (test\unit\game\domain\command\privilege\PrivilegeCommandHandler.test.ts:70:16)
+[0m
+
+

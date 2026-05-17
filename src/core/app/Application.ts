@@ -9,7 +9,17 @@ export default class Application {
     protected readonly databaseManager: DatabaseManager;
     protected readonly cacheProvider: CacheProvider;
 
-    constructor({ logger, server, databaseManager, cacheProvider }) {
+    constructor({
+        logger,
+        server,
+        databaseManager,
+        cacheProvider,
+    }: {
+        logger: Logger;
+        server: Server;
+        databaseManager: DatabaseManager;
+        cacheProvider: CacheProvider;
+    }) {
         this.server = server;
         this.logger = logger;
         this.databaseManager = databaseManager;

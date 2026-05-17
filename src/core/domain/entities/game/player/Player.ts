@@ -7,10 +7,8 @@ import { PointsEnum } from '@/core/enum/PointsEnum';
 import PlayerApplies from './delegate/PlayerApplies';
 import { EntityStateEnum } from '@/core/enum/EntityStateEnum';
 import { ChatMessageTypeEnum } from '@/core/enum/ChatMessageTypeEnum';
-import CharacterMovedEvent from './events/CharacterMovedEvent';
 import { ItemAntiFlagEnum } from '@/core/enum/ItemAntiFlagEnum';
 import Item from '../item/Item';
-import DropItemEvent from './events/DropItemEvent';
 import DroppedItem from '../item/DroppedItem';
 import PlayerState from '../../state/player/PlayerState';
 import Character from '../Character';
@@ -59,6 +57,10 @@ import { AbstractQuest } from '@/core/domain/quests/AbstractQuest';
 import { QuestStatusEnum } from '@/core/domain/quests/decorators/QuestDecorator';
 import QuestInfoPacket from '@/core/interface/networking/packets/packet/out/QuestInfoPacket';
 import { BlockFlagEnum } from '@/core/enum/BlockFlagEnum';
+import { QuestManager } from '@/core/domain/quests/QuestManager';
+import Logger from '@/core/infra/logger/Logger';
+import ExperienceManager from '@/core/domain/manager/ExperienceManager';
+import AnimationManager from '@/core/domain/manager/AnimationManager';
 
 const REGEN_INTERVAL = 3000;
 const MAX_DISTANCE_FROM_TARGET = 3500;
@@ -85,7 +87,7 @@ export default class Player extends Character {
     private readonly battle: PlayerBattle;
 
     //connection
-    private connection: GameConnection;
+    private connection: GameConnection | null = null;
 
     //save
     private readonly saveCharacterService: SaveCharacterService;
@@ -95,7 +97,7 @@ export default class Player extends Character {
 
     //quests
     private readonly quests: Map<number, AbstractQuest> = new Map();
-    private currentQuest: AbstractQuest;
+    private currentQuest: AbstractQuest | null = null;
 
     constructor(
         {
@@ -137,8 +139,61 @@ export default class Player extends Character {
             attackPerIqPoint = 0,
             baseAttackSpeed = 0,
             baseMovementSpeed = 0,
+        }: {
+            id: number;
+            accountId: number;
+            empire: number;
+            playerClass?: number;
+            skillGroup?: number;
+            playTime?: number;
+            level?: number;
+            experience?: number;
+            gold?: number;
+            st?: number;
+            ht?: number;
+            dx?: number;
+            iq?: number;
+            positionX?: number;
+            positionY?: number;
+            health?: number;
+            mana?: number;
+            stamina?: number;
+            bodyPart?: number;
+            hairPart?: number;
+            name: string;
+            givenStatusPoints?: number;
+            availableStatusPoints?: number;
+            slot?: number;
+            virtualId: number;
+            hpPerLvl?: number;
+            hpPerHtPoint?: number;
+            mpPerLvl?: number;
+            mpPerIqPoint?: number;
+            baseHealth?: number;
+            baseMana?: number;
+            appearance?: number;
+            defensePerHtPoint?: number;
+            attackPerStPoint?: number;
+            attackPerDxPoint?: number;
+            attackPerIqPoint?: number;
+            baseAttackSpeed?: number;
+            baseMovementSpeed?: number;
         },
-        { animationManager, experienceManager, config, logger, saveCharacterService, questManager },
+        {
+            animationManager,
+            experienceManager,
+            config,
+            logger,
+            saveCharacterService,
+            questManager,
+        }: {
+            animationManager: AnimationManager;
+            experienceManager: ExperienceManager;
+            config: GameConfig;
+            logger: Logger;
+            saveCharacterService: SaveCharacterService;
+            questManager: QuestManager;
+        },
     ) {
         super(
             {
@@ -304,7 +359,7 @@ export default class Player extends Character {
         this.eventTimerManager.removeTimer('SLOW');
 
         //TODO: reset killer mode
-        this.connection.setState(ConnectionStateEnum.DEAD);
+        this.connection?.setState(ConnectionStateEnum.DEAD);
 
         this.sendIamDead();
         for (const entity of this.nearbyEntities.values()) {
@@ -314,8 +369,8 @@ export default class Player extends Character {
         }
 
         for (const entity of this.targetedBy.values()) {
-            if (entity.getTarget().getVirtualId() === this.getVirtualId()) {
-                entity.setTarget(undefined);
+            if (entity.getTarget()?.getVirtualId() === this.getVirtualId()) {
+                entity.removeTarget();
             }
         }
 
@@ -330,7 +385,7 @@ export default class Player extends Character {
     }
 
     sendIamDead() {
-        this.connection.send(new CharacterDiedPacket({ virtualId: this.getVirtualId() }));
+        this.connection?.send(new CharacterDiedPacket({ virtualId: this.getVirtualId() }));
     }
 
     restart(type: 'TOWN' | 'HERE') {
@@ -338,17 +393,17 @@ export default class Player extends Character {
             messageType: ChatMessageTypeEnum.COMMAND,
             message: 'CloseRestartWindow',
         });
-        this.connection.setState(ConnectionStateEnum.GAME);
+        this.connection?.setState(ConnectionStateEnum.GAME);
 
         if (type === 'TOWN') {
-            const { x, y } = this.area.getStartPositionByEmpire(this.empire);
-            if (x && y) {
-                this.setPositionX(x);
-                this.setPositionY(y);
+            const position = this.area?.getStartPositionByEmpire(this.empire);
+            if (position?.x !== undefined && position?.y !== undefined) {
+                this.setPositionX(position.x);
+                this.setPositionY(position.y);
             }
         }
 
-        this.area.spawn(this);
+        this.area?.spawn(this);
     }
 
     setConnection(connection: GameConnection) {
@@ -378,7 +433,7 @@ export default class Player extends Character {
     }
 
     sendDetails() {
-        this.connection.send(
+        this.connection?.send(
             new CharacterDetailsPacket({
                 vid: this.getVirtualId(),
                 playerClass: this.getPlayerClass(),
@@ -466,7 +521,7 @@ export default class Player extends Character {
     }
 
     otherEntityDied(entity: GameEntity) {
-        this.connection.send(new CharacterDiedPacket({ virtualId: entity.getVirtualId() }));
+        this.connection?.send(new CharacterDiedPacket({ virtualId: entity.getVirtualId() }));
     }
 
     getHealthPercentage() {
@@ -487,7 +542,7 @@ export default class Player extends Character {
     }
 
     sendTargetUpdated(target?: Character) {
-        this.connection.send(
+        this.connection?.send(
             new TargetUpdatedPacket({
                 virtualId: target?.getVirtualId() || 0,
                 healthPercentage: target?.getHealthPercentage() || 0,
@@ -495,8 +550,8 @@ export default class Player extends Character {
         );
     }
 
-    sendDamageCaused({ virtualId, damage, damageFlags }) {
-        this.connection.send(
+    sendDamageCaused({ virtualId, damage, damageFlags }: { virtualId: number; damage: number; damageFlags: number }) {
+        this.connection?.send(
             new DamagePacket({
                 virtualId,
                 damage,
@@ -505,8 +560,8 @@ export default class Player extends Character {
         );
     }
 
-    sendDamageReceived({ damage, damageFlags }) {
-        this.connection.send(
+    sendDamageReceived({ damage, damageFlags }: { damage: number; damageFlags: number }) {
+        this.connection?.send(
             new DamagePacket({
                 virtualId: this.virtualId,
                 damage,
@@ -552,12 +607,12 @@ export default class Player extends Character {
         this.updateView();
     }
 
-    onItemEquipped(event: ItemEquippedEvent) {
+    onItemEquipped(event: ItemEquippedEvent): void {
         this.applies.addItemApplies(event.getItem());
         this.onEquipmentChange();
     }
 
-    onItemUnequipped(event: ItemUnequippedEvent) {
+    onItemUnequipped(event: ItemUnequippedEvent): void {
         this.applies.removeItemApplies(event.getItem());
         this.onEquipmentChange();
     }
@@ -566,7 +621,7 @@ export default class Player extends Character {
         this.move(x, y);
         this.stop();
 
-        this.connection.send(
+        this.connection?.send(
             new TeleportPacket({
                 positionX: this.getPositionX(),
                 positionY: this.getPositionY(),
@@ -588,8 +643,20 @@ export default class Player extends Character {
         level,
         name,
         rotation,
+    }: {
+        virtualId: number;
+        playerClass: number;
+        entityType: EntityTypeEnum;
+        attackSpeed: number;
+        movementSpeed: number;
+        positionX: number;
+        positionY: number;
+        empireId: number;
+        level: number;
+        name: string;
+        rotation: number;
     }) {
-        this.connection.send(
+        this.connection?.send(
             new CharacterSpawnPacket({
                 vid: virtualId,
                 playerClass,
@@ -600,10 +667,12 @@ export default class Player extends Character {
                 positionY,
                 positionZ: 0,
                 rotation,
+                affects: new Array(2).fill(0), //TODO
+                state: 0, //TODO
             }),
         );
 
-        this.connection.send(
+        this.connection?.send(
             new CharacterInfoPacket({
                 vid: virtualId,
                 empireId,
@@ -629,6 +698,18 @@ export default class Player extends Character {
         level,
         name,
         rotation,
+    }: {
+        virtualId: number;
+        playerClass: number;
+        entityType: EntityTypeEnum;
+        attackSpeed: number;
+        movementSpeed: number;
+        positionX: number;
+        positionY: number;
+        empireId: number;
+        level: number;
+        name: string;
+        rotation: number;
     }) {
         this.showEntity({
             virtualId,
@@ -645,16 +726,16 @@ export default class Player extends Character {
         });
     }
 
-    hideOtherEntity({ virtualId }) {
-        this.connection.send(
+    hideOtherEntity({ virtualId }: { virtualId: number }) {
+        this.connection?.send(
             new RemoveCharacterPacket({
                 vid: virtualId,
             }),
         );
     }
 
-    otherEntityLevelUp({ virtualId, level }) {
-        this.connection.send(
+    otherEntityLevelUp({ virtualId, level }: { virtualId: number; level: number }) {
+        this.connection?.send(
             new CharacterPointChangePacket({
                 vid: virtualId,
                 type: PointsEnum.LEVEL,
@@ -664,14 +745,35 @@ export default class Player extends Character {
         );
     }
 
-    otherEntityUpdated({ vid, attackSpeed, moveSpeed, bodyId, weaponId, hairId, affects }) {
-        this.connection.send(
+    otherEntityUpdated({
+        vid,
+        attackSpeed,
+        moveSpeed,
+        bodyId,
+        weaponId,
+        hairId,
+        affects,
+    }: {
+        vid: number;
+        attackSpeed: number;
+        moveSpeed: number;
+        bodyId: number;
+        weaponId: number;
+        hairId: number;
+        affects: AffectBitsTypeEnum[];
+    }) {
+        this.connection?.send(
             new CharacterUpdatePacket({
                 vid,
                 attackSpeed,
                 moveSpeed,
                 parts: [bodyId, weaponId, 0, hairId],
                 affects,
+                state: 0, //TODO
+                guildId: 0, //TODO
+                mountVnum: 0, //TODO
+                pkMode: 0, //TODO
+                rankPoints: 0, //TODO
             }),
         );
     }
@@ -688,14 +790,14 @@ export default class Player extends Character {
                 this.target.getPositionY(),
             ) >= MAX_DISTANCE_FROM_TARGET
         ) {
-            this.setTarget(undefined);
+            this.removeTarget();
         }
     }
 
     forgetMeAsTarget() {
         for (const entity of this.targetedBy.values()) {
-            if (entity.getTarget().getVirtualId() === this.getVirtualId()) {
-                entity.setTarget(undefined);
+            if (entity.getTarget()?.getVirtualId() === this.getVirtualId()) {
+                entity.removeTarget();
             }
         }
     }
@@ -737,7 +839,7 @@ export default class Player extends Character {
                 }
                 const countDown = SECONDS_TO_LEAVE - count;
                 if (countDown <= 0) {
-                    this.area.despawn(this);
+                    this.area?.despawn(this);
                     switch (command) {
                         case 'QUIT':
                             this.chat({
@@ -746,10 +848,10 @@ export default class Player extends Character {
                             });
                             break;
                         case 'LOGOUT':
-                            this.connection.setState(ConnectionStateEnum.CLOSE);
+                            this.connection?.setState(ConnectionStateEnum.CLOSE);
                             break;
                         case 'SELECT':
-                            this.connection.setState(ConnectionStateEnum.SELECT);
+                            this.connection?.setState(ConnectionStateEnum.SELECT);
                             break;
                     }
                     return;
@@ -781,7 +883,7 @@ export default class Player extends Character {
     }
 
     chat({ message, messageType }: { message: string; messageType: ChatMessageTypeEnum }) {
-        this.connection.send(
+        this.connection?.send(
             new ChatOutPacket({
                 messageType,
                 message,
@@ -793,7 +895,7 @@ export default class Player extends Character {
 
     sendCommandErrors(errors: Array<any>) {
         errors.forEach(({ errors }) => {
-            errors.forEach(({ error }) => {
+            errors.forEach(({ error }: { error: string }) => {
                 this.chat({
                     message: `[SYSTEM] ${error}`,
                     messageType: ChatMessageTypeEnum.INFO,
@@ -811,11 +913,29 @@ export default class Player extends Character {
         for (const point of this.getPoints().keys()) {
             characterPointsPacket.addPoint(Number(point), this.getPoint(point));
         }
-        this.connection.send(characterPointsPacket);
+        this.connection?.send(characterPointsPacket);
     }
 
-    updateOtherEntity({ virtualId, arg, movementType, time, rotation, positionX, positionY, duration }) {
-        this.connection.send(
+    updateOtherEntity({
+        virtualId,
+        arg,
+        movementType,
+        time,
+        rotation,
+        positionX,
+        positionY,
+        duration,
+    }: {
+        virtualId: number;
+        arg: number;
+        movementType: number;
+        time: number;
+        rotation: number;
+        positionX: number;
+        positionY: number;
+        duration: number;
+    }) {
+        this.connection?.send(
             new CharacterMoveOutPacket({
                 vid: virtualId,
                 arg,
@@ -829,8 +949,22 @@ export default class Player extends Character {
         );
     }
 
-    sendAffect({ type, apply, duration, flag, value, manaCost }) {
-        this.connection.send(
+    sendAffect({
+        type,
+        apply,
+        duration,
+        flag,
+        value,
+        manaCost,
+    }: {
+        type: number;
+        apply: number;
+        duration: number;
+        flag: number;
+        value: number;
+        manaCost: number;
+    }) {
+        this.connection?.send(
             new AffectAddPacket({
                 type,
                 apply,
@@ -843,7 +977,7 @@ export default class Player extends Character {
     }
 
     sendSpecialEffect(type: SpecialEffectTypeEnum) {
-        this.connection.send(
+        this.connection?.send(
             new SpecialEffectPacket({
                 type,
                 virtualId: this.virtualId,
@@ -852,13 +986,18 @@ export default class Player extends Character {
     }
 
     updateView() {
-        this.connection.send(
+        this.connection?.send(
             new CharacterUpdatePacket({
                 vid: this.virtualId,
                 attackSpeed: this.points.getPoint(PointsEnum.ATTACK_SPEED),
                 moveSpeed: this.points.getPoint(PointsEnum.MOVE_SPEED),
                 parts: [this.getBody()?.getId() ?? 0, this.getWeapon()?.getId() ?? 0, 0, this.getHair()?.getId() ?? 0],
                 affects: this.getAffectFlags(),
+                guildId: 0, //TODO
+                mountVnum: 0, //TODO
+                pkMode: 0, //TODO
+                rankPoints: 0, //TODO
+                state: 0, //TODO
             }),
         );
 
@@ -877,40 +1016,76 @@ export default class Player extends Character {
         }
     }
 
-    wait({ positionX, positionY, arg, rotation, time, movementType }) {
+    wait({
+        positionX,
+        positionY,
+        arg,
+        rotation,
+        time,
+        movementType,
+    }: {
+        positionX: number;
+        positionY: number;
+        arg: number;
+        rotation: number;
+        time: number;
+        movementType: number;
+    }) {
         super.waitInternal(positionX, positionY);
-        this.area.onCharacterMove(
-            new CharacterMovedEvent({
-                params: { positionX, positionY, arg, rotation, time, movementType, duration: 0 },
-                entity: this,
-            }),
-        );
+        this.area?.onCharacterMove({
+            params: { positionX, positionY, arg, rotation, time, movementType, duration: 0 },
+            entity: this,
+        });
     }
 
-    goto({ positionX, positionY, arg, rotation, time, movementType }) {
+    goto({
+        positionX,
+        positionY,
+        arg,
+        rotation,
+        time,
+        movementType,
+    }: {
+        positionX: number;
+        positionY: number;
+        arg: number;
+        rotation: number;
+        time: number;
+        movementType: number;
+    }) {
         super.gotoInternal(positionX, positionY, rotation);
-        this.area.onCharacterMove(
-            new CharacterMovedEvent({
-                params: { positionX, positionY, arg, rotation, time, movementType, duration: this.movementDuration },
-                entity: this,
-            }),
-        );
+        this.area?.onCharacterMove({
+            params: { positionX, positionY, arg, rotation, time, movementType, duration: this.movementDuration },
+            entity: this,
+        });
     }
 
     move(x: number, y: number) {
         super.move(x, y);
     }
 
-    sync({ positionX, positionY, arg, rotation, time, movementType }) {
+    sync({
+        positionX,
+        positionY,
+        arg,
+        rotation,
+        time,
+        movementType,
+    }: {
+        positionX: number;
+        positionY: number;
+        arg: number;
+        rotation: number;
+        time: number;
+        movementType: number;
+    }) {
         //remove invisible and cancel other things like mining
         this.rotation = rotation;
         this.move(positionX, positionY);
-        this.area.onCharacterMove(
-            new CharacterMovedEvent({
-                params: { positionX, positionY, arg, rotation, time, movementType, duration: 0 },
-                entity: this,
-            }),
-        );
+        this.area?.onCharacterMove({
+            params: { positionX, positionY, arg, rotation, time, movementType, duration: 0 },
+            entity: this,
+        });
     }
 
     calcPlayTime() {
@@ -967,8 +1142,8 @@ export default class Player extends Character {
         return uniqueItem1?.getId() === uniqueItemId || uniqueItem2?.getId() === uniqueItemId;
     }
 
-    sendItemAdded({ window, position, item }) {
-        this.connection.send(
+    sendItemAdded({ window, position, item }: { window: number; position: number; item: Item }) {
+        this.connection?.send(
             new ItemPacket({
                 window,
                 position,
@@ -983,8 +1158,8 @@ export default class Player extends Character {
         );
     }
 
-    sendItemRemoved({ window, position }) {
-        this.connection.send(
+    sendItemRemoved({ window, position }: { window: number; position: number }) {
+        this.connection?.send(
             new ItemPacket({
                 window,
                 position,
@@ -998,11 +1173,11 @@ export default class Player extends Character {
     }
 
     sendItemUpdate(item: Item) {
-        this.connection.send(
+        this.connection?.send(
             new UpdateItemPacket({
-                position: item.getPosition(),
-                count: item.getCount(),
-                window: item.getWindow(),
+                position: item.getPosition() ?? 0,
+                count: item.getCount() ?? 0,
+                window: item.getWindow() ?? 0,
             }),
         );
     }
@@ -1020,7 +1195,17 @@ export default class Player extends Character {
         );
     }
 
-    moveItem({ fromWindow, fromPosition, toWindow, toPosition /*_count*/ }) {
+    moveItem({
+        fromWindow,
+        fromPosition,
+        toWindow,
+        toPosition /*_count*/,
+    }: {
+        fromWindow: number;
+        fromPosition: number;
+        toWindow: number;
+        toPosition: number;
+    }) {
         const item = this.getItem(fromPosition);
 
         if (!item) return;
@@ -1063,32 +1248,42 @@ export default class Player extends Character {
 
     addItems(items: Array<Item>) {
         for (const item of items) {
-            this.inventory.addItemAt(item, item.getPosition());
+            this.inventory.addItemAt(item, item.getPosition() ?? 0);
         }
         this.sendPoints();
     }
 
     sendInventory() {
         for (const item of this.getInventory().getItems().values()) {
-            this.sendItemAdded({ window: item.getWindow(), position: item.getPosition(), item });
+            this.sendItemAdded({ window: item.getWindow() ?? 0, position: item.getPosition() ?? 0, item });
         }
         this.updateView();
     }
 
-    dropItem({ item, count }) {
-        this.area.onItemDrop(
-            new DropItemEvent({
-                item,
-                count,
-                positionX: this.positionX,
-                positionY: this.positionY,
-                ownerName: this.name,
-            }),
-        );
+    dropItem({ item, count }: { item: Item; count: number }) {
+        this.area?.onItemDrop({
+            item,
+            count,
+            positionX: this.positionX,
+            positionY: this.positionY,
+            ownerName: this.name,
+        });
     }
 
-    showDroppedItem({ virtualId, positionX, positionY, ownerName, id }) {
-        this.connection.send(
+    showDroppedItem({
+        virtualId,
+        positionX,
+        positionY,
+        ownerName,
+        id,
+    }: {
+        virtualId: number;
+        positionX: number;
+        positionY: number;
+        ownerName: string;
+        id: number;
+    }) {
+        this.connection?.send(
             new ItemDroppedPacket({
                 id,
                 positionX,
@@ -1104,7 +1299,7 @@ export default class Player extends Character {
     }
 
     sendSetItemOwnership({ ownerName, virtualId }: { ownerName: string; virtualId: number }) {
-        this.connection.send(
+        this.connection?.send(
             new SetItemOwnershipPacket({
                 ownerName,
                 virtualId,
@@ -1112,8 +1307,8 @@ export default class Player extends Character {
         );
     }
 
-    hideDroppedItem({ virtualId }) {
-        this.connection.send(
+    hideDroppedItem({ virtualId }: { virtualId: number }) {
+        this.connection?.send(
             new ItemDroppedHidePacket({
                 virtualId,
             }),
@@ -1191,7 +1386,7 @@ export default class Player extends Character {
             this.showDroppedItem({
                 virtualId: otherEntity.getVirtualId(),
                 // count: otherEntity.getCount(),
-                ownerName: otherEntity.getOwnerName(),
+                ownerName: otherEntity.getOwnerName() ?? '',
                 positionX: otherEntity.getPositionX(),
                 positionY: otherEntity.getPositionY(),
                 id: otherEntity.getItem().getId(),
@@ -1210,7 +1405,7 @@ export default class Player extends Character {
     }
 
     showFlyEffect(type: FlyEnum, from: number, to: number) {
-        this.connection.send(
+        this.connection?.send(
             new FlyPacket({
                 fromVirtualId: from,
                 toVirtualId: to,
@@ -1240,7 +1435,7 @@ export default class Player extends Character {
     //QUEST
 
     sendQuestScript(skin: number, src: string) {
-        this.connection.send(
+        this.connection?.send(
             new QuestScriptPacket({
                 skin,
                 src,
@@ -1252,8 +1447,8 @@ export default class Player extends Character {
         this.quests.set(id, quest);
     }
 
-    getQuest(id: number): AbstractQuest {
-        return this.quests.get(id);
+    getQuest(id: number): AbstractQuest | null {
+        return this.quests.get(id) ?? null;
     }
 
     setCurrentQuest(quest: AbstractQuest) {
@@ -1275,6 +1470,7 @@ export default class Player extends Character {
                 return quest;
             }
         }
+        return null;
     }
 
     sendQuestInfoPacket({
@@ -1298,7 +1494,7 @@ export default class Player extends Character {
         counterValue?: number;
         iconFile?: string;
     }) {
-        this.connection.send(
+        this.connection?.send(
             new QuestInfoPacket({
                 id,
                 flags,
@@ -1357,8 +1553,61 @@ export default class Player extends Character {
             attackPerIqPoint,
             baseAttackSpeed,
             baseMovementSpeed,
+        }: {
+            id: number;
+            accountId: number;
+            empire: number;
+            playerClass: number;
+            skillGroup: number;
+            playTime: number;
+            level: number;
+            experience: number;
+            gold: number;
+            st: number;
+            ht: number;
+            dx: number;
+            iq: number;
+            positionX: number;
+            positionY: number;
+            health: number;
+            mana: number;
+            stamina: number;
+            bodyPart: number;
+            hairPart: number;
+            name: string;
+            givenStatusPoints: number;
+            availableStatusPoints: number;
+            slot: number;
+            virtualId: number;
+            hpPerLvl: number;
+            hpPerHtPoint: number;
+            mpPerLvl: number;
+            mpPerIqPoint: number;
+            baseHealth: number;
+            baseMana: number;
+            appearance: number;
+            defensePerHtPoint: number;
+            attackPerStPoint: number;
+            attackPerDxPoint: number;
+            attackPerIqPoint: number;
+            baseAttackSpeed: number;
+            baseMovementSpeed: number;
         },
-        { animationManager, config, experienceManager, logger, saveCharacterService, questManager },
+        {
+            animationManager,
+            config,
+            experienceManager,
+            logger,
+            saveCharacterService,
+            questManager,
+        }: {
+            animationManager: AnimationManager;
+            config: GameConfig;
+            experienceManager: ExperienceManager;
+            logger: Logger;
+            saveCharacterService: SaveCharacterService;
+            questManager: QuestManager;
+        },
     ) {
         return new Player(
             {
@@ -1473,7 +1722,7 @@ export default class Player extends Character {
             message: `setblockmode ${this.blockMode}`,
         });
 
-        this.connection.send(playerBlockModeChatPacket);
+        this.connection?.send(playerBlockModeChatPacket);
     }
 
     setBlockMode(newMode: number) {

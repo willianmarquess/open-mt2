@@ -30,7 +30,7 @@ describe('CharacterAttackService', () => {
     it('should log info when area is not found', async () => {
         player.getPositionX.returns(100);
         player.getPositionY.returns(200);
-        world.getAreaByCoordinates.returns(null);
+        world.getAreaByCoordinates.returns(undefined);
 
         await service.execute(player, AttackTypeEnum.NORMAL, 1);
 

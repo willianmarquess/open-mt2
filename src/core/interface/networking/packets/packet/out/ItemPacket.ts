@@ -10,18 +10,6 @@ class ItemBonus {
     }
 }
 
-type ItemPacketParams = {
-    window?: number;
-    position?: number;
-    id?: number;
-    count?: number;
-    flags?: number;
-    antiFlags?: number;
-    highlight?: number;
-    sockets?: Array<number>;
-    bonuses?: Array<ItemBonus>;
-};
-
 export default class ItemPacket extends PacketOut {
     private window: number;
     private position: number;
@@ -41,7 +29,27 @@ export default class ItemPacket extends PacketOut {
         new ItemBonus({}),
     );
 
-    constructor({ window, position, id, count, flags, antiFlags, highlight, sockets, bonuses }: ItemPacketParams = {}) {
+    constructor({
+        window,
+        position,
+        id,
+        count,
+        flags,
+        antiFlags,
+        highlight,
+        sockets,
+        bonuses,
+    }: {
+        window: number;
+        position: number;
+        id: number;
+        count: number;
+        flags: number;
+        antiFlags: number;
+        highlight: number;
+        sockets?: Array<number>;
+        bonuses?: Array<ItemBonus>;
+    }) {
         super({
             header: PacketHeaderEnum.ITEM,
             name: 'ItemPacket',
@@ -54,14 +62,11 @@ export default class ItemPacket extends PacketOut {
         this.flags = flags;
         this.antiFlags = antiFlags;
         this.highlight = highlight;
-        this.sockets = sockets;
-        this.bonuses = bonuses;
-
         this.flags = 0;
         this.antiFlags = 0;
         this.highlight = 0;
-        this.sockets = new Array(3).fill(0);
-        this.bonuses = [
+        this.sockets = sockets ?? new Array(3).fill(0);
+        this.bonuses = bonuses ?? [
             new ItemBonus({}),
             new ItemBonus({}),
             new ItemBonus({}),

@@ -2,16 +2,19 @@ import DatabaseManager from '@/core/infra/database/DatabaseManager';
 import Account from '../../../core/domain/entities/state/account/Account';
 import AccountStatus from '../../../core/domain/entities/state/account/AccountStatus';
 import { IAccountRepository } from '@/core/domain/repository/IAccountRepository';
+import { RowDataPacket } from 'mysql2';
+
+type AccountRow = RowDataPacket & Account;
 
 export default class AccountRepository implements IAccountRepository {
     private readonly databaseManager: DatabaseManager;
 
-    constructor({ databaseManager }) {
+    constructor({ databaseManager }: { databaseManager: DatabaseManager }) {
         this.databaseManager = databaseManager;
     }
 
-    async findByUsername(username: string) {
-        const [accounts] = await this.databaseManager.getConnection().query(
+    async findByUsername(username: string): Promise<Account | null> {
+        const [accounts] = await this.databaseManager.getConnection().query<AccountRow[]>(
             `
         SELECT
             account.*,
@@ -32,8 +35,8 @@ export default class AccountRepository implements IAccountRepository {
         return this.mapToEntity(accounts[0]);
     }
 
-    mapToEntity(account: any) {
-        if (!account) return;
+    mapToEntity(account: AccountRow | undefined): Account | null {
+        if (!account) return null;
         const {
             id,
             username,

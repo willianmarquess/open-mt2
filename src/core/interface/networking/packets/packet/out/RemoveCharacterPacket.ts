@@ -1,14 +1,10 @@
 import PacketHeaderEnum from '@/core/enum/PacketHeaderEnum';
 import PacketOut from '@/core/interface/networking/packets/packet/out/PacketOut';
 
-type RemoveCharacterPacketParams = {
-    vid?: number;
-};
-
 export default class RemoveCharacterPacket extends PacketOut {
     private vid: number;
 
-    constructor({ vid }: RemoveCharacterPacketParams = {}) {
+    constructor({ vid }: { vid: number }) {
         super({
             header: PacketHeaderEnum.CHARACTER_REMOVE,
             name: 'RemoveCharacterPacket',

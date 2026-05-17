@@ -86,7 +86,7 @@ describe('PrivilegeManager', () => {
         const expiredPrivilege = privilegeManager.getPlayerPrivilege(player, PrivilegeTypeEnum.EXP);
         const activePrivilege = privilegeManager.getPlayerPrivilege(anotherPlayer, PrivilegeTypeEnum.EXP);
 
-        expect(expiredPrivilege).to.be.undefined;
+        expect(expiredPrivilege).to.equal(0);
         expect(activePrivilege).to.equal(150);
     });
 });

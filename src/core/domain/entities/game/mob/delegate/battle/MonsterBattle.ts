@@ -79,7 +79,7 @@ export default class MonsterBattle {
     private isBlocked(victim: Player, damageType: DamageTypeEnum): boolean {
         return (
             damageType === DamageTypeEnum.NORMAL &&
-            victim.getPoint(PointsEnum.BLOCK) &&
+            !!victim.getPoint(PointsEnum.BLOCK) &&
             MathUtil.getRandomInt(1, 100) <= victim.getPoint(PointsEnum.BLOCK)
         );
     }
@@ -87,7 +87,7 @@ export default class MonsterBattle {
     private isDodge(victim: Player, damageType: DamageTypeEnum): boolean {
         return (
             damageType === DamageTypeEnum.NORMAL_RANGE &&
-            victim.getPoint(PointsEnum.DODGE) &&
+            !!victim.getPoint(PointsEnum.DODGE) &&
             MathUtil.getRandomInt(1, 100) <= victim.getPoint(PointsEnum.DODGE)
         );
     }

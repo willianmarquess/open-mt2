@@ -16,7 +16,7 @@ export default class DropItemService {
     private readonly logger: Logger;
     private readonly itemManager: ItemManager;
 
-    constructor({ logger, itemManager }) {
+    constructor({ logger, itemManager }: { logger: Logger; itemManager: ItemManager }) {
         this.logger = logger;
         this.itemManager = itemManager;
     }
@@ -69,7 +69,7 @@ export default class DropItemService {
             item: {
                 id: 1,
                 count: amount,
-            },
+            } as any,
         });
     }
 }

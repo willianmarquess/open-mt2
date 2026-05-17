@@ -1,14 +1,10 @@
 import PacketHeaderEnum from '@/core/enum/PacketHeaderEnum';
 import PacketOut from '@/core/interface/networking/packets/packet/out/PacketOut';
 
-type CreateCharacterFailurePacketParams = {
-    reason?: number;
-};
-
 export default class CreateCharacterFailurePacket extends PacketOut {
     private reason: number;
 
-    constructor({ reason }: CreateCharacterFailurePacketParams = {}) {
+    constructor({ reason }: { reason: number }) {
         super({
             header: PacketHeaderEnum.CREATE_CHARACTER_FAILURE,
             name: 'CreateCharacterFailurePacket',

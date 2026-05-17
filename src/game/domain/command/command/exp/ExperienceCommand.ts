@@ -2,7 +2,7 @@ import Command from '../../Command';
 import ExperienceCommandValidator from './ExperienceCommandValidator';
 
 export default class ExperienceCommand extends Command {
-    constructor({ args }) {
+    constructor({ args }: { args: Array<string> }) {
         super({ args, validator: ExperienceCommandValidator });
     }
 

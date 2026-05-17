@@ -16,7 +16,17 @@ export default class AuthTokenPacketHandler extends PacketHandler<AuthTokenPacke
     private readonly config: GameConfig;
     private readonly logger: Logger;
 
-    constructor({ loadCharactersService, authenticateService, config, logger }) {
+    constructor({
+        loadCharactersService,
+        authenticateService,
+        config,
+        logger,
+    }: {
+        loadCharactersService: LoadCharactersService;
+        authenticateService: AuthenticateService;
+        config: GameConfig;
+        logger: Logger;
+    }) {
         super();
         this.loadCharactersService = loadCharactersService;
         this.authenticateService = authenticateService;
@@ -42,14 +52,19 @@ export default class AuthTokenPacketHandler extends PacketHandler<AuthTokenPacke
             return;
         }
 
-        const { accountId } = authResult.getData();
+        const token = authResult.getData();
 
-        connection.setAccountId(accountId);
+        if (!token) {
+            connection.close();
+            return;
+        }
 
-        const charactersResult = await this.loadCharactersService.execute({ accountId });
+        connection.setAccountId(token.accountId);
+
+        const charactersResult = await this.loadCharactersService.execute({ accountId: token.accountId });
 
         if (charactersResult.isOk()) {
-            const players = charactersResult.getData();
+            const players = charactersResult.getData()!;
 
             if (players?.length > 0) {
                 connection.send(

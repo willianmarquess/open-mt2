@@ -3,188 +3,188 @@ import { ItemWearFlagEnum } from '../../../../enum/ItemWearFlagEnum';
 import Item from '../item/Item';
 
 type ItemSlotInfo = {
-    set: (value: Item) => void;
-    get: () => Item;
+    set: (value: Item | null) => void;
+    get: () => Item | null;
 };
 
 export default class Equipment {
     private readonly slots: Map<ItemEquipmentSlotEnum, ItemSlotInfo> = new Map<ItemEquipmentSlotEnum, ItemSlotInfo>();
-    private weapon: Item;
-    private head: Item;
-    private body: Item;
-    private foots: Item;
-    private wrist: Item;
-    private neck: Item;
-    private ear: Item;
-    private shield: Item;
-    private arrow: Item;
-    private unique1: Item;
-    private unique2: Item;
-    private ability1: Item;
-    private ability2: Item;
-    private ability3: Item;
-    private ability4: Item;
-    private ability5: Item;
-    private ability6: Item;
-    private ability7: Item;
-    private ability8: Item;
-    private costumeBody: Item;
-    private costumeHair: Item;
-    private ring1: Item;
-    private ring2: Item;
-    private belt: Item;
+    private weapon: Item | null = null;
+    private head: Item | null = null;
+    private body: Item | null = null;
+    private foots: Item | null = null;
+    private wrist: Item | null = null;
+    private neck: Item | null = null;
+    private ear: Item | null = null;
+    private shield: Item | null = null;
+    private arrow: Item | null = null;
+    private unique1: Item | null = null;
+    private unique2: Item | null = null;
+    private ability1: Item | null = null;
+    private ability2: Item | null = null;
+    private ability3: Item | null = null;
+    private ability4: Item | null = null;
+    private ability5: Item | null = null;
+    private ability6: Item | null = null;
+    private ability7: Item | null = null;
+    private ability8: Item | null = null;
+    private costumeBody: Item | null = null;
+    private costumeHair: Item | null = null;
+    private ring1: Item | null = null;
+    private ring2: Item | null = null;
+    private belt: Item | null = null;
 
     private readonly offset: number;
 
     constructor(offset: number) {
         this.offset = offset;
         this.slots.set(ItemEquipmentSlotEnum.BODY, {
-            set: (value: Item) => {
+            set: (value: Item | null) => {
                 this.body = value;
             },
             get: () => this.body,
         });
         this.slots.set(ItemEquipmentSlotEnum.HEAD, {
-            set: (value: Item) => {
+            set: (value: Item | null) => {
                 this.head = value;
             },
             get: () => this.head,
         });
 
         this.slots.set(ItemEquipmentSlotEnum.HEAD, {
-            set: (value: Item) => {
+            set: (value: Item | null) => {
                 this.head = value;
             },
             get: () => this.head,
         });
         this.slots.set(ItemEquipmentSlotEnum.FOOTS, {
-            set: (value: Item) => {
+            set: (value: Item | null) => {
                 this.foots = value;
             },
             get: () => this.foots,
         });
         this.slots.set(ItemEquipmentSlotEnum.WRIST, {
-            set: (value: Item) => {
+            set: (value: Item | null) => {
                 this.wrist = value;
             },
             get: () => this.wrist,
         });
         this.slots.set(ItemEquipmentSlotEnum.WEAPON, {
-            set: (value: Item) => {
+            set: (value: Item | null) => {
                 this.weapon = value;
             },
             get: () => this.weapon,
         });
         this.slots.set(ItemEquipmentSlotEnum.NECK, {
-            set: (value: Item) => {
+            set: (value: Item | null) => {
                 this.neck = value;
             },
             get: () => this.neck,
         });
         this.slots.set(ItemEquipmentSlotEnum.EAR, {
-            set: (value: Item) => {
+            set: (value: Item | null) => {
                 this.ear = value;
             },
             get: () => this.ear,
         });
         this.slots.set(ItemEquipmentSlotEnum.UNIQUE1, {
-            set: (value: Item) => {
+            set: (value: Item | null) => {
                 this.unique1 = value;
             },
             get: () => this.unique1,
         });
         this.slots.set(ItemEquipmentSlotEnum.UNIQUE2, {
-            set: (value: Item) => {
+            set: (value: Item | null) => {
                 this.unique2 = value;
             },
             get: () => this.unique2,
         });
         this.slots.set(ItemEquipmentSlotEnum.ARROW, {
-            set: (value: Item) => {
+            set: (value: Item | null) => {
                 this.arrow = value;
             },
             get: () => this.arrow,
         });
         this.slots.set(ItemEquipmentSlotEnum.SHIELD, {
-            set: (value: Item) => {
+            set: (value: Item | null) => {
                 this.shield = value;
             },
             get: () => this.shield,
         });
         this.slots.set(ItemEquipmentSlotEnum.ABILITY1, {
-            set: (value: Item) => {
+            set: (value: Item | null) => {
                 this.ability1 = value;
             },
             get: () => this.ability1,
         });
         this.slots.set(ItemEquipmentSlotEnum.ABILITY2, {
-            set: (value: Item) => {
+            set: (value: Item | null) => {
                 this.ability2 = value;
             },
             get: () => this.ability2,
         });
         this.slots.set(ItemEquipmentSlotEnum.ABILITY3, {
-            set: (value: Item) => {
+            set: (value: Item | null) => {
                 this.ability3 = value;
             },
             get: () => this.ability3,
         });
         this.slots.set(ItemEquipmentSlotEnum.ABILITY4, {
-            set: (value: Item) => {
+            set: (value: Item | null) => {
                 this.ability4 = value;
             },
             get: () => this.ability4,
         });
         this.slots.set(ItemEquipmentSlotEnum.ABILITY5, {
-            set: (value: Item) => {
+            set: (value: Item | null) => {
                 this.ability5 = value;
             },
             get: () => this.ability5,
         });
         this.slots.set(ItemEquipmentSlotEnum.ABILITY6, {
-            set: (value: Item) => {
+            set: (value: Item | null) => {
                 this.ability6 = value;
             },
             get: () => this.ability6,
         });
         this.slots.set(ItemEquipmentSlotEnum.ABILITY7, {
-            set: (value: Item) => {
+            set: (value: Item | null) => {
                 this.ability7 = value;
             },
             get: () => this.ability7,
         });
         this.slots.set(ItemEquipmentSlotEnum.ABILITY8, {
-            set: (value: Item) => {
+            set: (value: Item | null) => {
                 this.ability8 = value;
             },
             get: () => this.ability8,
         });
         this.slots.set(ItemEquipmentSlotEnum.COSTUME_BODY, {
-            set: (value: Item) => {
+            set: (value: Item | null) => {
                 this.costumeBody = value;
             },
             get: () => this.costumeBody,
         });
         this.slots.set(ItemEquipmentSlotEnum.COSTUME_HAIR, {
-            set: (value: Item) => {
+            set: (value: Item | null) => {
                 this.costumeHair = value;
             },
             get: () => this.costumeHair,
         });
         this.slots.set(ItemEquipmentSlotEnum.RING1, {
-            set: (value: Item) => {
+            set: (value: Item | null) => {
                 this.ring1 = value;
             },
             get: () => this.ring1,
         });
         this.slots.set(ItemEquipmentSlotEnum.RING2, {
-            set: (value: Item) => {
+            set: (value: Item | null) => {
                 this.ring2 = value;
             },
             get: () => this.ring2,
         });
         this.slots.set(ItemEquipmentSlotEnum.BELT, {
-            set: (value: Item) => {
+            set: (value: Item | null) => {
                 this.belt = value;
             },
             get: () => this.belt,
@@ -269,21 +269,28 @@ export default class Equipment {
     }
 
     setItem(slot: ItemEquipmentSlotEnum, item: Item) {
-        this.slots.get(slot - this.offset).set(item);
+        const slotEntry = this.slots.get(slot - this.offset);
+        if (slotEntry) {
+            slotEntry.set(item);
+        }
     }
 
     getItem(slot: ItemEquipmentSlotEnum) {
-        return this.slots.get(slot - this.offset).get();
+        const slotEntry = this.slots.get(slot - this.offset);
+        return slotEntry ? slotEntry.get() : null;
     }
 
     removeItem(slot: ItemEquipmentSlotEnum) {
         const item = this.getItem(slot);
-        this.slots.get(slot - this.offset).set(null);
+        const slotEntry = this.slots.get(slot - this.offset);
+        if (slotEntry) {
+            slotEntry.set(null);
+        }
         return item;
     }
 
     haveAvailableSlot(slot: ItemEquipmentSlotEnum) {
-        return !this.slots.get(slot - this.offset).get();
+        return !this.slots.get(slot - this.offset)?.get();
     }
 
     getWearPosition(item: Item) {

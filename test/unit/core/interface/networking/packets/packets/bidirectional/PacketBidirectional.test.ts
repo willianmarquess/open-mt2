@@ -4,10 +4,10 @@ import BufferWriter from '@/core/interface/networking/buffer/BufferWriter';
 import PacketBidirectional from '@/core/interface/networking/packets/packet/bidirectional/PacketBidirectional';
 
 class PacketBidirectionalTest extends PacketBidirectional {
-    pack() {
+    pack(): Buffer {
         throw new Error('Method not implemented.');
     }
-    unpack() {
+    unpack(): this {
         throw new Error('Method not implemented.');
     }
 }

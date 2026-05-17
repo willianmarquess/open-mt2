@@ -6,7 +6,7 @@ import { IItemRepository } from '../../../core/domain/repository/IItemRepository
 export default class ItemRepository implements IItemRepository {
     private readonly databaseManager: DatabaseManager;
 
-    constructor({ databaseManager }) {
+    constructor({ databaseManager }: { databaseManager: DatabaseManager }) {
         this.databaseManager = databaseManager;
     }
 

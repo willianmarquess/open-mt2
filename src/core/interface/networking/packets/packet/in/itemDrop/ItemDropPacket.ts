@@ -8,7 +8,7 @@ export default class ItemDropPacket extends PacketIn {
     private gold: number;
     private count: number;
 
-    constructor({ window, position, gold, count }) {
+    constructor({ window, position, gold, count }: { window: number; position: number; gold: number; count: number }) {
         super({
             header: PacketHeaderEnum.ITEM_DROP,
             name: 'ItemDropPacket',

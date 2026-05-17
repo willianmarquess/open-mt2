@@ -1,6 +1,5 @@
 import { ConnectionStateEnum } from '../../../core/enum/ConnectionStateEnum';
 import Connection from '../../../core/interface/networking/Connection';
-import PacketOut from '@/core/interface/networking/packets/packet/out/PacketOut';
 
 export default class AuthConnection extends Connection {
     onHandshakeSuccess() {
@@ -8,7 +7,7 @@ export default class AuthConnection extends Connection {
         this.setState(ConnectionStateEnum.AUTH);
     }
 
-    send(packet: PacketOut) {
+    send<T>(packet: T & { pack: () => Buffer; getName: () => string }) {
         this.logger.debug(`[OUT][PACKET] name: ${packet.getName()}`);
         this.socket.write(packet.pack());
     }

@@ -50,6 +50,32 @@ export default class ItemState extends StateEntity {
         attributeValue6,
         updatedAt = new Date(),
         createdAt = new Date(),
+    }: {
+        id: number;
+        ownerId: number;
+        window: number;
+        position: number;
+        count: number;
+        protoId: number;
+        socket0: number;
+        socket1: number;
+        socket2: number;
+        attributeType0: number;
+        attributeValue0: number;
+        attributeType1: number;
+        attributeValue1: number;
+        attributeType2: number;
+        attributeValue2: number;
+        attributeType3: number;
+        attributeValue3: number;
+        attributeType4: number;
+        attributeValue4: number;
+        attributeType5: number;
+        attributeValue5: number;
+        attributeType6: number;
+        attributeValue6: number;
+        updatedAt?: Date;
+        createdAt?: Date;
     }) {
         super(id, createdAt, updatedAt);
         this.ownerId = ownerId;

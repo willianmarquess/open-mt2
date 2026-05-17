@@ -5,7 +5,7 @@ import InternalPingPacketValidator from './InternalPingPacketValidator';
 export default class InternalPingPacket extends PacketIn {
     private time: number;
 
-    constructor({ time }) {
+    constructor({ time }: { time: number }) {
         super({
             header: PacketHeaderEnum.INTERNAL_PING,
             name: 'InternalPing',

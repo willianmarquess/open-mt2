@@ -2,7 +2,9 @@
   "compilerOptions": {
     "resolveJsonModule": true,
     "outDir": "./dist",
-    "module": "CommonJS",
+    "rootDir": "./src",
+    "module": "nodenext",
+    "moduleResolution": "nodenext",
     "target": "es2024",
     "esModuleInterop": true,
     "skipLibCheck": true,
@@ -10,20 +12,14 @@
     "forceConsistentCasingInFileNames": true,
     "experimentalDecorators": true,
     "emitDecoratorMetadata": true,
-    "baseUrl": "./src",
+    "noImplicitAny": false,
     "paths": {
-      "@/*": [
-        "*"
-      ]
-    }
+      "@/*": ["./src/*"]
+    },
+    "types": ["node", "mocha"]
+    // Se precisar de tempo para corrigir erros de strict:
+    // "strict": false
   },
-  "include": [
-    "src",
-    "test"
-  ],
-  "exclude": [],
-  "types": [
-    "node",
-    "mocha"
-  ]
+  "include": ["src", "test"],
+  "exclude": []
 }

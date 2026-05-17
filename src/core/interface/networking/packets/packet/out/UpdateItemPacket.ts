@@ -10,14 +10,6 @@ class ItemBonus {
     }
 }
 
-type ItemUpdatePacketParams = {
-    window?: number;
-    position?: number;
-    count?: number;
-    sockets?: Array<number>;
-    bonuses?: Array<ItemBonus>;
-};
-
 export default class UpdateItemPacket extends PacketOut {
     private readonly window: number;
     private readonly position: number;
@@ -33,7 +25,19 @@ export default class UpdateItemPacket extends PacketOut {
         new ItemBonus(),
     );
 
-    constructor({ position, count, sockets, bonuses, window }: ItemUpdatePacketParams = {}) {
+    constructor({
+        position,
+        count,
+        sockets,
+        bonuses,
+        window,
+    }: {
+        position: number;
+        count: number;
+        sockets?: Array<number>;
+        bonuses?: Array<ItemBonus>;
+        window: number;
+    }) {
         super({
             header: PacketHeaderEnum.ITEM_UPDATE,
             name: 'UpdateItemPacket',
@@ -42,10 +46,8 @@ export default class UpdateItemPacket extends PacketOut {
         this.window = window;
         this.position = position;
         this.count = count;
-        this.sockets = sockets;
-        this.bonuses = bonuses;
-        this.sockets = new Array(3).fill(0);
-        this.bonuses = [
+        this.sockets = sockets ?? new Array(3).fill(0);
+        this.bonuses = bonuses ?? [
             new ItemBonus({}),
             new ItemBonus({}),
             new ItemBonus({}),

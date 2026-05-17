@@ -8,7 +8,17 @@ export default class CreateCharacterPacket extends PacketIn {
     private playerClass: number;
     private appearance: number;
 
-    constructor({ slot, playerName, playerClass, appearance }) {
+    constructor({
+        slot,
+        playerName,
+        playerClass,
+        appearance,
+    }: {
+        slot: number;
+        playerName: string;
+        playerClass: number;
+        appearance: number;
+    }) {
         super({
             header: PacketHeaderEnum.CREATE_CHARACTER,
             name: 'CreateCharacterPacket',

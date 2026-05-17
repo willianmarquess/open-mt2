@@ -8,7 +8,7 @@ import { PointsEnum } from '@/core/enum/PointsEnum';
 export default class StatCommandHandler extends CommandHandler<StatCommand> {
     private readonly logger: Logger;
 
-    constructor({ logger }) {
+    constructor({ logger }: { logger: Logger }) {
         super();
         this.logger = logger;
     }

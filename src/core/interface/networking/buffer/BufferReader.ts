@@ -1,6 +1,6 @@
 export default class BufferReader {
     private lastPos: number = 0;
-    private buffer: Buffer;
+    private buffer!: Buffer;
 
     setBuffer(buffer: Buffer, skipHeader: boolean = true) {
         this.buffer = buffer;

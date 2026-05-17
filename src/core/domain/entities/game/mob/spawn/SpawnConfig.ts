@@ -1,6 +1,6 @@
 import { SpawnConfigTypeEnum } from '../../../../../enum/SpawnConfigTypeEnum';
 
-const SpawnConfigMap = {
+const SpawnConfigMap: { [key: string]: SpawnConfigTypeEnum } = {
     g: SpawnConfigTypeEnum.GROUP,
     m: SpawnConfigTypeEnum.MONSTER,
     e: SpawnConfigTypeEnum.EXCEPTION,
@@ -24,7 +24,27 @@ export default class SpawnConfig {
     private readonly id: number;
     private readonly count: number;
 
-    constructor({ type, x, y, rangeX, rangeY, direction, respawnTime, id, count }) {
+    constructor({
+        type,
+        x,
+        y,
+        rangeX,
+        rangeY,
+        direction,
+        respawnTime,
+        id,
+        count,
+    }: {
+        type: SpawnConfigTypeEnum;
+        x: number;
+        y: number;
+        rangeX: number;
+        rangeY: number;
+        direction: number;
+        respawnTime: string;
+        id: number;
+        count: number;
+    }) {
         this.type = type;
         this.x = x;
         this.y = y;

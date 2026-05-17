@@ -16,7 +16,15 @@ export default class CreateCharacterPacketHandler extends PacketHandler<CreateCh
     private readonly logger: Logger;
     private readonly config: GameConfig;
 
-    constructor({ createCharacterService, logger, config }) {
+    constructor({
+        createCharacterService,
+        logger,
+        config,
+    }: {
+        createCharacterService: CreateCharacterService;
+        logger: Logger;
+        config: GameConfig;
+    }) {
         super();
         this.createCharacterService = createCharacterService;
         this.logger = logger;
@@ -72,6 +80,12 @@ export default class CreateCharacterPacketHandler extends PacketHandler<CreateCh
         }
 
         const player = result.getData();
+
+        if (!player) {
+            this.logger.error(`[CreateCharacterPacketHandler] Result has no player, this cannot happen`);
+            connection.close();
+            return;
+        }
 
         connection.send(
             new CreateCharacterSuccessPacket({

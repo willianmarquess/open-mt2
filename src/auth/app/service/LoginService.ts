@@ -15,14 +15,30 @@ export default class LoginService {
     private readonly cacheProvider: CacheProvider;
     private readonly encryptionProvider: EncryptionProvider;
 
-    constructor({ accountRepository, logger, cacheProvider, encryptionProvider }) {
+    constructor({
+        accountRepository,
+        logger,
+        cacheProvider,
+        encryptionProvider,
+    }: {
+        accountRepository: IAccountRepository;
+        logger: Logger;
+        cacheProvider: CacheProvider;
+        encryptionProvider: EncryptionProvider;
+    }) {
         this.accountRepository = accountRepository;
         this.logger = logger;
         this.cacheProvider = cacheProvider;
         this.encryptionProvider = encryptionProvider;
     }
 
-    async execute({ username, password }): Promise<Result<number, ErrorTypesEnum>> {
+    async execute({
+        username,
+        password,
+    }: {
+        username: string;
+        password: string;
+    }): Promise<Result<number, ErrorTypesEnum>> {
         const account = await this.accountRepository.findByUsername(username);
 
         if (!account) {

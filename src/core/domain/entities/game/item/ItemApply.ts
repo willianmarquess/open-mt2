@@ -4,7 +4,7 @@ export default class ItemApply {
     public type: ApplyTypeEnum;
     public value: number;
 
-    constructor({ type, value }) {
+    constructor({ type, value }: { type: ApplyTypeEnum; value: number }) {
         this.type = type;
         this.value = value;
     }

@@ -1,8 +1,8 @@
 import { ConnectionStateEnum } from '../../../core/enum/ConnectionStateEnum';
 import Connection from '../../../core/interface/networking/Connection';
 import Player from '@/core/domain/entities/game/player/Player';
-import PacketOut from '@/core/interface/networking/packets/packet/out/PacketOut';
-import PacketBidirectional from '@/core/interface/networking/packets/packet/bidirectional/PacketBidirectional';
+import { Socket } from 'net';
+import Logger from '@/core/infra/logger/Logger';
 
 // const hexString = (buffer) =>
 //     buffer.reduce((acc, byte, index) => {
@@ -13,10 +13,10 @@ import PacketBidirectional from '@/core/interface/networking/packets/packet/bidi
 //     }, '');
 
 export default class GameConnection extends Connection {
-    private accountId: number;
-    private player: Player;
+    private accountId: number | null = null;
+    private player: Player | null = null;
 
-    constructor({ logger, socket }) {
+    constructor({ logger, socket }: { logger: Logger; socket: Socket }) {
         super({ logger, socket });
     }
 
@@ -42,7 +42,7 @@ export default class GameConnection extends Connection {
         this.setState(ConnectionStateEnum.LOGIN);
     }
 
-    send(packet: PacketOut | PacketBidirectional) {
+    send<T>(packet: T & { pack: () => Buffer }) {
         this.socket.write(packet.pack());
     }
 }

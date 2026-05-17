@@ -4,7 +4,7 @@ export default class Animation {
     private readonly accY: number;
     private readonly accZ: number;
 
-    constructor({ duration, accX, accY, accZ }) {
+    constructor({ duration, accX, accY, accZ }: { duration: number; accX: number; accY: number; accZ: number }) {
         this.duration = duration;
         this.accX = accX;
         this.accY = accY;

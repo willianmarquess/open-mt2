@@ -23,7 +23,17 @@ export default class CreateCharacterService {
     private readonly playerRepository: IPlayerRepository;
     private readonly playerFactory: PlayerFactory;
 
-    constructor({ logger, cacheProvider, playerRepository, playerFactory }) {
+    constructor({
+        logger,
+        cacheProvider,
+        playerRepository,
+        playerFactory,
+    }: {
+        logger: Logger;
+        cacheProvider: CacheProvider;
+        playerRepository: IPlayerRepository;
+        playerFactory: PlayerFactory;
+    }) {
         this.logger = logger;
         this.cacheProvider = cacheProvider;
         this.playerRepository = playerRepository;

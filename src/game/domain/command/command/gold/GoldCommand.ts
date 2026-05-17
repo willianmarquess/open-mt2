@@ -2,7 +2,7 @@ import Command from '../../Command';
 import GoldCommandValidator from './GoldCommandValidator';
 
 export default class GoldCommand extends Command {
-    constructor({ args }) {
+    constructor({ args }: { args: Array<string> }) {
         super({ args, validator: GoldCommandValidator });
     }
 

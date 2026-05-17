@@ -10,7 +10,21 @@ export default class CharacterMovePacket extends PacketIn {
     private positionY: number;
     private time: number;
 
-    constructor({ movementType, arg, rotation, positionX, positionY, time }) {
+    constructor({
+        movementType,
+        arg,
+        rotation,
+        positionX,
+        positionY,
+        time,
+    }: {
+        movementType: number;
+        arg: number;
+        rotation: number;
+        positionX: number;
+        positionY: number;
+        time: number;
+    }) {
         super({
             header: PacketHeaderEnum.CHARACTER_MOVE,
             name: 'CharacterMovePacket',

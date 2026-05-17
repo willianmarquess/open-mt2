@@ -14,16 +14,11 @@ import PacketOut from '@/core/interface/networking/packets/packet/out/PacketOut'
  *   - {byte} healthPercentage 1 indicates the percent of target entity health
  */
 
-type TargetUpdatedPacketParams = {
-    virtualId?: number;
-    healthPercentage?: number;
-};
-
 export default class TargetUpdatedPacket extends PacketOut {
     private virtualId: number;
     private healthPercentage: number;
 
-    constructor({ virtualId, healthPercentage }: TargetUpdatedPacketParams = {}) {
+    constructor({ virtualId, healthPercentage }: { virtualId: number; healthPercentage: number }) {
         super({
             header: PacketHeaderEnum.TARGET_UPDATED,
             name: 'TargetUpdatedPacket',

@@ -6,9 +6,9 @@ import { getQuestMeta, QuestStatusEnum } from './decorators/QuestDecorator';
 import { QuestEventEnum } from '@/core/enum/QuestEventEnum';
 import Player from '../entities/game/player/Player';
 import NPC from '../entities/game/mob/NPC';
-import Character from '../entities/game/Character';
 import { NpcQuest } from './facade/NpcQuest';
 import { VictimQuest } from './facade/VictimQuest';
+import Monster from '../entities/game/mob/Monster';
 
 export class QuestManager {
     private readonly logger: Logger;
@@ -16,7 +16,7 @@ export class QuestManager {
     private readonly questsClickEvents: Map<number, Map<number, Set<string>>> = new Map();
     private readonly eventQuestMap: Map<QuestEventEnum, Map<number, Set<string>>> = new Map();
 
-    constructor({ logger }) {
+    constructor({ logger }: { logger: Logger }) {
         this.logger = logger;
     }
 
@@ -43,7 +43,7 @@ export class QuestManager {
                     if (this.isQuestClass(exp)) {
                         const ctor: any = exp;
                         const meta = getQuestMeta(ctor);
-                        const id = meta.id;
+                        const id = meta!.id;
 
                         if (this.questsClasses.has(id)) {
                             throw new Error(`[QuestManager] Quest class name should be unique, duplicated key: ${id}`);
@@ -191,7 +191,7 @@ export class QuestManager {
                     instance.addState({ name: stateName, tasks });
                 }
             }
-            await instance.setState(meta.initialState);
+            await instance.setState(meta!.initialState);
             player.addQuest(id, instance);
         }
     }
@@ -287,12 +287,12 @@ export class QuestManager {
         const quest = player.getQuest(questId & 0x7fffffff);
         if (!quest) return;
         const current = quest.getCurrentState()?.name;
-        if (states.has(current)) {
+        if (states.has(current ?? '')) {
             await quest.runState({ eventType: event });
         }
     }
 
-    async onKill(killer: Player, victim: Character) {
+    async onKill(killer: Player, victim: Player | Monster) {
         if (killer.isQuestRunning()) {
             this.logger.info(
                 `[QUEST_MANAGER] Player ${killer.getId()} logged in with running quest ${killer.getCurrentQuest()?.getName()}`,

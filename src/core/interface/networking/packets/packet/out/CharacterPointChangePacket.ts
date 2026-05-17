@@ -1,13 +1,6 @@
 import PacketHeaderEnum from '@/core/enum/PacketHeaderEnum';
 import PacketOut from '@/core/interface/networking/packets/packet/out/PacketOut';
 
-type CharacterPointChangePacketParams = {
-    vid?: number;
-    type?: number;
-    amount?: number;
-    value?: number;
-};
-
 /**
  * @packet
  * @type Out
@@ -29,7 +22,7 @@ export default class CharacterPointChangePacket extends PacketOut {
     private amount: number;
     private value: number;
 
-    constructor({ vid, type, amount, value }: CharacterPointChangePacketParams = {}) {
+    constructor({ vid, type, amount, value }: { vid: number; type: number; amount: number; value: number }) {
         super({
             header: PacketHeaderEnum.CHARACTER_POINT_CHANGE,
             name: 'CharacterPointChangePacket',

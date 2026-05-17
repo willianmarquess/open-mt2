@@ -45,7 +45,21 @@ export default class PlayerFactory {
     private readonly saveCharacterService: SaveCharacterService;
     private readonly questManager: QuestManager;
 
-    constructor({ config, animationManager, experienceManager, logger, saveCharacterService, questManager }) {
+    constructor({
+        config,
+        animationManager,
+        experienceManager,
+        logger,
+        saveCharacterService,
+        questManager,
+    }: {
+        config: GameConfig;
+        animationManager: AnimationManager;
+        experienceManager: ExperienceManager;
+        logger: Logger;
+        saveCharacterService: SaveCharacterService;
+        questManager: QuestManager;
+    }) {
         this.config = config;
         this.animationManager = animationManager;
         this.experienceManager = experienceManager;
@@ -91,10 +105,10 @@ export default class PlayerFactory {
                 name,
                 empire,
                 playerClass,
-                appearance, //verify this
+                appearance: appearance || 0, //verify this
                 slot,
-                positionX: positionX || Number(this.config.empire[empireName].startPosX),
-                positionY: positionY || Number(this.config.empire[empireName].startPosY),
+                positionX: positionX || Number(this.config.empire[empireName]?.startPosX),
+                positionY: positionY || Number(this.config.empire[empireName]?.startPosY),
                 st: st || this.config.jobs[className].common.st,
                 ht: ht || this.config.jobs[className].common.ht,
                 dx: dx || this.config.jobs[className].common.dx,
@@ -114,17 +128,17 @@ export default class PlayerFactory {
                 attackPerDxPoint: this.config.jobs[className].common.attackPerDXPoint,
                 attackPerIqPoint: this.config.jobs[className].common.attackPerIQPoint,
                 attackPerStPoint: this.config.jobs[className].common.attackPerStPoint,
-                virtualId,
-                bodyPart,
-                hairPart,
-                givenStatusPoints,
-                availableStatusPoints,
-                id,
-                skillGroup,
-                playTime,
-                level,
-                experience,
-                gold,
+                virtualId: virtualId || 0,
+                bodyPart: bodyPart || 0,
+                hairPart: hairPart || 0,
+                givenStatusPoints: givenStatusPoints || 0,
+                availableStatusPoints: availableStatusPoints || 0,
+                id: id || 0,
+                skillGroup: skillGroup || 0,
+                playTime: playTime || 0,
+                level: level || 1,
+                experience: experience || 0,
+                gold: gold || 0,
             },
             {
                 animationManager: this.animationManager,

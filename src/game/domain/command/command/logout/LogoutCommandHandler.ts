@@ -7,7 +7,7 @@ import { ChatMessageTypeEnum } from '@/core/enum/ChatMessageTypeEnum';
 export default class LogoutCommandHandler extends CommandHandler<LogoutCommand> {
     private readonly logger: Logger;
 
-    constructor({ logger }) {
+    constructor({ logger }: { logger: Logger }) {
         super();
         this.logger = logger;
     }

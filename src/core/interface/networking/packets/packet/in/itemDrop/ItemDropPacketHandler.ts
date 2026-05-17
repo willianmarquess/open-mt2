@@ -8,7 +8,7 @@ export default class ItemDropPacketHandler extends PacketHandler<ItemDropPacket>
     private readonly logger: Logger;
     private readonly dropItemService: DropItemService;
 
-    constructor({ logger, dropItemService }) {
+    constructor({ logger, dropItemService }: { logger: Logger; dropItemService: DropItemService }) {
         super();
         this.logger = logger;
         this.dropItemService = dropItemService;
@@ -22,8 +22,18 @@ export default class ItemDropPacketHandler extends PacketHandler<ItemDropPacket>
             return;
         }
 
+        const player = connection.getPlayer();
+
+        if (!player) {
+            this.logger.info(
+                `[ItemDropPacketHandler] The connection does not have a player selected, this cannot happen`,
+            );
+            connection.close();
+            return;
+        }
+
         this.dropItemService.execute({
-            player: connection.getPlayer(),
+            player,
             window: packet.getWindow(),
             position: packet.getPosition(),
             gold: packet.getGold(),

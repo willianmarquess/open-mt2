@@ -4,7 +4,7 @@ import Player from '../../entities/game/player/Player';
 export class VictimQuest {
     private readonly victim: Player | Monster;
 
-    constructor({ victim }) {
+    constructor({ victim }: { victim: Player | Monster }) {
         this.victim = victim;
     }
 

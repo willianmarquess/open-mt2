@@ -6,7 +6,7 @@ export default class ItemUsePacket extends PacketIn {
     private window: number;
     private position: number;
 
-    constructor({ window, position }) {
+    constructor({ window, position }: { window: number; position: number }) {
         super({
             header: PacketHeaderEnum.ITEM_USE,
             name: 'ItemUsePacket',

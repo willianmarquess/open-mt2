@@ -99,7 +99,7 @@ export default class SpatialGrid {
         entity.setCell(newCell);
     }
 
-    queryAround(entity: GameEntity, radius: number, filter: number = null) {
+    queryAround(entity: GameEntity, radius: number, filter: number | null = null) {
         const result = new Map<number, GameEntity>();
         const cell = entity.getCell();
         if (!cell) return result;

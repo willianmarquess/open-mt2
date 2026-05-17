@@ -18,7 +18,7 @@ export default class SpecialEffectPacket extends PacketOut {
     private type: number;
     private virtualId: number;
 
-    constructor({ type, virtualId }) {
+    constructor({ type, virtualId }: { type: number; virtualId: number }) {
         super({
             header: PacketHeaderEnum.SPECIAL_EFFECT,
             name: 'SpecialEffectPacket',

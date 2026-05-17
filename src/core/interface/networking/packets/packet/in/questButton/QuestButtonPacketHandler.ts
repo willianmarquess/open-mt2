@@ -8,7 +8,7 @@ export default class QuestButtonPacketHandler extends PacketHandler<QuestButtonP
     private logger: Logger;
     private questManager: QuestManager;
 
-    constructor({ logger, questManager }) {
+    constructor({ logger, questManager }: { logger: Logger; questManager: QuestManager }) {
         super();
         this.logger = logger;
         this.questManager = questManager;

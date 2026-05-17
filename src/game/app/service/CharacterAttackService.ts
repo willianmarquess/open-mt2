@@ -8,7 +8,7 @@ export default class CharacterAttackService {
     private readonly logger: Logger;
     private readonly world: World;
 
-    constructor({ logger, world }) {
+    constructor({ logger, world }: { logger: Logger; world: World }) {
         this.logger = logger;
         this.world = world;
     }

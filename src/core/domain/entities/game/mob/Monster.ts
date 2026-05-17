@@ -15,6 +15,9 @@ import { AttackTypeEnum } from '@/core/enum/AttackTypeEnum';
 import { MovementTypeEnum } from '@/core/enum/MovementTypeEnum';
 import { PositionEnum } from '@/core/enum/PositionEnum';
 import MonsterBattle from './delegate/battle/MonsterBattle';
+import { QuestManager } from '@/core/domain/quests/QuestManager';
+import Logger from '@/core/infra/logger/Logger';
+import AnimationManager from '@/core/domain/manager/AnimationManager';
 
 const MAX_DISTANCE_TO_GET_EXP = 5_000;
 
@@ -28,7 +31,19 @@ export default class Monster extends Mob {
 
     constructor(
         params: Omit<MobParams, 'virtualId' | 'entityType'>,
-        { animationManager, dropManager, experienceManager, logger, questManager },
+        {
+            animationManager,
+            dropManager,
+            experienceManager,
+            logger,
+            questManager,
+        }: {
+            animationManager: AnimationManager;
+            dropManager: DropManager;
+            experienceManager: ExperienceManager;
+            logger: Logger;
+            questManager: QuestManager;
+        },
     ) {
         super(
             {
@@ -105,7 +120,7 @@ export default class Monster extends Mob {
         this.eventTimerManager.addTimer({
             id: event,
             eventFunction: () => {
-                this.area.spawn(this);
+                this.area?.spawn(this);
             },
             options: {
                 repeatCount: 1,
@@ -126,7 +141,7 @@ export default class Monster extends Mob {
 
         this.addEventTimer({
             eventFunction: () => {
-                this.area.despawn(this);
+                this.area?.despawn(this);
             },
             id: 'DESPAWN',
             options: {
@@ -265,7 +280,7 @@ export default class Monster extends Mob {
         if (this.isAffectByFlag(AffectBitsTypeEnum.STUN)) return;
         const rotation = MathUtil.calcRotationFromXY(x - this.positionX, y - this.positionY) / 5;
         super.gotoInternal(x, y, rotation);
-        this.area.onMonsterMove(
+        this.area?.onMonsterMove(
             new MonsterMovedEvent({
                 params: {
                     positionX: x,
@@ -291,12 +306,12 @@ export default class Monster extends Mob {
     }
 
     getRespawnTimeInMs() {
-        return this.group?.getSpawnConfig()?.getRespawnTimeInMs();
+        return this.group?.getSpawnConfig()?.getRespawnTimeInMs() || 30_000;
     }
 
     reset() {
         this.behaviorInitialized = false;
-        this.setTarget(undefined);
+        this.removeTarget();
         this.setPos(PositionEnum.STANDING);
         this.stateMachine.gotoState(EntityStateEnum.IDLE);
         this.points.calcPointsAndResetValues();
@@ -312,7 +327,7 @@ export default class Monster extends Mob {
     }
 
     attack(victim: Player): void {
-        this.area.onMonsterMove(
+        this.area?.onMonsterMove(
             new MonsterMovedEvent({
                 params: {
                     positionX: this.getPositionX(),
@@ -333,3 +348,5 @@ export default class Monster extends Mob {
         throw new Error('Method not implemented.');
     }
 }
+
+//WGWXQ-2QYTT-7Y6P2-GHFH4-2V26Z

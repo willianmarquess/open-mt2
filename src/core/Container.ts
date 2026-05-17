@@ -1,3 +1,3 @@
 export interface Container {
-    build();
+    build(): any;
 }

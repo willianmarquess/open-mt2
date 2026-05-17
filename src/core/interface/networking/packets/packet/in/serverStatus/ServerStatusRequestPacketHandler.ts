@@ -6,7 +6,7 @@ import PacketHandler from '../../PacketHandler';
 export default class ServerStatusRequestPacketHandler extends PacketHandler<ServerStatusPacket> {
     private readonly config: GameConfig;
 
-    constructor({ config }) {
+    constructor({ config }: { config: GameConfig }) {
         super();
         this.config = config;
     }

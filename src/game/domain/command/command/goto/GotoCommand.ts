@@ -2,7 +2,7 @@ import Command from '../../Command';
 import GotoCommandValidator from './GotoCommandValidator';
 
 export default class GotoCommand extends Command {
-    constructor({ args }) {
+    constructor({ args }: { args: Array<string> }) {
         super({ args, validator: GotoCommandValidator });
     }
 

@@ -9,7 +9,19 @@ export default class ItemMovePacket extends PacketIn {
     private toPosition: number;
     private count: number;
 
-    constructor({ fromWindow, fromPosition, toWindow, toPosition, count }) {
+    constructor({
+        fromWindow,
+        fromPosition,
+        toWindow,
+        toPosition,
+        count,
+    }: {
+        fromWindow: number;
+        fromPosition: number;
+        toWindow: number;
+        toPosition: number;
+        count: number;
+    }) {
         super({
             header: PacketHeaderEnum.ITEM_MOVE,
             name: 'ItemMovePacket',

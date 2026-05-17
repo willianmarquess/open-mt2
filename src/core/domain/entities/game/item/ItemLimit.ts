@@ -4,7 +4,7 @@ export default class ItemLimit {
     public type: ItemLimitTypeEnum;
     public value: number;
 
-    constructor({ type, value }) {
+    constructor({ type, value }: { type: ItemLimitTypeEnum; value: number }) {
         this.type = type;
         this.value = value;
     }

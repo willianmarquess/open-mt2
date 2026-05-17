@@ -16,7 +16,7 @@ import PacketOut from '@/core/interface/networking/packets/packet/out/PacketOut'
 export default class CharacterDiedPacket extends PacketOut {
     private virtualId: number;
 
-    constructor({ virtualId }) {
+    constructor({ virtualId }: { virtualId: number }) {
         super({
             header: PacketHeaderEnum.CHARACTER_DIED,
             name: 'CharacterDiedPacket',

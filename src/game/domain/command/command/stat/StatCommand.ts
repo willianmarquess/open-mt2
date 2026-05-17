@@ -2,7 +2,7 @@ import Command from '../../Command';
 import StatCommandValidator from './StatCommandValidator';
 
 export default class StatCommand extends Command {
-    constructor({ args }) {
+    constructor({ args }: { args: Array<string> }) {
         super({ args, validator: StatCommandValidator });
     }
 

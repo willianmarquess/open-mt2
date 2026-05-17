@@ -13,7 +13,7 @@ export default class AuthenticateService {
     private logger: Logger;
     private cacheProvider: CacheProvider;
 
-    constructor({ logger, cacheProvider }) {
+    constructor({ logger, cacheProvider }: { logger: Logger; cacheProvider: CacheProvider }) {
         this.logger = logger;
         this.cacheProvider = cacheProvider;
     }

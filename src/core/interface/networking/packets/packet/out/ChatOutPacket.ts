@@ -1,20 +1,23 @@
 import PacketHeaderEnum from '@/core/enum/PacketHeaderEnum';
 import PacketOut from '@/core/interface/networking/packets/packet/out/PacketOut';
 
-type ChatOutPacketParams = {
-    messageType?: number;
-    message?: string;
-    vid?: number;
-    empireId?: number;
-};
-
 export default class ChatOutPacket extends PacketOut {
     private messageType: number;
     private message: string;
     private vid: number;
     private empireId: number;
 
-    constructor({ messageType, vid, empireId, message = '' }: ChatOutPacketParams = {}) {
+    constructor({
+        messageType,
+        vid,
+        empireId,
+        message = '',
+    }: {
+        messageType: number;
+        vid: number;
+        empireId: number;
+        message?: string;
+    }) {
         super({
             header: PacketHeaderEnum.CHAT_OUT,
             name: 'ChatOutPacket',

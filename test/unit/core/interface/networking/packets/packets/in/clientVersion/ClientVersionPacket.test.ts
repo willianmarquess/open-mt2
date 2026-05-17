@@ -31,7 +31,7 @@ describe('ClientVersionPacket', function () {
 
         const unpackedPacket = new ClientVersionPacket({
             clientName: '',
-            timeStamp: 0,
+            timeStamp: '',
         });
         unpackedPacket.unpack(buffer);
 

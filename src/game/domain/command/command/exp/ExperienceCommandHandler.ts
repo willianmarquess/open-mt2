@@ -10,7 +10,7 @@ export default class ExperienceCommandHandler extends CommandHandler<ExperienceC
     private readonly logger: Logger;
     private readonly world: World;
 
-    constructor({ logger, world }) {
+    constructor({ logger, world }: { logger: Logger; world: World }) {
         super();
         this.logger = logger;
         this.world = world;

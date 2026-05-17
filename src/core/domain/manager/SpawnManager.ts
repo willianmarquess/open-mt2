@@ -8,7 +8,7 @@ import MathUtil from '../util/MathUtil';
 import Monster from '../entities/game/mob/Monster';
 import Logger from '@/core/infra/logger/Logger';
 import MobManager from './MobManager';
-import { GroupCollection, Groups } from '@/game/infra/config/GameConfig';
+import { GameConfig, GroupCollection, Groups } from '@/game/infra/config/GameConfig';
 import { SpawnConfigTypeEnum } from '@/core/enum/SpawnConfigTypeEnum';
 
 const DEFAULT_SPAWN_CONFIG_PATH = 'src/core/infra/config/data/spawn';
@@ -35,7 +35,7 @@ export default class SpawnManager {
     private readonly groups: Array<Groups>;
     private readonly groupsCollection: Array<GroupCollection>;
 
-    constructor({ logger, mobManager, config }) {
+    constructor({ logger, mobManager, config }: { logger: Logger; mobManager: MobManager; config: GameConfig }) {
         this.logger = logger;
         this.mobManager = mobManager;
         this.groups = config.groups;
@@ -184,7 +184,7 @@ export default class SpawnManager {
     async loadFromArea(areaName: string) {
         const currentDir = process.cwd();
 
-        const spawns = {
+        const spawns: Record<string, Array<SpawnConfig>> = {
             regen: Array<SpawnConfig>(),
             npc: Array<SpawnConfig>(),
             boss: Array<SpawnConfig>(),
@@ -213,7 +213,7 @@ export default class SpawnManager {
                         });
                     });
                 }
-            } catch (error) {
+            } catch (error: any) {
                 this.logger.error(`Error loading spawn data from ${absoluteFilePath}:${error.message}`);
             }
         }
