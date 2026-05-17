@@ -35,7 +35,7 @@ export type MyShopItemEntry = {
 // Maximum: 35 + 40 × 13 = 555 bytes
 
 const SIGN_FIELD_LEN = PRIVATE_SHOP_SIGN_MAX_LEN + 1; // 33
-const ITEM_ENTRY_SIZE = 4 + 1 + 1 + 2 + 4 + 1; // 13
+const ITEM_ENTRY_SIZE = 13;
 const FIXED_SIZE = 1 + SIGN_FIELD_LEN + 1; // 35
 
 export { ITEM_ENTRY_SIZE };
