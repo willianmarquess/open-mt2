@@ -12,7 +12,7 @@ export type MyShopItemEntry = {
     windowType: number;
     /** Inventory cell index. */
     cellIndex: number;
-    /** Price set by the seller (in yang). */
+    /** Price set by the seller (in gold). */
     price: number;
     /** Display slot in the shop window. */
     displayPos: number;

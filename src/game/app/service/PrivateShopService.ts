@@ -8,7 +8,7 @@ import PrivateShop, { PrivateShopItem } from '@/core/domain/shop/PrivateShop';
 import { MyShopItemEntry } from '@/core/interface/networking/packets/packet/in/myshop/MyShopPacket';
 import ItemManager from '@/core/domain/manager/ItemManager';
 
-/** Maximum yang price a seller can set per item. */
+/** Maximum gold price a seller can set per item. */
 const MAX_ITEM_PRICE = 2_000_000_000;
 
 export default class PrivateShopService {
@@ -210,7 +210,7 @@ export default class PrivateShopService {
 
     /**
      * Handles a BUY request from a guest browsing a private shop.
-     * Transfers the item from owner's inventory to the buyer's inventory and moves yang.
+     * Transfers the item from owner's inventory to the buyer's inventory and moves gold.
      */
     async buy(guest: Player, displaySlot: number) {
         const owner = guest.getCurrentPrivateShopOwner();
@@ -262,7 +262,7 @@ export default class PrivateShopService {
             return;
         }
 
-        // Transfer yang
+        // Transfer gold
         guest.addPoint(PointsEnum.GOLD, -price);
         owner.addPoint(PointsEnum.GOLD, price);
 

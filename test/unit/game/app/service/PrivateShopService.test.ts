@@ -490,7 +490,7 @@ describe('PrivateShopService', () => {
             expect(owner.sendItemAdded.calledOnce).to.be.true;
         });
 
-        it('should transfer yang, save item, and send OK on success', async () => {
+        it('should transfer gold, save item, and send OK on success', async () => {
             const item = makeItem();
             const inventory = makeInventory();
             const shop = new PrivateShop({

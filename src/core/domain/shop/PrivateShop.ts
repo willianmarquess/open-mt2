@@ -9,7 +9,7 @@ export type PrivateShopItem = {
     displayPos: number;
     /** Inventory slot the item occupies on the shop owner. */
     inventoryPos: number;
-    /** Price the buyer must pay (in yang). */
+    /** Price the buyer must pay (in gold). */
     price: number;
     /** Reference to the actual item - stays in the owner's inventory but is locked. */
     item: Item;
