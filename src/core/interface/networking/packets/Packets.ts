@@ -43,6 +43,8 @@ import QuestAnswerPacket from './packet/in/questAnswer/QuestAnswerPacket';
 import QuestAnswerPacketHandler from './packet/in/questAnswer/QuestAnswerPacketHandler';
 import QuestButtonPacket from './packet/in/questButton/QuestButtonPacket';
 import QuestButtonPacketHandler from './packet/in/questButton/QuestButtonPacketHandler';
+import ShopPacket from './packet/in/shop/ShopPacket';
+import ShopPacketHandler from './packet/in/shop/ShopPacketHandler';
 
 export type PacketMapValue<T extends Packet> = {
     createPacket: (params?: any) => T;
@@ -195,6 +197,13 @@ const packets: Map<number, PacketMapValue<any>> = new Map<number, PacketMapValue
         {
             createPacket: (params = {}) => new QuestButtonPacket(params),
             createHandler: (params) => new QuestButtonPacketHandler(params),
+        },
+    ],
+    [
+        PacketHeaderEnum.SHOP_IN,
+        {
+            createPacket: () => new ShopPacket(),
+            createHandler: (params) => new ShopPacketHandler(params),
         },
     ],
 ]);

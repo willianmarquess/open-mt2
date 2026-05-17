@@ -57,10 +57,16 @@ import { AbstractQuest } from '@/core/domain/quests/AbstractQuest';
 import { QuestStatusEnum } from '@/core/domain/quests/decorators/QuestDecorator';
 import QuestInfoPacket from '@/core/interface/networking/packets/packet/out/QuestInfoPacket';
 import { BlockFlagEnum } from '@/core/enum/BlockFlagEnum';
-import { QuestManager } from '@/core/domain/quests/QuestManager';
-import Logger from '@/core/infra/logger/Logger';
-import ExperienceManager from '@/core/domain/manager/ExperienceManager';
 import AnimationManager from '@/core/domain/manager/AnimationManager';
+import ExperienceManager from '@/core/domain/manager/ExperienceManager';
+import Logger from '@/core/infra/logger/Logger';
+import { QuestManager } from '@/core/domain/quests/QuestManager';
+import Shop from '@/core/domain/shop/Shop';
+import ShopStartPacket, { ShopStartPacketParams } from '@/core/interface/networking/packets/packet/out/ShopStartPacket';
+import ShopResultPacket, {
+    ShopResultPacketParams,
+} from '@/core/interface/networking/packets/packet/out/ShopResultPacket';
+import ShopEndPacket from '@/core/interface/networking/packets/packet/out/ShopEndPacket';
 
 const REGEN_INTERVAL = 3000;
 const MAX_DISTANCE_FROM_TARGET = 3500;
@@ -98,6 +104,8 @@ export default class Player extends Character {
     //quests
     private readonly quests: Map<number, AbstractQuest> = new Map();
     private currentQuest: AbstractQuest | null = null;
+
+    private currentShop: Shop | null = null;
 
     constructor(
         {
@@ -445,6 +453,18 @@ export default class Player extends Character {
                 empireId: this.getEmpire(),
             }),
         );
+    }
+
+    sendCurrentShop(shop: ShopStartPacketParams) {
+        this.connection?.send(new ShopStartPacket(shop));
+    }
+
+    sendShopResult(result: ShopResultPacketParams) {
+        this.connection?.send(new ShopResultPacket(result));
+    }
+
+    sendShopClose() {
+        this.connection?.send(new ShopEndPacket());
     }
 
     addPoint(point: PointsEnum, value: number) {
@@ -1462,6 +1482,14 @@ export default class Player extends Character {
     isQuestRunning(): boolean {
         const quest = this.getCurrentQuest();
         return quest?.isRunning() ?? false;
+    }
+
+    getCurrentShop(): Shop | null {
+        return this.currentShop;
+    }
+
+    setCurrentShop(shop: Shop | null) {
+        this.currentShop = shop;
     }
 
     getQuestByStatus(status: QuestStatusEnum) {

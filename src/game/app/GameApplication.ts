@@ -9,6 +9,7 @@ import CacheProvider from '@/core/infra/cache/CacheProvider';
 import DatabaseManager from '@/core/infra/database/DatabaseManager';
 import Server from '@/core/interface/server/Server';
 import Logger from '@/core/infra/logger/Logger';
+import ShopManager from '@/core/domain/shop/ShopManager';
 
 export default class GameApplication extends Application {
     private readonly world: World;
@@ -17,6 +18,7 @@ export default class GameApplication extends Application {
     private readonly itemManager: ItemManager;
     private readonly dropManager: DropManager;
     private readonly questManager: QuestManager;
+    private readonly shopManager: ShopManager;
 
     constructor(container: {
         logger: Logger;
@@ -29,6 +31,7 @@ export default class GameApplication extends Application {
         itemManager: ItemManager;
         dropManager: DropManager;
         questManager: QuestManager;
+        shopManager: ShopManager;
     }) {
         super(container);
         this.world = container.world;
@@ -37,6 +40,7 @@ export default class GameApplication extends Application {
         this.itemManager = container.itemManager;
         this.dropManager = container.dropManager;
         this.questManager = container.questManager;
+        this.shopManager = container.shopManager;
     }
 
     async start() {
@@ -50,6 +54,7 @@ export default class GameApplication extends Application {
         ]);
         this.mobManager.load();
         this.questManager.load();
+        this.shopManager.load();
         await this.server.setup().start();
         await this.world.init();
         this.logger.info('[APP] Game application started 🎮🚀');
