@@ -1416,6 +1416,17 @@ export default class Player extends Character {
                     hairId: otherEntity.getHair()?.getId() ?? 0,
                     affects: otherEntity.getAffectFlags(),
                 });
+
+                // If the other player has an active private shop, announce it to us
+                if (otherEntity.isRunningPrivateShop()) {
+                    const shop = otherEntity.getPrivateShop();
+                    if (shop) {
+                        this.sendShopSign({
+                            ownerVid: otherEntity.getVirtualId(),
+                            sign: shop.getSign(),
+                        });
+                    }
+                }
             }
         }
 
@@ -1762,6 +1773,9 @@ export default class Player extends Character {
     }
     getPlayerClass() {
         return this.playerClass;
+    }
+    getClassId() {
+        return this.isPolymorphed() ? this.polymorphVnum : this.playerClass;
     }
     getSkillGroup() {
         return this.skillGroup;
