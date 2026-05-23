@@ -204,7 +204,7 @@ export default class PrivateShopService {
 
         guest.sendCurrentShop({
             ownerVid: owner.getVirtualId(),
-            items: shopItemsForPacket,
+            items: shopItemsForPacket as any,
         });
 
         this.logger.debug(`[PrivateShopService] ${guest.getName()} opened private shop of ${owner.getName()}`);
