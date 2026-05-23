@@ -53,7 +53,7 @@
         ]
     },
     {
-        "npcVnum": 9003,
+        "npcVnum": 666,
         "shopName": "Goods",
         "items": [
             { "vnum": 27001, "count": 1 },
@@ -65,6 +65,20 @@
             { "vnum": 50200, "count": 1 },
             { "vnum": 50901, "count": 10 },
             { "vnum": 71113, "count": 20 }
+        ]
+    },
+    {
+        "npcVnum": 667,
+        "shopName": "Potions",
+        "items": [
+            { "vnum": 27001, "count": 200 },
+            { "vnum": 27002, "count": 200 },
+            { "vnum": 27003, "count": 200 },
+            { "vnum": 27004, "count": 200 },
+            { "vnum": 27005, "count": 200 },
+            { "vnum": 27006, "count": 200 },
+            { "vnum": 27102, "count": 200 },
+            { "vnum": 27105, "count": 200 }
         ]
     },
     {

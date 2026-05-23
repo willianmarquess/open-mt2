@@ -9,15 +9,18 @@ import NPC from '../entities/game/mob/NPC';
 import { NpcQuest } from './facade/NpcQuest';
 import { VictimQuest } from './facade/VictimQuest';
 import Monster from '../entities/game/mob/Monster';
+import ShopService from '@/game/app/service/ShopService';
 
 export class QuestManager {
     private readonly logger: Logger;
+    private readonly shopService: ShopService;
     private readonly questsClasses: Map<number, typeof AbstractQuest> = new Map();
     private readonly questsClickEvents: Map<number, Map<number, Set<string>>> = new Map();
     private readonly eventQuestMap: Map<QuestEventEnum, Map<number, Set<string>>> = new Map();
 
-    constructor({ logger }: { logger: Logger }) {
+    constructor({ logger, shopService }: { logger: Logger; shopService: ShopService }) {
         this.logger = logger;
+        this.shopService = shopService;
     }
 
     load() {
@@ -73,9 +76,7 @@ export class QuestManager {
 
                                                     set.add(metaState.name);
                                                 } else {
-                                                    this.logger.info(
-                                                        `[QUEST_MANAGER] CLICK task without target in quest ${id}`,
-                                                    );
+                                                    this.addQuestToEvent(QuestEventEnum.CLICK, id, metaState.name);
                                                 }
                                             }
                                             break;
@@ -265,14 +266,17 @@ export class QuestManager {
             return;
         }
 
-        const questMap = this.questsClickEvents.get(npc.getId()) ?? new Map<number, Set<string>>();
+        const questMap = this.questsClickEvents.get(npc.getId()) ?? this.getQuestsForEvent(QuestEventEnum.CLICK);
         for (const [questId, states] of questMap) {
             const quest = player.getQuest(questId);
             if (!quest) continue;
             const current = quest.getCurrentState()?.name;
             if (!current) continue;
             if (states.has(current)) {
-                await quest.runState({ eventType: QuestEventEnum.CLICK, npc: new NpcQuest({ npc }) });
+                await quest.runState({
+                    eventType: QuestEventEnum.CLICK,
+                    npc: new NpcQuest({ npc, shopService: this.shopService, player }),
+                });
             }
         }
     }
