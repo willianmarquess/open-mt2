@@ -36,12 +36,13 @@ Metin2 are copyrighted by [Webzen](http://webzen.com/ "Webzen").
 | Load Mob Data    |      |       | ✅    |
 | Load NPC Data    |      |       | ✅    |
 | Load item Data    |      |       | ✅    |
+| Load Shop Data    |      |       | ✅    |
 | Spawn Mob    |      |       |  ✅    |
 | Spawn Mob From File    |      |       |  ✅    |
-| Mob Behavior System    |      | X     |      |
+| Mob Behavior System    |      |       |   ✅   |
 | Spawn NPC    |      |       |  ✅   |
 | NPC Behavior System    | X    |       |      |
-| NPC Shop System    | X    |       |      |
+| NPC Shop System    |      |       |   ✅   |
 | Spawn Item    |      |       |  ✅   |
 | Equip Item    |      |       |   ✅  |
 | Attributes Item System    | X    |       |      |
@@ -60,7 +61,7 @@ Metin2 are copyrighted by [Webzen](http://webzen.com/ "Webzen").
 | Character Duel System   | X    |       |      |
 | Drop System   |      | X     |      |
 | Affect System   |      | X     |      |
-| Quest System   | X    |       |      |
+| Quest System   |      |  X    |      |
 | Skills System   | X    |       |      |
 | Chat System   | X    |       |      |
 | Level System   |      |       | ✅    |
