@@ -18,22 +18,6 @@ export type MyShopItemEntry = {
     displayPos: number;
 };
 
-// CG_MYSHOP wire layout (variable-length):
-//  [1B  header=0x37]
-//  [33B szSign        - null-terminated, SHOP_SIGN_MAX_LEN+1 bytes]
-//  [1B  bCount        - 0 means close shop]
-//  bCount × TShopItemTable {
-//    [4B  vnum        LE]
-//    [1B  count           ]
-//    [1B  window_type     ]  \__ TItemPos
-//    [2B  cell        LE]  /
-//    [4B  price       LE]
-//    [1B  display_pos     ]
-//  }  (13 bytes per item)
-//
-// Minimum: 1 + 33 + 1 = 35 bytes
-// Maximum: 35 + 40 × 13 = 555 bytes
-
 const SIGN_FIELD_LEN = PRIVATE_SHOP_SIGN_MAX_LEN + 1; // 33
 const ITEM_ENTRY_SIZE = 13;
 const FIXED_SIZE = 1 + SIGN_FIELD_LEN + 1; // 35
