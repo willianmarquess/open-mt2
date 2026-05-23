@@ -114,6 +114,8 @@ export default class Player extends Character {
     private privateShop: PrivateShop | null = null;
     private currentPrivateShopOwner: Player | null = null;
 
+    private polymorphVnum: number = 0;
+
     constructor(
         {
             id,
@@ -1775,6 +1777,76 @@ export default class Player extends Character {
     }
     getInventory() {
         return this.inventory;
+    }
+
+    isPolymorphed() {
+        return this.polymorphVnum > 0;
+    }
+
+    getPolymorphVnum() {
+        return this.polymorphVnum;
+    }
+
+    /**
+     * Sets the polymorph race (mob vnum). Pass 0 to revert to original appearance.
+     * Broadcasts the appearance change to all nearby players and re-sends own spawn info.
+     */
+    setPolymorph(vnum: number) {
+        if (this.polymorphVnum === vnum) return;
+        this.polymorphVnum = vnum;
+
+        // The classId used for spawning is the mob vnum when polymorphed,
+        // otherwise the original player class.
+        const displayClassId = vnum > 0 ? vnum : this.playerClass;
+
+        // Re-broadcast own appearance to all nearby players
+        for (const entity of this.nearbyEntities.values()) {
+            if (entity instanceof Player) {
+                entity.hideOtherEntity({ virtualId: this.virtualId });
+                entity.showOtherEntity({
+                    virtualId: this.virtualId,
+                    playerClass: displayClassId,
+                    entityType: this.getEntityType(),
+                    attackSpeed: this.getAttackSpeed(),
+                    movementSpeed: this.getMovementSpeed(),
+                    positionX: this.getPositionX(),
+                    positionY: this.getPositionY(),
+                    empireId: this.getEmpire(),
+                    level: this.getLevel(),
+                    name: this.getName(),
+                    rotation: this.getRotation(),
+                });
+            }
+        }
+
+        // Update own client view
+        this.showEntity({
+            virtualId: this.virtualId,
+            playerClass: displayClassId,
+            entityType: this.getEntityType(),
+            attackSpeed: this.getAttackSpeed(),
+            movementSpeed: this.getMovementSpeed(),
+            positionX: this.getPositionX(),
+            positionY: this.getPositionY(),
+            empireId: this.getEmpire(),
+            level: this.getLevel(),
+            name: this.getName(),
+            rotation: this.getRotation(),
+        });
+
+        // Re-announce all nearby entities to our own client.
+        // The client clears the scene when it receives a CharacterSpawn for its own VID,
+        // so we need to re-send every entity that was already in view.
+        for (const entity of this.nearbyEntities.values()) {
+            this.onNearbyEntityAdded(entity);
+        }
+
+        // Sync affect flag
+        if (vnum > 0) {
+            this.setAffectFlag(AffectBitsTypeEnum.POLYMORPH);
+        } else {
+            this.removeAffectFlag(AffectBitsTypeEnum.POLYMORPH);
+        }
     }
 
     sendBlockMode() {

@@ -1,6 +1,7 @@
 import Item from '@/core/domain/entities/game/item/Item';
 import Player from '@/core/domain/entities/game/player/Player';
 import ItemManager from '@/core/domain/manager/ItemManager';
+import MobManager from '@/core/domain/manager/MobManager';
 import { ChatMessageTypeEnum } from '@/core/enum/ChatMessageTypeEnum';
 import { ItemTypeEnum } from '@/core/enum/ItemTypeEnum';
 import { ItemUseSubTypeEnum } from '@/core/enum/ItemUseSubTypeEnum';
@@ -12,10 +13,12 @@ import Logger from '@/core/infra/logger/Logger';
 export default class UseItemService {
     private logger: Logger;
     private itemManager: ItemManager;
+    private mobManager: MobManager;
 
-    constructor({ logger, itemManager }: { logger: Logger; itemManager: ItemManager }) {
+    constructor({ logger, itemManager, mobManager }: { logger: Logger; itemManager: ItemManager; mobManager: MobManager }) {
         this.logger = logger;
         this.itemManager = itemManager;
+        this.mobManager = mobManager;
     }
 
     async execute(player: Player, window: number, position: number) {
@@ -150,6 +153,9 @@ export default class UseItemService {
             case ItemUseSubTypeEnum.USE_SPECIAL:
                 return this.useSpecialItem(player, item);
 
+            case ItemUseSubTypeEnum.USE_POLYMORPH_BALL:
+                return await this.usePolymorphBall(player, item);
+
             default:
                 this.logger.info(
                     `[UseItemService] unhandled item use - vnum: ${item.getId()}, type: ${item.getType()}, subType: ${item.getSubType()}, player: ${player.getName()}`,
@@ -164,6 +170,39 @@ export default class UseItemService {
             // packet with the string "OpenPrivateShop"
             player.chat({ messageType: ChatMessageTypeEnum.COMMAND, message: 'OpenPrivateShop' });
         }
+    }
+
+    private async usePolymorphBall(player: Player, item: Item) {
+        if (player.isPolymorphed()) {
+            player.chat({ messageType: ChatMessageTypeEnum.INFO, message: 'You are already polymorphed.' });
+            return;
+        }
+
+        // Socket 0 holds the mob vnum (as stored by the polymorph ball item)
+        const mobVnum = item.getSocket0();
+        if (!mobVnum || !this.mobManager.hasMob(mobVnum)) {
+            player.chat({ messageType: ChatMessageTypeEnum.INFO, message: 'Invalid polymorph target.' });
+            return;
+        }
+
+        // Fixed duration: 5 minutes (300 seconds) — skill-level scaling can be added later
+        const POLYMORPH_DURATION_MS = 300_000;
+
+        player.setPolymorph(mobVnum);
+        await this.removeItemByQuantity(player, item, 1);
+
+        // Schedule automatic revert
+        player.addEventTimer({
+            id: 'POLYMORPH',
+            eventFunction: () => {
+                player.setPolymorph(0);
+            },
+            options: {
+                interval: POLYMORPH_DURATION_MS,
+                duration: POLYMORPH_DURATION_MS,
+                repeatCount: 1,
+            },
+        });
     }
 
     private async removeItemByQuantity(player: Player, item: Item, quantity: number) {

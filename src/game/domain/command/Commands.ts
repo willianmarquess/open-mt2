@@ -19,6 +19,8 @@ import LogoutCommand from './command/logout/LogoutCommand';
 import LogoutCommandHandler from './command/logout/LogoutCommandHandler';
 import LevelCommand from './command/lvl/LevelCommand';
 import LevelCommandHandler from './command/lvl/LevelCommandHandler';
+import PolymorphCommand from './command/polymorph/PolymorphCommand';
+import PolymorphCommandHandler from './command/polymorph/PolymorphCommandHandler';
 import PrivilegeCommand from './command/privilege/PrivilegeCommand';
 import PrivilegeCommandHandler from './command/privilege/PrivilegeCommandHandler';
 import QuitCommand from './command/quit/QuitCommand';
@@ -157,6 +159,13 @@ export default () =>
             {
                 command: CloseShopCommand,
                 createHandler: (params) => new CloseShopCommandHandler(params),
+            },
+        ],
+        [
+            PolymorphCommand.getName(),
+            {
+                command: PolymorphCommand,
+                createHandler: (params) => new PolymorphCommandHandler(params),
             },
         ],
     ]);

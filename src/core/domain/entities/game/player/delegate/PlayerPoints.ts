@@ -824,6 +824,17 @@ export class PlayerPoints extends Points {
             get: () => this.hpRecovery,
             add: (value) => this.addCommonPoint(value, 'hpRecovery'),
         });
+        this.points.set(PointsEnum.POLYMORPH, {
+            get: () => this.polymorph,
+            set: (value: number) => {
+                this.polymorph = value;
+                this.player.setPolymorph(value);
+            },
+            add: (value: number) => {
+                this.polymorph = value;
+                this.player.setPolymorph(value);
+            },
+        });
     }
 
     private addCommonPoint(value: number, pointName: string) {
