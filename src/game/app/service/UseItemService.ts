@@ -13,9 +13,17 @@ import Logger from '@/core/infra/logger/Logger';
 export default class UseItemService {
     private logger: Logger;
     private itemManager: ItemManager;
-    private mobManager: MobManager;
+    private readonly mobManager: MobManager;
 
-    constructor({ logger, itemManager, mobManager }: { logger: Logger; itemManager: ItemManager; mobManager: MobManager }) {
+    constructor({
+        logger,
+        itemManager,
+        mobManager,
+    }: {
+        logger: Logger;
+        itemManager: ItemManager;
+        mobManager: MobManager;
+    }) {
         this.logger = logger;
         this.itemManager = itemManager;
         this.mobManager = mobManager;
