@@ -2,12 +2,6 @@ import PacketHeaderEnum from '@/core/enum/PacketHeaderEnum';
 import PacketOut from '@/core/interface/networking/packets/packet/out/PacketOut';
 import { ShopSubHeaderGC } from '@/core/enum/ShopSubHeaderEnum';
 
-// GC_SHOP / SHOP_SUBHEADER_GC_UPDATE_ITEM payload:
-//  [1B header=0x26][2B size][1B subheader=0x02][1B pos][43B item]
-//
-// item = { vnum:4B  price:4B  count:1B  display_pos:1B  sockets[3]:12B  bonuses[7]:21B }
-// An empty slot is represented with all-zero item fields (vnum=0).
-
 const SOCKETS_COUNT = 3;
 const BONUSES_COUNT = 7;
 const ITEM_BYTES = 4 + 4 + 1 + 1 + SOCKETS_COUNT * 4 + BONUSES_COUNT * 3; // 43
