@@ -34,6 +34,7 @@ export type AtlasInfoGoto = {
 export type NpcShopItem = {
     vnum: number;
     count: number;
+    position?: number;
 };
 
 export type NpcShopsProto = {

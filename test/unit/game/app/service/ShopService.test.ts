@@ -49,7 +49,9 @@ describe('ShopService', () => {
 
     describe('openShop', () => {
         it('should open shop and send ShopStartPacket', async () => {
-            const items: ShopItem[] = [{ vnum: 1000, count: 1, price: 100, item: undefined }];
+            const items: ShopItem[] = [
+                { vnum: 1000, count: 1, price: 100, item: { getSize: () => 1 } as any, size: 1, position: 0 },
+            ];
             const shop = new Shop({ npcVnum: 9001, shopName: 'Arms', items });
             shopManagerStub.getShop.returns(shop);
 
@@ -110,7 +112,9 @@ describe('ShopService', () => {
         });
 
         it('should send NOT_ENOUGH_MONEY if player cannot afford item', async () => {
-            const items: ShopItem[] = [{ vnum: 1000, count: 1, price: 5000, item: undefined }];
+            const items: ShopItem[] = [
+                { vnum: 1000, count: 1, price: 5000, item: { getSize: () => 1 } as any, size: 1, position: 0 },
+            ];
             const shop = new Shop({ npcVnum: 9001, shopName: 'Arms', items });
             playerStub.getCurrentShop.returns(shop);
             playerStub.getPoint.withArgs(PointsEnum.GOLD).returns(100);
@@ -122,7 +126,9 @@ describe('ShopService', () => {
         });
 
         it('should send SOLD_OUT if itemManager cannot create item', async () => {
-            const items: ShopItem[] = [{ vnum: 1000, count: 1, price: 100, item: undefined }];
+            const items: ShopItem[] = [
+                { vnum: 1000, count: 1, price: 100, item: { getSize: () => 1 } as any, size: 1, position: 0 },
+            ];
             const shop = new Shop({ npcVnum: 9001, shopName: 'Arms', items });
             playerStub.getCurrentShop.returns(shop);
             playerStub.getPoint.withArgs(PointsEnum.GOLD).returns(1000);
@@ -134,7 +140,9 @@ describe('ShopService', () => {
         });
 
         it('should send INVENTORY_FULL if player cannot add item', async () => {
-            const items: ShopItem[] = [{ vnum: 1000, count: 1, price: 100, item: undefined }];
+            const items: ShopItem[] = [
+                { vnum: 1000, count: 1, price: 100, item: { getSize: () => 1 } as any, size: 1, position: 0 },
+            ];
             const shop = new Shop({ npcVnum: 9001, shopName: 'Arms', items });
             const mockItem = { getSize: () => 1 };
             playerStub.getCurrentShop.returns(shop);
@@ -149,7 +157,9 @@ describe('ShopService', () => {
         });
 
         it('should deduct gold and send OK on successful buy', async () => {
-            const items: ShopItem[] = [{ vnum: 1000, count: 1, price: 200, item: undefined }];
+            const items: ShopItem[] = [
+                { vnum: 1000, count: 1, price: 200, item: { getSize: () => 1 } as any, size: 1, position: 0 },
+            ];
             const shop = new Shop({ npcVnum: 9001, shopName: 'Arms', items });
             const mockItem = {};
             playerStub.getCurrentShop.returns(shop);

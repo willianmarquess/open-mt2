@@ -14,7 +14,7 @@ describe('ShopManager', () => {
     beforeEach(() => {
         loggerStub = sinon.createStubInstance(WinstonLoggerAdapter);
         itemManagerStub = sinon.createStubInstance(ItemManager);
-        itemManagerStub.getItem.returns({ getShopPrice: () => 100 } as any);
+        itemManagerStub.getItem.returns({ getShopPrice: () => 100, getSize: () => 1 } as any);
         manager = new ShopManager({
             config: makeGameConfig(),
             logger: loggerStub,
@@ -32,7 +32,7 @@ describe('ShopManager', () => {
 
     it('should load shops from npc_shop.json', () => {
         // Mock itemManager.getItem to return valid items
-        itemManagerStub.getItem.returns({ getShopPrice: () => 100 } as any);
+        itemManagerStub.getItem.returns({ getShopPrice: () => 100, getSize: () => 1 } as any);
 
         manager.load();
 
@@ -43,17 +43,19 @@ describe('ShopManager', () => {
     });
 
     it('should return correct shop for valid NPC vnum', () => {
-        itemManagerStub.getItem.returns({ getShopPrice: () => 100 } as any);
+        itemManagerStub.getItem.returns({ getShopPrice: () => 100, getSize: () => 1 } as any);
 
         manager.load();
 
         const shop = manager.getShop(9001);
         expect(shop).to.be.instanceOf(Shop);
-        expect(shop.getShopName()).to.equal('Arms');
+        if (shop) {
+            expect(shop.getShopName()).to.equal('Arms');
+        }
     });
 
     it('should return undefined for invalid NPC vnum', () => {
-        itemManagerStub.getItem.returns({ getShopPrice: () => 100 } as any);
+        itemManagerStub.getItem.returns({ getShopPrice: () => 100, getSize: () => 1 } as any);
 
         manager.load();
 
@@ -62,7 +64,7 @@ describe('ShopManager', () => {
     });
 
     it('should indicate shop exists for loaded NPCs', () => {
-        itemManagerStub.getItem.returns({ getShopPrice: () => 100 } as any);
+        itemManagerStub.getItem.returns({ getShopPrice: () => 100, getSize: () => 1 } as any);
 
         manager.load();
 
@@ -71,25 +73,28 @@ describe('ShopManager', () => {
     });
 
     it('should load all expected shops', () => {
-        itemManagerStub.getItem.returns({ getShopPrice: () => 100 } as any);
+        itemManagerStub.getItem.returns({ getShopPrice: () => 100, getSize: () => 1 } as any);
 
         manager.load();
 
-        const expectedNpcs = [9001, 9002, 9003, 9004, 9005, 9006, 9007, 9008, 9009, 9010, 9011, 9012];
+        const expectedNpcs = makeGameConfig().npcShops.map((shopEntry) => shopEntry.npcVnum);
         expectedNpcs.forEach((npcVnum) => {
             expect(manager.hasShop(npcVnum)).to.be.true;
         });
     });
 
     it('should load shop items correctly', () => {
-        itemManagerStub.getItem.returns({ getShopPrice: () => 500 } as any);
+        itemManagerStub.getItem.returns({ getShopPrice: () => 500, getSize: () => 1 } as any);
 
         manager.load();
 
         const shop = manager.getShop(9001);
-        const items = shop.getItems();
-        expect(items.length).to.be.greaterThan(0);
-        expect(items[0]).to.have.property('vnum');
-        expect(items[0]).to.have.property('count');
+        expect(shop).to.not.be.undefined;
+        if (shop) {
+            const items = shop.getItems();
+            expect(items.length).to.be.greaterThan(0);
+            expect(items[0]).to.have.property('vnum');
+            expect(items[0]).to.have.property('count');
+        }
     });
 });

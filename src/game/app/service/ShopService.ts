@@ -27,12 +27,15 @@ export default class ShopService {
         this.logger = logger;
     }
 
-    async openShop(player: Player, npc: NPC) {
-        const shop = this.shopManager.getShop(npc.getId());
+    async openShop(player: Player, npc: NPC, id?: number) {
+        const shop = this.shopManager.getShop(id ?? npc.getId());
         if (!shop) {
             this.logger.debug(`[ShopService] NPC vnum ${npc.getId()} has no shop`);
             return;
         }
+
+        //TODO: validate if player can open the shop (distance, isExchanging, HasShopOpened, etc)
+        //TODO: verify player distance to npc
 
         player.setCurrentShop(shop);
 
@@ -62,7 +65,7 @@ export default class ShopService {
             return;
         }
 
-        const shopItem = shop.getItemAtSlot(pos);
+        const shopItem = shop.getItem(pos);
         if (!shopItem) {
             player.sendShopResult({ result: ShopSubHeaderGC.INVALID_POS });
             return;

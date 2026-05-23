@@ -14,8 +14,6 @@ export default class ShopManager {
     private readonly config: GameConfig;
     private readonly logger: Logger;
     private readonly itemManager: ItemManager;
-
-    // vnum → Shop (NPC shops loaded from config)
     private readonly shops: Map<number, Shop> = new Map();
 
     constructor({ config, logger, itemManager }: ShopManagerParams) {
@@ -28,7 +26,7 @@ export default class ShopManager {
         this.config.npcShops.forEach((shopEntry) => {
             const shopItems: ShopItem[] = [];
 
-            shopEntry.items.forEach(({ vnum, count }) => {
+            shopEntry.items.forEach(({ vnum, count, position }, index) => {
                 const item = this.itemManager.getItem(vnum, count);
                 if (!item) {
                     this.logger.info(`[ShopManager] Unknown item vnum ${vnum} in shop for NPC ${shopEntry.npcVnum}`);
@@ -40,6 +38,8 @@ export default class ShopManager {
                     count,
                     price: item.getShopPrice(),
                     item,
+                    position: position ?? index,
+                    size: item.getSize(),
                 });
             });
 

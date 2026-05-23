@@ -9,8 +9,8 @@ describe('ShopStartPacket', () => {
 
     beforeEach(() => {
         const items: ShopItem[] = [
-            { vnum: 1000, count: 1, price: 500, item: undefined },
-            { vnum: 1010, count: 1, price: 1000, item: undefined },
+            { vnum: 1000, count: 1, price: 500, item: { getSize: () => 1 } as any, size: 1, position: 0 },
+            { vnum: 1010, count: 1, price: 1000, item: { getSize: () => 1 } as any, size: 1, position: 1 },
         ];
         packet = new ShopStartPacket({ ownerVid: 12345, items });
     });

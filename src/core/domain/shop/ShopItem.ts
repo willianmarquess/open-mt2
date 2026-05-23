@@ -5,4 +5,6 @@ export type ShopItem = {
     count: number;
     price: number;
     item: Item;
+    position: number;
+    size: number;
 };
