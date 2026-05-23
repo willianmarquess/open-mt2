@@ -97,6 +97,7 @@ export default class PrivateShopService {
 
         const privateShop = new PrivateShop({ owner: player, sign, items: shopItems });
         player.setPrivateShop(privateShop);
+        player.setPolymorph(30000);
 
         this.logger.debug(
             `[PrivateShopService] ${player.getName()} opened private shop "${sign}" (${shopItems.length} item(s))`,
@@ -126,6 +127,7 @@ export default class PrivateShopService {
 
         // Send SHOP_END to the owner to close the shop UI on their client
         player.sendShopClose();
+        player.setPolymorph(0);
 
         this.logger.debug(`[PrivateShopService] ${player.getName()} closed their private shop`);
 
