@@ -2,15 +2,6 @@ import PacketHeaderEnum from '@/core/enum/PacketHeaderEnum';
 import PacketOut from '@/core/interface/networking/packets/packet/out/PacketOut';
 import { PRIVATE_SHOP_SIGN_MAX_LEN } from '@/core/domain/shop/PrivateShop';
 
-// Packet structure (little-endian, #pragma pack(1)):
-//  [1B header=0x27][4B ownerVid][33B sign (null-terminated)]
-//
-// Total: 1 + 4 + 33 = 38 bytes
-//
-// HEADER_GC_SHOP_SIGN = 39 (0x27)
-// Sent to all players in the area when a private shop opens or closes.
-// When closing, sign is an empty string ("").
-
 const SIGN_FIELD_LEN = PRIVATE_SHOP_SIGN_MAX_LEN + 1; // 33 bytes incl. null terminator
 const PACKET_SIZE = 1 + 4 + SIGN_FIELD_LEN; // 38 bytes
 

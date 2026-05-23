@@ -2,7 +2,6 @@ import PacketHeaderEnum from '@/core/enum/PacketHeaderEnum';
 import PacketOut from '@/core/interface/networking/packets/packet/out/PacketOut';
 import { ShopSubHeaderGC } from '@/core/enum/ShopSubHeaderEnum';
 
-// [1B header][2B size][1B subheader=END] - total 4 bytes
 const PACKET_SIZE = 4;
 
 export default class ShopEndPacket extends PacketOut {
