@@ -1,8 +1,6 @@
 import PacketHeaderEnum from '@/core/enum/PacketHeaderEnum';
 import PacketOut from './PacketOut';
 
-// GC_ITEM_USE wire layout:
-//  [1B header=0x0b][1B window][2B position]  - 4 bytes total
 const PACKET_SIZE = 4;
 
 export default class ItemUsePacket extends PacketOut {
