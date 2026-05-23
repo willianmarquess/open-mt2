@@ -1775,7 +1775,7 @@ export default class Player extends Character {
         return this.playerClass;
     }
     getClassId() {
-        return this.isPolymorphed() ? this.polymorphVnum : this.playerClass;
+        return this.isPolymorphed() ? this.getPolymorphVnum() : this.playerClass;
     }
     getSkillGroup() {
         return this.skillGroup;
