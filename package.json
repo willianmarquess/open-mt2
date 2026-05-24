@@ -1,5 +1,5 @@
 {
-  "name": "mt2-server-javascript",
+  "name": "open-mt2",
   "version": "1.0.0",
   "description": "",
   "main": "src/main.js",
@@ -31,7 +31,7 @@
     "@types/bcryptjs": "^3.0.0",
     "@types/chai": "^5.2.3",
     "@types/mocha": "^10.0.10",
-    "@types/node": "^25.8.0",
+    "@types/node": "^25.9.1",
     "@types/sinon": "^21.0.1",
     "@typescript-eslint/eslint-plugin": "^8.59.3",
     "@typescript-eslint/parser": "^8.59.3",

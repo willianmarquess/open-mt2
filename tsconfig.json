@@ -17,8 +17,6 @@
       "@/*": ["./src/*"]
     },
     "types": ["node", "mocha"]
-    // Se precisar de tempo para corrigir erros de strict:
-    // "strict": false
   },
   "include": ["src", "test"],
   "exclude": []
