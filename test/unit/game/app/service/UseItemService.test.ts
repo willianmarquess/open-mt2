@@ -8,13 +8,15 @@ import UseItemService from '@/game/app/service/UseItemService';
 describe('UseItemService', () => {
     let loggerStub;
     let itemManagerStub;
+    let mobManagerStub;
     let service: UseItemService;
     let playerStub;
 
     beforeEach(() => {
         loggerStub = sinon.createStubInstance(WinstonLoggerAdapter);
         itemManagerStub = { update: sinon.stub().resolves() };
-        service = new UseItemService({ logger: loggerStub, itemManager: itemManagerStub });
+        mobManagerStub = { hasMob: sinon.stub().resolves() };
+        service = new UseItemService({ logger: loggerStub, itemManager: itemManagerStub, mobManager: mobManagerStub });
         playerStub = {
             getItem: sinon.stub(),
             getInventory: sinon.stub(),
