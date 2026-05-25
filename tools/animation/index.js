@@ -1,3 +1,4 @@
+/* global process */
 import fsPromise from 'fs/promises';
 import fs from 'fs';
 import path from 'path';

@@ -1,5 +1,2 @@
-echo "CODE FORMAT HOOK"
-npm run format
-
-echo "CODE LINT HOOK"
-npm run format
+echo "CODE LINT & FORMAT HOOK"
+npx lint-staged

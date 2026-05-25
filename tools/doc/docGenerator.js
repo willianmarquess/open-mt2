@@ -87,5 +87,5 @@ function generateDocumentation(dir) {
     console.log(`\nComplete documentation generated at ${outputPath}`);
 }
 
-const packetDir = path.join('src');
+path.join('src');
 generateDocumentation(inputFilePath);
