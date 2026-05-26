@@ -35,6 +35,7 @@ export default class PolymorphCommandHandler extends CommandHandler<PolymorphCom
             return;
         }
 
+        // TODO: Calculate new player attributes based on mob attributes.
         player.setPolymorph(vnum);
         this.logger.info(`[PolymorphCommand] ${player.getName()} polymorphed into vnum ${vnum}`);
     }
