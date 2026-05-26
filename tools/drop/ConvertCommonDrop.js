@@ -1,3 +1,4 @@
+/* global process */
 import { join } from 'path';
 import fs, { writeFile } from 'fs/promises';
 
