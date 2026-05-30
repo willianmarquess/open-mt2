@@ -67,7 +67,7 @@ export default class OnClickPacketHandler extends PacketHandler<OnClickPacket> {
         }
 
         // If the npc has a quest and is a shop, then do the quest first and skip opening the shop
-        const isInQuestMenu = this.questManager.onClick(player, target as NPC);
+        const isInQuestMenu = await this.questManager.onClick(player, target as NPC);
 
         if (!isInQuestMenu) {
             await this.shopManager.openShop(target, player);
