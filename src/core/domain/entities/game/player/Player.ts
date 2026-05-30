@@ -43,7 +43,7 @@ import { PlayerPoints } from './delegate/PlayerPoints';
 import { PositionEnum } from '@/core/enum/PositionEnum';
 import { PlayerBattle } from './delegate/battle/PlayerBattle';
 import { AttackTypeEnum } from '@/core/enum/AttackTypeEnum';
-import Monster from '../mob/Monster';
+import type Monster from '../mob/Monster';
 import { AffectBitsTypeEnum } from '@/core/enum/AffectBitsTypeEnum';
 import SpecialEffectPacket from '@/core/interface/networking/packets/packet/out/SpecialEffectPacket';
 import { SpecialEffectTypeEnum } from '@/core/enum/SpecialEffectTypeEnum';

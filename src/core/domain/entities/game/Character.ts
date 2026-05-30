@@ -4,7 +4,7 @@ import { AnimationTypeEnum } from '@/core/enum/AnimationTypeEnum';
 import { AnimationSubTypeEnum } from '@/core/enum/AnimationSubTypeEnum';
 import MathUtil from '../../util/MathUtil';
 import AnimationUtil from '../../util/AnimationUtil';
-import Player from './player/Player';
+import type Player from './player/Player';
 import GameEntity from './GameEntity';
 import { AffectBitsTypeEnum } from '@/core/enum/AffectBitsTypeEnum';
 import AffectBitFlag from '@/core/util/AffectBitFlag';
@@ -109,8 +109,8 @@ export default abstract class Character extends GameEntity {
 
     public createFlyEffect(toVirtualId: number, type: FlyEnum) {
         for (const otherEntity of this.nearbyEntities.values()) {
-            if (otherEntity instanceof Player) {
-                otherEntity.showFlyEffect(type, this.virtualId, toVirtualId);
+            if (otherEntity.getEntityType() === EntityTypeEnum.PLAYER) {
+                (otherEntity as Player).showFlyEffect(type, this.virtualId, toVirtualId);
             }
         }
     }
@@ -155,8 +155,8 @@ export default abstract class Character extends GameEntity {
 
     broadcastMyTarget() {
         for (const entity of this.targetedBy.values()) {
-            if (entity instanceof Player) {
-                entity.sendTargetUpdated(this);
+            if (entity.getEntityType() === EntityTypeEnum.PLAYER) {
+                (entity as Player).sendTargetUpdated(this);
             }
         }
     }
