@@ -136,6 +136,9 @@ export default class PrivateShopService {
 
         player.setPrivateShop(null);
 
+        // Stamp the shop-close time for warp/portal exploit prevention
+        player.setMyShopTime();
+
         // Send SHOP_END to the owner to close the shop UI on their client
         player.sendShopClose();
         player.setPolymorph(0);

@@ -51,6 +51,7 @@ const makePlayer = (overrides: Partial<any> = {}): any => ({
     sendItemAdded: sinon.stub(),
     sendItemUpdate: sinon.stub(),
     setPolymorph: sinon.stub(),
+    setMyShopTime: sinon.stub(),
     ...overrides,
 });
 

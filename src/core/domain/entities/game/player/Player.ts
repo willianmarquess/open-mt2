@@ -114,6 +114,9 @@ export default class Player extends Character {
     private privateShop: PrivateShop | null = null;
     private currentPrivateShopOwner: Player | null = null;
 
+    /** Timestamp (ms) when the player last closed their private shop, used for anti-exploit warp cooldown. */
+    private myShopClosedAt: number | null = null;
+
     private polymorphVnum: number = 0;
 
     constructor(
@@ -654,7 +657,22 @@ export default class Player extends Character {
         this.onEquipmentChange();
     }
 
+    canTeleport() {
+        if (this.isShopCloseGracePeriod()) {
+            return false;
+        }
+    }
+
     teleport(x: number, y: number) {
+        if (!this.canTeleport()) {
+            this.chat({
+                message: `[SYSTEM] teleport canceled`,
+                messageType: ChatMessageTypeEnum.INFO,
+            });
+
+            return;
+        }
+
         this.move(x, y);
         this.stop();
 
@@ -1530,6 +1548,25 @@ export default class Player extends Character {
 
     isRunningPrivateShop(): boolean {
         return this.privateShop !== null;
+    }
+
+    /** Records the current timestamp as the moment the player's private shop was closed. */
+    setMyShopTime() {
+        this.myShopClosedAt = Date.now();
+    }
+
+    /** Returns the timestamp (ms) when the private shop was last closed, or null if never. */
+    getMyShopTime(): number | null {
+        return this.myShopClosedAt;
+    }
+
+    /**
+     * Returns true if the player closed their private shop less than `limitSeconds` ago.
+     * Used to block warp/teleport actions shortly after shop closure, to prevent item duplication.
+     */
+    isShopCloseGracePeriod(limitSeconds: number = 10): boolean {
+        if (this.myShopClosedAt === null) return false;
+        return Date.now() - this.myShopClosedAt < limitSeconds * 1000;
     }
 
     getCurrentPrivateShopOwner(): Player | null {
