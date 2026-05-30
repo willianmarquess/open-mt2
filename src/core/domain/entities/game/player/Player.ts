@@ -658,7 +658,7 @@ export default class Player extends Character {
     }
 
     canTeleport() {
-        if (this.isShopCloseGracePeriod()) {
+        if (this.isShopCloseGracePeriod() || this.isRunningPrivateShop()) {
             return false;
         }
     }
