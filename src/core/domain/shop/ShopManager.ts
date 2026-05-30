@@ -80,7 +80,6 @@ export default class ShopManager {
             );
             await this.privateShopService.openShopForGuest(player, targetPlayer);
         }
-        return;
     }
 
     async closeShop(player: Player) {
