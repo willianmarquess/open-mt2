@@ -7,16 +7,27 @@ import { WindowTypeEnum } from '@/core/enum/WindowTypeEnum';
 import PrivateShop, { PrivateShopItem } from '@/core/domain/shop/PrivateShop';
 import { MyShopItemEntry } from '@/core/interface/networking/packets/packet/in/myshop/MyShopPacket';
 import ItemManager from '@/core/domain/manager/ItemManager';
+import SaveCharacterService from '@/game/domain/service/SaveCharacterService';
 
 /** Maximum gold price a seller can set per item. */
 const MAX_ITEM_PRICE = 2_000_000_000;
 
 export default class PrivateShopService {
     private readonly itemManager: ItemManager;
+    private readonly saveCharacterService: SaveCharacterService;
     private readonly logger: Logger;
 
-    constructor({ itemManager, logger }: { itemManager: ItemManager; logger: Logger }) {
+    constructor({
+        itemManager,
+        saveCharacterService,
+        logger,
+    }: {
+        itemManager: ItemManager;
+        saveCharacterService: SaveCharacterService;
+        logger: Logger;
+    }) {
         this.itemManager = itemManager;
+        this.saveCharacterService = saveCharacterService;
         this.logger = logger;
     }
 
@@ -269,7 +280,11 @@ export default class PrivateShopService {
         owner.addPoint(PointsEnum.GOLD, price);
 
         // Persist item ownership change
-        await this.itemManager.save(item);
+        await this.itemManager.update(item);
+
+        // Persist gold and items, flush item cache
+        await this.saveCharacterService.execute(guest);
+        await this.saveCharacterService.execute(owner);
 
         // Remove entry from shop and notify all guests that this slot is now empty
         shop.removeItemAtDisplaySlot(displaySlot);

@@ -67,7 +67,12 @@ describe('PrivateShopService', () => {
             save: sinon.stub().resolves(),
             delete: sinon.stub().resolves(),
         };
-        service = new PrivateShopService({ logger: loggerStub, itemManager: itemManagerStub });
+        const saveCharacterServiceStub = { execute: sinon.stub().resolves() } as any;
+        service = new PrivateShopService({
+            logger: loggerStub,
+            itemManager: itemManagerStub,
+            saveCharacterService: saveCharacterServiceStub,
+        });
     });
 
     afterEach(() => sinon.restore());
