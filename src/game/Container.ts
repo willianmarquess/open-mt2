@@ -37,7 +37,7 @@ import RedisCacheProvider from '@/core/infra/cache/RedisCacheProvider';
 import { PrivilegeManager } from '@/core/domain/manager/PrivilegeManager';
 import { QuestManager } from '@/core/domain/quests/QuestManager';
 import ShopService from '@/game/app/service/ShopService';
-import ShopManager from '../core/domain/shop/ShopManager';
+import ShopManager from '@/core/domain/shop/ShopManager';
 import PrivateShopService from './app/service/PrivateShopService';
 
 const container = createContainer();

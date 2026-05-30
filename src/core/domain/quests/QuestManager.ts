@@ -10,6 +10,7 @@ import { NpcQuest } from './facade/NpcQuest';
 import { VictimQuest } from './facade/VictimQuest';
 import Monster from '../entities/game/mob/Monster';
 import ShopManager from '@/core/domain/shop/ShopManager';
+import GameEntity from '../entities/game/GameEntity';
 
 export class QuestManager {
     private readonly logger: Logger;
@@ -258,12 +259,16 @@ export class QuestManager {
         }
     }
 
-    async onClick(player: Player, npc: NPC) {
+    async onClick(player: Player, npc: GameEntity) {
+        if (!(npc instanceof NPC)) {
+            return false;
+        }
+
         if (player.isQuestRunning()) {
             this.logger.info(
                 `[QUEST_MANAGER] Player ${player.getId()} logged in with running quest ${player.getCurrentQuest()?.getName()}`,
             );
-            return;
+            return false;
         }
 
         const questMap = this.questsClickEvents.get(npc.getId()) ?? this.getQuestsForEvent(QuestEventEnum.CLICK);
@@ -275,10 +280,13 @@ export class QuestManager {
             if (states.has(current)) {
                 await quest.runState({
                     eventType: QuestEventEnum.CLICK,
-                    npc: new NpcQuest({ npc, shopService: this.shopManager, player }),
+                    npc: new NpcQuest({ npc, shopManager: this.shopManager, player }),
                 });
+                return true;
             }
         }
+
+        return false;
     }
 
     async onButton(player: Player, questId: number) {

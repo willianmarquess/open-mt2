@@ -62,12 +62,15 @@ export default class OnClickPacketHandler extends PacketHandler<OnClickPacket> {
             return;
         }
 
-        const npc = target as NPC;
-        this.logger.info(`[OnClickPacketHandler] You have clicked on: ${npc.getId()}`);
+        if (target instanceof NPC) {
+            this.logger.info(`[OnClickPacketHandler] You have clicked on: ${target.getId()}`);
+        }
 
         // If the npc has a quest and is a shop, then do the quest first and skip opening the shop
-        this.questManager.onClick(player, npc);
+        const isInQuestMenu = this.questManager.onClick(player, target);
 
-        await this.shopManager.openShop(target, player);
+        if (!isInQuestMenu) {
+            await this.shopManager.openShop(target, player);
+        }
     }
 }

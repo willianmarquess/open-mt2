@@ -7,9 +7,9 @@ export class NpcQuest {
     private readonly shopManager: ShopManager;
     private readonly player: Player;
 
-    constructor({ npc, shopService, player }: { npc: NPC; shopService: ShopManager; player: Player }) {
+    constructor({ npc, shopManager, player }: { npc: NPC; shopManager: ShopManager; player: Player }) {
         this.npc = npc;
-        this.shopManager = shopService;
+        this.shopManager = shopManager;
         this.player = player;
     }
 
