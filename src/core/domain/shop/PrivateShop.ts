@@ -24,14 +24,14 @@ export type PrivateShopItem = {
  */
 export default class PrivateShop {
     private readonly owner: Player;
-    private readonly sign: string;
+    private readonly shopName: string;
     /** Keyed by displayPos (shop grid slot 0-39). */
     private readonly items: Map<number, PrivateShopItem> = new Map();
     private readonly guests: Set<Player> = new Set();
 
     constructor({ owner, sign, items }: { owner: Player; sign: string; items: PrivateShopItem[] }) {
         this.owner = owner;
-        this.sign = sign.slice(0, PRIVATE_SHOP_SIGN_MAX_LEN);
+        this.shopName = sign.slice(0, PRIVATE_SHOP_SIGN_MAX_LEN);
 
         for (const entry of items.slice(0, PRIVATE_SHOP_MAX_ITEMS)) {
             this.items.set(entry.displayPos, entry);
@@ -43,7 +43,7 @@ export default class PrivateShop {
     }
 
     getSign(): string {
-        return this.sign;
+        return this.shopName;
     }
 
     /**

@@ -36,8 +36,8 @@ import WinstonLoggerAdapter from '@/core/infra/logger/WinstonLoggerAdapter';
 import RedisCacheProvider from '@/core/infra/cache/RedisCacheProvider';
 import { PrivilegeManager } from '@/core/domain/manager/PrivilegeManager';
 import { QuestManager } from '@/core/domain/quests/QuestManager';
-import ShopManager from '@/core/domain/shop/ShopManager';
-import ShopService from './app/service/ShopService';
+import ShopService from '@/game/app/service/ShopService';
+import ShopManager from '../core/domain/shop/ShopManager';
 import PrivateShopService from './app/service/PrivateShopService';
 
 const container = createContainer();
@@ -81,9 +81,8 @@ container.register({
     dropManager: asClass(DropManager).singleton(),
     privilegeManager: asClass(PrivilegeManager).singleton(),
     questManager: asClass(QuestManager).singleton(),
-
-    shopManager: asClass(ShopManager).singleton(),
     shopService: asClass(ShopService).singleton(),
+    shopManager: asClass(ShopManager).singleton(),
     privateShopService: asClass(PrivateShopService).singleton(),
 });
 

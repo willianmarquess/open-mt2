@@ -9,18 +9,18 @@ import NPC from '../entities/game/mob/NPC';
 import { NpcQuest } from './facade/NpcQuest';
 import { VictimQuest } from './facade/VictimQuest';
 import Monster from '../entities/game/mob/Monster';
-import ShopService from '@/game/app/service/ShopService';
+import ShopManager from '@/core/domain/shop/ShopManager';
 
 export class QuestManager {
     private readonly logger: Logger;
-    private readonly shopService: ShopService;
+    private readonly shopManager: ShopManager;
     private readonly questsClasses: Map<number, typeof AbstractQuest> = new Map();
     private readonly questsClickEvents: Map<number, Map<number, Set<string>>> = new Map();
     private readonly eventQuestMap: Map<QuestEventEnum, Map<number, Set<string>>> = new Map();
 
-    constructor({ logger, shopService }: { logger: Logger; shopService: ShopService }) {
+    constructor({ logger, shopManager }: { logger: Logger; shopManager: ShopManager }) {
         this.logger = logger;
-        this.shopService = shopService;
+        this.shopManager = shopManager;
     }
 
     load() {
@@ -275,7 +275,7 @@ export class QuestManager {
             if (states.has(current)) {
                 await quest.runState({
                     eventType: QuestEventEnum.CLICK,
-                    npc: new NpcQuest({ npc, shopService: this.shopService, player }),
+                    npc: new NpcQuest({ npc, shopService: this.shopManager, player }),
                 });
             }
         }

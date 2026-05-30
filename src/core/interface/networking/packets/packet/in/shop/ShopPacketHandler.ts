@@ -3,16 +3,16 @@ import PacketHandler from '../../PacketHandler';
 import Logger from '@/core/infra/logger/Logger';
 import ShopPacket from './ShopPacket';
 import { ShopSubHeaderCG } from '@/core/enum/ShopSubHeaderEnum';
-import ShopService from '@/game/app/service/ShopService';
+import ShopManager from '@/core/domain/shop/ShopManager';
 
 export default class ShopPacketHandler extends PacketHandler<ShopPacket> {
     private readonly logger: Logger;
-    private readonly shopService: ShopService;
+    private readonly shopManager: ShopManager;
 
-    constructor({ logger, shopService }: { logger: Logger; shopService: ShopService }) {
+    constructor({ logger, shopManager }: { logger: Logger; shopManager: ShopManager }) {
         super();
         this.logger = logger;
-        this.shopService = shopService;
+        this.shopManager = shopManager;
     }
 
     async execute(connection: GameConnection, packet: ShopPacket) {
@@ -31,19 +31,19 @@ export default class ShopPacketHandler extends PacketHandler<ShopPacket> {
 
         switch (packet.getShopSubHeader()) {
             case ShopSubHeaderCG.END:
-                await this.shopService.closeShop(player);
+                await this.shopManager.closeShop(player);
                 break;
 
             case ShopSubHeaderCG.BUY:
-                await this.shopService.buy(player, packet.getPos());
+                await this.shopManager.buy(player, packet.getPos());
                 break;
 
             case ShopSubHeaderCG.SELL:
-                await this.shopService.sell(player, packet.getPos(), 1);
+                await this.shopManager.sell(player, packet.getPos(), 1);
                 break;
 
             case ShopSubHeaderCG.SELL2:
-                await this.shopService.sell(player, packet.getPos(), packet.getCount());
+                await this.shopManager.sell(player, packet.getPos(), packet.getCount());
                 break;
 
             default:
