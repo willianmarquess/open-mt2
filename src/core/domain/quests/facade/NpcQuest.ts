@@ -1,6 +1,6 @@
-import ShopManager from '@/core/domain/shop/ShopManager';
-import NPC from '../../entities/game/mob/NPC';
-import Player from '../../entities/game/player/Player';
+import type ShopManager from '@/core/domain/shop/ShopManager';
+import type NPC from '../../entities/game/mob/NPC';
+import type Player from '../../entities/game/player/Player';
 
 export class NpcQuest {
     private readonly npc: NPC;

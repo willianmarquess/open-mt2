@@ -4,6 +4,7 @@ import WinstonLoggerAdapter from '@/core/infra/logger/WinstonLoggerAdapter';
 import ShopManager from '@/core/domain/shop/ShopManager';
 import NPC from '@/core/domain/entities/game/mob/NPC';
 import Shop from '@/core/domain/shop/Shop';
+import { EntityTypeEnum } from '@/core/enum/EntityTypeEnum';
 import { ShopItem } from '@/core/domain/shop/ShopItem';
 import { ShopSubHeaderGC } from '@/core/enum/ShopSubHeaderEnum';
 import { PointsEnum } from '@/core/enum/PointsEnum';
@@ -47,6 +48,8 @@ describe('ShopService', () => {
         npcStub = sinon.createStubInstance(NPC);
         npcStub.getId.returns(9001);
         npcStub.getVirtualId.returns(1);
+        npcStub.getEntityType.returns(EntityTypeEnum.NPC);
+        npcStub.isNPC.returns(true);
     });
 
     afterEach(() => {

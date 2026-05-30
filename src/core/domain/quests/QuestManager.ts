@@ -10,7 +10,6 @@ import { NpcQuest } from './facade/NpcQuest';
 import { VictimQuest } from './facade/VictimQuest';
 import Monster from '../entities/game/mob/Monster';
 import ShopManager from '@/core/domain/shop/ShopManager';
-import GameEntity from '../entities/game/GameEntity';
 
 export class QuestManager {
     private readonly logger: Logger;
@@ -259,8 +258,8 @@ export class QuestManager {
         }
     }
 
-    async onClick(player: Player, npc: GameEntity) {
-        if (!(npc instanceof NPC)) {
+    async onClick(player: Player, npc: NPC) {
+        if (!npc.isNPC()) {
             return false;
         }
 

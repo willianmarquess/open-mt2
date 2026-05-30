@@ -1,5 +1,4 @@
 import Player from '@/core/domain/entities/game/player/Player';
-import NPC from '@/core/domain/entities/game/mob/NPC';
 import ShopService from '@/game/app/service/ShopService';
 import ItemManager from '@/core/domain/manager/ItemManager';
 import Logger from '@/core/infra/logger/Logger';
@@ -9,6 +8,7 @@ import { ShopSubHeaderGC } from '@/core/enum/ShopSubHeaderEnum';
 import { WindowTypeEnum } from '@/core/enum/WindowTypeEnum';
 import PrivateShopService from '../../../game/app/service/PrivateShopService';
 import GameEntity from '@/core/domain/entities/game/GameEntity';
+import NPC from '../entities/game/mob/NPC';
 
 export default class ShopManager {
     private readonly shopService: ShopService;
@@ -34,16 +34,15 @@ export default class ShopManager {
     }
 
     async openShop(target: GameEntity, player: Player, id?: number) {
-        if (target instanceof Player) {
-            await this.openPlayerShop(target, player);
-        }
-
-        if (target instanceof NPC) {
-            await this.openNpcShop(target, player, id);
-        }
+        await this.openPlayerShop(target as Player, player);
+        await this.openNpcShop(target as NPC, player, id);
     }
 
     async openNpcShop(npc: NPC, player: Player, id?: number) {
+        if (!npc.isNPC()) {
+            return;
+        }
+
         const shop = this.shopService.getShop(id ?? npc.getId());
         if (!shop) {
             this.logger.debug(`[ShopManager] NPC vnum ${npc.getId()} has no shop`);
@@ -66,6 +65,10 @@ export default class ShopManager {
     }
 
     async openPlayerShop(targetPlayer: Player, player: Player) {
+        if (!targetPlayer.isPlayer()) {
+            return;
+        }
+
         if (targetPlayer.isRunningPrivateShop()) {
             if (targetPlayer === player) {
                 // Owner clicked themselves - re-send the shop listing to open the management UI
