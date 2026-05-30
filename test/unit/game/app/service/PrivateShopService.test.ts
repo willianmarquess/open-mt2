@@ -67,6 +67,7 @@ describe('PrivateShopService', () => {
         itemManagerStub = {
             save: sinon.stub().resolves(),
             delete: sinon.stub().resolves(),
+            update: sinon.stub().resolves(),
         };
         const saveCharacterServiceStub = { execute: sinon.stub().resolves() } as any;
         service = new PrivateShopService({
@@ -520,7 +521,7 @@ describe('PrivateShopService', () => {
 
             expect(guest.addPoint.calledWith(PointsEnum.GOLD, -500)).to.be.true;
             expect(owner.addPoint.calledWith(PointsEnum.GOLD, 500)).to.be.true;
-            expect(itemManagerStub.save.calledOnceWith(item)).to.be.true;
+            expect(itemManagerStub.update.calledOnceWith(item)).to.be.true;
             expect(guest.sendShopResult.calledWith({ result: ShopSubHeaderGC.OK })).to.be.true;
         });
 
