@@ -1,8 +1,10 @@
 import { expect } from 'chai';
 import sinon from 'sinon';
 import WinstonLoggerAdapter from '@/core/infra/logger/WinstonLoggerAdapter';
-import ShopService from '@/game/app/service/ShopService';
+import ShopManager from '@/core/domain/shop/ShopManager';
+import NPC from '@/core/domain/entities/game/mob/NPC';
 import Shop from '@/core/domain/shop/Shop';
+import { EntityTypeEnum } from '@/core/enum/EntityTypeEnum';
 import { ShopItem } from '@/core/domain/shop/ShopItem';
 import { ShopSubHeaderGC } from '@/core/enum/ShopSubHeaderEnum';
 import { PointsEnum } from '@/core/enum/PointsEnum';
@@ -11,7 +13,7 @@ describe('ShopService', () => {
     let loggerStub;
     let shopManagerStub;
     let itemManagerStub;
-    let service: ShopService;
+    let manager: ShopManager;
     let playerStub;
     let npcStub;
 
@@ -20,12 +22,18 @@ describe('ShopService', () => {
         shopManagerStub = { getShop: sinon.stub(), hasShop: sinon.stub() };
         itemManagerStub = { getItem: sinon.stub(), save: sinon.stub().resolves(), delete: sinon.stub().resolves() };
 
-        service = new ShopService({ logger: loggerStub, shopManager: shopManagerStub, itemManager: itemManagerStub });
+        manager = new ShopManager({
+            logger: loggerStub,
+            shopService: shopManagerStub,
+            itemManager: itemManagerStub,
+            privateShopService: {} as any,
+        });
 
         playerStub = {
             getName: sinon.stub().returns('TestPlayer'),
             setCurrentShop: sinon.stub(),
             getCurrentShop: sinon.stub(),
+            getCurrentPrivateShopOwner: sinon.stub().returns(null),
             getPoint: sinon.stub(),
             addPoint: sinon.stub(),
             addItem: sinon.stub(),
@@ -37,10 +45,11 @@ describe('ShopService', () => {
             sendShopResult: sinon.stub(),
         };
 
-        npcStub = {
-            getId: sinon.stub().returns(9001),
-            getVirtualId: sinon.stub().returns(1),
-        };
+        npcStub = sinon.createStubInstance(NPC);
+        npcStub.getId.returns(9001);
+        npcStub.getVirtualId.returns(1);
+        npcStub.getEntityType.returns(EntityTypeEnum.NPC);
+        npcStub.isNPC.returns(true);
     });
 
     afterEach(() => {
@@ -55,7 +64,7 @@ describe('ShopService', () => {
             const shop = new Shop({ npcVnum: 9001, shopName: 'Arms', items });
             shopManagerStub.getShop.returns(shop);
 
-            await service.openShop(playerStub, npcStub);
+            await manager.openShop(npcStub, playerStub);
 
             expect(playerStub.setCurrentShop.calledOnceWith(shop)).to.be.true;
             expect(playerStub.sendCurrentShop.calledOnce).to.be.true;
@@ -64,7 +73,7 @@ describe('ShopService', () => {
         it('should not open shop if NPC has no shop', async () => {
             shopManagerStub.getShop.returns(undefined);
 
-            await service.openShop(playerStub, npcStub);
+            await manager.openShop(npcStub, playerStub);
 
             expect(playerStub.setCurrentShop.called).to.be.false;
             expect(playerStub.sendCurrentShop.called).to.be.false;
@@ -76,7 +85,7 @@ describe('ShopService', () => {
             const shop = new Shop({ npcVnum: 9001, shopName: 'Arms', items: [] });
             playerStub.getCurrentShop.returns(shop);
 
-            await service.closeShop(playerStub);
+            await manager.closeShop(playerStub);
 
             expect(playerStub.setCurrentShop.calledOnceWith(null)).to.be.true;
             expect(playerStub.sendShopClose.calledOnce).to.be.true;
@@ -85,7 +94,7 @@ describe('ShopService', () => {
         it('should do nothing if player has no open shop', async () => {
             playerStub.getCurrentShop.returns(null);
 
-            await service.closeShop(playerStub);
+            await manager.closeShop(playerStub);
 
             expect(playerStub.setCurrentShop.called).to.be.false;
             expect(playerStub.sendShopClose.called).to.be.false;
@@ -96,7 +105,7 @@ describe('ShopService', () => {
         it('should not buy if player has no open shop', async () => {
             playerStub.getCurrentShop.returns(null);
 
-            await service.buy(playerStub, 0);
+            await manager.buy(playerStub, 0);
 
             expect(playerStub.addPoint.called).to.be.false;
             expect(playerStub.sendShopResult.called).to.be.false;
@@ -106,7 +115,7 @@ describe('ShopService', () => {
             const shop = new Shop({ npcVnum: 9001, shopName: 'Arms', items: [] });
             playerStub.getCurrentShop.returns(shop);
 
-            await service.buy(playerStub, 5);
+            await manager.buy(playerStub, 5);
 
             expect(playerStub.sendShopResult.calledOnceWith({ result: ShopSubHeaderGC.INVALID_POS })).to.be.true;
         });
@@ -119,7 +128,7 @@ describe('ShopService', () => {
             playerStub.getCurrentShop.returns(shop);
             playerStub.getPoint.withArgs(PointsEnum.GOLD).returns(100);
 
-            await service.buy(playerStub, 0);
+            await manager.buy(playerStub, 0);
 
             expect(playerStub.sendShopResult.calledOnceWith({ result: ShopSubHeaderGC.NOT_ENOUGH_MONEY })).to.be.true;
             expect(playerStub.addPoint.called).to.be.false;
@@ -134,7 +143,7 @@ describe('ShopService', () => {
             playerStub.getPoint.withArgs(PointsEnum.GOLD).returns(1000);
             itemManagerStub.getItem.returns(null);
 
-            await service.buy(playerStub, 0);
+            await manager.buy(playerStub, 0);
 
             expect(playerStub.sendShopResult.calledOnceWith({ result: ShopSubHeaderGC.SOLD_OUT })).to.be.true;
         });
@@ -150,7 +159,7 @@ describe('ShopService', () => {
             itemManagerStub.getItem.returns(mockItem);
             playerStub.addItem.returns(false);
 
-            await service.buy(playerStub, 0);
+            await manager.buy(playerStub, 0);
 
             expect(playerStub.sendShopResult.calledOnceWith({ result: ShopSubHeaderGC.INVENTORY_FULL })).to.be.true;
             expect(playerStub.addPoint.called).to.be.false;
@@ -167,7 +176,7 @@ describe('ShopService', () => {
             itemManagerStub.getItem.returns(mockItem);
             playerStub.addItem.returns(true);
 
-            await service.buy(playerStub, 0);
+            await manager.buy(playerStub, 0);
 
             expect(playerStub.addPoint.calledOnceWith(PointsEnum.GOLD, -200)).to.be.true;
             expect(itemManagerStub.save.calledOnceWith(mockItem)).to.be.true;
@@ -179,7 +188,7 @@ describe('ShopService', () => {
         it('should not sell if player has no open shop', async () => {
             playerStub.getCurrentShop.returns(null);
 
-            await service.sell(playerStub, 1, 1);
+            await manager.sell(playerStub, 1, 1);
 
             expect(playerStub.addPoint.called).to.be.false;
         });
@@ -189,7 +198,7 @@ describe('ShopService', () => {
             playerStub.getCurrentShop.returns(shop);
             playerStub.getItem.returns(null);
 
-            await service.sell(playerStub, 1, 1);
+            await manager.sell(playerStub, 1, 1);
 
             expect(playerStub.sendShopResult.calledOnceWith({ result: ShopSubHeaderGC.INVALID_POS })).to.be.true;
         });
@@ -205,7 +214,7 @@ describe('ShopService', () => {
             playerStub.getCurrentShop.returns(shop);
             playerStub.getItem.returns(mockItem);
 
-            await service.sell(playerStub, 1, 1);
+            await manager.sell(playerStub, 1, 1);
 
             expect(playerStub.sendShopResult.calledOnceWith({ result: ShopSubHeaderGC.INVALID_POS })).to.be.true;
             expect(playerStub.addPoint.called).to.be.false;
@@ -224,7 +233,7 @@ describe('ShopService', () => {
             playerStub.getItem.returns(mockItem);
             playerStub.getInventory.returns(inventoryStub);
 
-            await service.sell(playerStub, 1, 3);
+            await manager.sell(playerStub, 1, 3);
 
             // sell price = floor(500 * 3 / 5) = 300
             expect(playerStub.addPoint.calledOnceWith(PointsEnum.GOLD, 300)).to.be.true;
@@ -243,7 +252,7 @@ describe('ShopService', () => {
             playerStub.getItem.returns(mockItem);
             playerStub.getInventory.returns(inventoryStub);
 
-            await service.sell(playerStub, 2, 1);
+            await manager.sell(playerStub, 2, 1);
 
             expect(inventoryStub.removeItem.calledOnceWith(2, 1)).to.be.true;
             expect(playerStub.sendItemRemoved.calledOnce).to.be.true;
@@ -264,7 +273,7 @@ describe('ShopService', () => {
             playerStub.getItem.returns(mockItem);
             playerStub.getInventory.returns(inventoryStub);
 
-            await service.sell(playerStub, 1, 10); // trying to sell 10, but only 2 available
+            await manager.sell(playerStub, 1, 10); // trying to sell 10, but only 2 available
 
             // sell price = floor(500 * 2 / 5) = 200
             expect(playerStub.addPoint.calledOnceWith(PointsEnum.GOLD, 200)).to.be.true;

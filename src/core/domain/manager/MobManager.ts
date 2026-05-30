@@ -136,6 +136,10 @@ export default class MobManager {
         return this.mobs.has(id);
     }
 
+    getMobProto(id: number): MobsProto | undefined {
+        return this.mobs.get(id);
+    }
+
     getMob(id: number, positionX: number, positionY: number, direction: number = 0) {
         const proto = this.mobs.get(id);
         if (!proto) return;

@@ -30,4 +30,5 @@ export enum ItemUseSubTypeEnum {
     USE_TIME_CHARGE_FIX,
     USE_PUT_INTO_BELT_SOCKET,
     USE_PUT_INTO_RING_SOCKET,
+    USE_POLYMORPH_BALL,
 }
