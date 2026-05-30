@@ -2,6 +2,7 @@ import { expect } from 'chai';
 import sinon from 'sinon';
 import WinstonLoggerAdapter from '@/core/infra/logger/WinstonLoggerAdapter';
 import ShopManager from '@/core/domain/shop/ShopManager';
+import NPC from '@/core/domain/entities/game/mob/NPC';
 import Shop from '@/core/domain/shop/Shop';
 import { ShopItem } from '@/core/domain/shop/ShopItem';
 import { ShopSubHeaderGC } from '@/core/enum/ShopSubHeaderEnum';
@@ -43,10 +44,9 @@ describe('ShopService', () => {
             sendShopResult: sinon.stub(),
         };
 
-        npcStub = {
-            getId: sinon.stub().returns(9001),
-            getVirtualId: sinon.stub().returns(1),
-        };
+        npcStub = sinon.createStubInstance(NPC);
+        npcStub.getId.returns(9001);
+        npcStub.getVirtualId.returns(1);
     });
 
     afterEach(() => {
@@ -61,7 +61,7 @@ describe('ShopService', () => {
             const shop = new Shop({ npcVnum: 9001, shopName: 'Arms', items });
             shopManagerStub.getShop.returns(shop);
 
-            await manager.openShop(playerStub, npcStub);
+            await manager.openShop(npcStub, playerStub);
 
             expect(playerStub.setCurrentShop.calledOnceWith(shop)).to.be.true;
             expect(playerStub.sendCurrentShop.calledOnce).to.be.true;
@@ -70,7 +70,7 @@ describe('ShopService', () => {
         it('should not open shop if NPC has no shop', async () => {
             shopManagerStub.getShop.returns(undefined);
 
-            await manager.openShop(playerStub, npcStub);
+            await manager.openShop(npcStub, playerStub);
 
             expect(playerStub.setCurrentShop.called).to.be.false;
             expect(playerStub.sendCurrentShop.called).to.be.false;
