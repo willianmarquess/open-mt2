@@ -109,7 +109,7 @@ export default abstract class Character extends GameEntity {
 
     public createFlyEffect(toVirtualId: number, type: FlyEnum) {
         for (const otherEntity of this.nearbyEntities.values()) {
-            if (otherEntity.getEntityType() === EntityTypeEnum.PLAYER) {
+            if (otherEntity.isPlayer()) {
                 (otherEntity as Player).showFlyEffect(type, this.virtualId, toVirtualId);
             }
         }
@@ -155,7 +155,7 @@ export default abstract class Character extends GameEntity {
 
     broadcastMyTarget() {
         for (const entity of this.targetedBy.values()) {
-            if (entity.getEntityType() === EntityTypeEnum.PLAYER) {
+            if (entity.isPlayer()) {
                 (entity as Player).sendTargetUpdated(this);
             }
         }
