@@ -3,6 +3,20 @@ import BlockModeCommand from './command/blockMode/BlockModeCommand';
 import BlockModeCommandHandler from './command/blockMode/BlockModeCommandHandler';
 import CloseShopCommand from './command/closeShop/CloseShopCommand';
 import CloseShopCommandHandler from './command/closeShop/CloseShopCommandHandler';
+import UserHorseRideCommand from './command/userHorseRide/UserHorseRideCommand';
+import UserHorseRideCommandHandler from './command/userHorseRide/UserHorseRideCommandHandler';
+import UserHorseBackCommand from './command/userHorseBack/UserHorseBackCommand';
+import UserHorseBackCommandHandler from './command/userHorseBack/UserHorseBackCommandHandler';
+import UserHorseFeedCommand from './command/userHorseFeed/UserHorseFeedCommand';
+import UserHorseFeedCommandHandler from './command/userHorseFeed/UserHorseFeedCommandHandler';
+import HorseStateCommand from './command/horseState/HorseStateCommand';
+import HorseStateCommandHandler from './command/horseState/HorseStateCommandHandler';
+import HorseLevelCommand from './command/horseLevel/HorseLevelCommand';
+import HorseLevelCommandHandler from './command/horseLevel/HorseLevelCommandHandler';
+import HorseRideCommand from './command/horseRide/HorseRideCommand';
+import HorseRideCommandHandler from './command/horseRide/HorseRideCommandHandler';
+import HorseSetStatCommand from './command/horseSetStat/HorseSetStatCommand';
+import HorseSetStatCommandHandler from './command/horseSetStat/HorseSetStatCommandHandler';
 import ExperienceCommand from './command/exp/ExperienceCommand';
 import ExperienceCommandHandler from './command/exp/ExperienceCommandHandler';
 import GoldCommand from './command/gold/GoldCommand';
@@ -166,6 +180,55 @@ export default () =>
             {
                 command: PolymorphCommand,
                 createHandler: (params) => new PolymorphCommandHandler(params),
+            },
+        ],
+        [
+            UserHorseRideCommand.getName(),
+            {
+                command: UserHorseRideCommand,
+                createHandler: (params) => new UserHorseRideCommandHandler(params),
+            },
+        ],
+        [
+            UserHorseBackCommand.getName(),
+            {
+                command: UserHorseBackCommand,
+                createHandler: (params) => new UserHorseBackCommandHandler(params),
+            },
+        ],
+        [
+            UserHorseFeedCommand.getName(),
+            {
+                command: UserHorseFeedCommand,
+                createHandler: (params) => new UserHorseFeedCommandHandler(params),
+            },
+        ],
+        [
+            HorseStateCommand.getName(),
+            {
+                command: HorseStateCommand,
+                createHandler: () => new HorseStateCommandHandler(),
+            },
+        ],
+        [
+            HorseLevelCommand.getName(),
+            {
+                command: HorseLevelCommand,
+                createHandler: (params) => new HorseLevelCommandHandler(params),
+            },
+        ],
+        [
+            HorseRideCommand.getName(),
+            {
+                command: HorseRideCommand,
+                createHandler: () => new HorseRideCommandHandler(),
+            },
+        ],
+        [
+            HorseSetStatCommand.getName(),
+            {
+                command: HorseSetStatCommand,
+                createHandler: () => new HorseSetStatCommandHandler(),
             },
         ],
     ]);

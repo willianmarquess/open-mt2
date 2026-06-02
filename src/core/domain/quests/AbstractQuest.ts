@@ -25,11 +25,12 @@ export abstract class AbstractQuest {
 
     private readonly player: Player;
     private readonly playerQuest: PlayerQuest;
-    private readonly itemManager!: ItemManager;
+    private readonly itemManager: ItemManager;
 
-    constructor({ player }: { player: Player }) {
+    constructor({ player, itemManager }: { player: Player; itemManager: ItemManager }) {
         this.player = player;
         this.playerQuest = new PlayerQuest({ player });
+        this.itemManager = itemManager;
     }
 
     protected nextState(stateName: string): TaskResult {
@@ -336,6 +337,11 @@ export abstract class AbstractQuest {
 
     protected async giveGold(value: number) {
         this.playerQuest.addGold(value);
+    }
+
+    protected giveHorse(level: number = 1) {
+        this.player.setHorseLevel(level);
+        this.hasReward = true;
     }
 
     isRunning() {

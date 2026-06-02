@@ -10,17 +10,28 @@ import { NpcQuest } from './facade/NpcQuest';
 import { VictimQuest } from './facade/VictimQuest';
 import Monster from '../entities/game/mob/Monster';
 import ShopManager from '@/core/domain/shop/ShopManager';
+import ItemManager from '../manager/ItemManager';
 
 export class QuestManager {
     private readonly logger: Logger;
     private readonly shopManager: ShopManager;
+    private readonly itemManager: ItemManager;
     private readonly questsClasses: Map<number, typeof AbstractQuest> = new Map();
     private readonly questsClickEvents: Map<number, Map<number, Set<string>>> = new Map();
     private readonly eventQuestMap: Map<QuestEventEnum, Map<number, Set<string>>> = new Map();
 
-    constructor({ logger, shopManager }: { logger: Logger; shopManager: ShopManager }) {
+    constructor({
+        logger,
+        shopManager,
+        itemManager,
+    }: {
+        logger: Logger;
+        shopManager: ShopManager;
+        itemManager: ItemManager;
+    }) {
         this.logger = logger;
         this.shopManager = shopManager;
+        this.itemManager = itemManager;
     }
 
     load() {
@@ -170,7 +181,7 @@ export class QuestManager {
             const ctor: any = questClass;
             const meta = getQuestMeta(ctor);
 
-            const instance: AbstractQuest = new (questClass as any)({ player });
+            const instance: AbstractQuest = new (questClass as any)({ player, itemManager: this.itemManager });
             (instance as any).id = meta?.id ?? id;
             (instance as any).name = meta?.name ?? id;
 
