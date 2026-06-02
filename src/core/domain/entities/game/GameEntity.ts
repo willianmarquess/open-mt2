@@ -105,4 +105,12 @@ export default abstract class GameEntity {
     isEventTimerActive(eventName: string) {
         return this.eventTimerManager.isTimerActive(eventName);
     }
+
+    isNPC() {
+        return this.getEntityType() === EntityTypeEnum.NPC;
+    }
+
+    isPlayer() {
+        return this.getEntityType() === EntityTypeEnum.PLAYER;
+    }
 }

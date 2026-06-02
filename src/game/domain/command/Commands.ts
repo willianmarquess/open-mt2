@@ -1,6 +1,8 @@
 import Command from './Command';
 import BlockModeCommand from './command/blockMode/BlockModeCommand';
 import BlockModeCommandHandler from './command/blockMode/BlockModeCommandHandler';
+import CloseShopCommand from './command/closeShop/CloseShopCommand';
+import CloseShopCommandHandler from './command/closeShop/CloseShopCommandHandler';
 import ExperienceCommand from './command/exp/ExperienceCommand';
 import ExperienceCommandHandler from './command/exp/ExperienceCommandHandler';
 import GoldCommand from './command/gold/GoldCommand';
@@ -17,6 +19,8 @@ import LogoutCommand from './command/logout/LogoutCommand';
 import LogoutCommandHandler from './command/logout/LogoutCommandHandler';
 import LevelCommand from './command/lvl/LevelCommand';
 import LevelCommandHandler from './command/lvl/LevelCommandHandler';
+import PolymorphCommand from './command/polymorph/PolymorphCommand';
+import PolymorphCommandHandler from './command/polymorph/PolymorphCommandHandler';
 import PrivilegeCommand from './command/privilege/PrivilegeCommand';
 import PrivilegeCommandHandler from './command/privilege/PrivilegeCommandHandler';
 import QuitCommand from './command/quit/QuitCommand';
@@ -148,6 +152,20 @@ export default () =>
             {
                 command: BlockModeCommand,
                 createHandler: (params) => new BlockModeCommandHandler(params),
+            },
+        ],
+        [
+            CloseShopCommand.getName(),
+            {
+                command: CloseShopCommand,
+                createHandler: (params) => new CloseShopCommandHandler(params),
+            },
+        ],
+        [
+            PolymorphCommand.getName(),
+            {
+                command: PolymorphCommand,
+                createHandler: (params) => new PolymorphCommandHandler(params),
             },
         ],
     ]);

@@ -1,7 +1,7 @@
 import { GameConfig } from '@/game/infra/config/GameConfig';
 import exp from '@/core/infra/config/data/exp/exp';
 import Player from '../entities/game/player/Player';
-import Monster from '../entities/game/mob/Monster';
+import type Monster from '../entities/game/mob/Monster';
 import Stone from '../entities/game/mob/Stone';
 import MathUtil from '../util/MathUtil';
 import { PrivilegeManager, PrivilegeTypeEnum } from './PrivilegeManager';

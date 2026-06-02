@@ -43,7 +43,7 @@ import { PlayerPoints } from './delegate/PlayerPoints';
 import { PositionEnum } from '@/core/enum/PositionEnum';
 import { PlayerBattle } from './delegate/battle/PlayerBattle';
 import { AttackTypeEnum } from '@/core/enum/AttackTypeEnum';
-import Monster from '../mob/Monster';
+import type Monster from '../mob/Monster';
 import { AffectBitsTypeEnum } from '@/core/enum/AffectBitsTypeEnum';
 import SpecialEffectPacket from '@/core/interface/networking/packets/packet/out/SpecialEffectPacket';
 import { SpecialEffectTypeEnum } from '@/core/enum/SpecialEffectTypeEnum';
@@ -67,6 +67,11 @@ import ShopResultPacket, {
     ShopResultPacketParams,
 } from '@/core/interface/networking/packets/packet/out/ShopResultPacket';
 import ShopEndPacket from '@/core/interface/networking/packets/packet/out/ShopEndPacket';
+import PrivateShop from '@/core/domain/shop/PrivateShop';
+import ShopSignPacket, { ShopSignPacketParams } from '@/core/interface/networking/packets/packet/out/ShopSignPacket';
+import ShopUpdateItemPacket, {
+    ShopUpdateItemParams,
+} from '@/core/interface/networking/packets/packet/out/ShopUpdateItemPacket';
 
 const REGEN_INTERVAL = 3000;
 const MAX_DISTANCE_FROM_TARGET = 3500;
@@ -106,6 +111,13 @@ export default class Player extends Character {
     private currentQuest: AbstractQuest | null = null;
 
     private currentShop: Shop | null = null;
+    private privateShop: PrivateShop | null = null;
+    private currentPrivateShopOwner: Player | null = null;
+
+    /** Timestamp (ms) when the player last closed their private shop, used for anti-exploit warp cooldown. */
+    private myShopClosedAt: number | null = null;
+
+    private polymorphVnum: number = 0;
 
     constructor(
         {
@@ -467,6 +479,14 @@ export default class Player extends Character {
         this.connection?.send(new ShopEndPacket());
     }
 
+    sendShopSign(params: ShopSignPacketParams) {
+        this.connection?.send(new ShopSignPacket(params));
+    }
+
+    sendShopUpdateItem(params: ShopUpdateItemParams) {
+        this.connection?.send(new ShopUpdateItemPacket(params));
+    }
+
     addPoint(point: PointsEnum, value: number) {
         this.points.addPoint(point, value);
         this.sendPoints(); //TODO: maybe we should send only the single point packet or just the points that have side effected.
@@ -637,7 +657,22 @@ export default class Player extends Character {
         this.onEquipmentChange();
     }
 
+    canTeleport() {
+        if (this.isShopCloseGracePeriod() || this.isRunningPrivateShop()) {
+            return false;
+        }
+    }
+
     teleport(x: number, y: number) {
+        if (!this.canTeleport()) {
+            this.chat({
+                message: `[SYSTEM] teleport canceled`,
+                messageType: ChatMessageTypeEnum.INFO,
+            });
+
+            return;
+        }
+
         this.move(x, y);
         this.stop();
 
@@ -1399,6 +1434,17 @@ export default class Player extends Character {
                     hairId: otherEntity.getHair()?.getId() ?? 0,
                     affects: otherEntity.getAffectFlags(),
                 });
+
+                // If the other player has an active private shop, announce it to us
+                if (otherEntity.isRunningPrivateShop()) {
+                    const shop = otherEntity.getPrivateShop();
+                    if (shop) {
+                        this.sendShopSign({
+                            ownerVid: otherEntity.getVirtualId(),
+                            sign: shop.getSign(),
+                        });
+                    }
+                }
             }
         }
 
@@ -1490,6 +1536,45 @@ export default class Player extends Character {
 
     setCurrentShop(shop: Shop | null) {
         this.currentShop = shop;
+    }
+
+    getPrivateShop(): PrivateShop | null {
+        return this.privateShop;
+    }
+
+    setPrivateShop(shop: PrivateShop | null) {
+        this.privateShop = shop;
+    }
+
+    isRunningPrivateShop(): boolean {
+        return this.privateShop !== null;
+    }
+
+    /** Records the current timestamp as the moment the player's private shop was closed. */
+    setMyShopTime() {
+        this.myShopClosedAt = Date.now();
+    }
+
+    /** Returns the timestamp (ms) when the private shop was last closed, or null if never. */
+    getMyShopTime(): number | null {
+        return this.myShopClosedAt;
+    }
+
+    /**
+     * Returns true if the player closed their private shop less than `limitSeconds` ago.
+     * Used to block warp/teleport actions shortly after shop closure, to prevent item duplication.
+     */
+    isShopCloseGracePeriod(limitSeconds: number = 10): boolean {
+        if (this.myShopClosedAt === null) return false;
+        return Date.now() - this.myShopClosedAt < limitSeconds * 1000;
+    }
+
+    getCurrentPrivateShopOwner(): Player | null {
+        return this.currentPrivateShopOwner;
+    }
+
+    setCurrentPrivateShopOwner(owner: Player | null) {
+        this.currentPrivateShopOwner = owner;
     }
 
     getQuestByStatus(status: QuestStatusEnum) {
@@ -1726,6 +1811,9 @@ export default class Player extends Character {
     getPlayerClass() {
         return this.playerClass;
     }
+    getClassId() {
+        return this.isPolymorphed() ? this.getPolymorphVnum() : this.playerClass;
+    }
     getSkillGroup() {
         return this.skillGroup;
     }
@@ -1740,6 +1828,76 @@ export default class Player extends Character {
     }
     getInventory() {
         return this.inventory;
+    }
+
+    isPolymorphed() {
+        return this.polymorphVnum > 0;
+    }
+
+    getPolymorphVnum() {
+        return this.polymorphVnum;
+    }
+
+    /**
+     * Sets the polymorph race (mob vnum). Pass 0 to revert to original appearance.
+     * Broadcasts the appearance change to all nearby players and re-sends own spawn info.
+     */
+    setPolymorph(vnum: number) {
+        if (this.polymorphVnum === vnum) return;
+        this.polymorphVnum = vnum;
+
+        // The classId used for spawning is the mob vnum when polymorphed,
+        // otherwise the original player class.
+        const displayClassId = vnum > 0 ? vnum : this.playerClass;
+
+        // Re-broadcast own appearance to all nearby players
+        for (const entity of this.nearbyEntities.values()) {
+            if (entity instanceof Player) {
+                entity.hideOtherEntity({ virtualId: this.virtualId });
+                entity.showOtherEntity({
+                    virtualId: this.virtualId,
+                    playerClass: displayClassId,
+                    entityType: this.getEntityType(),
+                    attackSpeed: this.getAttackSpeed(),
+                    movementSpeed: this.getMovementSpeed(),
+                    positionX: this.getPositionX(),
+                    positionY: this.getPositionY(),
+                    empireId: this.getEmpire(),
+                    level: this.getLevel(),
+                    name: this.getName(),
+                    rotation: this.getRotation(),
+                });
+            }
+        }
+
+        // Update own client view
+        this.showEntity({
+            virtualId: this.virtualId,
+            playerClass: displayClassId,
+            entityType: this.getEntityType(),
+            attackSpeed: this.getAttackSpeed(),
+            movementSpeed: this.getMovementSpeed(),
+            positionX: this.getPositionX(),
+            positionY: this.getPositionY(),
+            empireId: this.getEmpire(),
+            level: this.getLevel(),
+            name: this.getName(),
+            rotation: this.getRotation(),
+        });
+
+        // Re-announce all nearby entities to our own client.
+        // The client clears the scene when it receives a CharacterSpawn for its own VID,
+        // so we need to re-send every entity that was already in view.
+        for (const entity of this.nearbyEntities.values()) {
+            this.onNearbyEntityAdded(entity);
+        }
+
+        // Sync affect flag
+        if (vnum > 0) {
+            this.setAffectFlag(AffectBitsTypeEnum.POLYMORPH);
+        } else {
+            this.removeAffectFlag(AffectBitsTypeEnum.POLYMORPH);
+        }
     }
 
     sendBlockMode() {

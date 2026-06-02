@@ -1,6 +1,6 @@
 import { MobRankEnum } from '@/core/enum/MobRankEnum';
 import Character from '../Character';
-import MonsterGroup from './MonsterGroup';
+import type MonsterGroup from './MonsterGroup';
 import { BattleTypeEnum } from '@/core/enum/BattleTypeEnum';
 import BitFlag from '@/core/util/BitFlag';
 import { MobAIFlagEnum } from '@/core/enum/MobAIFlagEnum';

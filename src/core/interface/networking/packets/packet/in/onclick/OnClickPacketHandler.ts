@@ -4,30 +4,25 @@ import Logger from '@/core/infra/logger/Logger';
 import OnClickPacket from './OnClickPacket';
 import { QuestManager } from '@/core/domain/quests/QuestManager';
 import NPC from '@/core/domain/entities/game/mob/NPC';
-import ShopService from '@/game/app/service/ShopService';
 import ShopManager from '@/core/domain/shop/ShopManager';
 
 export default class OnClickPacketHandler extends PacketHandler<OnClickPacket> {
     private readonly logger: Logger;
     private readonly questManager: QuestManager;
-    private readonly shopService: ShopService;
     private readonly shopManager: ShopManager;
 
     constructor({
         logger,
         questManager,
         shopManager,
-        shopService,
     }: {
         logger: Logger;
         questManager: QuestManager;
         shopManager: ShopManager;
-        shopService: ShopService;
     }) {
         super();
         this.logger = logger;
         this.questManager = questManager;
-        this.shopService = shopService;
         this.shopManager = shopManager;
     }
 
@@ -67,14 +62,15 @@ export default class OnClickPacketHandler extends PacketHandler<OnClickPacket> {
             return;
         }
 
-        const npc = target as NPC;
-        this.logger.info(`[OnClickPacketHandler] You have clicked on: ${npc.getId()}`);
+        if (target instanceof NPC) {
+            this.logger.info(`[OnClickPacketHandler] You have clicked on: ${target.getId()}`);
+        }
 
         // If the npc has a quest and is a shop, then do the quest first and skip opening the shop
-        this.questManager.onClick(player, npc);
+        const isInQuestMenu = await this.questManager.onClick(player, target as NPC);
 
-        if (this.shopManager.hasShop(npc.getId())) {
-            await this.shopService.openShop(player, npc);
+        if (!isInQuestMenu) {
+            await this.shopManager.openShop(target, player);
         }
     }
 }

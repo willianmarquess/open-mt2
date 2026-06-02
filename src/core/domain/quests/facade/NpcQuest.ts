@@ -1,15 +1,15 @@
-import ShopService from '@/game/app/service/ShopService';
-import NPC from '../../entities/game/mob/NPC';
-import Player from '../../entities/game/player/Player';
+import type ShopManager from '@/core/domain/shop/ShopManager';
+import type NPC from '../../entities/game/mob/NPC';
+import type Player from '../../entities/game/player/Player';
 
 export class NpcQuest {
     private readonly npc: NPC;
-    private readonly shopService: ShopService;
+    private readonly shopManager: ShopManager;
     private readonly player: Player;
 
-    constructor({ npc, shopService, player }: { npc: NPC; shopService: ShopService; player: Player }) {
+    constructor({ npc, shopManager, player }: { npc: NPC; shopManager: ShopManager; player: Player }) {
         this.npc = npc;
-        this.shopService = shopService;
+        this.shopManager = shopManager;
         this.player = player;
     }
 
@@ -22,6 +22,6 @@ export class NpcQuest {
     }
 
     async openShop(shopId: number) {
-        await this.shopService.openShop(this.player, this.npc, shopId);
+        await this.shopManager.openShop(this.npc, this.player, shopId);
     }
 }

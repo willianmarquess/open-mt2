@@ -123,6 +123,10 @@ In this implementation we are using custom commands, described bellow:
     - Description: set player interaction block modes (settings).
     - Example: /setblockmode <number>
     - Usage: /setblockmode 3 (sets Trade and Group to blocked)
+- **/polymorph**
+    - Description: transform your character into a mob appearance by vnum. Pass 0 to revert to original appearance.
+    - Example: /polymorph <vnum>
+    - Usage: /polymorph 101 (transforms into mob with vnum 101)
 
 
 ## Auth Flow
