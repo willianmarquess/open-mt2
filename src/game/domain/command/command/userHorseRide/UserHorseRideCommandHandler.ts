@@ -29,8 +29,6 @@ export default class UserHorseRideCommandHandler extends CommandHandler<UserHors
             return;
         }
 
-        if (!target.startRiding()) {
-            this.logger.debug(`[UserHorseRideCommand] startRiding had no effect for ${target.getName()}`);
-        }
+        target.toggleRiding();
     }
 }

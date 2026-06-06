@@ -15,6 +15,8 @@ import HorseLevelCommand from './command/horseLevel/HorseLevelCommand';
 import HorseLevelCommandHandler from './command/horseLevel/HorseLevelCommandHandler';
 import HorseRideCommand from './command/horseRide/HorseRideCommand';
 import HorseRideCommandHandler from './command/horseRide/HorseRideCommandHandler';
+import RideCommand from './command/ride/RideCommand';
+import RideCommandHandler from './command/ride/RideCommandHandler';
 import HorseSetStatCommand from './command/horseSetStat/HorseSetStatCommand';
 import HorseSetStatCommandHandler from './command/horseSetStat/HorseSetStatCommandHandler';
 import ExperienceCommand from './command/exp/ExperienceCommand';
@@ -222,6 +224,13 @@ export default () =>
             {
                 command: HorseRideCommand,
                 createHandler: () => new HorseRideCommandHandler(),
+            },
+        ],
+        [
+            RideCommand.getName(),
+            {
+                command: RideCommand,
+                createHandler: (params) => new RideCommandHandler(params),
             },
         ],
         [

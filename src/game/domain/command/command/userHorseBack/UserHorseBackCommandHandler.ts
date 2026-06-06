@@ -29,8 +29,13 @@ export default class UserHorseBackCommandHandler extends CommandHandler<UserHors
             return;
         }
 
-        if (!target.stopRiding()) {
-            this.logger.debug(`[UserHorseBackCommand] stopRiding had no effect for ${target.getName()}`);
+        // Send away the horse entity (only works when NOT riding)
+        if (!target.sendHorseAway()) {
+            player.chat({
+                messageType: ChatMessageTypeEnum.INFO,
+                message: `Cannot send horse away. Either player is currently riding or no horse entity is active.`,
+            });
+            this.logger.debug(`[UserHorseBackCommand] sendHorseAway had no effect for ${target.getName()}`);
         }
     }
 }

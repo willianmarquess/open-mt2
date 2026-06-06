@@ -3,11 +3,12 @@ import HorseRideCommand from './HorseRideCommand';
 import Player from '@/core/domain/entities/game/player/Player';
 
 export default class HorseRideCommandHandler extends CommandHandler<HorseRideCommand> {
-    async execute(player: Player, _command: HorseRideCommand) {
-        if (player.isHorseRiding()) {
-            player.stopRiding();
-        } else {
-            player.startRiding();
+    async execute(player: Player, command: HorseRideCommand) {
+        if (!command.isValid()) {
+            player.sendCommandErrors(command.errors());
+            return;
         }
+
+        player.toggleRiding();
     }
 }
