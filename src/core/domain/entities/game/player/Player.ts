@@ -74,6 +74,7 @@ import ShopSignPacket, { ShopSignPacketParams } from '@/core/interface/networkin
 import ShopUpdateItemPacket, {
     ShopUpdateItemParams,
 } from '@/core/interface/networking/packets/packet/out/ShopUpdateItemPacket';
+import NPC from '../mob/NPC';
 import MobManager from '@/core/domain/manager/MobManager';
 
 const REGEN_INTERVAL = 3000;
@@ -1732,6 +1733,18 @@ export default class Player extends Character {
 
     setHorseStamina(value: number): void {
         this.horse.setStamina(value);
+    }
+
+    getSpawnedHorse(): NPC | null {
+        return this.horse.getSpawnedHorse();
+    }
+
+    getHorseName(): string {
+        return this.horse.getName();
+    }
+
+    setHorseName(name: string): number {
+        return this.horse.setName(name);
     }
 
     private broadcastMountChange(): void {

@@ -19,6 +19,8 @@ import RideCommand from './command/ride/RideCommand';
 import RideCommandHandler from './command/ride/RideCommandHandler';
 import HorseSetStatCommand from './command/horseSetStat/HorseSetStatCommand';
 import HorseSetStatCommandHandler from './command/horseSetStat/HorseSetStatCommandHandler';
+import HorseNameCommand from './command/horseName/HorseNameCommand';
+import HorseNameCommandHandler from './command/horseName/HorseNameCommandHandler';
 import ExperienceCommand from './command/exp/ExperienceCommand';
 import ExperienceCommandHandler from './command/exp/ExperienceCommandHandler';
 import GoldCommand from './command/gold/GoldCommand';
@@ -50,6 +52,8 @@ import SelectCommandHandler from './command/select/SelectCommandHandler';
 import StatCommand from './command/stat/StatCommand';
 import StatCommandHandler from './command/stat/StatCommandHandler';
 import CommandHandler from './CommandHandler';
+import HorseUnmountCommand from './command/horseUnmount/HorseUnmountCommand';
+import HorseUnmountCommandHandler from './command/horseUnmount/HorseUnmountCommandHandler';
 
 export type CommandConstructor<T extends Command> = {
     new (args?: any): T;
@@ -238,6 +242,20 @@ export default () =>
             {
                 command: HorseSetStatCommand,
                 createHandler: () => new HorseSetStatCommandHandler(),
+            },
+        ],
+        [
+            HorseNameCommand.getName(),
+            {
+                command: HorseNameCommand,
+                createHandler: (params) => new HorseNameCommandHandler(params),
+            },
+        ],
+        [
+            HorseUnmountCommand.getName(),
+            {
+                command: HorseUnmountCommand,
+                createHandler: () => new HorseUnmountCommandHandler(),
             },
         ],
     ]);

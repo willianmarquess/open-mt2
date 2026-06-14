@@ -43,6 +43,7 @@ export class PlayerHorse {
     private riding: boolean = false;
     private mountVnum: number = 0;
     private spawnedHorse: NPC | null = null; // Spawned horse entity when not riding
+    private horseName: string = '';
 
     private readonly owner: IHorseOwner;
 
@@ -51,6 +52,28 @@ export class PlayerHorse {
     }
 
     // ── Accessors ──────────────────────────────────────────────────────────────
+
+    getSpawnedHorse(): NPC | null {
+        return this.spawnedHorse;
+    }
+
+    getName(): string {
+        return this.horseName;
+    }
+
+    setName(name: string): number {
+        if (name.length < 2 || name.length > 12) {
+            return 0;
+        }
+        if (name === this.horseName) {
+            return 1;
+        }
+        this.horseName = name;
+        if (this.spawnedHorse) {
+            (this.spawnedHorse as any).name = name;
+        }
+        return 2;
+    }
 
     getLevel(): number {
         return this.level;
@@ -239,9 +262,9 @@ export class PlayerHorse {
                 return;
             }
 
-            // Set horse name to player's name + "'s Horse"
+            // Set horse name to custom horse name or player's name + "'s Horse"
             const playerName = this.owner.getName();
-            (horseEntity as any).name = `${playerName}'s Horse`;
+            (horseEntity as any).name = this.horseName || `${playerName}'s Horse`;
 
             // Spawn in the area with proper virtualId assignment
             area.spawnMobEntity(horseEntity);
