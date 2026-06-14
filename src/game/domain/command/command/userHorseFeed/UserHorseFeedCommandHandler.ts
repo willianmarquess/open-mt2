@@ -19,7 +19,7 @@ export default class UserHorseFeedCommandHandler extends CommandHandler<UserHors
         this.logger = logger;
     }
 
-    async execute(player: Player, _command: UserHorseFeedCommand) {
+    async execute(player: Player) {
         const grade = player.getHorseGrade();
 
         if (grade <= 0 || player.getHorseLevel() <= 0) {

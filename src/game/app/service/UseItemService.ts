@@ -273,7 +273,6 @@ export default class UseItemService {
         } else {
             player.startRiding();
         }
-        // Item is not consumed - it is a reusable summoning book.
     }
 
     private useHorseItem(player: Player, item: Item): void {

@@ -4,7 +4,7 @@ import Player from '@/core/domain/entities/game/player/Player';
 import { ChatMessageTypeEnum } from '@/core/enum/ChatMessageTypeEnum';
 
 export default class HorseStateCommandHandler extends CommandHandler<HorseStateCommand> {
-    async execute(player: Player, _command: HorseStateCommand) {
+    async execute(player: Player) {
         const level = player.getHorseLevel();
         const hp = player.getHorseHealth();
         const maxHp = player.getHorseMaxHealth();
