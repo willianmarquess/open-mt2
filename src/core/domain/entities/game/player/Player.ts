@@ -104,6 +104,8 @@ export default class Player extends Character {
     //connection
     private connection: GameConnection | null = null;
 
+    private readonly logger: Logger;
+
     //save
     private readonly saveCharacterService: SaveCharacterService;
 
@@ -131,6 +133,7 @@ export default class Player extends Character {
         getArea: () => this.area,
         getMobManager: () => this.mobManager,
         setPoint: (point, value) => this.setPoint(point, value),
+        save: () => this.save(),
     });
     private privateShop: PrivateShop | null = null;
     private currentPrivateShopOwner: Player | null = null;
@@ -180,6 +183,10 @@ export default class Player extends Character {
             attackPerIqPoint = 0,
             baseAttackSpeed = 0,
             baseMovementSpeed = 0,
+            horseLevel = 0,
+            horseHealth = 0,
+            horseStamina = 0,
+            horseName = '',
         }: {
             id: number;
             accountId: number;
@@ -219,6 +226,10 @@ export default class Player extends Character {
             attackPerIqPoint?: number;
             baseAttackSpeed?: number;
             baseMovementSpeed?: number;
+            horseLevel?: number;
+            horseHealth?: number;
+            horseStamina?: number;
+            horseName?: string;
         },
         {
             animationManager,
@@ -262,6 +273,7 @@ export default class Player extends Character {
         this.slot = slot;
         this.appearance = appearance;
 
+        this.logger = logger;
         this.config = config;
         this.mobManager = mobManager;
         this.inventory = new Inventory({ config: this.config, ownerId: this.id });
@@ -306,6 +318,7 @@ export default class Player extends Character {
         this.battle = new PlayerBattle(this, logger);
 
         this.saveCharacterService = saveCharacterService;
+        this.horse.initialize(horseLevel, horseHealth, horseStamina, horseName);
 
         this.stateMachine
             .addState({
@@ -1870,6 +1883,10 @@ export default class Player extends Character {
             attackPerIqPoint,
             baseAttackSpeed,
             baseMovementSpeed,
+            horseLevel,
+            horseHealth,
+            horseStamina,
+            horseName,
         }: {
             id: number;
             accountId: number;
@@ -1909,6 +1926,10 @@ export default class Player extends Character {
             attackPerIqPoint: number;
             baseAttackSpeed: number;
             baseMovementSpeed: number;
+            horseLevel?: number;
+            horseHealth?: number;
+            horseStamina?: number;
+            horseName?: string;
         },
         {
             animationManager,
@@ -1968,6 +1989,10 @@ export default class Player extends Character {
                 attackPerIqPoint,
                 baseAttackSpeed,
                 baseMovementSpeed,
+                horseLevel,
+                horseHealth,
+                horseStamina,
+                horseName,
             },
             { animationManager, config, experienceManager, logger, saveCharacterService, questManager, mobManager },
         );
@@ -1999,6 +2024,16 @@ export default class Player extends Character {
             givenStatusPoints: this.points.getGivenStatusPoints(),
             availableStatusPoints: this.points.getPoint(PointsEnum.STATUS_POINTS),
             slot: this.slot,
+            horseLevel: this.getHorseLevel(),
+            horseHealth: this.getHorseHealth(),
+            horseStamina: this.getHorseStamina(),
+            horseName: this.getHorseName(),
+        });
+    }
+
+    save(): void {
+        this.saveCharacterService.execute(this).catch((err) => {
+            this.logger.error('Failed to save character:', err);
         });
     }
 

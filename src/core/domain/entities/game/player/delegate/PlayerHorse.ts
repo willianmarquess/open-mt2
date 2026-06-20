@@ -31,6 +31,8 @@ export interface IHorseOwner {
     getMobManager(): any; // MobManager type
     /** Set a point value (e.g., MOUNT, HORSE_SKILL). */
     setPoint(point: PointsEnum, value: number): void;
+    /** Save character stats. */
+    save(): void;
 }
 
 const STAMINA_CONSUME_INTERVAL_MS = 6 * 60 * 1_000; // 6 min per tick
@@ -49,6 +51,13 @@ export class PlayerHorse {
 
     constructor(owner: IHorseOwner) {
         this.owner = owner;
+    }
+
+    initialize(level: number, health: number, stamina: number, name: string): void {
+        this.level = level;
+        this.health = health;
+        this.stamina = stamina;
+        this.horseName = name;
     }
 
     // ── Accessors ──────────────────────────────────────────────────────────────
@@ -72,6 +81,7 @@ export class PlayerHorse {
         if (this.spawnedHorse) {
             (this.spawnedHorse as any).name = name;
         }
+        this.owner.save();
         return 2;
     }
 
@@ -119,6 +129,7 @@ export class PlayerHorse {
             this.health = 0;
             this.stamina = 0;
         }
+        this.owner.save();
     }
 
     /** Begin riding. Returns true if state changed. */
@@ -197,6 +208,7 @@ export class PlayerHorse {
         this.health = stat.maxHealth;
         this.stamina = stat.maxStamina;
         this.sendHorseState();
+        this.owner.save();
         return true;
     }
 
@@ -205,6 +217,7 @@ export class PlayerHorse {
         if (this.level > 0 && this.health > 0) {
             this.health = Math.min(this.health + 1, this.getMaxHealth());
             this.sendHorseState();
+            this.owner.save();
         }
     }
 
@@ -212,12 +225,14 @@ export class PlayerHorse {
     setHealth(value: number): void {
         this.health = Math.max(0, Math.min(value, this.getMaxHealth()));
         this.sendHorseState();
+        this.owner.save();
     }
 
     /** Directly set horse stamina (used by GM horse_set_stat). */
     setStamina(value: number): void {
         this.stamina = Math.max(0, Math.min(value, this.getMaxStamina()));
         this.sendHorseState();
+        this.owner.save();
     }
 
     // ── Private helpers ────────────────────────────────────────────────────────
@@ -293,7 +308,7 @@ export class PlayerHorse {
 
     /**
      * Sends the `horse_state <level> <healthGrade> <staminaGrade>` command to
-     * the client - same format as the reference C++ server's SendHorseInfo().
+     * the client
      */
     private sendHorseState(): void {
         if (this.level <= 0) return;
@@ -337,6 +352,7 @@ export class PlayerHorse {
                 this.stamina = Math.max(0, this.stamina - 1);
                 if (this.stamina <= 0) this.stopRiding();
                 this.sendHorseState();
+                this.owner.save();
             },
             options: { interval: STAMINA_CONSUME_INTERVAL_MS, duration: STAMINA_CONSUME_INTERVAL_MS },
         });
@@ -351,6 +367,7 @@ export class PlayerHorse {
                 const maxSt = this.getMaxStamina();
                 this.stamina = Math.min(maxSt, this.stamina + 1);
                 this.sendHorseState();
+                this.owner.save();
             },
             options: { interval: STAMINA_REGEN_INTERVAL_MS, duration: STAMINA_REGEN_INTERVAL_MS },
         });

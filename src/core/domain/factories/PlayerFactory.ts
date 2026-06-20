@@ -36,6 +36,10 @@ type PlayerFactoryParams = {
     name: string;
     givenStatusPoints?: number;
     availableStatusPoints?: number;
+    horseLevel?: number;
+    horseHealth?: number;
+    horseStamina?: number;
+    horseName?: string;
 };
 
 export default class PlayerFactory {
@@ -100,6 +104,10 @@ export default class PlayerFactory {
         name,
         givenStatusPoints,
         availableStatusPoints,
+        horseLevel,
+        horseHealth,
+        horseStamina,
+        horseName,
     }: PlayerFactoryParams): Player {
         const className = JobUtil.getClassNameFromClassId(playerClass);
         const empireName = EmpireUtil.getEmpireName(empire);
@@ -144,6 +152,10 @@ export default class PlayerFactory {
                 level: level || 1,
                 experience: experience || 0,
                 gold: gold || 0,
+                horseLevel: horseLevel || 0,
+                horseHealth: horseHealth || 0,
+                horseStamina: horseStamina || 0,
+                horseName: horseName || '',
             },
             {
                 animationManager: this.animationManager,
