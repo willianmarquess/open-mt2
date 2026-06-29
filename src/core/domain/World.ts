@@ -8,7 +8,7 @@ import SpawnManager from './manager/SpawnManager';
 import { PrivilegeManager } from './manager/PrivilegeManager';
 import SaveCharacterService from '@/game/domain/service/SaveCharacterService';
 
-const TICKS_PER_SECONDS = 15;
+const TICKS_PER_SECONDS = 20;
 const AREA_UNIT = 25600;
 
 function calculateTickDelay(delta: number = 0) {

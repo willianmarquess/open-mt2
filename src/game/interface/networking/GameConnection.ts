@@ -20,6 +20,14 @@ export default class GameConnection extends Connection {
         super({ logger, socket });
     }
 
+    cork() {
+        this.socket.cork();
+    }
+
+    uncork() {
+        this.socket.uncork();
+    }
+
     setAccountId(value: number) {
         this.accountId = value;
     }

@@ -30,6 +30,7 @@ export default abstract class Server {
     abstract onData(connection: Connection, data: Buffer): Promise<void>;
 
     onListener(socket: Socket) {
+        socket.setNoDelay(true);
         const connection = this.createConnection(socket);
         this.connections.set(connection.getId(), connection);
 
@@ -62,9 +63,9 @@ export default abstract class Server {
     }
 
     async close(): Promise<void> {
-        this.isShuttingDown = true;
-
         if (!this.server.listening || this.isShuttingDown) return;
+
+        this.isShuttingDown = true;
 
         return new Promise((resolve, reject) => {
             this.server.close((err: Error | undefined) => {

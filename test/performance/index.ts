@@ -7,7 +7,7 @@ import MathUtil from '@/core/domain/util/MathUtil';
 
 const SIGNALS = ['SIGINT', 'SIGTERM'];
 const ERRORS = ['unhandledRejection', 'uncaughtException'];
-const MAX_FAKE_PLAYERS = 150;
+const MAX_FAKE_PLAYERS = 170;
 
 const users: Array<string> = [];
 const gameFlows: Array<GameFlow> = [];
@@ -107,46 +107,105 @@ const allowedAreas = [
     'metin2_map_spiderdungeon_02',
 ];
 
-async function createFakePlayersSpread() {
+class FakePlayerIdGenerator {
+    private current = 0;
+
+    next(): number {
+        return this.current++;
+    }
+}
+
+const idGenerator = new FakePlayerIdGenerator();
+
+interface FakePlayerData {
+    id: number;
+    positionX: number;
+    positionY: number;
+}
+
+async function createAndConnectPlayer(id: number, positionX: number, positionY: number) {
+    const { user, password } = await createData(db, id, positionX, positionY);
+
+    users.push(user);
+
+    const token = await authFlow(user, password);
+
+    const gameFlow = new GameFlow(user, token);
+
+    await gameFlow.connect();
+    await gameFlow.basicFlow();
+
+    gameFlows.push(gameFlow);
+}
+
+const LOGIN_BATCH_SIZE = 50;
+
+async function loginPlayersConcurrently(players: FakePlayerData[]) {
+    const totalBatches = Math.ceil(players.length / LOGIN_BATCH_SIZE);
+
+    for (let batchIndex = 0; batchIndex < totalBatches; batchIndex++) {
+        const start = batchIndex * LOGIN_BATCH_SIZE;
+        const end = Math.min(start + LOGIN_BATCH_SIZE, players.length);
+
+        const batch = players.slice(start, end);
+
+        console.log(`[${batchIndex + 1}/${totalBatches}] Connecting ${batch.length} players`);
+
+        await Promise.all(batch.map((player) => createAndConnectPlayer(player.id, player.positionX, player.positionY)));
+    }
+}
+
+async function createFakePlayersSpread(): Promise<FakePlayerData[]> {
+    const fakePlayers: FakePlayerData[] = [];
+
     const currentDir = process.cwd();
-    let i = 0;
+
     for (const { mapName, posX, posY, aka } of atlasInfo) {
-        if (!allowedAreas.includes(mapName)) continue;
-
-        const absoluteFilePath = path.join(currentDir, DEFAULT_SPAWN_CONFIG_PATH + `/${mapName}/regen.json`);
-        if (fsSync.existsSync(absoluteFilePath)) {
-            const fileContent = await fs.readFile(absoluteFilePath, 'utf8');
-            const spawnsData = JSON.parse(fileContent || '');
-
-            console.log(`Creating fake playes at ${mapName}, aka: ${aka}`);
-
-            let counter = 0;
-            for (const { x, y } of spawnsData) {
-                if (counter >= MAX_FAKE_PLAYERS) break;
-
-                const posXI = MathUtil.getRandomInt(-5_000, 5_000);
-                const posYI = MathUtil.getRandomInt(-5_000, 5_000);
-                const positionX = posX + x * 100 + posXI;
-                const positionY = posY + y * 100 + posYI;
-                const { user, password } = await createData(db, i, positionX, positionY);
-                users.push(user);
-
-                const token = await authFlow(user, password);
-                const gameFlow = new GameFlow(user, token);
-
-                await gameFlow.connect();
-                await gameFlow.basicFlow();
-                gameFlows.push(gameFlow);
-
-                i++;
-                counter++;
-            }
-
-            console.log(`Initialized ${counter} fake players at ${mapName}, aka: ${aka}.`);
+        if (!allowedAreas.includes(mapName)) {
+            continue;
         }
 
-        console.log(`Total of players fake created ${users.length}`);
+        const absoluteFilePath = path.join(currentDir, DEFAULT_SPAWN_CONFIG_PATH + `/${mapName}/regen.json`);
+
+        if (!fsSync.existsSync(absoluteFilePath)) {
+            continue;
+        }
+
+        const fileContent = await fs.readFile(absoluteFilePath, 'utf8');
+
+        const spawnsData = JSON.parse(fileContent);
+
+        console.log(`Preparing fake players at ${mapName}, aka: ${aka}`);
+
+        let counter = 0;
+        // const { x, y } = spawnsData[0];
+        for (const { x, y } of spawnsData) {
+            if (counter >= MAX_FAKE_PLAYERS) {
+                break;
+            }
+
+            const posXI = MathUtil.getRandomInt(-5_000, 5_000);
+
+            const posYI = MathUtil.getRandomInt(-5_000, 5_000);
+
+            const positionX = posX + x * 100 + posXI;
+            const positionY = posY + y * 100 + posYI;
+
+            fakePlayers.push({
+                id: idGenerator.next(),
+                positionX,
+                positionY,
+            });
+
+            counter++;
+        }
+
+        console.log(`Prepared ${counter} fake players at ${mapName}`);
     }
+
+    console.log(`Total fake players prepared: ${fakePlayers.length}`);
+
+    return fakePlayers;
 }
 
 async function startRandomMovement() {
@@ -172,7 +231,16 @@ async function startRandomMovement() {
 
 async function main() {
     try {
-        await createFakePlayersSpread();
+        const fakePlayers = await createFakePlayersSpread();
+
+        console.log(`Starting concurrent login for ${fakePlayers.length} players`);
+
+        const startTime = performance.now();
+
+        await loginPlayersConcurrently(fakePlayers);
+
+        console.log(`${gameFlows.length} players connected in ${performance.now() - startTime} ms`);
+
         await startRandomMovement();
     } catch (error) {
         console.error('Error in main:', error);

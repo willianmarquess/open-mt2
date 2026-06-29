@@ -22,7 +22,6 @@ export default class GameServer extends Server {
     async onData(connection: GameConnection, data: Buffer) {
         this.container.containerInstance.createScope();
         this.logger.debug(`[IN][DATA SOCKET EVENT] Data received from ID: ${connection.getId()}`);
-
         const header = data[0];
         const packetBuilder = this.packets.get(header);
 
@@ -35,7 +34,13 @@ export default class GameServer extends Server {
         const packet = createPacket({});
         const handler = createHandler(this.container);
         this.logger.debug(`[IN][PACKET] processing packet: ${handler.constructor.name}`);
-        handler.execute(connection, packet.unpack(data)).catch((err) => this.logger.error(err));
+        connection.cork();
+        await handler
+            .execute(connection, packet.unpack(data))
+            .catch((err) => this.logger.error(err))
+            .finally(() => {
+                connection.uncork();
+            });
     }
 
     createConnection(socket: Socket) {

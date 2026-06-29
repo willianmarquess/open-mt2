@@ -17,7 +17,7 @@ import Item from './entities/game/item/Item';
 import { AtlasInfoGoto } from '@/game/infra/config/GameConfig';
 
 const SIZE_QUEUE = 5_000;
-const CHAR_VIEW_SIZE = 10000;
+const CHAR_VIEW_SIZE = 8000;
 const SAVE_PLAYERS_INTERVAL = 120000;
 const SPAWN_POSITION_MULTIPLIER = 100;
 
@@ -74,7 +74,7 @@ export default class Area {
         this.aka = aka;
         this.goto = goto;
         // this.aoi = new QuadTree(positionX, positionY, width * 25600, height * 25600, 50);
-        this.aoi = new SpatialGrid(CHAR_VIEW_SIZE / 2);
+        this.aoi = new SpatialGrid(CHAR_VIEW_SIZE * 2);
 
         this.saveCharacterService = saveCharacterService;
         this.logger = logger;

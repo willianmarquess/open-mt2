@@ -12,11 +12,11 @@ export default class SocketClient {
                 resolve(this.client);
             });
 
-            this.client.on('data', (data) => {
+            this.client.on('data', (data: Buffer<ArrayBufferLike>) => {
                 this.data = Buffer.concat([this.data, data]);
                 this.onData?.(data);
             });
-            this.client.on('error', (err) => {
+            this.client.on('error', (err: Error) => {
                 console.error(`Connection error: ${err.message}`);
                 reject(err);
             });
