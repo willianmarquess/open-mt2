@@ -16,7 +16,7 @@ Metin2 JS is an open source implementation of MMORPG Metin2 server using Nodejs 
 This project will be developed for fun and study only.
 
 Disclaimer: The idea is not to strictly follow the game's original behavior; for some features, the developers will add new behaviors as they see fit, feel free to send suggestions.
-s
+
 Metin2 are copyrighted by [Webzen](http://webzen.com/ "Webzen").
 
 # Features roadmap
