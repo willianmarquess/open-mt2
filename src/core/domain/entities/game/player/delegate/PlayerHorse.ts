@@ -47,9 +47,7 @@ export interface IHorseOwner {
 
 const STAMINA_CONSUME_INTERVAL_MS = 6 * 60 * 1_000; // 6 min per tick
 const STAMINA_REGEN_INTERVAL_MS = 12 * 60 * 1_000; // 12 min per tick
-// Poll frequently enough to start the next leg as soon as the current one ends.
-// A new destination is still sent only while the horse is idle.
-const HORSE_FOLLOW_INTERVAL_MS = 100;
+const HORSE_FOLLOW_INTERVAL_MS = 500;
 const HORSE_FOLLOW_DISTANCE = 400;
 const HORSE_FOLLOW_MIN_APPROACH = 150;
 const HORSE_FOLLOW_MAX_APPROACH = 300;
@@ -333,6 +331,8 @@ export class PlayerHorse {
             return;
         }
 
+        this.spawnedHorse.clearMovementNodes();
+
         const area = this.owner.getArea();
         if (area) {
             area.despawn(this.spawnedHorse);
@@ -342,42 +342,40 @@ export class PlayerHorse {
     }
 
     private startHorseFollow(): void {
-        this.owner.logger.debug(`[PlayerHorse] starting follow timer for ${this.owner.getName()}`);
+        const horse = this.spawnedHorse;
+        if (!horse) return;
+
+        horse.moveAlongNodes(() => {
+            if (this.riding || this.spawnedHorse !== horse) return null;
+
+            const playerX = this.owner.getPositionX();
+            const playerY = this.owner.getPositionY();
+            const deltaX = playerX - horse.getPositionX();
+            const deltaY = playerY - horse.getPositionY();
+            const distance = Math.sqrt(deltaX * deltaX + deltaY * deltaY);
+            if (distance <= HORSE_FOLLOW_DISTANCE) {
+                this.owner.logger.debug(`[PlayerHorse] follow idle: distance=${Math.round(distance)}`);
+                return null;
+            }
+
+            const approach =
+                HORSE_FOLLOW_MIN_APPROACH +
+                Math.floor(Math.random() * (HORSE_FOLLOW_MAX_APPROACH - HORSE_FOLLOW_MIN_APPROACH + 1));
+            const scale = Math.max(0, (distance - approach) / distance);
+            const targetX = Math.round(playerX - deltaX * scale);
+            const targetY = Math.round(playerY - deltaY * scale);
+            this.owner.logger.debug(
+                `[PlayerHorse] follow move: horse=${horse.getPositionX()},${horse.getPositionY()} player=${playerX},${playerY} distance=${Math.round(distance)} target=${targetX},${targetY}`,
+            );
+            return { x: targetX, y: targetY };
+        });
+
         this.owner.addEventTimer({
             id: HORSE_FOLLOW_TIMER,
             eventFunction: () => {
-                const horse = this.spawnedHorse;
-                if (!horse || this.riding) {
-                    this.owner.logger.debug(
-                        `[PlayerHorse] follow skipped: horse=${Boolean(horse)} riding=${this.riding}`,
-                    );
-                    return;
+                if (this.spawnedHorse === horse && !this.riding && horse.getState() === EntityStateEnum.IDLE) {
+                    horse.continueMovementNodes();
                 }
-
-                if (horse.getState() !== EntityStateEnum.IDLE) {
-                    return;
-                }
-
-                const playerX = this.owner.getPositionX();
-                const playerY = this.owner.getPositionY();
-                const deltaX = playerX - horse.getPositionX();
-                const deltaY = playerY - horse.getPositionY();
-                const distance = Math.sqrt(deltaX * deltaX + deltaY * deltaY);
-                if (distance <= HORSE_FOLLOW_DISTANCE) {
-                    this.owner.logger.debug(`[PlayerHorse] follow idle: distance=${Math.round(distance)}`);
-                    return;
-                }
-
-                const approach =
-                    HORSE_FOLLOW_MIN_APPROACH +
-                    Math.floor(Math.random() * (HORSE_FOLLOW_MAX_APPROACH - HORSE_FOLLOW_MIN_APPROACH + 1));
-                const scale = Math.max(0, (distance - approach) / distance);
-                const targetX = Math.round(playerX - deltaX * scale);
-                const targetY = Math.round(playerY - deltaY * scale);
-                this.owner.logger.debug(
-                    `[PlayerHorse] follow move: horse=${horse.getPositionX()},${horse.getPositionY()} player=${this.owner.getPositionX()},${this.owner.getPositionY()} distance=${Math.round(distance)} target=${targetX},${targetY}`,
-                );
-                horse.moveTo(targetX, targetY);
             },
             options: { interval: HORSE_FOLLOW_INTERVAL_MS },
         });

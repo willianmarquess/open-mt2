@@ -147,6 +147,19 @@ export default class Area {
         this.spawn(droppedItem);
     }
 
+    spawnGoldMarker(positionX: number, positionY: number): DroppedItem {
+        const marker = DroppedItem.create({
+            item: { id: 1, count: 1 } as unknown as Item,
+            count: 1,
+            ownerName: '',
+            virtualId: this.world.generateVirtualId(),
+            positionX,
+            positionY,
+        });
+        this.spawn(marker);
+        return marker;
+    }
+
     spawnMobEntity(entity: GameEntity) {
         const virtualId = this.world.generateVirtualId();
         entity.setVirtualId(virtualId);
