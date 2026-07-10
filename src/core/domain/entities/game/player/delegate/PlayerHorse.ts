@@ -1,5 +1,6 @@
 import { ChatMessageTypeEnum } from '@/core/enum/ChatMessageTypeEnum';
 import { PointsEnum } from '@/core/enum/PointsEnum';
+import { EntityStateEnum } from '@/core/enum/EntityStateEnum';
 import {
     HORSE_MAX_LEVEL,
     HORSE_STATS,
@@ -7,22 +8,27 @@ import {
     getHorseVnumByLevel,
 } from '@/core/domain/entities/game/horse/HorseStats';
 import type NPC from '../../mob/NPC';
+import type Logger from '@/core/infra/logger/Logger';
 
 /** Minimal surface of Player that PlayerHorse needs to call back into. */
 export interface IHorseOwner {
+    logger: Logger;
     chat(opts: { messageType: ChatMessageTypeEnum; message: string }): void;
     isEventTimerActive(id: string): boolean;
     addEventTimer(opts: {
         id: string;
         eventFunction: () => void;
-        options: { interval: number; duration: number };
+        options: { interval: number; duration?: number };
     }): void;
+    removeEventTimer(id: string): void;
     /** Broadcast updated mountId to self + nearby players. */
     broadcastMountChange(): void;
     /** Get player's current position X. */
     getPositionX(): number;
     /** Get player's current position Y. */
     getPositionY(): number;
+    /** Get the player's current movement destination. */
+    getTargetPosition(): { x: number; y: number };
     /** Get player's name. */
     getName(): string;
     /** Get player's area for spawning entities. */
@@ -31,12 +37,23 @@ export interface IHorseOwner {
     getMobManager(): any; // MobManager type
     /** Set a point value (e.g., MOUNT, HORSE_SKILL). */
     setPoint(point: PointsEnum, value: number): void;
+    /** Recalculate player combat points after mounting or dismounting. */
+    recalculatePoints(): void;
+    /** Send the complete client skill array. */
+    sendSkillLevel(): void;
     /** Save character stats. */
     save(): void;
 }
 
 const STAMINA_CONSUME_INTERVAL_MS = 6 * 60 * 1_000; // 6 min per tick
 const STAMINA_REGEN_INTERVAL_MS = 12 * 60 * 1_000; // 12 min per tick
+// Poll frequently enough to start the next leg as soon as the current one ends.
+// A new destination is still sent only while the horse is idle.
+const HORSE_FOLLOW_INTERVAL_MS = 100;
+const HORSE_FOLLOW_DISTANCE = 400;
+const HORSE_FOLLOW_MIN_APPROACH = 150;
+const HORSE_FOLLOW_MAX_APPROACH = 300;
+const HORSE_FOLLOW_TIMER = 'HORSE_FOLLOW';
 
 export class PlayerHorse {
     private level: number = 0;
@@ -54,10 +71,14 @@ export class PlayerHorse {
     }
 
     initialize(level: number, health: number, stamina: number, name: string): void {
-        this.level = level;
-        this.health = health;
-        this.stamina = stamina;
-        this.horseName = name;
+        this.level = Math.max(0, Math.min(Number(level) || 0, HORSE_MAX_LEVEL));
+        const stat = HORSE_STATS[this.level];
+        this.health = Math.max(0, Math.min(Number(health) || stat.maxHealth, stat.maxHealth));
+        this.stamina = Math.max(0, Math.min(Number(stamina) || stat.maxStamina, stat.maxStamina));
+        this.horseName = name || '';
+
+        this.owner.setPoint(PointsEnum.HORSE_SKILL, this.level);
+        this.owner.recalculatePoints();
     }
 
     // ── Accessors ──────────────────────────────────────────────────────────────
@@ -113,6 +134,10 @@ export class PlayerHorse {
         return this.mountVnum;
     }
 
+    getStats() {
+        return this.level > 0 ? HORSE_STATS[this.level] : HORSE_STATS[0];
+    }
+
     isRiding(): boolean {
         return this.riding;
     }
@@ -121,6 +146,8 @@ export class PlayerHorse {
 
     setLevel(level: number): void {
         this.level = Math.max(0, Math.min(level, HORSE_MAX_LEVEL));
+        this.owner.setPoint(PointsEnum.HORSE_SKILL, this.level);
+        this.owner.sendSkillLevel();
         if (this.level > 0) {
             const stat = HORSE_STATS[this.level];
             this.health = stat.maxHealth;
@@ -129,6 +156,7 @@ export class PlayerHorse {
             this.health = 0;
             this.stamina = 0;
         }
+        this.owner.recalculatePoints();
         this.owner.save();
     }
 
@@ -251,7 +279,9 @@ export class PlayerHorse {
         const mobManager = this.owner.getMobManager();
 
         if (!area || !mobManager) {
-            // Silently fail - area or mobManager not initialized yet
+            this.owner.logger.debug(
+                `[PlayerHorse] cannot spawn horse: area=${Boolean(area)} mobManager=${Boolean(mobManager)} level=${this.level}`,
+            );
             return;
         }
 
@@ -273,7 +303,7 @@ export class PlayerHorse {
             const horseEntity = mobManager.getMob(horseVnum, spawnX, spawnY, 180);
 
             if (!horseEntity) {
-                // Horse vnum not found in mob database
+                this.owner.logger.debug(`[PlayerHorse] horse vnum ${horseVnum} was not found in MobManager`);
                 return;
             }
 
@@ -284,9 +314,12 @@ export class PlayerHorse {
             // Spawn in the area with proper virtualId assignment
             area.spawnMobEntity(horseEntity);
             this.spawnedHorse = horseEntity;
+            this.startHorseFollow();
+            this.owner.logger.debug(
+                `[PlayerHorse] spawned horse vnum=${horseVnum} vid=${horseEntity.getVirtualId()} at=${spawnX},${spawnY}`,
+            );
         } catch (error) {
-            // Silently fail - horse spawning is cosmetic
-            console.error('Failed to spawn horse entity:', error);
+            this.owner.logger.error(error instanceof Error ? error : String(error));
         }
     }
 
@@ -294,6 +327,8 @@ export class PlayerHorse {
      * Despawns the horse entity when the player mounts.
      */
     private despawnHorseEntity(): void {
+        this.owner.removeEventTimer(HORSE_FOLLOW_TIMER);
+
         if (!this.spawnedHorse) {
             return;
         }
@@ -304,6 +339,48 @@ export class PlayerHorse {
         }
 
         this.spawnedHorse = null;
+    }
+
+    private startHorseFollow(): void {
+        this.owner.logger.debug(`[PlayerHorse] starting follow timer for ${this.owner.getName()}`);
+        this.owner.addEventTimer({
+            id: HORSE_FOLLOW_TIMER,
+            eventFunction: () => {
+                const horse = this.spawnedHorse;
+                if (!horse || this.riding) {
+                    this.owner.logger.debug(
+                        `[PlayerHorse] follow skipped: horse=${Boolean(horse)} riding=${this.riding}`,
+                    );
+                    return;
+                }
+
+                if (horse.getState() !== EntityStateEnum.IDLE) {
+                    return;
+                }
+
+                const playerX = this.owner.getPositionX();
+                const playerY = this.owner.getPositionY();
+                const deltaX = playerX - horse.getPositionX();
+                const deltaY = playerY - horse.getPositionY();
+                const distance = Math.sqrt(deltaX * deltaX + deltaY * deltaY);
+                if (distance <= HORSE_FOLLOW_DISTANCE) {
+                    this.owner.logger.debug(`[PlayerHorse] follow idle: distance=${Math.round(distance)}`);
+                    return;
+                }
+
+                const approach =
+                    HORSE_FOLLOW_MIN_APPROACH +
+                    Math.floor(Math.random() * (HORSE_FOLLOW_MAX_APPROACH - HORSE_FOLLOW_MIN_APPROACH + 1));
+                const scale = Math.max(0, (distance - approach) / distance);
+                const targetX = Math.round(playerX - deltaX * scale);
+                const targetY = Math.round(playerY - deltaY * scale);
+                this.owner.logger.debug(
+                    `[PlayerHorse] follow move: horse=${horse.getPositionX()},${horse.getPositionY()} player=${this.owner.getPositionX()},${this.owner.getPositionY()} distance=${Math.round(distance)} target=${targetX},${targetY}`,
+                );
+                horse.moveTo(targetX, targetY);
+            },
+            options: { interval: HORSE_FOLLOW_INTERVAL_MS },
+        });
     }
 
     /**

@@ -15,6 +15,7 @@ import { PositionEnum } from '@/core/enum/PositionEnum';
 import { EmpireEnum } from '@/core/enum/EmpireEnum';
 import { QuestManager } from '../../quests/QuestManager';
 import { EntityTypeEnum } from '@/core/enum/EntityTypeEnum';
+import { MovementTypeEnum } from '@/core/enum/MovementTypeEnum';
 
 export default abstract class Character extends GameEntity {
     protected id: number;
@@ -200,6 +201,24 @@ export default abstract class Character extends GameEntity {
 
         this.rotation = rotation * 5;
         this.stateMachine.gotoState(EntityStateEnum.MOVING);
+    }
+
+    /** Move an NPC or character and broadcast the movement to nearby players. */
+    moveTo(x: number, y: number): void {
+        const rotation = MathUtil.calcRotationFromXY(x - this.positionX, y - this.positionY) / 5;
+        this.gotoInternal(x, y, rotation);
+        this.area?.onCharacterMove({
+            entity: this,
+            params: {
+                positionX: x,
+                positionY: y,
+                arg: 0,
+                rotation,
+                time: performance.now(),
+                movementType: MovementTypeEnum.WAIT,
+                duration: this.movementDuration,
+            },
+        });
     }
 
     protected move(x: number, y: number) {

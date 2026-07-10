@@ -22,6 +22,7 @@ import CharacterSpawnPacket from '@/core/interface/networking/packets/packet/out
 import CharacterInfoPacket from '@/core/interface/networking/packets/packet/out/CharacterInfoPacket';
 import CharacterUpdatePacket from '@/core/interface/networking/packets/packet/out/CharacterUpdatePacket';
 import CharacterPointsPacket from '@/core/interface/networking/packets/packet/out/CharacterPointsPacket';
+import SkillLevelPacket, { SKILL_HORSE } from '@/core/interface/networking/packets/packet/out/SkillLevelPacket';
 import CharacterDetailsPacket from '@/core/interface/networking/packets/packet/out/CharacterDetailsPacket';
 import CharacterDiedPacket from '@/core/interface/networking/packets/packet/out/CharacterDiedPacket';
 import TeleportPacket from '@/core/interface/networking/packets/packet/out/TeleportPacket';
@@ -121,20 +122,6 @@ export default class Player extends Character {
 
     private currentShop: Shop | null = null;
 
-    // Horse riding delegate
-    private readonly horse: PlayerHorse = new PlayerHorse({
-        chat: (opts) => this.chat(opts),
-        isEventTimerActive: (id) => this.isEventTimerActive(id),
-        addEventTimer: (opts) => this.addEventTimer(opts),
-        broadcastMountChange: () => this.broadcastMountChange(),
-        getPositionX: () => this.positionX,
-        getPositionY: () => this.positionY,
-        getName: () => this.name,
-        getArea: () => this.area,
-        getMobManager: () => this.mobManager,
-        setPoint: (point, value) => this.setPoint(point, value),
-        save: () => this.save(),
-    });
     private privateShop: PrivateShop | null = null;
     private currentPrivateShopOwner: Player | null = null;
 
@@ -142,6 +129,9 @@ export default class Player extends Character {
     private myShopClosedAt: number | null = null;
 
     private polymorphVnum: number = 0;
+
+    // Horse riding delegate
+    private readonly horse: PlayerHorse;
 
     constructor(
         {
@@ -276,6 +266,24 @@ export default class Player extends Character {
         this.logger = logger;
         this.config = config;
         this.mobManager = mobManager;
+        this.horse = new PlayerHorse({
+            logger,
+            chat: (opts) => this.chat(opts),
+            isEventTimerActive: (id) => this.isEventTimerActive(id),
+            addEventTimer: (opts) => this.addEventTimer(opts),
+            removeEventTimer: (id) => this.eventTimerManager.removeTimer(id),
+            broadcastMountChange: () => this.broadcastMountChange(),
+            getPositionX: () => this.positionX,
+            getPositionY: () => this.positionY,
+            getTargetPosition: () => this.getTargetPosition(),
+            getName: () => this.name,
+            getArea: () => this.area,
+            getMobManager: () => this.mobManager,
+            setPoint: (point, value) => this.setPoint(point, value),
+            save: () => this.save(),
+            recalculatePoints: () => this.points.calcPoints(),
+            sendSkillLevel: () => this.sendSkillLevel(),
+        });
         this.inventory = new Inventory({ config: this.config, ownerId: this.id });
         this.inventory.subscribe(InventoryEventsEnum.ITEM_EQUIPPED, this.onItemEquipped.bind(this));
         this.inventory.subscribe(InventoryEventsEnum.ITEM_UNEQUIPPED, this.onItemUnequipped.bind(this));
@@ -1014,6 +1022,14 @@ export default class Player extends Character {
             characterPointsPacket.addPoint(Number(point), this.getPoint(point));
         }
         this.connection?.send(characterPointsPacket);
+
+        this.sendSkillLevel();
+    }
+
+    sendSkillLevel() {
+        const packet = new SkillLevelPacket();
+        packet.setSkillLevel(SKILL_HORSE, this.getHorseLevel());
+        this.connection?.send(packet);
     }
 
     updateOtherEntity({
@@ -1702,6 +1718,10 @@ export default class Player extends Character {
 
     getHorseGrade(): number {
         return this.horse.getGrade();
+    }
+
+    getHorseStats() {
+        return this.horse.getStats();
     }
 
     getMountVnum(): number {
