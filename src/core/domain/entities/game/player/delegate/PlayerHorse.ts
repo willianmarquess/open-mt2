@@ -71,8 +71,16 @@ export class PlayerHorse {
     initialize(level: number, health: number, stamina: number, name: string): void {
         this.level = Math.max(0, Math.min(Number(level) || 0, HORSE_MAX_LEVEL));
         const stat = HORSE_STATS[this.level];
-        this.health = Math.max(0, Math.min(Number(health) || stat.maxHealth, stat.maxHealth));
-        this.stamina = Math.max(0, Math.min(Number(stamina) || stat.maxStamina, stat.maxStamina));
+        const parsedHealth = Number(health);
+        const parsedStamina = Number(stamina);
+        this.health = Math.max(
+            0,
+            Math.min(Number.isFinite(parsedHealth) ? parsedHealth : stat.maxHealth, stat.maxHealth),
+        );
+        this.stamina = Math.max(
+            0,
+            Math.min(Number.isFinite(parsedStamina) ? parsedStamina : stat.maxStamina, stat.maxStamina),
+        );
         this.horseName = name || '';
 
         this.owner.setPoint(PointsEnum.HORSE_SKILL, this.level);
@@ -83,6 +91,10 @@ export class PlayerHorse {
 
     getSpawnedHorse(): NPC | null {
         return this.spawnedHorse;
+    }
+
+    despawn(): void {
+        this.despawnHorseEntity();
     }
 
     getName(): string {

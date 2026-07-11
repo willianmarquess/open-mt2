@@ -404,6 +404,7 @@ export default class Player extends Character {
     }
 
     async onDespawn(): Promise<void> {
+        this.horse.despawn();
         this.eventTimerManager.clearAllTimers();
         this.forgetMeAsTarget();
         //TODO: logout from party
