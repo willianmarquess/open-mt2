@@ -1757,8 +1757,8 @@ export default class Player extends Character {
         return this.horse.revive();
     }
 
-    feedHorse(): void {
-        this.horse.feed();
+    feedHorse(): boolean {
+        return this.horse.feed();
     }
 
     setHorseHealth(value: number): void {

@@ -1,11 +1,9 @@
 import CommandHandler from '../../CommandHandler';
 import UserHorseFeedCommand from './UserHorseFeedCommand';
 import Player from '@/core/domain/entities/game/player/Player';
-import Item from '@/core/domain/entities/game/item/Item';
-import ItemManager from '@/core/domain/manager/ItemManager';
+import UseItemService from '@/game/app/service/UseItemService';
 import Logger from '@/core/infra/logger/Logger';
 import { ChatMessageTypeEnum } from '@/core/enum/ChatMessageTypeEnum';
-import { WindowTypeEnum } from '@/core/enum/WindowTypeEnum';
 
 // Grade-to-food vnum mapping: grade 1 → 50054, grade 2 → 50055, grade 3 → 50056
 const HORSE_FOOD_VNUM_BY_GRADE: Record<number, number> = {
@@ -16,12 +14,12 @@ const HORSE_FOOD_VNUM_BY_GRADE: Record<number, number> = {
 
 export default class UserHorseFeedCommandHandler extends CommandHandler<UserHorseFeedCommand> {
     private readonly logger: Logger;
-    private readonly itemManager: ItemManager;
+    private readonly useItemService: UseItemService;
 
-    constructor({ logger, itemManager }: { logger: Logger; itemManager: ItemManager }) {
+    constructor({ logger, useItemService }: { logger: Logger; useItemService: UseItemService }) {
         super();
         this.logger = logger;
-        this.itemManager = itemManager;
+        this.useItemService = useItemService;
     }
 
     async execute(player: Player) {
@@ -64,24 +62,8 @@ export default class UserHorseFeedCommandHandler extends CommandHandler<UserHors
             return;
         }
 
-        await this.consumeFoodItem(player, foodItem);
-        player.feedHorse();
+        if (!player.feedHorse()) return;
+        await this.useItemService.removeItemByQuantity(player, foodItem);
         player.chat({ messageType: ChatMessageTypeEnum.INFO, message: 'You fed your horse.' });
-    }
-
-    private async consumeFoodItem(player: Player, foodItem: Item) {
-        if (foodItem.getCount() > 1) {
-            foodItem.decreaseCount(1);
-            player.sendItemUpdate(foodItem);
-            await this.itemManager.update(foodItem);
-            return;
-        }
-
-        player.getInventory().removeItem(foodItem.getPosition(), foodItem.getSize());
-        player.sendItemRemoved({
-            window: WindowTypeEnum.INVENTORY,
-            position: foodItem.getPosition(),
-        });
-        await this.itemManager.delete(foodItem);
     }
 }

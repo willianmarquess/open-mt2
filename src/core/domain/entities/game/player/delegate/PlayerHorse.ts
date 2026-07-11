@@ -250,13 +250,14 @@ export class PlayerHorse {
         return true;
     }
 
-    /** Feed the horse to restore 1 health point. */
-    feed(): void {
-        if (this.level > 0 && this.health > 0) {
-            this.health = Math.min(this.health + 1, this.getMaxHealth());
-            this.sendHorseState();
-            this.owner.save();
-        }
+    /** Feed the horse to restore 1 health point. Returns whether health changed. */
+    feed(): boolean {
+        if (this.level <= 0 || this.health <= 0 || this.health >= this.getMaxHealth()) return false;
+
+        this.health += 1;
+        this.sendHorseState();
+        this.owner.save();
+        return true;
     }
 
     /** Directly set horse health (used by GM horse_set_stat). */

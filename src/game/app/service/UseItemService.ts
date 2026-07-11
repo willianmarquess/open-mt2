@@ -275,7 +275,7 @@ export default class UseItemService {
         }
     }
 
-    private useHorseItem(player: Player, item: Item): void {
+    private async useHorseItem(player: Player, item: Item): Promise<void> {
         const grade = player.getHorseGrade();
 
         if (grade <= 0) {
@@ -294,15 +294,15 @@ export default class UseItemService {
             }
             player.reviveHorse();
             player.chat({ messageType: ChatMessageTypeEnum.INFO, message: 'You revived your horse.' });
-            item.decreaseCount(1);
+            await this.removeItemByQuantity(player, item);
         } else if (vnum === feedVnum) {
             if (player.getHorseHealth() <= 0) {
                 player.chat({ messageType: ChatMessageTypeEnum.INFO, message: 'You cannot feed a dead horse.' });
                 return;
             }
-            player.feedHorse();
+            if (!player.feedHorse()) return;
             player.chat({ messageType: ChatMessageTypeEnum.INFO, message: 'You fed your horse.' });
-            item.decreaseCount(1);
+            await this.removeItemByQuantity(player, item);
         } else {
             // Wrong grade item for this horse
             player.chat({
@@ -312,22 +312,23 @@ export default class UseItemService {
         }
     }
 
-    private async removeItemByQuantity(player: Player, item: Item, quantity: number) {
-        if (item.getCount() - quantity <= 0) {
-            player.getInventory().removeItem(item.getPosition(), item.getSize());
+    async removeItemByQuantity(player: Player, item: Item, quantity: number = 1): Promise<boolean> {
+        if (quantity <= 0 || item.getCount() < quantity) return false;
 
+        if (item.getCount() <= quantity) {
+            player.getInventory().removeItem(item.getPosition(), item.getSize());
             player.sendItemRemoved({
                 window: WindowTypeEnum.INVENTORY,
                 position: item.getPosition(),
             });
-
             await this.itemManager.delete(item);
-            return;
+            return true;
         }
 
         item.decreaseCount(quantity);
         player.sendItemUpdate(item);
         await this.itemManager.update(item);
+        return true;
     }
 
     private async useManaPotion(player: Player, item: Item) {

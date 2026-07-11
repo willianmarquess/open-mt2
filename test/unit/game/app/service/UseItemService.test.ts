@@ -16,7 +16,10 @@ describe('UseItemService', () => {
         loggerStub = sinon.createStubInstance(WinstonLoggerAdapter);
         itemManagerStub = { update: sinon.stub().resolves() };
         mobManagerStub = { hasMob: sinon.stub().resolves() };
-        service = new UseItemService({ logger: loggerStub, itemManager: itemManagerStub, mobManager: mobManagerStub });
+        service = new UseItemService({
+            logger: loggerStub,
+            itemManager: itemManagerStub, mobManager: mobManagerStub,
+        });
         playerStub = {
             getItem: sinon.stub(),
             getInventory: sinon.stub(),
