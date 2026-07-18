@@ -43,7 +43,7 @@ const SetNameResult = {
 
 @Quest('HorseMenuQuest', HorseMenuQuestState.START)
 export class HorseMenuQuest extends AbstractQuest {
-    @Task({ state: HorseMenuQuestState.START, when: QuestEventEnum.CLICK })
+    @Task({ state: HorseMenuQuestState.START, when: QuestEventEnum.CLICK, target: HORSE_VNUMS })
     async onClick({ npc }: ClickExecutionContext) {
         if (!HORSE_VNUMS.includes(npc.getId())) return;
         if (!npc.isMine()) return;

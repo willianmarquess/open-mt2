@@ -67,7 +67,7 @@ export type Event = {
     [QuestEventEnum.CLICK]: {
         readonly state: string;
         readonly when: QuestEventEnum.CLICK;
-        target: number;
+        target?: number | number[];
         readonly with?: ConditionFunc;
         readonly callback: TaskCallback;
     };
@@ -142,7 +142,7 @@ export type State = {
 
 export type MetaTask = {
     readonly when: QuestEventEnum;
-    target?: number;
+    target?: number | number[];
     chat?: string;
     readonly with?: ConditionFunc;
     readonly handlerName: string;

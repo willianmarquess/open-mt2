@@ -82,36 +82,42 @@ export class QuestManager {
                             for (const [, metaState] of meta.states) {
                                 for (const t of metaState.tasks) {
                                     if (t.when === QuestEventEnum.CHAT && t.target !== undefined && t.chat) {
-                                        const options = this.questsChatEvents.get(t.target) ?? [];
-                                        options.push({
-                                            questId: id,
-                                            stateName: metaState.name,
-                                            label: t.chat,
-                                            handlerName: t.handlerName,
-                                            with: t.with,
-                                        });
-                                        this.questsChatEvents.set(t.target, options);
+                                        const targets = Array.isArray(t.target) ? t.target : [t.target];
+                                        for (const targetId of targets) {
+                                            const options = this.questsChatEvents.get(targetId) ?? [];
+                                            options.push({
+                                                questId: id,
+                                                stateName: metaState.name,
+                                                label: t.chat,
+                                                handlerName: t.handlerName,
+                                                with: t.with,
+                                            });
+                                            this.questsChatEvents.set(targetId, options);
+                                        }
                                         continue;
                                     }
 
                                     switch (t.when) {
                                         case QuestEventEnum.CLICK:
                                             {
-                                                const target = t.target as number | undefined;
+                                                const target = t.target as number | number[] | undefined;
                                                 if (target !== undefined) {
-                                                    let stateMap = this.questsClickEvents.get(target);
-                                                    if (!stateMap) {
-                                                        stateMap = new Map<number, Set<string>>();
-                                                        this.questsClickEvents.set(target, stateMap);
-                                                    }
+                                                    const targets = Array.isArray(target) ? target : [target];
+                                                    for (const targetId of targets) {
+                                                        let stateMap = this.questsClickEvents.get(targetId);
+                                                        if (!stateMap) {
+                                                            stateMap = new Map<number, Set<string>>();
+                                                            this.questsClickEvents.set(targetId, stateMap);
+                                                        }
 
-                                                    let set = stateMap.get(id);
-                                                    if (!set) {
-                                                        set = new Set<string>();
-                                                        stateMap.set(id, set);
-                                                    }
+                                                        let set = stateMap.get(id);
+                                                        if (!set) {
+                                                            set = new Set<string>();
+                                                            stateMap.set(id, set);
+                                                        }
 
-                                                    set.add(metaState.name);
+                                                        set.add(metaState.name);
+                                                    }
                                                 } else {
                                                     this.addQuestToEvent(QuestEventEnum.CLICK, id, metaState.name);
                                                 }
@@ -291,7 +297,7 @@ export class QuestManager {
                         eventType: QuestEventEnum.CHAT,
                         npc: new NpcQuest({
                             npc: option.npc!,
-                            shopService: this.shopService,
+                            shopManager: this.shopManager,
                             player,
                         }),
                     } as any,
@@ -339,7 +345,7 @@ export class QuestManager {
             if (!quest || quest.getCurrentState()?.name !== option.stateName) continue;
             const context = {
                 player: new PlayerQuest({ player }),
-                npc: new NpcQuest({ npc, shopService: this.shopService, player }),
+                npc: new NpcQuest({ npc, shopManager: this.shopManager, player }),
                 eventType: QuestEventEnum.CHAT,
             };
             if (!option.with || (await option.with(context))) chatOptions.push(option);
@@ -353,7 +359,7 @@ export class QuestManager {
             const labels = [...chatOptions.map((option) => option.label), 'Close'];
             const src = `[QUESTION ${labels.map((label, index) => `${index + 1}; ${label}`).join('|')}]`;
             player.sendQuestScript(QuestSkinEnum.NORMAL, src);
-            return;
+            return true;
         }
 
         const questMap = this.questsClickEvents.get(npc.getId()) ?? this.getQuestsForEvent(QuestEventEnum.CLICK);
