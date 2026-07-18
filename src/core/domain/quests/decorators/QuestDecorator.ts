@@ -21,6 +21,7 @@ export type ContextBase = {
 };
 
 export type ClickExecutionContext = ContextBase & { npc: NpcQuest } & { eventType: QuestEventEnum.CLICK };
+export type ChatExecutionContext = ContextBase & { npc: NpcQuest } & { eventType: QuestEventEnum.CHAT };
 export type KillExecutionContext = ContextBase & { victim: VictimQuest } & { eventType: QuestEventEnum.KILL };
 export type EnterExecutionContext = ContextBase & { eventType: QuestEventEnum.ENTER_STATE };
 export type LeaveExecutionContext = ContextBase & { eventType: QuestEventEnum.LEAVE_STATE };
@@ -33,6 +34,7 @@ export type ButtonExecutionContext = ContextBase & { eventType: QuestEventEnum.B
 
 export type StateExecutionContext =
     | ClickExecutionContext
+    | ChatExecutionContext
     | KillExecutionContext
     | EnterExecutionContext
     | LeaveExecutionContext
@@ -45,6 +47,7 @@ export type StateExecutionContext =
 
 export type StateExecutionContextBase =
     | Omit<ClickExecutionContext, 'player'>
+    | Omit<ChatExecutionContext, 'player'>
     | Omit<KillExecutionContext, 'player'>
     | Omit<EnterExecutionContext, 'player'>
     | Omit<LeaveExecutionContext, 'player'>
@@ -65,6 +68,14 @@ export type Event = {
         readonly state: string;
         readonly when: QuestEventEnum.CLICK;
         target: number;
+        readonly with?: ConditionFunc;
+        readonly callback: TaskCallback;
+    };
+    [QuestEventEnum.CHAT]: {
+        readonly state: string;
+        readonly when: QuestEventEnum.CHAT;
+        target: number;
+        chat: string;
         readonly with?: ConditionFunc;
         readonly callback: TaskCallback;
     };
@@ -109,6 +120,7 @@ export type Event = {
 
 export type QuestTask =
     | Event[QuestEventEnum.CLICK]
+    | Event[QuestEventEnum.CHAT]
     | Event[QuestEventEnum.KILL]
     | Event[QuestEventEnum.LEVELUP]
     | Event[QuestEventEnum.LOGIN]
@@ -131,6 +143,7 @@ export type State = {
 export type MetaTask = {
     readonly when: QuestEventEnum;
     target?: number;
+    chat?: string;
     readonly with?: ConditionFunc;
     readonly handlerName: string;
 };
@@ -204,6 +217,10 @@ export function Task(opts: TaskDecoratorOpts) {
 
         if ((opts as any).target !== undefined) {
             metaTask.target = (opts as any).target;
+        }
+
+        if ((opts as any).chat !== undefined) {
+            metaTask.chat = (opts as any).chat;
         }
 
         state.tasks.push(metaTask);

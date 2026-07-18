@@ -4,6 +4,7 @@ import Logger from '@/core/infra/logger/Logger';
 import { AbstractQuest } from './AbstractQuest';
 import { getQuestMeta, QuestStatusEnum } from './decorators/QuestDecorator';
 import { QuestEventEnum } from '@/core/enum/QuestEventEnum';
+import { QuestSkinEnum } from '@/core/enum/QuestSkinEnum';
 import Player from '../entities/game/player/Player';
 import NPC from '../entities/game/mob/NPC';
 import { NpcQuest } from './facade/NpcQuest';
@@ -11,6 +12,16 @@ import { VictimQuest } from './facade/VictimQuest';
 import Monster from '../entities/game/mob/Monster';
 import ShopManager from '@/core/domain/shop/ShopManager';
 import ItemManager from '../manager/ItemManager';
+import { PlayerQuest } from './facade/PlayerQuest';
+
+type ChatOption = {
+    questId: number;
+    stateName: string;
+    label: string;
+    handlerName: string;
+    with?: (args: any) => boolean | Promise<boolean>;
+    npc?: NPC;
+};
 
 export class QuestManager {
     private readonly logger: Logger;
@@ -19,6 +30,8 @@ export class QuestManager {
     private readonly questsClasses: Map<number, typeof AbstractQuest> = new Map();
     private readonly questsClickEvents: Map<number, Map<number, Set<string>>> = new Map();
     private readonly eventQuestMap: Map<QuestEventEnum, Map<number, Set<string>>> = new Map();
+    private readonly questsChatEvents: Map<number, ChatOption[]> = new Map();
+    private readonly pendingChatOptions: Map<number, ChatOption[]> = new Map();
 
     constructor({
         logger,
@@ -68,6 +81,19 @@ export class QuestManager {
                         if (meta && meta.states) {
                             for (const [, metaState] of meta.states) {
                                 for (const t of metaState.tasks) {
+                                    if (t.when === QuestEventEnum.CHAT && t.target !== undefined && t.chat) {
+                                        const options = this.questsChatEvents.get(t.target) ?? [];
+                                        options.push({
+                                            questId: id,
+                                            stateName: metaState.name,
+                                            label: t.chat,
+                                            handlerName: t.handlerName,
+                                            with: t.with,
+                                        });
+                                        this.questsChatEvents.set(t.target, options);
+                                        continue;
+                                    }
+
                                     switch (t.when) {
                                         case QuestEventEnum.CLICK:
                                             {
@@ -195,7 +221,7 @@ export class QuestManager {
                                 : () => {
                                       console.warn(`[QUEST_MANAGER] handler not found: ${t.handlerName}`);
                                   };
-                        const task: any = { when: t.when, with: t.with, callback };
+                        const task: any = { when: t.when, with: t.with, callback, handlerName: t.handlerName };
                         if (t.target !== undefined) task.target = t.target;
                         return task;
                     });
@@ -249,6 +275,29 @@ export class QuestManager {
     }
 
     onAnswer(player: Player, answer: number) {
+        const chatOptions = this.pendingChatOptions.get(player.getId());
+        if (chatOptions) {
+            this.pendingChatOptions.delete(player.getId());
+            const option = chatOptions[answer];
+            if (option) {
+                const quest = player.getQuest(option.questId);
+                if (quest && quest.getCurrentState()?.name === option.stateName) {
+                    void quest.runState(
+                        {
+                            eventType: QuestEventEnum.CHAT,
+                            npc: new NpcQuest({
+                                npc: option.npc!,
+                                shopService: this.shopService,
+                                player,
+                            }),
+                        } as any,
+                        option.handlerName,
+                    );
+                }
+            }
+            return;
+        }
+
         if (answer <= 250) {
             const quest = player.getQuestByStatus(QuestStatusEnum.SELECT);
 
@@ -279,6 +328,29 @@ export class QuestManager {
                 `[QUEST_MANAGER] Player ${player.getId()} logged in with running quest ${player.getCurrentQuest()?.getName()}`,
             );
             return false;
+        }
+
+        const chatOptions = [] as ChatOption[];
+        for (const option of this.questsChatEvents.get(npc.getId()) ?? []) {
+            const quest = player.getQuest(option.questId);
+            if (!quest || quest.getCurrentState()?.name !== option.stateName) continue;
+            const context = {
+                player: new PlayerQuest({ player }),
+                npc: new NpcQuest({ npc, shopService: this.shopService, player }),
+                eventType: QuestEventEnum.CHAT,
+            };
+            if (!option.with || (await option.with(context))) chatOptions.push(option);
+        }
+
+        if (chatOptions.length > 0) {
+            this.pendingChatOptions.set(
+                player.getId(),
+                chatOptions.map((option) => ({ ...option, npc })),
+            );
+            const labels = [...chatOptions.map((option) => option.label), 'Close'];
+            const src = `[QUESTION ${labels.map((label, index) => `${index + 1}; ${label}`).join('|')}]`;
+            player.sendQuestScript(QuestSkinEnum.NORMAL, src);
+            return;
         }
 
         const questMap = this.questsClickEvents.get(npc.getId()) ?? this.getQuestsForEvent(QuestEventEnum.CLICK);

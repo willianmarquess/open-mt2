@@ -61,7 +61,6 @@ export abstract class AbstractQuest {
                 item.decreaseCount(needed);
                 this.player.sendItemUpdate(item);
                 await this.itemManager.update(item);
-                needed = 0;
                 break;
             } else {
                 inventory.removeItem(item.getPosition(), item.getSize());
@@ -101,9 +100,11 @@ export abstract class AbstractQuest {
         return this;
     }
 
-    async runState(context: StateExecutionContextBase) {
+    async runState(context: StateExecutionContextBase, handlerName?: string) {
         if (this.currentState) {
-            const tasks = this.getCurrentTasksByEvent(context.eventType);
+            const tasks = this.getCurrentTasksByEvent(context.eventType).filter(
+                (task: any) => !handlerName || task.handlerName === handlerName,
+            );
             for (const routine of tasks) {
                 try {
                     const withFunc = routine.with ? routine.with({ player: this.playerQuest, ...context }) : true;

@@ -1,6 +1,6 @@
 import { QuestEventEnum } from '@/core/enum/QuestEventEnum';
 import { AbstractQuest } from '../AbstractQuest';
-import { ClickExecutionContext, Quest, Task } from '../decorators/QuestDecorator';
+import { ChatExecutionContext, Quest, Task } from '../decorators/QuestDecorator';
 
 enum HorseTicketQuestState {
     START = 'START',
@@ -17,8 +17,14 @@ const RENTAL_COOLDOWN_SECONDS = 60 * 60;
 export class HorseTicketQuest extends AbstractQuest {
     private lastRentalAt = 0;
 
-    @Task({ state: HorseTicketQuestState.START, when: QuestEventEnum.CLICK, target: STABLE_MASTER_VNUM })
-    async onClick({ player }: ClickExecutionContext) {
+    @Task({
+        state: HorseTicketQuestState.START,
+        when: QuestEventEnum.CHAT,
+        target: STABLE_MASTER_VNUM,
+        chat: 'Ride (Use your riding card)',
+        with: ({ player }) => player.getLevel() > 10 && player.getMountVnum() === 0,
+    })
+    async onClick({ player }: ChatExecutionContext) {
         if (player.getLevel() < REQUIRED_LEVEL || player.getPlayerInstance().isHorseRiding()) return;
 
         const now = Math.floor(Date.now() / 1_000);

@@ -13,6 +13,10 @@ export class PlayerQuest {
         return this.player.getLevel();
     }
 
+    getMountVnum() {
+        return this.player.getMountVnum();
+    }
+
     addExp(value: number) {
         this.player.addPoint(PointsEnum.EXPERIENCE, value);
     }
