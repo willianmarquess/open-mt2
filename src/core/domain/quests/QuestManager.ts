@@ -81,28 +81,13 @@ export class QuestManager {
                         if (meta && meta.states) {
                             for (const [, metaState] of meta.states) {
                                 for (const t of metaState.tasks) {
-                                    if (t.when === QuestEventEnum.CHAT && t.target !== undefined && t.chat) {
-                                        const targets = Array.isArray(t.target) ? t.target : [t.target];
-                                        for (const targetId of targets) {
-                                            const options = this.questsChatEvents.get(targetId) ?? [];
-                                            options.push({
-                                                questId: id,
-                                                stateName: metaState.name,
-                                                label: t.chat,
-                                                handlerName: t.handlerName,
-                                                with: t.with,
-                                            });
-                                            this.questsChatEvents.set(targetId, options);
-                                        }
-                                        continue;
-                                    }
-
                                     switch (t.when) {
                                         case QuestEventEnum.CLICK:
                                             {
                                                 const target = t.target as number | number[] | undefined;
                                                 if (target !== undefined) {
-                                                    const targets = Array.isArray(target) ? target : [target];
+                                                    const targets = [target].flat();
+
                                                     for (const targetId of targets) {
                                                         let stateMap = this.questsClickEvents.get(targetId);
                                                         if (!stateMap) {
@@ -139,7 +124,28 @@ export class QuestManager {
                                             this.addQuestToEvent(QuestEventEnum.INFO, id, metaState.name);
                                             break;
                                         case QuestEventEnum.CHAT:
-                                            this.addQuestToEvent(QuestEventEnum.CHAT, id, metaState.name);
+                                            {
+                                                const target = t.target as number | number[] | undefined;
+
+                                                if (target !== undefined && t.chat) {
+                                                    const targets = [target].flat();
+
+                                                    for (const targetId of targets) {
+                                                        const options = this.questsChatEvents.get(targetId) ?? [];
+                                                        options.push({
+                                                            questId: id,
+                                                            stateName: metaState.name,
+                                                            label: t.chat,
+                                                            handlerName: t.handlerName,
+                                                            with: t.with,
+                                                        });
+                                                        this.questsChatEvents.set(targetId, options);
+                                                    }
+                                                    continue;
+                                                }
+
+                                                this.addQuestToEvent(QuestEventEnum.CHAT, id, metaState.name);
+                                            }
                                             break;
                                         case QuestEventEnum.ATTR_IN:
                                             this.addQuestToEvent(QuestEventEnum.ATTR_IN, id, metaState.name);
