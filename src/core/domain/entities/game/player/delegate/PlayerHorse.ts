@@ -53,6 +53,10 @@ const HORSE_FOLLOW_MIN_APPROACH = 150;
 const HORSE_FOLLOW_MAX_APPROACH = 300;
 const HORSE_FOLLOW_TIMER = 'HORSE_FOLLOW';
 
+const TEMPORARY_HORSE_RIDE = 'TEMPORARY_HORSE_RIDE';
+const HORSE_STAMINA_REGEN = 'HORSE_STAMINA_REGEN';
+const HORSE_STAMINA_CONSUME = 'HORSE_STAMINA_CONSUME';
+
 export class PlayerHorse {
     private level: number = 0;
     private health: number = 0;
@@ -157,6 +161,13 @@ export class PlayerHorse {
         return this.temporaryRiding;
     }
 
+    summon(): boolean {
+        if (this.level <= 0 || this.riding || this.spawnedHorse) return false;
+
+        this.spawnHorseEntity();
+        return this.spawnedHorse !== null;
+    }
+
     // ── Mutations ──────────────────────────────────────────────────────────────
 
     setLevel(level: number): void {
@@ -219,7 +230,7 @@ export class PlayerHorse {
         this.owner.setPoint(PointsEnum.MOUNT, mountVnum);
         this.owner.broadcastMountChange();
         this.owner.addEventTimer({
-            id: 'TEMPORARY_HORSE_RIDE',
+            id: TEMPORARY_HORSE_RIDE,
             eventFunction: () => this.stopTemporaryRiding(),
             options: { interval: durationMs, duration: durationMs },
         });
@@ -254,7 +265,7 @@ export class PlayerHorse {
     private stopTemporaryRiding(): boolean {
         if (!this.riding || !this.temporaryRiding) return false;
 
-        this.owner.removeEventTimer('TEMPORARY_HORSE_RIDE');
+        this.owner.removeEventTimer(TEMPORARY_HORSE_RIDE);
         this.riding = false;
         this.temporaryRiding = false;
         this.mountVnum = 0;
@@ -302,6 +313,9 @@ export class PlayerHorse {
     /** Directly set horse health (used by GM horse_set_stat). */
     setHealth(value: number): void {
         this.health = Math.max(0, Math.min(value, this.getMaxHealth()));
+        if (this.health === 0) {
+            this.handleDeath();
+        }
         this.sendHorseState();
         this.owner.save();
     }
@@ -311,6 +325,22 @@ export class PlayerHorse {
         this.stamina = Math.max(0, Math.min(value, this.getMaxStamina()));
         this.sendHorseState();
         this.owner.save();
+    }
+
+    private handleDeath(): void {
+        this.stamina = 0;
+        this.owner.removeEventTimer(HORSE_STAMINA_CONSUME);
+        this.owner.removeEventTimer(HORSE_STAMINA_REGEN);
+        this.owner.removeEventTimer(HORSE_FOLLOW_TIMER);
+        this.despawnHorseEntity(); // TODO: replace with death animation, and dead state
+
+        if (this.riding) {
+            this.riding = false;
+            this.temporaryRiding = false;
+            this.mountVnum = 0;
+            this.owner.removeEventTimer(TEMPORARY_HORSE_RIDE);
+            this.owner.broadcastMountChange();
+        }
     }
 
     // ── Private helpers ────────────────────────────────────────────────────────
@@ -471,9 +501,9 @@ export class PlayerHorse {
     }
 
     private startStaminaConsume(): void {
-        if (this.owner.isEventTimerActive('HORSE_STAMINA_CONSUME')) return;
+        if (this.owner.isEventTimerActive(HORSE_STAMINA_CONSUME)) return;
         this.owner.addEventTimer({
-            id: 'HORSE_STAMINA_CONSUME',
+            id: HORSE_STAMINA_CONSUME,
             eventFunction: () => {
                 if (!this.riding || this.health <= 0) return;
                 this.stamina = Math.max(0, this.stamina - 1);
@@ -486,9 +516,9 @@ export class PlayerHorse {
     }
 
     private startStaminaRegen(): void {
-        if (this.owner.isEventTimerActive('HORSE_STAMINA_REGEN')) return;
+        if (this.owner.isEventTimerActive(HORSE_STAMINA_REGEN)) return;
         this.owner.addEventTimer({
-            id: 'HORSE_STAMINA_REGEN',
+            id: HORSE_STAMINA_REGEN,
             eventFunction: () => {
                 if (this.riding || this.health <= 0) return;
                 const maxSt = this.getMaxStamina();

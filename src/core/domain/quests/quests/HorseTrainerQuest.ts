@@ -1,6 +1,6 @@
 import { QuestEventEnum } from '@/core/enum/QuestEventEnum';
 import { AbstractQuest } from '../AbstractQuest';
-import { ClickExecutionContext, Quest, Task } from '../decorators/QuestDecorator';
+import { Quest, Task } from '../decorators/QuestDecorator';
 import { ITEM_HORSE_SUMMON_BOOK_1 } from '@/game/app/service/UseItemService';
 
 enum HorseTrainerQuestState {
@@ -12,27 +12,14 @@ const REQUIRED_LEVEL = 30;
 
 @Quest('HorseTrainerQuest', HorseTrainerQuestState.START)
 export class HorseTrainerQuest extends AbstractQuest {
-    @Task({ state: HorseTrainerQuestState.START, when: QuestEventEnum.CLICK })
-    async onClick({ npc, player }: ClickExecutionContext) {
-        if (npc.getId() !== HORSE_TRAINER_NPC_VNUM) return;
-
-        const playerLevel = player.getLevel();
-
-        // Already has a horse
-        if (player.getPlayerInstance().getHorseLevel() > 0) {
-            this.title('Horse Trainer');
-            this.text('You already have a horse. Take good care of it!');
-            return;
-        }
-
-        // Level too low
-        if (playerLevel < REQUIRED_LEVEL) {
-            this.title('Horse Trainer');
-            this.text(`You must be at least level ${REQUIRED_LEVEL} to receive a horse.`);
-            this.text(`Come back when you are stronger, young warrior.`);
-            return;
-        }
-
+    @Task({
+        state: HorseTrainerQuestState.START,
+        when: QuestEventEnum.CHAT,
+        target: HORSE_TRAINER_NPC_VNUM,
+        chat: 'Train a Horse',
+        with: ({ player }) => player.getLevel() >= REQUIRED_LEVEL && player.getHorseLevel() === 0,
+    })
+    async onChat() {
         // Offer the horse
         this.title('Horse Trainer');
         this.text('Greetings, brave warrior!');

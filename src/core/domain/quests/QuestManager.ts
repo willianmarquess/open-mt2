@@ -279,21 +279,24 @@ export class QuestManager {
         if (chatOptions) {
             this.pendingChatOptions.delete(player.getId());
             const option = chatOptions[answer];
-            if (option) {
-                const quest = player.getQuest(option.questId);
-                if (quest && quest.getCurrentState()?.name === option.stateName) {
-                    void quest.runState(
-                        {
-                            eventType: QuestEventEnum.CHAT,
-                            npc: new NpcQuest({
-                                npc: option.npc!,
-                                shopService: this.shopService,
-                                player,
-                            }),
-                        } as any,
-                        option.handlerName,
-                    );
-                }
+            if (!option) {
+                player.sendQuestScript(QuestSkinEnum.NO_WINDOW, '[DONE]');
+                return;
+            }
+
+            const quest = player.getQuest(option.questId);
+            if (quest && quest.getCurrentState()?.name === option.stateName) {
+                void quest.runState(
+                    {
+                        eventType: QuestEventEnum.CHAT,
+                        npc: new NpcQuest({
+                            npc: option.npc!,
+                            shopService: this.shopService,
+                            player,
+                        }),
+                    } as any,
+                    option.handlerName,
+                );
             }
             return;
         }

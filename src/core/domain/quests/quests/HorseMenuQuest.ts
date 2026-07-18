@@ -1,6 +1,7 @@
 import { QuestEventEnum } from '@/core/enum/QuestEventEnum';
 import { AbstractQuest } from '../AbstractQuest';
 import { ClickExecutionContext, Quest, Task } from '../decorators/QuestDecorator';
+import { REVIVE_HERB_BY_GRADE } from './HorseReviveQuest';
 
 enum HorseMenuQuestState {
     START = 'START',
@@ -56,9 +57,17 @@ export class HorseMenuQuest extends AbstractQuest {
         if (isDead) {
             const selection = await this.select(['Revive Horse', 'Send Away', 'Nothing (close window)']);
 
+            const grade = playerInstance.getHorseGrade();
+            const herb = REVIVE_HERB_BY_GRADE[grade];
+
             switch (selection) {
                 case DeadMenuOption.REVIVE:
-                    playerInstance.reviveHorse();
+                    if (!herb) return;
+
+                    if (this.countItem(herb) > 0 && playerInstance.reviveHorse()) {
+                        await this.removeItem(herb, 1);
+                        playerInstance.startRiding();
+                    }
                     break;
                 case DeadMenuOption.SEND_AWAY:
                     playerInstance.sendHorseAway();

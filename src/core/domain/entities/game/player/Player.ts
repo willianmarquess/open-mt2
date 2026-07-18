@@ -1749,6 +1749,10 @@ export default class Player extends Character {
         return this.horse.startRiding();
     }
 
+    summonHorse(): boolean {
+        return this.horse.summon();
+    }
+
     startTemporaryRiding(mountVnum: number, durationMs: number): boolean {
         return this.horse.startTemporaryRiding(mountVnum, durationMs);
     }

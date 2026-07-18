@@ -270,6 +270,8 @@ export default class UseItemService {
 
         if (player.isHorseRiding()) {
             player.stopRiding();
+        } else if (player.getHorseHealth() <= 0) {
+            player.summonHorse();
         } else {
             player.startRiding();
         }
