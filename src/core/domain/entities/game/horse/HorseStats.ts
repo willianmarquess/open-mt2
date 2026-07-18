@@ -17,7 +17,6 @@ export interface IHorseStat {
 
 /**
  * Horse stat table indexed by horse level [0..HORSE_MAX_LEVEL].
- * Mirrors c_aHorseStat[] from the reference C++ server (horse_rider.cpp).
  *
  * Grade 1 (Beginner):  levels  1-10 → npcRace 20101
  * Grade 2 (Intermediate): levels 11-20 → npcRace 20104
