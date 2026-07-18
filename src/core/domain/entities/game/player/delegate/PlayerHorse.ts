@@ -347,7 +347,6 @@ export class PlayerHorse {
 
     /**
      * Spawns a horse entity at a nearby location when the player unmounts.
-     * Similar to C++ HorseSummon(true, true, dwVnum) behavior.
      */
     private spawnHorseEntity(): void {
         // Don't spawn if horse is already spawned, has no level, or is riding
