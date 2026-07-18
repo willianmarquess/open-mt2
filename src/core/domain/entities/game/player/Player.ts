@@ -22,6 +22,7 @@ import CharacterSpawnPacket from '@/core/interface/networking/packets/packet/out
 import CharacterInfoPacket from '@/core/interface/networking/packets/packet/out/CharacterInfoPacket';
 import CharacterUpdatePacket from '@/core/interface/networking/packets/packet/out/CharacterUpdatePacket';
 import CharacterPointsPacket from '@/core/interface/networking/packets/packet/out/CharacterPointsPacket';
+import SkillLevelPacket, { SKILL_HORSE } from '@/core/interface/networking/packets/packet/out/SkillLevelPacket';
 import CharacterDetailsPacket from '@/core/interface/networking/packets/packet/out/CharacterDetailsPacket';
 import CharacterDiedPacket from '@/core/interface/networking/packets/packet/out/CharacterDiedPacket';
 import TeleportPacket from '@/core/interface/networking/packets/packet/out/TeleportPacket';
@@ -45,6 +46,7 @@ import { PlayerBattle } from './delegate/battle/PlayerBattle';
 import { AttackTypeEnum } from '@/core/enum/AttackTypeEnum';
 import type Monster from '../mob/Monster';
 import { AffectBitsTypeEnum } from '@/core/enum/AffectBitsTypeEnum';
+import { AffectTypeEnum } from '@/core/enum/AffectTypeEnum';
 import SpecialEffectPacket from '@/core/interface/networking/packets/packet/out/SpecialEffectPacket';
 import { SpecialEffectTypeEnum } from '@/core/enum/SpecialEffectTypeEnum';
 import UpdateItemPacket from '@/core/interface/networking/packets/packet/out/UpdateItemPacket';
@@ -67,11 +69,14 @@ import ShopResultPacket, {
     ShopResultPacketParams,
 } from '@/core/interface/networking/packets/packet/out/ShopResultPacket';
 import ShopEndPacket from '@/core/interface/networking/packets/packet/out/ShopEndPacket';
+import { PlayerHorse } from './delegate/PlayerHorse';
 import PrivateShop from '@/core/domain/shop/PrivateShop';
 import ShopSignPacket, { ShopSignPacketParams } from '@/core/interface/networking/packets/packet/out/ShopSignPacket';
 import ShopUpdateItemPacket, {
     ShopUpdateItemParams,
 } from '@/core/interface/networking/packets/packet/out/ShopUpdateItemPacket';
+import NPC from '../mob/NPC';
+import MobManager from '@/core/domain/manager/MobManager';
 
 const REGEN_INTERVAL = 3000;
 const MAX_DISTANCE_FROM_TARGET = 3500;
@@ -100,8 +105,13 @@ export default class Player extends Character {
     //connection
     private connection: GameConnection | null = null;
 
+    private readonly logger: Logger;
+
     //save
     private readonly saveCharacterService: SaveCharacterService;
+
+    //manager
+    private readonly mobManager: MobManager;
 
     //pos
     private lastTimeInBattle: number = 0;
@@ -111,6 +121,7 @@ export default class Player extends Character {
     private currentQuest: AbstractQuest | null = null;
 
     private currentShop: Shop | null = null;
+
     private privateShop: PrivateShop | null = null;
     private currentPrivateShopOwner: Player | null = null;
 
@@ -118,6 +129,9 @@ export default class Player extends Character {
     private myShopClosedAt: number | null = null;
 
     private polymorphVnum: number = 0;
+
+    // Horse riding delegate
+    private readonly horse: PlayerHorse;
 
     constructor(
         {
@@ -159,6 +173,10 @@ export default class Player extends Character {
             attackPerIqPoint = 0,
             baseAttackSpeed = 0,
             baseMovementSpeed = 0,
+            horseLevel = 0,
+            horseHealth = 0,
+            horseStamina = 0,
+            horseName = '',
         }: {
             id: number;
             accountId: number;
@@ -198,6 +216,10 @@ export default class Player extends Character {
             attackPerIqPoint?: number;
             baseAttackSpeed?: number;
             baseMovementSpeed?: number;
+            horseLevel?: number;
+            horseHealth?: number;
+            horseStamina?: number;
+            horseName?: string;
         },
         {
             animationManager,
@@ -206,6 +228,7 @@ export default class Player extends Character {
             logger,
             saveCharacterService,
             questManager,
+            mobManager,
         }: {
             animationManager: AnimationManager;
             experienceManager: ExperienceManager;
@@ -213,6 +236,7 @@ export default class Player extends Character {
             logger: Logger;
             saveCharacterService: SaveCharacterService;
             questManager: QuestManager;
+            mobManager: MobManager;
         },
     ) {
         super(
@@ -239,7 +263,27 @@ export default class Player extends Character {
         this.slot = slot;
         this.appearance = appearance;
 
+        this.logger = logger;
         this.config = config;
+        this.mobManager = mobManager;
+        this.horse = new PlayerHorse({
+            logger,
+            chat: (opts) => this.chat(opts),
+            isEventTimerActive: (id) => this.isEventTimerActive(id),
+            addEventTimer: (opts) => this.addEventTimer(opts),
+            removeEventTimer: (id) => this.eventTimerManager.removeTimer(id),
+            broadcastMountChange: () => this.broadcastMountChange(),
+            getPositionX: () => this.positionX,
+            getPositionY: () => this.positionY,
+            getTargetPosition: () => this.getTargetPosition(),
+            getName: () => this.name,
+            getArea: () => this.area,
+            getMobManager: () => this.mobManager,
+            setPoint: (point, value) => this.setPoint(point, value),
+            save: () => this.save(),
+            recalculatePoints: () => this.points.calcPoints(),
+            sendSkillLevel: () => this.sendSkillLevel(),
+        });
         this.inventory = new Inventory({ config: this.config, ownerId: this.id });
         this.inventory.subscribe(InventoryEventsEnum.ITEM_EQUIPPED, this.onItemEquipped.bind(this));
         this.inventory.subscribe(InventoryEventsEnum.ITEM_UNEQUIPPED, this.onItemUnequipped.bind(this));
@@ -282,6 +326,7 @@ export default class Player extends Character {
         this.battle = new PlayerBattle(this, logger);
 
         this.saveCharacterService = saveCharacterService;
+        this.horse.initialize(horseLevel, horseHealth, horseStamina, horseName);
 
         this.stateMachine
             .addState({
@@ -316,6 +361,7 @@ export default class Player extends Character {
             level: this.getLevel(),
             name: this.getName(),
             rotation: this.getRotation(),
+            mountId: this.getMountVnum(),
         });
         this.applyInvisibleAffect(3);
 
@@ -358,6 +404,7 @@ export default class Player extends Character {
     }
 
     async onDespawn(): Promise<void> {
+        this.horse.despawn();
         this.eventTimerManager.clearAllTimers();
         this.forgetMeAsTarget();
         //TODO: logout from party
@@ -443,6 +490,14 @@ export default class Player extends Character {
     }
 
     attack(attackType: AttackTypeEnum, victim: Player | Monster) {
+        if (this.horse.isTemporaryRiding()) {
+            this.chat({
+                messageType: ChatMessageTypeEnum.INFO,
+                message: 'You cannot attack while using a rented horse.',
+            });
+            return;
+        }
+
         if (victim.isDead()) {
             this.setPos(PositionEnum.STANDING);
             return;
@@ -698,6 +753,7 @@ export default class Player extends Character {
         level,
         name,
         rotation,
+        mountId = 0,
     }: {
         virtualId: number;
         playerClass: number;
@@ -710,6 +766,7 @@ export default class Player extends Character {
         level: number;
         name: string;
         rotation: number;
+        mountId?: number;
     }) {
         this.connection?.send(
             new CharacterSpawnPacket({
@@ -734,7 +791,7 @@ export default class Player extends Character {
                 level,
                 playerName: name,
                 guildId: 0, //todo
-                mountId: 0, //todo
+                mountId,
                 pkMode: 0, //todo
                 rankPoints: 0, //todo
             }),
@@ -753,6 +810,7 @@ export default class Player extends Character {
         level,
         name,
         rotation,
+        mountId = 0,
     }: {
         virtualId: number;
         playerClass: number;
@@ -765,6 +823,7 @@ export default class Player extends Character {
         level: number;
         name: string;
         rotation: number;
+        mountId?: number;
     }) {
         this.showEntity({
             virtualId,
@@ -778,6 +837,7 @@ export default class Player extends Character {
             level,
             name,
             rotation,
+            mountId,
         });
     }
 
@@ -808,6 +868,7 @@ export default class Player extends Character {
         weaponId,
         hairId,
         affects,
+        mountVnum = 0,
     }: {
         vid: number;
         attackSpeed: number;
@@ -816,6 +877,7 @@ export default class Player extends Character {
         weaponId: number;
         hairId: number;
         affects: AffectBitsTypeEnum[];
+        mountVnum?: number;
     }) {
         this.connection?.send(
             new CharacterUpdatePacket({
@@ -826,7 +888,7 @@ export default class Player extends Character {
                 affects,
                 state: 0, //TODO
                 guildId: 0, //TODO
-                mountVnum: 0, //TODO
+                mountVnum,
                 pkMode: 0, //TODO
                 rankPoints: 0, //TODO
             }),
@@ -969,6 +1031,14 @@ export default class Player extends Character {
             characterPointsPacket.addPoint(Number(point), this.getPoint(point));
         }
         this.connection?.send(characterPointsPacket);
+
+        this.sendSkillLevel();
+    }
+
+    sendSkillLevel() {
+        const packet = new SkillLevelPacket();
+        packet.setSkillLevel(SKILL_HORSE, this.getHorseLevel());
+        this.connection?.send(packet);
     }
 
     updateOtherEntity({
@@ -1049,7 +1119,7 @@ export default class Player extends Character {
                 parts: [this.getBody()?.getId() ?? 0, this.getWeapon()?.getId() ?? 0, 0, this.getHair()?.getId() ?? 0],
                 affects: this.getAffectFlags(),
                 guildId: 0, //TODO
-                mountVnum: 0, //TODO
+                mountVnum: this.horse.getMountVnum(),
                 pkMode: 0, //TODO
                 rankPoints: 0, //TODO
                 state: 0, //TODO
@@ -1066,6 +1136,7 @@ export default class Player extends Character {
                     weaponId: this.getWeaponId() ?? 0,
                     hairId: this.getHairId() ?? 0,
                     affects: this.getAffectFlags(),
+                    mountVnum: this.horse.getMountVnum(),
                 });
             }
         }
@@ -1422,6 +1493,7 @@ export default class Player extends Character {
                 level: otherEntity.getLevel(),
                 name: otherEntity.getName(),
                 rotation: otherEntity.getRotation(),
+                mountId: otherEntity instanceof Player ? otherEntity.getMountVnum() : 0,
             });
 
             if (otherEntity instanceof Player) {
@@ -1433,6 +1505,7 @@ export default class Player extends Character {
                     weaponId: otherEntity.getWeapon()?.getId() ?? 0,
                     hairId: otherEntity.getHair()?.getId() ?? 0,
                     affects: otherEntity.getAffectFlags(),
+                    mountVnum: otherEntity.getMountVnum(),
                 });
 
                 // If the other player has an active private shop, announce it to us
@@ -1626,6 +1699,191 @@ export default class Player extends Character {
         return this.area;
     }
 
+    // ─── Horse Riding ─────────────────────────────────────────────────────────
+
+    getHorseLevel(): number {
+        return this.horse.getLevel();
+    }
+
+    setHorseLevel(level: number): void {
+        this.horse.setLevel(level);
+    }
+
+    getHorseHealth(): number {
+        return this.horse.getHealth();
+    }
+
+    getHorseMaxHealth(): number {
+        return this.horse.getMaxHealth();
+    }
+
+    getHorseStamina(): number {
+        return this.horse.getStamina();
+    }
+
+    getHorseMaxStamina(): number {
+        return this.horse.getMaxStamina();
+    }
+
+    getHorseGrade(): number {
+        return this.horse.getGrade();
+    }
+
+    getHorseStats() {
+        return this.horse.getStats();
+    }
+
+    getMountVnum(): number {
+        return this.horse.getMountVnum();
+    }
+
+    isHorseRiding(): boolean {
+        return this.horse.isRiding();
+    }
+
+    isTemporaryHorseRiding(): boolean {
+        return this.horse.isTemporaryRiding();
+    }
+
+    startRiding(): boolean {
+        return this.horse.startRiding();
+    }
+
+    summonHorse(): boolean {
+        return this.horse.summon();
+    }
+
+    startTemporaryRiding(mountVnum: number, durationMs: number): boolean {
+        return this.horse.startTemporaryRiding(mountVnum, durationMs);
+    }
+
+    stopRiding(): boolean {
+        return this.horse.stopRiding();
+    }
+
+    toggleRiding() {
+        if (this.isHorseRiding()) {
+            this.stopRiding();
+        } else {
+            this.startRiding();
+        }
+    }
+
+    sendHorseAway(): boolean {
+        return this.horse.sendAway();
+    }
+
+    reviveHorse(): boolean {
+        return this.horse.revive();
+    }
+
+    feedHorse(): boolean {
+        return this.horse.feed();
+    }
+
+    setHorseHealth(value: number): void {
+        this.horse.setHealth(value);
+    }
+
+    setHorseStamina(value: number): void {
+        this.horse.setStamina(value);
+    }
+
+    getSpawnedHorse(): NPC | null {
+        return this.horse.getSpawnedHorse();
+    }
+
+    getHorseName(): string {
+        return this.horse.getName();
+    }
+
+    setHorseName(name: string): number {
+        return this.horse.setName(name);
+    }
+
+    private broadcastMountChange(): void {
+        const mountVnum = this.horse.getMountVnum();
+        const isRiding = this.horse.isRiding();
+        const parts = [this.getBody()?.getId() ?? 0, this.getWeapon()?.getId() ?? 0, 0, this.getHair()?.getId() ?? 0];
+
+        const spawnPacket = new CharacterSpawnPacket({
+            vid: this.getVirtualId(),
+            playerClass: this.getClassId(),
+            entityType: this.getEntityType(),
+            attackSpeed: this.getAttackSpeed(),
+            movementSpeed: this.getMovementSpeed(),
+            positionX: this.positionX,
+            positionY: this.positionY,
+            positionZ: 0,
+            rotation: this.getRotation(),
+            affects: this.getAffectFlags(),
+            state: this.isDead() ? 1 : 0,
+        });
+
+        const infoPacket = new CharacterInfoPacket({
+            vid: this.getVirtualId(),
+            empireId: this.empire,
+            level: this.getLevel(),
+            playerName: this.name,
+            parts: parts,
+            guildId: 0,
+            mountId: mountVnum,
+            pkMode: 0,
+            rankPoints: 0,
+        });
+
+        // Send CharacterSpawnPacket and CharacterInfoPacket to self first
+        this.connection?.send(spawnPacket);
+        this.connection?.send(infoPacket);
+
+        // Send CharacterUpdatePacket to self with new mount info
+        this.connection?.send(
+            new CharacterUpdatePacket({
+                vid: this.virtualId,
+                attackSpeed: this.points.getPoint(PointsEnum.ATTACK_SPEED),
+                moveSpeed: this.points.getPoint(PointsEnum.MOVE_SPEED),
+                parts: parts,
+                affects: this.getAffectFlags(),
+                guildId: 0,
+                mountVnum: mountVnum,
+                pkMode: 0,
+                rankPoints: 0,
+                state: this.isDead() ? 1 : 0,
+            }),
+        );
+
+        // Send mount affect to self when mounting
+        if (isRiding) {
+            this.sendAffect({
+                type: AffectTypeEnum.MOUNT,
+                apply: 0,
+                duration: 0,
+                flag: 0,
+                value: mountVnum,
+                manaCost: 0,
+            });
+        }
+
+        for (const entity of this.nearbyEntities.values()) {
+            if (entity instanceof Player) {
+                // Send CharacterSpawnPacket and CharacterInfoPacket to other players
+                entity.connection?.send(spawnPacket);
+                entity.connection?.send(infoPacket);
+                // Also send CharacterUpdatePacket with the new mount info
+                entity.otherEntityUpdated({
+                    vid: this.getVirtualId(),
+                    attackSpeed: this.points.getPoint(PointsEnum.ATTACK_SPEED),
+                    moveSpeed: this.points.getPoint(PointsEnum.MOVE_SPEED),
+                    bodyId: this.getBody()?.getId() ?? 0,
+                    weaponId: this.getWeapon()?.getId() ?? 0,
+                    hairId: this.getHair()?.getId() ?? 0,
+                    affects: this.getAffectFlags(),
+                    mountVnum: mountVnum,
+                });
+            }
+        }
+    }
+
     static create(
         {
             id,
@@ -1666,6 +1924,10 @@ export default class Player extends Character {
             attackPerIqPoint,
             baseAttackSpeed,
             baseMovementSpeed,
+            horseLevel,
+            horseHealth,
+            horseStamina,
+            horseName,
         }: {
             id: number;
             accountId: number;
@@ -1705,6 +1967,10 @@ export default class Player extends Character {
             attackPerIqPoint: number;
             baseAttackSpeed: number;
             baseMovementSpeed: number;
+            horseLevel?: number;
+            horseHealth?: number;
+            horseStamina?: number;
+            horseName?: string;
         },
         {
             animationManager,
@@ -1713,6 +1979,7 @@ export default class Player extends Character {
             logger,
             saveCharacterService,
             questManager,
+            mobManager,
         }: {
             animationManager: AnimationManager;
             config: GameConfig;
@@ -1720,6 +1987,7 @@ export default class Player extends Character {
             logger: Logger;
             saveCharacterService: SaveCharacterService;
             questManager: QuestManager;
+            mobManager: MobManager;
         },
     ) {
         return new Player(
@@ -1762,8 +2030,12 @@ export default class Player extends Character {
                 attackPerIqPoint,
                 baseAttackSpeed,
                 baseMovementSpeed,
+                horseLevel,
+                horseHealth,
+                horseStamina,
+                horseName,
             },
-            { animationManager, config, experienceManager, logger, saveCharacterService, questManager },
+            { animationManager, config, experienceManager, logger, saveCharacterService, questManager, mobManager },
         );
     }
 
@@ -1793,6 +2065,16 @@ export default class Player extends Character {
             givenStatusPoints: this.points.getGivenStatusPoints(),
             availableStatusPoints: this.points.getPoint(PointsEnum.STATUS_POINTS),
             slot: this.slot,
+            horseLevel: this.getHorseLevel(),
+            horseHealth: this.getHorseHealth(),
+            horseStamina: this.getHorseStamina(),
+            horseName: this.getHorseName(),
+        });
+    }
+
+    save(): void {
+        this.saveCharacterService.execute(this).catch((err) => {
+            this.logger.error('Failed to save character:', err);
         });
     }
 

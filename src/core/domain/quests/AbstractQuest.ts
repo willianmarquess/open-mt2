@@ -7,6 +7,7 @@ import { QuestFlagEnum } from '@/core/enum/QuestSendFlagEnum';
 import { PlayerQuest } from './facade/PlayerQuest';
 import ItemManager from '../manager/ItemManager';
 import MathUtil from '../util/MathUtil';
+import { WindowTypeEnum } from '@/core/enum/WindowTypeEnum';
 
 export abstract class AbstractQuest {
     private readonly id!: number;
@@ -23,13 +24,57 @@ export abstract class AbstractQuest {
     private status: QuestStatusEnum = QuestStatusEnum.NONE;
     private questFlags: BitFlag = new BitFlag();
 
-    private readonly player: Player;
-    private readonly playerQuest: PlayerQuest;
-    private readonly itemManager!: ItemManager;
+    protected readonly player: Player;
+    protected readonly playerQuest: PlayerQuest;
+    protected readonly itemManager: ItemManager;
 
-    constructor({ player }: { player: Player }) {
+    constructor({ player, itemManager }: { player: Player; itemManager: ItemManager }) {
         this.player = player;
         this.playerQuest = new PlayerQuest({ player });
+        this.itemManager = itemManager;
+    }
+
+    protected countItem(id: number): number {
+        let count = 0;
+        const vnum = Number(id);
+        for (const item of this.player.getInventory().getItems().values()) {
+            if (item.getId() === vnum) {
+                count += item.getCount();
+            }
+        }
+        return count;
+    }
+
+    protected async removeItem(id: number, quantity: number = 1): Promise<boolean> {
+        const vnum = Number(id);
+        let needed = quantity;
+        const inventory = this.player.getInventory();
+        const items = [...inventory.getItems().values()].filter((item) => item.getId() === vnum);
+
+        if (this.countItem(vnum) < quantity) {
+            return false;
+        }
+
+        for (const item of items) {
+            const currentCount = item.getCount();
+            if (currentCount > needed) {
+                item.decreaseCount(needed);
+                this.player.sendItemUpdate(item);
+                await this.itemManager.update(item);
+                break;
+            } else {
+                inventory.removeItem(item.getPosition(), item.getSize());
+                this.player.sendItemRemoved({
+                    window: WindowTypeEnum.INVENTORY,
+                    position: item.getPosition(),
+                });
+                await this.itemManager.delete(item);
+                needed -= currentCount;
+            }
+            if (needed <= 0) break;
+        }
+
+        return true;
     }
 
     protected nextState(stateName: string): TaskResult {
@@ -55,9 +100,11 @@ export abstract class AbstractQuest {
         return this;
     }
 
-    async runState(context: StateExecutionContextBase) {
+    async runState(context: StateExecutionContextBase, handlerName?: string) {
         if (this.currentState) {
-            const tasks = this.getCurrentTasksByEvent(context.eventType);
+            const tasks = this.getCurrentTasksByEvent(context.eventType).filter(
+                (task: any) => !handlerName || task.handlerName === handlerName,
+            );
             for (const routine of tasks) {
                 try {
                     const withFunc = routine.with ? routine.with({ player: this.playerQuest, ...context }) : true;
@@ -336,6 +383,11 @@ export abstract class AbstractQuest {
 
     protected async giveGold(value: number) {
         this.playerQuest.addGold(value);
+    }
+
+    protected giveHorse(level: number = 1) {
+        this.player.setHorseLevel(level);
+        this.hasReward = true;
     }
 
     isRunning() {

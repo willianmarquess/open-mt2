@@ -2,6 +2,7 @@ import { QuestManager } from '@/core/domain/quests/QuestManager';
 import { Mob, MobParams } from './Mob';
 import { EntityTypeEnum } from '@/core/enum/EntityTypeEnum';
 import AnimationManager from '@/core/domain/manager/AnimationManager';
+import { EntityStateEnum } from '@/core/enum/EntityStateEnum';
 
 export default class NPC extends Mob {
     constructor(
@@ -15,6 +16,18 @@ export default class NPC extends Mob {
             },
             { animationManager, questManager },
         );
+
+        this.stateMachine
+            .addState({
+                name: EntityStateEnum.IDLE,
+                onTick: this.idleStateTick.bind(this),
+                onStart: this.idleStateStart.bind(this),
+            })
+            .addState({
+                name: EntityStateEnum.MOVING,
+                onTick: this.movingStateTick.bind(this),
+            })
+            .gotoState(EntityStateEnum.IDLE);
     }
 
     onDespawn(): void {}

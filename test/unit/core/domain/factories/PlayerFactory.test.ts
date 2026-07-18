@@ -57,6 +57,7 @@ describe('PlayerFactory', () => {
             logger,
             saveCharacterService,
             questManager,
+            mobManager: {} as any,
         });
     });
 

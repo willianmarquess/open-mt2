@@ -7,6 +7,7 @@ import EmpireUtil from '@/core/domain/util/EmpireUtil';
 import Player from '../entities/game/player/Player';
 import SaveCharacterService from '@/game/domain/service/SaveCharacterService';
 import { QuestManager } from '../quests/QuestManager';
+import MobManager from '@/core/domain/manager/MobManager';
 
 type PlayerFactoryParams = {
     playerClass: number;
@@ -35,6 +36,10 @@ type PlayerFactoryParams = {
     name: string;
     givenStatusPoints?: number;
     availableStatusPoints?: number;
+    horseLevel?: number;
+    horseHealth?: number;
+    horseStamina?: number;
+    horseName?: string;
 };
 
 export default class PlayerFactory {
@@ -44,6 +49,7 @@ export default class PlayerFactory {
     private readonly logger: Logger;
     private readonly saveCharacterService: SaveCharacterService;
     private readonly questManager: QuestManager;
+    private readonly mobManager: MobManager;
 
     constructor({
         config,
@@ -52,6 +58,7 @@ export default class PlayerFactory {
         logger,
         saveCharacterService,
         questManager,
+        mobManager,
     }: {
         config: GameConfig;
         animationManager: AnimationManager;
@@ -59,6 +66,7 @@ export default class PlayerFactory {
         logger: Logger;
         saveCharacterService: SaveCharacterService;
         questManager: QuestManager;
+        mobManager: MobManager;
     }) {
         this.config = config;
         this.animationManager = animationManager;
@@ -66,6 +74,7 @@ export default class PlayerFactory {
         this.logger = logger;
         this.saveCharacterService = saveCharacterService;
         this.questManager = questManager;
+        this.mobManager = mobManager;
     }
 
     create({
@@ -95,6 +104,10 @@ export default class PlayerFactory {
         name,
         givenStatusPoints,
         availableStatusPoints,
+        horseLevel,
+        horseHealth,
+        horseStamina,
+        horseName,
     }: PlayerFactoryParams): Player {
         const className = JobUtil.getClassNameFromClassId(playerClass);
         const empireName = EmpireUtil.getEmpireName(empire);
@@ -139,6 +152,10 @@ export default class PlayerFactory {
                 level: level || 1,
                 experience: experience || 0,
                 gold: gold || 0,
+                horseLevel: horseLevel || 0,
+                horseHealth: horseHealth || 0,
+                horseStamina: horseStamina || 0,
+                horseName: horseName || '',
             },
             {
                 animationManager: this.animationManager,
@@ -147,6 +164,7 @@ export default class PlayerFactory {
                 logger: this.logger,
                 saveCharacterService: this.saveCharacterService,
                 questManager: this.questManager,
+                mobManager: this.mobManager,
             },
         );
     }

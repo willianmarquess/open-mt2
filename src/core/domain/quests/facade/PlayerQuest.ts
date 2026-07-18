@@ -13,6 +13,26 @@ export class PlayerQuest {
         return this.player.getLevel();
     }
 
+    getMountVnum() {
+        return this.player.getMountVnum();
+    }
+
+    getHorseGrade() {
+        return this.player.getHorseGrade();
+    }
+
+    getHorseLevel() {
+        return this.player.getHorseLevel();
+    }
+
+    getHorseHealth() {
+        return this.player.getHorseHealth();
+    }
+
+    reviveHorse() {
+        return this.player.reviveHorse();
+    }
+
     addExp(value: number) {
         this.player.addPoint(PointsEnum.EXPERIENCE, value);
     }

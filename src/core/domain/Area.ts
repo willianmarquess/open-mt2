@@ -147,6 +147,12 @@ export default class Area {
         this.spawn(droppedItem);
     }
 
+    spawnMobEntity(entity: GameEntity) {
+        const virtualId = this.world.generateVirtualId();
+        entity.setVirtualId(virtualId);
+        this.spawn(entity);
+    }
+
     async savePlayers(): Promise<void> {
         if (this.entities.size < 1) return;
 

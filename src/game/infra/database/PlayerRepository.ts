@@ -40,11 +40,15 @@ export default class PlayerRepository implements IPlayerRepository {
             name, 
             givenStatusPoints, 
             availableStatusPoints,
-            slot
+            slot,
+            horseLevel,
+            horseHealth,
+            horseStamina,
+            horseName
         )
             values
         (
-            ?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?
+            ?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?
         );
         `,
             [
@@ -73,6 +77,10 @@ export default class PlayerRepository implements IPlayerRepository {
                 player.givenStatusPoints,
                 player.availableStatusPoints,
                 player.slot,
+                player.horseLevel,
+                player.horseHealth,
+                player.horseStamina,
+                player.horseName,
             ],
         );
 
@@ -118,7 +126,11 @@ export default class PlayerRepository implements IPlayerRepository {
             name = ?, 
             givenStatusPoints = ?, 
             availableStatusPoints = ?,
-            slot = ?
+            slot = ?,
+            horseLevel = ?,
+            horseHealth = ?,
+            horseStamina = ?,
+            horseName = ?
         WHERE id = ?;
         `,
             [
@@ -147,6 +159,10 @@ export default class PlayerRepository implements IPlayerRepository {
                 player.givenStatusPoints,
                 player.availableStatusPoints,
                 player.slot,
+                player.horseLevel,
+                player.horseHealth,
+                player.horseStamina,
+                player.horseName,
                 player.id,
             ],
         );
@@ -215,6 +231,10 @@ export default class PlayerRepository implements IPlayerRepository {
             givenStatusPoints,
             availableStatusPoints,
             slot,
+            horseLevel,
+            horseHealth,
+            horseStamina,
+            horseName,
         } = player;
 
         return new PlayerState({
@@ -244,6 +264,10 @@ export default class PlayerRepository implements IPlayerRepository {
             givenStatusPoints,
             availableStatusPoints,
             slot,
+            horseLevel,
+            horseHealth,
+            horseStamina,
+            horseName,
         });
     }
 }

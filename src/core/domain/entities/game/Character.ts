@@ -15,6 +15,11 @@ import { PositionEnum } from '@/core/enum/PositionEnum';
 import { EmpireEnum } from '@/core/enum/EmpireEnum';
 import { QuestManager } from '../../quests/QuestManager';
 import { EntityTypeEnum } from '@/core/enum/EntityTypeEnum';
+import { MovementTypeEnum } from '@/core/enum/MovementTypeEnum';
+
+type MovementNodeProvider = () => { x: number; y: number } | null;
+
+const MOVEMENT_NODE_HANDOFF_RATE = 0.9;
 
 export default abstract class Character extends GameEntity {
     protected id: number;
@@ -41,6 +46,7 @@ export default abstract class Character extends GameEntity {
     protected pos: PositionEnum = PositionEnum.STANDING;
 
     protected readonly questManager: QuestManager;
+    private movementNodeProvider: MovementNodeProvider | null = null;
 
     constructor(
         {
@@ -202,6 +208,72 @@ export default abstract class Character extends GameEntity {
         this.stateMachine.gotoState(EntityStateEnum.MOVING);
     }
 
+    /** Move an NPC or character and broadcast the movement to nearby players. */
+    moveTo(x: number, y: number): void {
+        this.movementNodeProvider = null;
+        const rotation = MathUtil.calcRotationFromXY(x - this.positionX, y - this.positionY) / 5;
+        this.gotoInternal(x, y, rotation);
+        this.broadcastMovement(x, y, rotation);
+    }
+
+    moveAlongNodes(provider: MovementNodeProvider): void {
+        this.movementNodeProvider = provider;
+        this.startNextMovementNode();
+    }
+
+    continueMovementNodes(): void {
+        if (this.movementNodeProvider && this.getState() === EntityStateEnum.IDLE) {
+            this.startNextMovementNode();
+        }
+    }
+
+    clearMovementNodes(): void {
+        this.movementNodeProvider = null;
+        this.stateMachine.gotoState(EntityStateEnum.IDLE);
+    }
+
+    private startNextMovementNode(): void {
+        const node = this.movementNodeProvider?.();
+        if (!node) {
+            this.stateMachine.gotoState(EntityStateEnum.IDLE);
+            return;
+        }
+
+        const rotation = MathUtil.calcRotationFromXY(node.x - this.positionX, node.y - this.positionY) / 5;
+        this.gotoInternal(node.x, node.y, rotation);
+        this.broadcastMovementMoving(node.x, node.y, rotation);
+    }
+
+    private broadcastMovementMoving(positionX: number, positionY: number, rotation: number): void {
+        this.area?.onCharacterMove({
+            entity: this,
+            params: {
+                positionX,
+                positionY,
+                arg: 0,
+                rotation,
+                time: performance.now(),
+                movementType: MovementTypeEnum.MOVE,
+                duration: 10,
+            },
+        });
+    }
+
+    private broadcastMovement(positionX: number, positionY: number, rotation: number): void {
+        this.area?.onCharacterMove({
+            entity: this,
+            params: {
+                positionX,
+                positionY,
+                arg: 0,
+                rotation,
+                time: performance.now(),
+                movementType: MovementTypeEnum.WAIT,
+                duration: this.movementDuration,
+            },
+        });
+    }
+
     protected move(x: number, y: number) {
         if (x === this.positionX && y === this.positionY) return;
         this.positionX = x;
@@ -334,8 +406,26 @@ export default abstract class Character extends GameEntity {
         this.positionX = x;
         this.positionY = y;
 
-        if (rate >= 1) {
-            this.stateMachine.gotoState(EntityStateEnum.IDLE);
+        if (rate >= MOVEMENT_NODE_HANDOFF_RATE && this.movementNodeProvider) {
+            const node = this.movementNodeProvider();
+            if (node) {
+                this.startMovementNode(node);
+                return;
+            }
         }
+
+        if (rate >= 1) {
+            if (this.movementNodeProvider) {
+                this.startNextMovementNode();
+            } else {
+                this.stateMachine.gotoState(EntityStateEnum.IDLE);
+            }
+        }
+    }
+
+    private startMovementNode(node: { x: number; y: number }): void {
+        const rotation = MathUtil.calcRotationFromXY(node.x - this.positionX, node.y - this.positionY) / 5;
+        this.gotoInternal(node.x, node.y, rotation);
+        this.broadcastMovement(node.x, node.y, rotation);
     }
 }
