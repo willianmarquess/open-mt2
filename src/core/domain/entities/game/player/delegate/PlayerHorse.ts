@@ -58,6 +58,7 @@ export class PlayerHorse {
     private health: number = 0;
     private stamina: number = 0;
     private riding: boolean = false;
+    private temporaryRiding: boolean = false;
     private mountVnum: number = 0;
     private spawnedHorse: NPC | null = null; // Spawned horse entity when not riding
     private horseName: string = '';
@@ -152,6 +153,10 @@ export class PlayerHorse {
         return this.riding;
     }
 
+    isTemporaryRiding(): boolean {
+        return this.temporaryRiding;
+    }
+
     // ── Mutations ──────────────────────────────────────────────────────────────
 
     setLevel(level: number): void {
@@ -203,9 +208,31 @@ export class PlayerHorse {
         return true;
     }
 
+    /** Mount a rental horse without changing the player's owned horse state. */
+    startTemporaryRiding(mountVnum: number, durationMs: number): boolean {
+        if (this.riding || durationMs <= 0) return false;
+
+        this.despawnHorseEntity();
+        this.riding = true;
+        this.temporaryRiding = true;
+        this.mountVnum = mountVnum;
+        this.owner.setPoint(PointsEnum.MOUNT, mountVnum);
+        this.owner.broadcastMountChange();
+        this.owner.addEventTimer({
+            id: 'TEMPORARY_HORSE_RIDE',
+            eventFunction: () => this.stopTemporaryRiding(),
+            options: { interval: durationMs, duration: durationMs },
+        });
+        return true;
+    }
+
     /** Stop riding. Returns true if state changed. */
     stopRiding(): boolean {
         if (!this.riding) return false;
+
+        if (this.temporaryRiding) {
+            return this.stopTemporaryRiding();
+        }
 
         this.riding = false;
         this.mountVnum = 0;
@@ -221,6 +248,18 @@ export class PlayerHorse {
         // Spawn horse entity at player location
         this.spawnHorseEntity();
 
+        return true;
+    }
+
+    private stopTemporaryRiding(): boolean {
+        if (!this.riding || !this.temporaryRiding) return false;
+
+        this.owner.removeEventTimer('TEMPORARY_HORSE_RIDE');
+        this.riding = false;
+        this.temporaryRiding = false;
+        this.mountVnum = 0;
+        this.owner.setPoint(PointsEnum.MOUNT, 0);
+        this.owner.broadcastMountChange();
         return true;
     }
 

@@ -490,6 +490,14 @@ export default class Player extends Character {
     }
 
     attack(attackType: AttackTypeEnum, victim: Player | Monster) {
+        if (this.horse.isTemporaryRiding()) {
+            this.chat({
+                messageType: ChatMessageTypeEnum.INFO,
+                message: 'You cannot attack while using a rented horse.',
+            });
+            return;
+        }
+
         if (victim.isDead()) {
             this.setPos(PositionEnum.STANDING);
             return;
@@ -1733,8 +1741,16 @@ export default class Player extends Character {
         return this.horse.isRiding();
     }
 
+    isTemporaryHorseRiding(): boolean {
+        return this.horse.isTemporaryRiding();
+    }
+
     startRiding(): boolean {
         return this.horse.startRiding();
+    }
+
+    startTemporaryRiding(mountVnum: number, durationMs: number): boolean {
+        return this.horse.startTemporaryRiding(mountVnum, durationMs);
     }
 
     stopRiding(): boolean {
