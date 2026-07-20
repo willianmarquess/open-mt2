@@ -7,6 +7,7 @@ import EmpireUtil from '@/core/domain/util/EmpireUtil';
 import Player from '../entities/game/player/Player';
 import SaveCharacterService from '@/game/domain/service/SaveCharacterService';
 import { QuestManager } from '../quests/QuestManager';
+import GlobalEventTimerManager from '../manager/GlobalEventTimeManager';
 
 type PlayerFactoryParams = {
     playerClass: number;
@@ -44,6 +45,7 @@ export default class PlayerFactory {
     private readonly logger: Logger;
     private readonly saveCharacterService: SaveCharacterService;
     private readonly questManager: QuestManager;
+    private readonly eventTimerManager: GlobalEventTimerManager;
 
     constructor({
         config,
@@ -52,6 +54,7 @@ export default class PlayerFactory {
         logger,
         saveCharacterService,
         questManager,
+        eventTimerManager,
     }: {
         config: GameConfig;
         animationManager: AnimationManager;
@@ -59,6 +62,7 @@ export default class PlayerFactory {
         logger: Logger;
         saveCharacterService: SaveCharacterService;
         questManager: QuestManager;
+        eventTimerManager: GlobalEventTimerManager;
     }) {
         this.config = config;
         this.animationManager = animationManager;
@@ -66,6 +70,7 @@ export default class PlayerFactory {
         this.logger = logger;
         this.saveCharacterService = saveCharacterService;
         this.questManager = questManager;
+        this.eventTimerManager = eventTimerManager;
     }
 
     create({
@@ -147,6 +152,7 @@ export default class PlayerFactory {
                 logger: this.logger,
                 saveCharacterService: this.saveCharacterService,
                 questManager: this.questManager,
+                eventTimerManager: this.eventTimerManager,
             },
         );
     }

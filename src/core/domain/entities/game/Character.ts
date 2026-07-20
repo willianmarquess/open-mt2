@@ -15,6 +15,7 @@ import { PositionEnum } from '@/core/enum/PositionEnum';
 import { EmpireEnum } from '@/core/enum/EmpireEnum';
 import { QuestManager } from '../../quests/QuestManager';
 import { EntityTypeEnum } from '@/core/enum/EntityTypeEnum';
+import GlobalEventTimerManager from '../../manager/GlobalEventTimeManager';
 
 export default abstract class Character extends GameEntity {
     protected id: number;
@@ -41,6 +42,7 @@ export default abstract class Character extends GameEntity {
     protected pos: PositionEnum = PositionEnum.STANDING;
 
     protected readonly questManager: QuestManager;
+    protected readonly eventTimerManager: GlobalEventTimerManager;
 
     constructor(
         {
@@ -62,14 +64,25 @@ export default abstract class Character extends GameEntity {
             name: string;
             empire: number;
         },
-        { animationManager, questManager }: { animationManager: AnimationManager; questManager: QuestManager },
+        {
+            animationManager,
+            questManager,
+            eventTimerManager,
+        }: {
+            animationManager: AnimationManager;
+            questManager: QuestManager;
+            eventTimerManager: GlobalEventTimerManager;
+        },
     ) {
-        super({
-            entityType,
-            positionX,
-            positionY,
-            virtualId,
-        });
+        super(
+            {
+                entityType,
+                positionX,
+                positionY,
+                virtualId,
+            },
+            { eventTimerManager },
+        );
         this.id = id;
         this.classId = classId;
         this.name = name;
@@ -77,6 +90,7 @@ export default abstract class Character extends GameEntity {
 
         this.animationManager = animationManager;
         this.questManager = questManager;
+        this.eventTimerManager = eventTimerManager;
     }
 
     abstract addPoint(point: PointsEnum, value: number): void;
@@ -122,7 +136,7 @@ export default abstract class Character extends GameEntity {
     // eslint-disable-next-line
     die(_killer?: Character) {
         this.pos = PositionEnum.DEAD;
-        this.eventTimerManager.clearAllTimers();
+        this.removeTimers();
     }
 
     isDead(): boolean {

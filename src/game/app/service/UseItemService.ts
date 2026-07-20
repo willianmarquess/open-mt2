@@ -7,6 +7,7 @@ import { ItemTypeEnum } from '@/core/enum/ItemTypeEnum';
 import { ItemUseSubTypeEnum } from '@/core/enum/ItemUseSubTypeEnum';
 import { PointsEnum } from '@/core/enum/PointsEnum';
 import { SpecialEffectTypeEnum } from '@/core/enum/SpecialEffectTypeEnum';
+import { TimedEventsEnum } from '@/core/enum/TimedEventsEnum';
 import { WindowTypeEnum } from '@/core/enum/WindowTypeEnum';
 import Logger from '@/core/infra/logger/Logger';
 
@@ -243,10 +244,10 @@ export default class UseItemService {
 
         await this.removeItemByQuantity(player, item, 1);
 
-        if (player.isEventTimerActive('MANA_POTION')) return;
+        if (player.isEventTimerActive(TimedEventsEnum.MANA_POTION)) return;
 
         player.addEventTimer({
-            id: 'MANA_POTION',
+            id: TimedEventsEnum.MANA_POTION,
             eventFunction: () => {
                 const manaIsFull = player.getPoint(PointsEnum.MANA) >= player.getPoint(PointsEnum.MAX_MANA);
                 if (manaIsFull) return;
@@ -276,10 +277,10 @@ export default class UseItemService {
         player.sendSpecialEffect(SpecialEffectTypeEnum.HP_UP_RED);
         await this.removeItemByQuantity(player, item, 1);
 
-        if (player.isEventTimerActive('HEALTH_POTION')) return;
+        if (player.isEventTimerActive(TimedEventsEnum.HEALTH_POTION)) return;
 
         player.addEventTimer({
-            id: 'HEALTH_POTION',
+            id: TimedEventsEnum.HEALTH_POTION,
             eventFunction: () => {
                 const healthIsFull = player.getPoint(PointsEnum.HEALTH) >= player.getPoint(PointsEnum.MAX_HEALTH);
                 if (healthIsFull) return;

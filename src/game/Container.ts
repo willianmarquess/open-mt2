@@ -39,6 +39,7 @@ import { QuestManager } from '@/core/domain/quests/QuestManager';
 import ShopService from '@/game/app/service/ShopService';
 import ShopManager from '@/core/domain/shop/ShopManager';
 import PrivateShopService from './app/service/PrivateShopService';
+import GlobalEventTimerManager from '@/core/domain/manager/GlobalEventTimeManager';
 
 const container = createContainer();
 
@@ -84,6 +85,7 @@ container.register({
     shopService: asClass(ShopService).singleton(),
     shopManager: asClass(ShopManager).singleton(),
     privateShopService: asClass(PrivateShopService).singleton(),
+    eventTimerManager: asClass(GlobalEventTimerManager).singleton(),
 });
 
 export { container };

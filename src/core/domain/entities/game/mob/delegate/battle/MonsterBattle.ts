@@ -12,6 +12,7 @@ import { MobEnchantEnum } from '@/core/enum/MobEnchantEnum';
 import Player from '../../../player/Player';
 import { MobImmuneFlagEnum } from '@/core/enum/MobImmuneFlagEnum';
 import Monster from '../../Monster';
+import { TimedEventsEnum } from '@/core/enum/TimedEventsEnum';
 
 export default class MonsterBattle {
     private readonly logger: Logger;
@@ -275,7 +276,7 @@ export default class MonsterBattle {
         victim.updateView();
 
         victim.addEventTimer({
-            id: 'POISON_AFFECT',
+            id: TimedEventsEnum.POISON,
             eventFunction: () => {
                 const damage = victim.getPoint(PointsEnum.MAX_HEALTH) * 0.03;
                 this.applyDamage(damage, DamageTypeEnum.POISON, victim);
@@ -300,7 +301,7 @@ export default class MonsterBattle {
         victim.stun();
 
         victim.addEventTimer({
-            id: 'STUN_AFFECT',
+            id: TimedEventsEnum.STUN,
             eventFunction: () => {
                 victim.removeStun();
             },
@@ -322,7 +323,7 @@ export default class MonsterBattle {
         victim.updateView();
 
         victim.addEventTimer({
-            id: 'SLOW_AFFECT',
+            id: TimedEventsEnum.SLOW,
             eventFunction: () => {
                 victim.addPoint(PointsEnum.MOVE_SPEED, SLOW_VALUE);
                 victim.removeAffectFlag(AffectBitsTypeEnum.SLOW);

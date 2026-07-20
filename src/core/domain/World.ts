@@ -7,6 +7,7 @@ import { GameConfig } from '@/game/infra/config/GameConfig';
 import SpawnManager from './manager/SpawnManager';
 import { PrivilegeManager } from './manager/PrivilegeManager';
 import SaveCharacterService from '@/game/domain/service/SaveCharacterService';
+import GlobalEventTimerManager from './manager/GlobalEventTimeManager';
 
 const TICKS_PER_SECONDS = 20;
 const AREA_UNIT = 25600;
@@ -25,6 +26,7 @@ export default class World {
     private readonly saveCharacterService: SaveCharacterService;
     private readonly spawnManager: SpawnManager;
     private readonly privilegeManager: PrivilegeManager;
+    private readonly eventTimerManager: GlobalEventTimerManager;
 
     private virtualId = 0;
 
@@ -41,18 +43,21 @@ export default class World {
         saveCharacterService,
         spawnManager,
         privilegeManager,
+        eventTimerManager,
     }: {
         logger: Logger;
         config: GameConfig;
         saveCharacterService: SaveCharacterService;
         spawnManager: SpawnManager;
         privilegeManager: PrivilegeManager;
+        eventTimerManager: GlobalEventTimerManager;
     }) {
         this.logger = logger;
         this.config = config;
         this.saveCharacterService = saveCharacterService;
         this.spawnManager = spawnManager;
         this.privilegeManager = privilegeManager;
+        this.eventTimerManager = eventTimerManager;
     }
 
     getWidth() {
@@ -144,6 +149,7 @@ export default class World {
                     logger: this.logger,
                     world: this,
                     spawnManager: this.spawnManager,
+                    eventTimerManager: this.eventTimerManager,
                 },
             );
             await area.load();
@@ -226,6 +232,7 @@ export default class World {
         }
 
         this.privilegeManager.tick();
+        this.eventTimerManager.tick();
 
         const delta = performance.now() - startTickTime;
         this.deltas.push(delta);

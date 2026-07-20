@@ -17,6 +17,7 @@ import DropManager from './DropManager';
 import ExperienceManager from './ExperienceManager';
 import Logger from '@/core/infra/logger/Logger';
 import { QuestManager } from '../quests/QuestManager';
+import GlobalEventTimerManager from './GlobalEventTimeManager';
 
 // const MobRankEnum = {
 //     PAWN: 0,
@@ -102,6 +103,7 @@ export default class MobManager {
     private readonly experienceManager: ExperienceManager;
     private readonly logger: Logger;
     private readonly questManager: QuestManager;
+    private readonly eventTimerManager: GlobalEventTimerManager;
 
     constructor({
         config,
@@ -110,6 +112,7 @@ export default class MobManager {
         experienceManager,
         logger,
         questManager,
+        eventTimerManager,
     }: {
         config: GameConfig;
         animationManager: AnimationManager;
@@ -117,6 +120,7 @@ export default class MobManager {
         experienceManager: ExperienceManager;
         logger: Logger;
         questManager: QuestManager;
+        eventTimerManager: GlobalEventTimerManager;
     }) {
         this.config = config;
         this.animationManager = animationManager;
@@ -124,6 +128,7 @@ export default class MobManager {
         this.experienceManager = experienceManager;
         this.logger = logger;
         this.questManager = questManager;
+        this.eventTimerManager = eventTimerManager;
     }
 
     load() {
@@ -159,6 +164,7 @@ export default class MobManager {
                         experienceManager: this.experienceManager,
                         logger: this.logger,
                         questManager: this.questManager,
+                        eventTimerManager: this.eventTimerManager,
                     },
                 );
             }

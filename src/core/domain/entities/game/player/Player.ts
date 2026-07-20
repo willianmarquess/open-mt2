@@ -72,10 +72,11 @@ import ShopSignPacket, { ShopSignPacketParams } from '@/core/interface/networkin
 import ShopUpdateItemPacket, {
     ShopUpdateItemParams,
 } from '@/core/interface/networking/packets/packet/out/ShopUpdateItemPacket';
+import { TimedEventsEnum } from '@/core/enum/TimedEventsEnum';
+import GlobalEventTimerManager from '@/core/domain/manager/GlobalEventTimeManager';
 
 const REGEN_INTERVAL = 3000;
 const MAX_DISTANCE_FROM_TARGET = 3500;
-const TIMED_EVENT = 'TIMED_EVENT';
 const MAX_TIME_IDLE_IN_FIGHTING = 5_000;
 
 export default class Player extends Character {
@@ -206,6 +207,7 @@ export default class Player extends Character {
             logger,
             saveCharacterService,
             questManager,
+            eventTimerManager,
         }: {
             animationManager: AnimationManager;
             experienceManager: ExperienceManager;
@@ -213,6 +215,7 @@ export default class Player extends Character {
             logger: Logger;
             saveCharacterService: SaveCharacterService;
             questManager: QuestManager;
+            eventTimerManager: GlobalEventTimerManager;
         },
     ) {
         super(
@@ -229,6 +232,7 @@ export default class Player extends Character {
             {
                 animationManager,
                 questManager,
+                eventTimerManager,
             },
         );
         this.accountId = accountId;
@@ -343,8 +347,8 @@ export default class Player extends Character {
         //     manaCost: 0,
         //     value: 200
         // });
-        this.eventTimerManager.addTimer({
-            id: 'INVISIBLE',
+        this.addEventTimer({
+            id: TimedEventsEnum.INVISIBILITY,
             eventFunction: () => {
                 this.removeAffectFlag(AffectBitsTypeEnum.REVIVE_INVISIBLE);
                 this.updateView();
@@ -358,7 +362,7 @@ export default class Player extends Character {
     }
 
     async onDespawn(): Promise<void> {
-        this.eventTimerManager.clearAllTimers();
+        this.removeTimers();
         this.forgetMeAsTarget();
         //TODO: logout from party
         //TODO: logout from guild
@@ -373,10 +377,8 @@ export default class Player extends Character {
         super.die(killer);
 
         //TODO: death penalty
-        this.eventTimerManager.removeTimer('STUN');
-        this.eventTimerManager.removeTimer('POISON');
-        this.eventTimerManager.removeTimer('FIRE');
-        this.eventTimerManager.removeTimer('SLOW');
+
+        this.removeTimers();
 
         //TODO: reset killer mode
         this.connection?.setState(ConnectionStateEnum.DEAD);
@@ -520,13 +522,13 @@ export default class Player extends Character {
         this.points.calcPointsAndResetValues();
         this.sendPoints();
 
-        this.eventTimerManager.addTimer({
-            id: 'REGEN_HEALTH',
+        this.addEventTimer({
+            id: TimedEventsEnum.REGEN_HEALTH,
             eventFunction: this.regenHealth.bind(this),
             options: { interval: REGEN_INTERVAL },
         });
-        this.eventTimerManager.addTimer({
-            id: 'REGEN_MANA',
+        this.addEventTimer({
+            id: TimedEventsEnum.REGEN_MANA,
             eventFunction: this.regenMana.bind(this),
             options: { interval: REGEN_INTERVAL },
         });
@@ -858,8 +860,8 @@ export default class Player extends Character {
     }
 
     private createTimedEvent(command: 'QUIT' | 'SELECT' | 'LOGOUT', prefix: string) {
-        if (this.eventTimerManager.isTimerActive(TIMED_EVENT)) {
-            this.eventTimerManager.removeTimer(TIMED_EVENT);
+        if (this.isEventTimerActive(TimedEventsEnum.COUNTDOWN)) {
+            this.removeEventTimer(TimedEventsEnum.COUNTDOWN);
             this.chat({
                 message: `[SYSTEM] ${prefix} canceled`,
                 messageType: ChatMessageTypeEnum.INFO,
@@ -874,7 +876,7 @@ export default class Player extends Character {
 
         const SECONDS_TO_LEAVE = 10;
 
-        this.eventTimerManager.addTimer({
+        this.addEventTimer({
             eventFunction: (count: number) => {
                 if (
                     !this.isPosOneOf([
@@ -885,7 +887,7 @@ export default class Player extends Character {
                         PositionEnum.RESTING,
                     ])
                 ) {
-                    this.eventTimerManager.removeTimer(TIMED_EVENT);
+                    this.removeEventTimer(TimedEventsEnum.COUNTDOWN);
                     this.chat({
                         message: `[SYSTEM] ${prefix} canceled`,
                         messageType: ChatMessageTypeEnum.INFO,
@@ -917,7 +919,7 @@ export default class Player extends Character {
                     messageType: ChatMessageTypeEnum.INFO,
                 });
             },
-            id: TIMED_EVENT,
+            id: TimedEventsEnum.COUNTDOWN,
             options: {
                 interval: 1_000,
                 repeatCount: SECONDS_TO_LEAVE,
@@ -1713,6 +1715,7 @@ export default class Player extends Character {
             logger,
             saveCharacterService,
             questManager,
+            eventTimerManager,
         }: {
             animationManager: AnimationManager;
             config: GameConfig;
@@ -1720,6 +1723,7 @@ export default class Player extends Character {
             logger: Logger;
             saveCharacterService: SaveCharacterService;
             questManager: QuestManager;
+            eventTimerManager: GlobalEventTimerManager;
         },
     ) {
         return new Player(
@@ -1763,7 +1767,15 @@ export default class Player extends Character {
                 baseAttackSpeed,
                 baseMovementSpeed,
             },
-            { animationManager, config, experienceManager, logger, saveCharacterService, questManager },
+            {
+                animationManager,
+                config,
+                experienceManager,
+                logger,
+                saveCharacterService,
+                questManager,
+                eventTimerManager,
+            },
         );
     }
 

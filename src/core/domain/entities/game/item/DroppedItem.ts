@@ -2,6 +2,7 @@ import Item from '@/core/domain/entities/game/item/Item';
 import GameEntity from '../GameEntity';
 import { EntityTypeEnum } from '@/core/enum/EntityTypeEnum';
 import Player from '../player/Player';
+import GlobalEventTimerManager from '@/core/domain/manager/GlobalEventTimeManager';
 
 const REMOVE_ITEM_FROM_GROUND = 30000;
 const REMOVE_OWNER_ITEM_FROM_GROUND = 15000;
@@ -11,27 +12,37 @@ export default class DroppedItem extends GameEntity {
     private readonly count: number;
     private ownerName: string | null;
 
-    constructor({
-        item,
-        count,
-        ownerName,
-        virtualId,
-        positionX,
-        positionY,
-    }: {
-        item: Item;
-        count: number;
-        ownerName: string;
-        virtualId: number;
-        positionX: number;
-        positionY: number;
-    }) {
-        super({
+    constructor(
+        {
+            item,
+            count,
+            ownerName,
             virtualId,
-            entityType: EntityTypeEnum.DROPPED_ITEM,
             positionX,
             positionY,
-        });
+        }: {
+            item: Item;
+            count: number;
+            ownerName: string;
+            virtualId: number;
+            positionX: number;
+            positionY: number;
+        },
+        {
+            eventTimerManager,
+        }: {
+            eventTimerManager: GlobalEventTimerManager;
+        },
+    ) {
+        super(
+            {
+                virtualId,
+                entityType: EntityTypeEnum.DROPPED_ITEM,
+                positionX,
+                positionY,
+            },
+            { eventTimerManager },
+        );
         this.item = item;
         this.count = count;
         this.ownerName = ownerName;
@@ -48,7 +59,7 @@ export default class DroppedItem extends GameEntity {
     }
 
     public onSpawn() {
-        this.eventTimerManager.addTimer({
+        this.addEventTimer({
             eventFunction: () => {
                 for (const entity of this.getNearbyEntities().values()) {
                     if (entity instanceof Player) {
@@ -67,7 +78,7 @@ export default class DroppedItem extends GameEntity {
             },
             id: `REMOVE_OWNER`,
         });
-        this.eventTimerManager.addTimer({
+        this.addEventTimer({
             eventFunction: () => {
                 this.area?.despawn(this);
             },
@@ -81,31 +92,43 @@ export default class DroppedItem extends GameEntity {
     }
 
     public onDespawn() {
-        this.eventTimerManager.clearAllTimers();
+        this.removeTimers();
     }
 
-    static create({
-        item,
-        count,
-        ownerName,
-        virtualId,
-        positionX,
-        positionY,
-    }: {
-        item: Item;
-        count: number;
-        ownerName: string;
-        virtualId: number;
-        positionX: number;
-        positionY: number;
-    }) {
-        return new DroppedItem({
+    static create(
+        {
             item,
             count,
             ownerName,
             virtualId,
             positionX,
             positionY,
-        });
+        }: {
+            item: Item;
+            count: number;
+            ownerName: string;
+            virtualId: number;
+            positionX: number;
+            positionY: number;
+        },
+        {
+            eventTimerManager,
+        }: {
+            eventTimerManager: GlobalEventTimerManager;
+        },
+    ) {
+        return new DroppedItem(
+            {
+                item,
+                count,
+                ownerName,
+                virtualId,
+                positionX,
+                positionY,
+            },
+            {
+                eventTimerManager,
+            },
+        );
     }
 }
