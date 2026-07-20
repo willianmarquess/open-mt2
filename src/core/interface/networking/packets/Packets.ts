@@ -47,6 +47,12 @@ import ShopPacket from './packet/in/shop/ShopPacket';
 import ShopPacketHandler from './packet/in/shop/ShopPacketHandler';
 import MyShopPacket from './packet/in/myshop/MyShopPacket';
 import MyShopPacketHandler from './packet/in/myshop/MyShopPacketHandler';
+import QuickSlotAddRequestPacket from './packet/in/quickSlotAdd/QuickSlotAddRequestPacket';
+import QuickSlotAddRequestPacketHandler from './packet/in/quickSlotAdd/QuickSlotAddRequestPacketHandler';
+import QuickSlotSwapRequestPacket from './packet/in/quickSlotSwap/QuickSlotSwapRequestPacket';
+import QuickSlotSwapRequestPacketHandler from './packet/in/quickSlotSwap/QuickSlotSwapRequestPacketHandler';
+import QuickSlotRemoveRequestPacket from './packet/in/quickSlotRemove/QuickSlotRemoveRequestPacket';
+import QuickSlotRemoveRequestPacketHandler from './packet/in/quickSlotRemove/QuickSlotRemoveRequestPacketHandler';
 
 export type PacketMapValue<T extends Packet> = {
     createPacket: (params?: any) => T;
@@ -213,6 +219,27 @@ const packets: Map<number, PacketMapValue<any>> = new Map<number, PacketMapValue
         {
             createPacket: () => new MyShopPacket(),
             createHandler: (params) => new MyShopPacketHandler(params),
+        },
+    ],
+    [
+        PacketHeaderEnum.QUICK_SLOT_ADD_REQUEST,
+        {
+            createPacket: (params = {}) => new QuickSlotAddRequestPacket(params),
+            createHandler: (params) => new QuickSlotAddRequestPacketHandler(params),
+        },
+    ],
+    [
+        PacketHeaderEnum.QUICK_SLOT_SWAP_REQUEST,
+        {
+            createPacket: (params = {}) => new QuickSlotSwapRequestPacket(params),
+            createHandler: (params) => new QuickSlotSwapRequestPacketHandler(params),
+        },
+    ],
+    [
+        PacketHeaderEnum.QUICK_SLOT_REMOVE_REQUEST,
+        {
+            createPacket: (params = {}) => new QuickSlotRemoveRequestPacket(params),
+            createHandler: (params) => new QuickSlotRemoveRequestPacketHandler(params),
         },
     ],
 ]);

@@ -108,3 +108,16 @@ CREATE TABLE game.item (
         REFERENCES game.player(id)
         ON DELETE CASCADE
 );
+
+DROP TABLE IF EXISTS game.quick_slot;
+
+CREATE TABLE game.quick_slot (
+    playerId INT UNSIGNED NOT NULL,
+    slot TINYINT UNSIGNED NOT NULL,
+    type TINYINT UNSIGNED NOT NULL,
+    position TINYINT UNSIGNED NOT NULL,
+    PRIMARY KEY (playerId, slot),
+    FOREIGN KEY (playerId)
+        REFERENCES game.player(id)
+        ON DELETE CASCADE
+);

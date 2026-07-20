@@ -74,6 +74,10 @@ import ShopUpdateItemPacket, {
 } from '@/core/interface/networking/packets/packet/out/ShopUpdateItemPacket';
 import { TimedEventsEnum } from '@/core/enum/TimedEventsEnum';
 import GlobalEventTimerManager from '@/core/domain/manager/GlobalEventTimeManager';
+import { QuickSlotTypeEnum } from '@/core/enum/QuickSlotTypeEnum';
+import QuickSlotAddResponsePacket from '@/core/interface/networking/packets/packet/out/QuickSlotAddResponsePacket';
+import QuickSlotRemoveResponsePacket from '@/core/interface/networking/packets/packet/out/QuickSlotRemoveResponsePacket';
+import QuickSlotSwapResponsePacket from '@/core/interface/networking/packets/packet/out/QuickSlotSwapResponsePacket';
 
 const REGEN_INTERVAL = 3000;
 const MAX_DISTANCE_FROM_TARGET = 3500;
@@ -92,6 +96,7 @@ export default class Player extends Character {
 
     private readonly config: GameConfig;
     private readonly inventory: Inventory;
+    private readonly quickSlot: Map<number, { type: QuickSlotTypeEnum; position: number }> = new Map();
 
     //delegate
     private readonly applies: PlayerApplies;
@@ -160,6 +165,7 @@ export default class Player extends Character {
             attackPerIqPoint = 0,
             baseAttackSpeed = 0,
             baseMovementSpeed = 0,
+            quickSlot,
         }: {
             id: number;
             accountId: number;
@@ -199,6 +205,7 @@ export default class Player extends Character {
             attackPerIqPoint?: number;
             baseAttackSpeed?: number;
             baseMovementSpeed?: number;
+            quickSlot?: Map<number, { type: number; position: number }>;
         },
         {
             animationManager,
@@ -242,6 +249,7 @@ export default class Player extends Character {
         this.hairPart = hairPart;
         this.slot = slot;
         this.appearance = appearance;
+        this.quickSlot = quickSlot || new Map<number, { type: QuickSlotTypeEnum; position: number }>();
 
         this.config = config;
         this.inventory = new Inventory({ config: this.config, ownerId: this.id });
@@ -329,6 +337,7 @@ export default class Player extends Character {
         });
 
         this.sendInventory();
+        this.sendQuickSlot();
 
         await this.questManager.addQuests(this);
         this.questManager.onLogin(this);
@@ -1628,6 +1637,109 @@ export default class Player extends Character {
         return this.area;
     }
 
+    /**
+     * Quickslot area
+     */
+
+    addQuickSlot(slot: number, type: QuickSlotTypeEnum, position: number) {
+        for (const [existingSlot, existingSlotData] of this.quickSlot.entries()) {
+            if (type === QuickSlotTypeEnum.NONE) {
+                continue;
+            }
+            if (existingSlotData.type === type && existingSlotData.position === position) {
+                this.removeQuickSlot(existingSlot);
+            }
+        }
+
+        switch (type) {
+            case QuickSlotTypeEnum.ITEM:
+                {
+                    const item = this.getInventory().getItem(position);
+                    if (!item) {
+                        this.chat({
+                            message: `[SYSTEM] No item found in inventory at position ${position}`,
+                            messageType: ChatMessageTypeEnum.INFO,
+                        });
+                        return;
+                    }
+                }
+                break;
+            case QuickSlotTypeEnum.SKILL:
+                //TODO
+                break;
+            case QuickSlotTypeEnum.COMMAND:
+                return;
+            default:
+                this.chat({
+                    message: `[SYSTEM] Invalid quickslot type: ${type}`,
+                    messageType: ChatMessageTypeEnum.INFO,
+                });
+                return;
+        }
+
+        this.quickSlot.set(slot, { type, position: position });
+        this.connection?.send(
+            new QuickSlotAddResponsePacket({
+                position: position,
+                slot: slot,
+                type: type,
+            }),
+        );
+    }
+
+    removeQuickSlot(slot: number) {
+        this.quickSlot.delete(slot);
+        this.connection?.send(
+            new QuickSlotRemoveResponsePacket({
+                slot: slot,
+            }),
+        );
+        console.log(this.quickSlot);
+    }
+
+    swapQuickSlot(slotA: number, slotB: number) {
+        const slotAData = this.quickSlot.get(slotA);
+        const slotBData = this.quickSlot.get(slotB);
+
+        if (!slotAData && !slotBData) {
+            this.chat({
+                message: `[SYSTEM] Both quickslots ${slotA} and ${slotB} are empty`,
+                messageType: ChatMessageTypeEnum.INFO,
+            });
+            return;
+        }
+
+        this.quickSlot.delete(slotA);
+        this.quickSlot.delete(slotB);
+
+        if (slotBData) {
+            this.quickSlot.set(slotA, slotBData);
+        }
+
+        if (slotAData) {
+            this.quickSlot.set(slotB, slotAData);
+        }
+
+        this.connection?.send(
+            new QuickSlotSwapResponsePacket({
+                slotA: slotA,
+                slotB: slotB,
+            }),
+        );
+    }
+
+    sendQuickSlot() {
+        for (const [slot, slotData] of this.quickSlot.entries()) {
+            this.connection?.send(
+                new QuickSlotAddResponsePacket({
+                    position: slotData.position,
+                    slot: slot,
+                    type: slotData.type,
+                }),
+            );
+        }
+    }
+
     static create(
         {
             id,
@@ -1668,6 +1780,7 @@ export default class Player extends Character {
             attackPerIqPoint,
             baseAttackSpeed,
             baseMovementSpeed,
+            quickSlot,
         }: {
             id: number;
             accountId: number;
@@ -1707,6 +1820,7 @@ export default class Player extends Character {
             attackPerIqPoint: number;
             baseAttackSpeed: number;
             baseMovementSpeed: number;
+            quickSlot: Map<number, { type: QuickSlotTypeEnum; position: number }>;
         },
         {
             animationManager,
@@ -1766,6 +1880,7 @@ export default class Player extends Character {
                 attackPerIqPoint,
                 baseAttackSpeed,
                 baseMovementSpeed,
+                quickSlot,
             },
             {
                 animationManager,
@@ -1805,6 +1920,7 @@ export default class Player extends Character {
             givenStatusPoints: this.points.getGivenStatusPoints(),
             availableStatusPoints: this.points.getPoint(PointsEnum.STATUS_POINTS),
             slot: this.slot,
+            quickSlot: this.quickSlot,
         });
     }
 

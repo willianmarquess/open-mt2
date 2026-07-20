@@ -36,6 +36,7 @@ type PlayerFactoryParams = {
     name: string;
     givenStatusPoints?: number;
     availableStatusPoints?: number;
+    quickSlot?: Map<number, { type: number; position: number }>;
 };
 
 export default class PlayerFactory {
@@ -100,6 +101,7 @@ export default class PlayerFactory {
         name,
         givenStatusPoints,
         availableStatusPoints,
+        quickSlot,
     }: PlayerFactoryParams): Player {
         const className = JobUtil.getClassNameFromClassId(playerClass);
         const empireName = EmpireUtil.getEmpireName(empire);
@@ -144,6 +146,7 @@ export default class PlayerFactory {
                 level: level || 1,
                 experience: experience || 0,
                 gold: gold || 0,
+                quickSlot: quickSlot || new Map<number, { type: number; position: number }>(),
             },
             {
                 animationManager: this.animationManager,

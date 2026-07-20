@@ -1,29 +1,30 @@
 import StateEntity from '../StateEntity';
 
 export default class PlayerState extends StateEntity {
-    public accountId: number;
-    public empire: number;
-    public playerClass: number;
-    public skillGroup: number;
-    public playTime: number;
-    public level: number;
-    public experience: number;
-    public gold: number;
-    public st: number;
-    public ht: number;
-    public dx: number;
-    public iq: number;
-    public positionX: number;
-    public positionY: number;
-    public health: number;
-    public mana: number;
-    public stamina: number;
-    public bodyPart: number;
-    public hairPart: number;
-    public name: string;
-    public givenStatusPoints: number;
-    public availableStatusPoints: number;
-    public slot: number;
+    public readonly accountId: number;
+    public readonly empire: number;
+    public readonly playerClass: number;
+    public readonly skillGroup: number;
+    public readonly playTime: number;
+    public readonly level: number;
+    public readonly experience: number;
+    public readonly gold: number;
+    public readonly st: number;
+    public readonly ht: number;
+    public readonly dx: number;
+    public readonly iq: number;
+    public readonly positionX: number;
+    public readonly positionY: number;
+    public readonly health: number;
+    public readonly mana: number;
+    public readonly stamina: number;
+    public readonly bodyPart: number;
+    public readonly hairPart: number;
+    public readonly name: string;
+    public readonly givenStatusPoints: number;
+    public readonly availableStatusPoints: number;
+    public readonly slot: number;
+    public readonly quickSlot: Map<number, { type: number; position: number }> = new Map();
 
     constructor({
         id,
@@ -52,6 +53,7 @@ export default class PlayerState extends StateEntity {
         givenStatusPoints = 0,
         availableStatusPoints = 0,
         slot = 0,
+        quickSlot,
     }: {
         id: number;
         updatedAt?: Date;
@@ -79,6 +81,7 @@ export default class PlayerState extends StateEntity {
         givenStatusPoints: number;
         availableStatusPoints: number;
         slot: number;
+        quickSlot?: Map<number, { type: number; position: number }>;
     }) {
         super(id, createdAt, updatedAt);
         this.accountId = accountId;
@@ -104,5 +107,6 @@ export default class PlayerState extends StateEntity {
         this.givenStatusPoints = givenStatusPoints;
         this.availableStatusPoints = availableStatusPoints;
         this.slot = slot;
+        this.quickSlot = quickSlot || new Map();
     }
 }
