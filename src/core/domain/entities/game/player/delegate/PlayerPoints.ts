@@ -6,6 +6,8 @@ import { GameConfig } from '@/game/infra/config/GameConfig';
 import Player from '../Player';
 import JobUtil from '@/core/domain/util/JobUtil';
 import { Points } from '../../shared/Points';
+import MobManager from '@/core/domain/manager/MobManager';
+import { AffectBitsTypeEnum } from '@/core/enum/AffectBitsTypeEnum';
 
 export class PlayerPoints extends Points {
     private level: number;
@@ -144,6 +146,7 @@ export class PlayerPoints extends Points {
     private maxWeaponDamage: number;
 
     private experienceManager: ExperienceManager;
+    private mobManager: MobManager;
     private config: GameConfig;
 
     private givenStatusPoints: number;
@@ -469,10 +472,12 @@ export class PlayerPoints extends Points {
             config,
             experienceManager,
             player,
+            mobManager,
         }: {
             experienceManager: ExperienceManager;
             config: GameConfig;
             player: Player;
+            mobManager: MobManager;
         },
     ) {
         super();
@@ -628,6 +633,7 @@ export class PlayerPoints extends Points {
 
         this.config = config;
         this.experienceManager = experienceManager;
+        this.mobManager = mobManager;
         this.player = player;
 
         this.points.set(PointsEnum.EXPERIENCE, {
@@ -635,22 +641,22 @@ export class PlayerPoints extends Points {
             add: (value: number) => this.addExperience(value),
         });
         this.points.set(PointsEnum.HT, {
-            get: () => this.ht,
+            get: () => this.calcPolymorphPoint(StatsEnum.HT),
             add: (value: number) => this.addStat(StatsEnum.HT, value),
             afterAddHooks: () => [this.calcDefense, this.calcMagicDefense, this.calcMaxHealth],
         });
         this.points.set(PointsEnum.ST, {
-            get: () => this.st,
+            get: () => this.calcPolymorphPoint(StatsEnum.ST),
             add: (value: number) => this.addStat(StatsEnum.ST, value),
             afterAddHooks: () => [this.calcAttack],
         });
         this.points.set(PointsEnum.IQ, {
-            get: () => this.iq,
+            get: () => this.calcPolymorphPoint(StatsEnum.IQ),
             add: (value: number) => this.addStat(StatsEnum.IQ, value),
             afterAddHooks: () => [this.calcAttack, this.calcMagicAttack, this.calcMagicDefense, this.calcMaxMana],
         });
         this.points.set(PointsEnum.DX, {
-            get: () => this.dx,
+            get: () => this.calcPolymorphPoint(StatsEnum.DX),
             add: (value: number) => this.addStat(StatsEnum.DX, value),
             afterAddHooks: () => [this.calcAttack],
         });
@@ -843,6 +849,13 @@ export class PlayerPoints extends Points {
             throw new Error(`The field ${pointName} is invalid on Points`);
 
         (this as Record<string, any>)[pointName] = Math.max(0, currentValue + value);
+    }
+
+    calcPolymorphPoint(pointName: 'ht' | 'st' | 'dx' | 'iq'): number {
+        if (!this.player.isAffectByFlag(AffectBitsTypeEnum.POLYMORPH)) return this[pointName];
+        const mobProto = this.mobManager.getMobProto(this.player.getPolymorphVnum());
+        if (!mobProto) return this[pointName];
+        return Math.min(255, this[pointName] + Number(mobProto[pointName] || 0));
     }
 
     calcPointsAndResetValues() {

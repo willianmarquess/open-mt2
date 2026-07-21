@@ -132,6 +132,8 @@ export default class UseItemService {
         switch (item.getType()) {
             case ItemTypeEnum.ITEM_USE:
                 return this.useItemUsable(player, item);
+            case ItemTypeEnum.ITEM_POLYMORPH:
+                return this.usePolymorphBall(player, item);
             default:
                 break;
         }
@@ -162,9 +164,6 @@ export default class UseItemService {
             case ItemUseSubTypeEnum.USE_SPECIAL:
                 return this.useSpecialItem(player, item);
 
-            case ItemUseSubTypeEnum.USE_POLYMORPH_BALL:
-                return await this.usePolymorphBall(player, item);
-
             default:
                 this.logger.info(
                     `[UseItemService] unhandled item use - vnum: ${item.getId()}, type: ${item.getType()}, subType: ${item.getSubType()}, player: ${player.getName()}`,
@@ -175,8 +174,7 @@ export default class UseItemService {
 
     private useSpecialItem(player: Player, item: Item) {
         if (item.getId() === 50200) {
-            // The client opens the private shop UI when it receives a CHAT_TYPE_COMMAND
-            // packet with the string "OpenPrivateShop"
+            //TODO: add this to an enum avoiding magical numbers
             player.chat({ messageType: ChatMessageTypeEnum.COMMAND, message: 'OpenPrivateShop' });
         }
     }
@@ -187,22 +185,19 @@ export default class UseItemService {
             return;
         }
 
-        // Socket 0 holds the mob vnum (as stored by the polymorph ball item)
         const mobVnum = item.getSocket0();
         if (!mobVnum || !this.mobManager.hasMob(mobVnum)) {
             player.chat({ messageType: ChatMessageTypeEnum.INFO, message: 'Invalid polymorph target.' });
             return;
         }
 
-        // Fixed duration: 5 minutes (300 seconds) — skill-level scaling can be added later
-        const POLYMORPH_DURATION_MS = 300_000;
+        const POLYMORPH_DURATION_MS = 300_000; //TODO: read this from config file
 
         player.setPolymorph(mobVnum);
         await this.removeItemByQuantity(player, item, 1);
 
-        // Schedule automatic revert
         player.addEventTimer({
-            id: 'POLYMORPH',
+            id: TimedEventsEnum.POLYMORPH,
             eventFunction: () => {
                 player.setPolymorph(0);
             },

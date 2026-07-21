@@ -78,6 +78,7 @@ import { QuickSlotTypeEnum } from '@/core/enum/QuickSlotTypeEnum';
 import QuickSlotAddResponsePacket from '@/core/interface/networking/packets/packet/out/QuickSlotAddResponsePacket';
 import QuickSlotRemoveResponsePacket from '@/core/interface/networking/packets/packet/out/QuickSlotRemoveResponsePacket';
 import QuickSlotSwapResponsePacket from '@/core/interface/networking/packets/packet/out/QuickSlotSwapResponsePacket';
+import MobManager from '@/core/domain/manager/MobManager';
 
 const REGEN_INTERVAL = 3000;
 const MAX_DISTANCE_FROM_TARGET = 3500;
@@ -215,6 +216,7 @@ export default class Player extends Character {
             saveCharacterService,
             questManager,
             eventTimerManager,
+            mobManager,
         }: {
             animationManager: AnimationManager;
             experienceManager: ExperienceManager;
@@ -223,6 +225,7 @@ export default class Player extends Character {
             saveCharacterService: SaveCharacterService;
             questManager: QuestManager;
             eventTimerManager: GlobalEventTimerManager;
+            mobManager: MobManager;
         },
     ) {
         super(
@@ -289,6 +292,7 @@ export default class Player extends Character {
                 config,
                 experienceManager,
                 player: this,
+                mobManager,
             },
         );
         this.battle = new PlayerBattle(this, logger);
@@ -1829,6 +1833,7 @@ export default class Player extends Character {
             saveCharacterService,
             questManager,
             eventTimerManager,
+            mobManager,
         }: {
             animationManager: AnimationManager;
             config: GameConfig;
@@ -1837,6 +1842,7 @@ export default class Player extends Character {
             saveCharacterService: SaveCharacterService;
             questManager: QuestManager;
             eventTimerManager: GlobalEventTimerManager;
+            mobManager: MobManager;
         },
     ) {
         return new Player(
@@ -1889,6 +1895,7 @@ export default class Player extends Character {
                 saveCharacterService,
                 questManager,
                 eventTimerManager,
+                mobManager,
             },
         );
     }
@@ -2018,6 +2025,8 @@ export default class Player extends Character {
         for (const entity of this.nearbyEntities.values()) {
             this.onNearbyEntityAdded(entity);
         }
+
+        this.sendPoints();
 
         // Sync affect flag
         if (vnum > 0) {

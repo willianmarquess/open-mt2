@@ -8,6 +8,7 @@ import Player from '../entities/game/player/Player';
 import SaveCharacterService from '@/game/domain/service/SaveCharacterService';
 import { QuestManager } from '../quests/QuestManager';
 import GlobalEventTimerManager from '../manager/GlobalEventTimeManager';
+import MobManager from '../manager/MobManager';
 
 type PlayerFactoryParams = {
     playerClass: number;
@@ -47,6 +48,7 @@ export default class PlayerFactory {
     private readonly saveCharacterService: SaveCharacterService;
     private readonly questManager: QuestManager;
     private readonly eventTimerManager: GlobalEventTimerManager;
+    private readonly mobManager: MobManager;
 
     constructor({
         config,
@@ -56,6 +58,7 @@ export default class PlayerFactory {
         saveCharacterService,
         questManager,
         eventTimerManager,
+        mobManager,
     }: {
         config: GameConfig;
         animationManager: AnimationManager;
@@ -64,6 +67,7 @@ export default class PlayerFactory {
         saveCharacterService: SaveCharacterService;
         questManager: QuestManager;
         eventTimerManager: GlobalEventTimerManager;
+        mobManager: MobManager;
     }) {
         this.config = config;
         this.animationManager = animationManager;
@@ -72,6 +76,7 @@ export default class PlayerFactory {
         this.saveCharacterService = saveCharacterService;
         this.questManager = questManager;
         this.eventTimerManager = eventTimerManager;
+        this.mobManager = mobManager;
     }
 
     create({
@@ -156,6 +161,7 @@ export default class PlayerFactory {
                 saveCharacterService: this.saveCharacterService,
                 questManager: this.questManager,
                 eventTimerManager: this.eventTimerManager,
+                mobManager: this.mobManager,
             },
         );
     }

@@ -218,6 +218,11 @@ export default class DropManager {
             drops.push(goldDrop);
         }
 
+        const item = this.itemManager.getItem(70104);
+        if (!item) return drops;
+        item.setSocket0(monster.getId());
+        drops.push(new DropItem(item, 1));
+
         return drops;
     }
 }
