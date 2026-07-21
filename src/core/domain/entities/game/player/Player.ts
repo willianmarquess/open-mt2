@@ -1694,7 +1694,6 @@ export default class Player extends Character {
                 slot: slot,
             }),
         );
-        console.log(this.quickSlot);
     }
 
     swapQuickSlot(slotA: number, slotB: number) {
