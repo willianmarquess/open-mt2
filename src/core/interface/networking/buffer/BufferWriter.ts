@@ -8,6 +8,11 @@ export default class BufferWriter {
     }
 
     getBuffer(size?: number): Buffer {
+        // Reset the cursor so the next write sequence starts a fresh payload after
+        // the header. Every pack() ends by calling getBuffer(), so this makes packet
+        // instances safe to pack more than once (e.g. broadcasts to multiple
+        // connections) instead of writing past the end of the fixed-size buffer.
+        this.lastPos = 1;
         if (size) {
             return this.buffer.subarray(0, size);
         }
