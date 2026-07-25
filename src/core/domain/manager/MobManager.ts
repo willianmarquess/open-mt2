@@ -179,6 +179,7 @@ export default class MobManager {
                     {
                         animationManager: this.animationManager,
                         questManager: this.questManager,
+                        eventTimerManager: this.eventTimerManager,
                     },
                 );
             }
@@ -193,6 +194,7 @@ export default class MobManager {
                     {
                         animationManager: this.animationManager,
                         questManager: this.questManager,
+                        eventTimerManager: this.eventTimerManager,
                     },
                 );
             }
