@@ -47,7 +47,6 @@ export default class QuestInfoPacket extends PacketOut {
         this.id = id;
         this.flags = flags;
         this.wasStated = wasStarted;
-        this.wasStated;
         this.title = title;
         this.clockName = clockName;
         this.clockValue = clockValue;
