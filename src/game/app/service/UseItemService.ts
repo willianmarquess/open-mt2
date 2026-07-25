@@ -7,6 +7,7 @@ import { ItemTypeEnum } from '@/core/enum/ItemTypeEnum';
 import { ItemUseSubTypeEnum } from '@/core/enum/ItemUseSubTypeEnum';
 import { PointsEnum } from '@/core/enum/PointsEnum';
 import { SpecialEffectTypeEnum } from '@/core/enum/SpecialEffectTypeEnum';
+import { TimedEventsEnum } from '@/core/enum/TimedEventsEnum';
 import { WindowTypeEnum } from '@/core/enum/WindowTypeEnum';
 import Logger from '@/core/infra/logger/Logger';
 
@@ -176,6 +177,8 @@ export default class UseItemService {
                     return this.useHorseSummonBook(player);
                 }
                 break;
+            case ItemTypeEnum.ITEM_POLYMORPH:
+                return this.usePolymorphBall(player, item);
             default:
                 break;
         }
@@ -205,8 +208,8 @@ export default class UseItemService {
                 }
                 break;
 
-            case ItemUseSubTypeEnum.USE_POLYMORPH_BALL:
-                return await this.usePolymorphBall(player, item);
+            case ItemUseSubTypeEnum.USE_SPECIAL:
+                return this.useSpecialItem(player, item);
 
             default:
                 this.logger.info(
@@ -218,8 +221,7 @@ export default class UseItemService {
 
     private useSpecialItem(player: Player, item: Item) {
         if (item.getId() === 50200) {
-            // The client opens the private shop UI when it receives a CHAT_TYPE_COMMAND
-            // packet with the string "OpenPrivateShop"
+            //TODO: add this to an enum avoiding magical numbers
             player.chat({ messageType: ChatMessageTypeEnum.COMMAND, message: 'OpenPrivateShop' });
             return;
         }
@@ -235,22 +237,19 @@ export default class UseItemService {
             return;
         }
 
-        // Socket 0 holds the mob vnum (as stored by the polymorph ball item)
         const mobVnum = item.getSocket0();
         if (!mobVnum || !this.mobManager.hasMob(mobVnum)) {
             player.chat({ messageType: ChatMessageTypeEnum.INFO, message: 'Invalid polymorph target.' });
             return;
         }
 
-        // Fixed duration: 5 minutes (300 seconds) — skill-level scaling can be added later
-        const POLYMORPH_DURATION_MS = 300_000;
+        const POLYMORPH_DURATION_MS = 300_000; //TODO: read this from config file
 
         player.setPolymorph(mobVnum);
         await this.removeItemByQuantity(player, item, 1);
 
-        // Schedule automatic revert
         player.addEventTimer({
-            id: 'POLYMORPH',
+            id: TimedEventsEnum.POLYMORPH,
             eventFunction: () => {
                 player.setPolymorph(0);
             },
@@ -345,10 +344,10 @@ export default class UseItemService {
 
         await this.removeItemByQuantity(player, item, 1);
 
-        if (player.isEventTimerActive('MANA_POTION')) return;
+        if (player.isEventTimerActive(TimedEventsEnum.MANA_POTION)) return;
 
         player.addEventTimer({
-            id: 'MANA_POTION',
+            id: TimedEventsEnum.MANA_POTION,
             eventFunction: () => {
                 const manaIsFull = player.getPoint(PointsEnum.MANA) >= player.getPoint(PointsEnum.MAX_MANA);
                 if (manaIsFull) return;
@@ -378,10 +377,10 @@ export default class UseItemService {
         player.sendSpecialEffect(SpecialEffectTypeEnum.HP_UP_RED);
         await this.removeItemByQuantity(player, item, 1);
 
-        if (player.isEventTimerActive('HEALTH_POTION')) return;
+        if (player.isEventTimerActive(TimedEventsEnum.HEALTH_POTION)) return;
 
         player.addEventTimer({
-            id: 'HEALTH_POTION',
+            id: TimedEventsEnum.HEALTH_POTION,
             eventFunction: () => {
                 const healthIsFull = player.getPoint(PointsEnum.HEALTH) >= player.getPoint(PointsEnum.MAX_HEALTH);
                 if (healthIsFull) return;

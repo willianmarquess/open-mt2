@@ -7,7 +7,8 @@ import EmpireUtil from '@/core/domain/util/EmpireUtil';
 import Player from '../entities/game/player/Player';
 import SaveCharacterService from '@/game/domain/service/SaveCharacterService';
 import { QuestManager } from '../quests/QuestManager';
-import MobManager from '@/core/domain/manager/MobManager';
+import GlobalEventTimerManager from '../manager/GlobalEventTimeManager';
+import MobManager from '../manager/MobManager';
 
 type PlayerFactoryParams = {
     playerClass: number;
@@ -36,6 +37,7 @@ type PlayerFactoryParams = {
     name: string;
     givenStatusPoints?: number;
     availableStatusPoints?: number;
+    quickSlot?: Map<number, { type: number; position: number }>;
     horseLevel?: number;
     horseHealth?: number;
     horseStamina?: number;
@@ -49,6 +51,7 @@ export default class PlayerFactory {
     private readonly logger: Logger;
     private readonly saveCharacterService: SaveCharacterService;
     private readonly questManager: QuestManager;
+    private readonly eventTimerManager: GlobalEventTimerManager;
     private readonly mobManager: MobManager;
 
     constructor({
@@ -58,6 +61,7 @@ export default class PlayerFactory {
         logger,
         saveCharacterService,
         questManager,
+        eventTimerManager,
         mobManager,
     }: {
         config: GameConfig;
@@ -66,6 +70,7 @@ export default class PlayerFactory {
         logger: Logger;
         saveCharacterService: SaveCharacterService;
         questManager: QuestManager;
+        eventTimerManager: GlobalEventTimerManager;
         mobManager: MobManager;
     }) {
         this.config = config;
@@ -74,6 +79,7 @@ export default class PlayerFactory {
         this.logger = logger;
         this.saveCharacterService = saveCharacterService;
         this.questManager = questManager;
+        this.eventTimerManager = eventTimerManager;
         this.mobManager = mobManager;
     }
 
@@ -104,6 +110,7 @@ export default class PlayerFactory {
         name,
         givenStatusPoints,
         availableStatusPoints,
+        quickSlot,
         horseLevel,
         horseHealth,
         horseStamina,
@@ -152,6 +159,7 @@ export default class PlayerFactory {
                 level: level || 1,
                 experience: experience || 0,
                 gold: gold || 0,
+                quickSlot: quickSlot || new Map<number, { type: number; position: number }>(),
                 horseLevel: horseLevel || 0,
                 horseHealth: horseHealth || 0,
                 horseStamina: horseStamina || 0,
@@ -164,6 +172,7 @@ export default class PlayerFactory {
                 logger: this.logger,
                 saveCharacterService: this.saveCharacterService,
                 questManager: this.questManager,
+                eventTimerManager: this.eventTimerManager,
                 mobManager: this.mobManager,
             },
         );

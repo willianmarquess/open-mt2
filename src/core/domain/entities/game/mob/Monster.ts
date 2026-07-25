@@ -18,6 +18,8 @@ import MonsterBattle from './delegate/battle/MonsterBattle';
 import { QuestManager } from '@/core/domain/quests/QuestManager';
 import Logger from '@/core/infra/logger/Logger';
 import AnimationManager from '@/core/domain/manager/AnimationManager';
+import { TimedEventsEnum } from '@/core/enum/TimedEventsEnum';
+import GlobalEventTimerManager from '@/core/domain/manager/GlobalEventTimeManager';
 
 const MAX_DISTANCE_TO_GET_EXP = 5_000;
 
@@ -37,12 +39,14 @@ export default class Monster extends Mob {
             experienceManager,
             logger,
             questManager,
+            eventTimerManager,
         }: {
             animationManager: AnimationManager;
             dropManager: DropManager;
             experienceManager: ExperienceManager;
             logger: Logger;
             questManager: QuestManager;
+            eventTimerManager: GlobalEventTimerManager;
         },
     ) {
         super(
@@ -50,7 +54,7 @@ export default class Monster extends Mob {
                 ...params,
                 entityType: EntityTypeEnum.MONSTER,
             },
-            { animationManager, questManager },
+            { animationManager, questManager, eventTimerManager },
         );
         this.dropManager = dropManager;
         this.experienceManager = experienceManager;
@@ -111,13 +115,13 @@ export default class Monster extends Mob {
     }
 
     createRespawnEvent() {
-        const event = 'RESPAWN';
+        const event = TimedEventsEnum.RESPAWN;
 
-        if (this.eventTimerManager.isTimerActive(event)) return;
+        if (this.isEventTimerActive(event)) return;
 
         const respawnTime = this.getRespawnTimeInMs();
 
-        this.eventTimerManager.addTimer({
+        this.addEventTimer({
             id: event,
             eventFunction: () => {
                 this.area?.spawn(this);
@@ -143,7 +147,7 @@ export default class Monster extends Mob {
             eventFunction: () => {
                 this.area?.despawn(this);
             },
-            id: 'DESPAWN',
+            id: TimedEventsEnum.DESPAWN,
             options: {
                 repeatCount: 1,
                 duration: 2_000,
@@ -157,15 +161,15 @@ export default class Monster extends Mob {
     }
 
     onDespawn(): void {
-        this.eventTimerManager.clearAllTimers();
+        this.removeTimers();
         if (this.group?.allDead()) {
             this.group.createRespawnEvent();
         }
     }
 
     private initEvents() {
-        this.eventTimerManager.addTimer({
-            id: 'REGEN_HEALTH',
+        this.addEventTimer({
+            id: TimedEventsEnum.REGEN_HEALTH,
             eventFunction: this.regenHealth.bind(this),
             options: {
                 interval: this.regenCycle * 1_000,

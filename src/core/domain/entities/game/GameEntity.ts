@@ -1,7 +1,7 @@
 import { EntityTypeEnum } from '@/core/enum/EntityTypeEnum';
 import Area from '../../Area';
 import { SpatialCell } from '@/core/util/SpatialGrid';
-import EventTimerManager, { addTimerParam } from '../../manager/EventTimerManager';
+import GlobalEventTimerManager, { addTimerParam } from '../../manager/GlobalEventTimeManager';
 
 export default abstract class GameEntity {
     protected virtualId: number;
@@ -13,23 +13,27 @@ export default abstract class GameEntity {
     protected cell: SpatialCell | null = null;
     protected targetPositionX: number = 0;
     protected targetPositionY: number = 0;
-    protected readonly eventTimerManager = new EventTimerManager();
+    protected readonly eventTimerManager: GlobalEventTimerManager;
 
-    constructor({
-        virtualId,
-        entityType,
-        positionX,
-        positionY,
-    }: {
-        virtualId: number;
-        entityType: EntityTypeEnum;
-        positionX: number;
-        positionY: number;
-    }) {
+    constructor(
+        {
+            virtualId,
+            entityType,
+            positionX,
+            positionY,
+        }: {
+            virtualId: number;
+            entityType: EntityTypeEnum;
+            positionX: number;
+            positionY: number;
+        },
+        { eventTimerManager }: { eventTimerManager: GlobalEventTimerManager },
+    ) {
         this.virtualId = virtualId;
         this.entityType = entityType;
         this.targetPositionX = this.positionX = positionX;
         this.targetPositionY = this.positionY = positionY;
+        this.eventTimerManager = eventTimerManager;
     }
 
     abstract onSpawn(): Promise<void> | void;
@@ -98,12 +102,24 @@ export default abstract class GameEntity {
         return this.cell;
     }
 
-    addEventTimer(params: addTimerParam) {
-        return this.eventTimerManager.addTimer(params);
+    addEventTimer(params: Omit<addTimerParam, 'ownerId'>) {
+        return this.eventTimerManager.addTimer({ ...params, ownerId: this.getVirtualId() });
     }
 
     isEventTimerActive(eventName: string) {
-        return this.eventTimerManager.isTimerActive(eventName);
+        return this.eventTimerManager.isTimerActive(this.getVirtualId(), eventName);
+    }
+
+    removeEventTimer(eventName: string) {
+        this.eventTimerManager.removeTimer(this.getVirtualId(), eventName);
+    }
+
+    removeTimers() {
+        this.eventTimerManager.removeAllTimersFromOwner(this.getVirtualId());
+    }
+
+    isMonster() {
+        return this.getEntityType() === EntityTypeEnum.MONSTER;
     }
 
     isNPC() {

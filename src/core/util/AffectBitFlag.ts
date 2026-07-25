@@ -13,7 +13,7 @@ export default class AffectBitFlag {
         if (flag <= 0 || flag > AFF_BITS_MAX) return false;
 
         const index = Math.floor((flag - 1) / 32);
-        const bit = 1 << (flag - 1) % 32;
+        const bit = 1 << ((flag - 1) % 32);
         return this.flags[index].is(bit);
     }
 
@@ -21,7 +21,7 @@ export default class AffectBitFlag {
         if (flag <= 0 || flag > AFF_BITS_MAX) return;
 
         const index = Math.floor((flag - 1) / 32);
-        const bit = 1 << (flag - 1) % 32;
+        const bit = 1 << ((flag - 1) % 32);
         this.flags[index].set(bit);
     }
 
@@ -29,7 +29,7 @@ export default class AffectBitFlag {
         if (flag <= 0 || flag > AFF_BITS_MAX) return;
 
         const index = Math.floor((flag - 1) / 32);
-        const bit = 1 << (flag - 1) % 32;
+        const bit = 1 << ((flag - 1) % 32);
         this.flags[index].remove(bit);
     }
 
@@ -37,7 +37,7 @@ export default class AffectBitFlag {
         if (flag <= 0 || flag > AFF_BITS_MAX) return;
 
         const index = Math.floor((flag - 1) / 32);
-        const bit = 1 << (flag - 1) % 32;
+        const bit = 1 << ((flag - 1) % 32);
         this.flags[index].toggle(bit);
     }
 

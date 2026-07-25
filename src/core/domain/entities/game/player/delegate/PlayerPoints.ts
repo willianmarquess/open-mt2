@@ -7,6 +7,8 @@ import Player from '../Player';
 import JobUtil from '@/core/domain/util/JobUtil';
 import { Points } from '../../shared/Points';
 import { HORSE_STATS } from '@/core/domain/entities/game/horse/HorseStats';
+import MobManager from '@/core/domain/manager/MobManager';
+import { AffectBitsTypeEnum } from '@/core/enum/AffectBitsTypeEnum';
 
 type StatPoints = {
     st: number;
@@ -152,6 +154,7 @@ export class PlayerPoints extends Points {
     private maxWeaponDamage: number;
 
     private experienceManager: ExperienceManager;
+    private mobManager: MobManager;
     private config: GameConfig;
 
     private givenStatusPoints: number;
@@ -477,10 +480,12 @@ export class PlayerPoints extends Points {
             config,
             experienceManager,
             player,
+            mobManager,
         }: {
             experienceManager: ExperienceManager;
             config: GameConfig;
             player: Player;
+            mobManager: MobManager;
         },
     ) {
         super();
@@ -636,6 +641,7 @@ export class PlayerPoints extends Points {
 
         this.config = config;
         this.experienceManager = experienceManager;
+        this.mobManager = mobManager;
         this.player = player;
 
         this.points.set(PointsEnum.EXPERIENCE, {
@@ -853,6 +859,13 @@ export class PlayerPoints extends Points {
         (this as Record<string, any>)[pointName] = Math.max(0, currentValue + value);
     }
 
+    calcPolymorphPoint(pointName: 'ht' | 'st' | 'dx' | 'iq'): number {
+        if (!this.player.isAffectByFlag(AffectBitsTypeEnum.POLYMORPH)) return this[pointName];
+        const mobProto = this.mobManager.getMobProto(this.player.getPolymorphVnum());
+        if (!mobProto) return this[pointName];
+        return Math.min(255, this[pointName] + Number(mobProto[pointName] || 0));
+    }
+
     calcPointsAndResetValues() {
         this.calcMaxHealth();
         this.calcMaxMana();
@@ -1054,13 +1067,24 @@ export class PlayerPoints extends Points {
 
         if (isRiding) {
             const horse = HORSE_STATS[this.player.getHorseLevel()];
-            const horseStats = this.getBaseStat(horse, point);
-
-            return horseStats;
+            return this.getBaseStat(horse, point);
         }
 
-        const stats = this.getBaseStat({ dx: this.dx, ht: this.ht, iq: this.ht, st: this.st }, point);
-        return stats;
+        return this.calcPolymorphPoint(this.getStatName(point));
+    }
+
+    private getStatName(point: PointsEnum): StatsEnum {
+        switch (point) {
+            case PointsEnum.ST:
+                return StatsEnum.ST;
+            case PointsEnum.DX:
+                return StatsEnum.DX;
+            case PointsEnum.IQ:
+                return StatsEnum.IQ;
+            case PointsEnum.HT:
+            default:
+                return StatsEnum.HT;
+        }
     }
 
     private getBaseStat(target: StatPoints, point: PointsEnum): number {

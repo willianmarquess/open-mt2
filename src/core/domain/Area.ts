@@ -15,6 +15,7 @@ import { EmpireEnum } from '../enum/EmpireEnum';
 import EmpireUtil from './util/EmpireUtil';
 import Item from './entities/game/item/Item';
 import { AtlasInfoGoto } from '@/game/infra/config/GameConfig';
+import GlobalEventTimerManager from './manager/GlobalEventTimeManager';
 
 const SIZE_QUEUE = 5_000;
 const CHAR_VIEW_SIZE = 8000;
@@ -40,6 +41,7 @@ export default class Area {
 
     private readonly world: World;
     private readonly spawnManager: SpawnManager;
+    private readonly eventTimerManager: GlobalEventTimerManager;
 
     constructor(
         {
@@ -64,7 +66,14 @@ export default class Area {
             logger,
             world,
             spawnManager,
-        }: { saveCharacterService: SaveCharacterService; logger: Logger; world: World; spawnManager: SpawnManager },
+            eventTimerManager,
+        }: {
+            saveCharacterService: SaveCharacterService;
+            logger: Logger;
+            world: World;
+            spawnManager: SpawnManager;
+            eventTimerManager: GlobalEventTimerManager;
+        },
     ) {
         this.name = name;
         this.positionX = positionX;
@@ -81,7 +90,7 @@ export default class Area {
 
         this.world = world;
         this.spawnManager = spawnManager;
-
+        this.eventTimerManager = eventTimerManager;
         setInterval(this.savePlayers.bind(this), SAVE_PLAYERS_INTERVAL);
     }
 
@@ -136,14 +145,19 @@ export default class Area {
     onItemDrop(itemDropEvent: { item: Item; count: number; positionX: number; positionY: number; ownerName: string }) {
         const { item, count, positionX, positionY, ownerName } = itemDropEvent;
         const virtualId = this.world.generateVirtualId();
-        const droppedItem = DroppedItem.create({
-            item,
-            count,
-            ownerName,
-            virtualId,
-            positionX,
-            positionY,
-        });
+        const droppedItem = DroppedItem.create(
+            {
+                item,
+                count,
+                ownerName,
+                virtualId,
+                positionX,
+                positionY,
+            },
+            {
+                eventTimerManager: this.eventTimerManager,
+            },
+        );
         this.spawn(droppedItem);
     }
 

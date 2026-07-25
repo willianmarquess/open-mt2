@@ -17,6 +17,7 @@ import Player from '../../Player';
 import MathUtil from '@/core/domain/util/MathUtil';
 import { FlyEnum } from '@/core/enum/FlyEnum';
 import PlayerBattleStrategy from './PlayerBattleStrategy';
+import { TimedEventsEnum } from '@/core/enum/TimedEventsEnum';
 
 const weaponResistanceMapper: { [key in ItemWeaponSubTypeEnum]: MobResistEnum } = {
     [ItemWeaponSubTypeEnum.WEAPON_BELL]: MobResistEnum.BELL,
@@ -359,7 +360,7 @@ export default class PlayerBattleAgainstMobStrategy extends PlayerBattleStrategy
         victim.sendUpdateEvent();
 
         victim.addEventTimer({
-            id: 'FIRE_AFFECT',
+            id: TimedEventsEnum.FIRE,
             eventFunction: () => {
                 const damage = victim.getPoint(PointsEnum.MAX_HEALTH) * 0.05;
                 this.applyDamage(damage, DamageTypeEnum.FIRE, victim);
@@ -383,7 +384,7 @@ export default class PlayerBattleAgainstMobStrategy extends PlayerBattleStrategy
         victim.sendUpdateEvent();
 
         victim.addEventTimer({
-            id: 'POISON_AFFECT',
+            id: TimedEventsEnum.POISON,
             eventFunction: () => {
                 const damage = victim.getPoint(PointsEnum.MAX_HEALTH) * 0.03;
                 this.applyDamage(damage, DamageTypeEnum.POISON, victim);
@@ -406,7 +407,7 @@ export default class PlayerBattleAgainstMobStrategy extends PlayerBattleStrategy
         victim.stun();
 
         victim.addEventTimer({
-            id: 'STUN_AFFECT',
+            id: TimedEventsEnum.STUN,
             eventFunction: () => {
                 victim.removeStun();
             },
@@ -428,7 +429,7 @@ export default class PlayerBattleAgainstMobStrategy extends PlayerBattleStrategy
         victim.sendUpdateEvent();
 
         victim.addEventTimer({
-            id: 'SLOW_AFFECT',
+            id: TimedEventsEnum.SLOW,
             eventFunction: () => {
                 victim.addPoint(PointsEnum.MOVE_SPEED, SLOW_VALUE);
                 victim.removeAffectFlag(AffectBitsTypeEnum.SLOW);

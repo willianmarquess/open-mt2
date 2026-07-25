@@ -3,18 +3,27 @@ import { Mob, MobParams } from './Mob';
 import { EntityTypeEnum } from '@/core/enum/EntityTypeEnum';
 import AnimationManager from '@/core/domain/manager/AnimationManager';
 import { EntityStateEnum } from '@/core/enum/EntityStateEnum';
+import GlobalEventTimerManager from '@/core/domain/manager/GlobalEventTimeManager';
 
 export default class NPC extends Mob {
     constructor(
         params: Omit<MobParams, 'virtualId' | 'entityType'>,
-        { animationManager, questManager }: { animationManager: AnimationManager; questManager: QuestManager },
+        {
+            animationManager,
+            questManager,
+            eventTimerManager,
+        }: {
+            animationManager: AnimationManager;
+            questManager: QuestManager;
+            eventTimerManager: GlobalEventTimerManager;
+        },
     ) {
         super(
             {
                 ...params,
                 entityType: EntityTypeEnum.NPC,
             },
-            { animationManager, questManager },
+            { animationManager, questManager, eventTimerManager },
         );
 
         this.stateMachine

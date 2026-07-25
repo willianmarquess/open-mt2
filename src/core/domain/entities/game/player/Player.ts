@@ -76,11 +76,16 @@ import ShopUpdateItemPacket, {
     ShopUpdateItemParams,
 } from '@/core/interface/networking/packets/packet/out/ShopUpdateItemPacket';
 import NPC from '../mob/NPC';
+import { TimedEventsEnum } from '@/core/enum/TimedEventsEnum';
+import GlobalEventTimerManager from '@/core/domain/manager/GlobalEventTimeManager';
+import { QuickSlotTypeEnum } from '@/core/enum/QuickSlotTypeEnum';
+import QuickSlotAddResponsePacket from '@/core/interface/networking/packets/packet/out/QuickSlotAddResponsePacket';
+import QuickSlotRemoveResponsePacket from '@/core/interface/networking/packets/packet/out/QuickSlotRemoveResponsePacket';
+import QuickSlotSwapResponsePacket from '@/core/interface/networking/packets/packet/out/QuickSlotSwapResponsePacket';
 import MobManager from '@/core/domain/manager/MobManager';
 
 const REGEN_INTERVAL = 3000;
 const MAX_DISTANCE_FROM_TARGET = 3500;
-const TIMED_EVENT = 'TIMED_EVENT';
 const MAX_TIME_IDLE_IN_FIGHTING = 5_000;
 
 export default class Player extends Character {
@@ -96,6 +101,7 @@ export default class Player extends Character {
 
     private readonly config: GameConfig;
     private readonly inventory: Inventory;
+    private readonly quickSlot: Map<number, { type: QuickSlotTypeEnum; position: number }> = new Map();
 
     //delegate
     private readonly applies: PlayerApplies;
@@ -173,6 +179,7 @@ export default class Player extends Character {
             attackPerIqPoint = 0,
             baseAttackSpeed = 0,
             baseMovementSpeed = 0,
+            quickSlot,
             horseLevel = 0,
             horseHealth = 0,
             horseStamina = 0,
@@ -216,6 +223,7 @@ export default class Player extends Character {
             attackPerIqPoint?: number;
             baseAttackSpeed?: number;
             baseMovementSpeed?: number;
+            quickSlot?: Map<number, { type: number; position: number }>;
             horseLevel?: number;
             horseHealth?: number;
             horseStamina?: number;
@@ -228,6 +236,7 @@ export default class Player extends Character {
             logger,
             saveCharacterService,
             questManager,
+            eventTimerManager,
             mobManager,
         }: {
             animationManager: AnimationManager;
@@ -236,6 +245,7 @@ export default class Player extends Character {
             logger: Logger;
             saveCharacterService: SaveCharacterService;
             questManager: QuestManager;
+            eventTimerManager: GlobalEventTimerManager;
             mobManager: MobManager;
         },
     ) {
@@ -253,6 +263,7 @@ export default class Player extends Character {
             {
                 animationManager,
                 questManager,
+                eventTimerManager,
             },
         );
         this.accountId = accountId;
@@ -262,6 +273,7 @@ export default class Player extends Character {
         this.hairPart = hairPart;
         this.slot = slot;
         this.appearance = appearance;
+        this.quickSlot = quickSlot || new Map<number, { type: QuickSlotTypeEnum; position: number }>();
 
         this.logger = logger;
         this.config = config;
@@ -271,7 +283,7 @@ export default class Player extends Character {
             chat: (opts) => this.chat(opts),
             isEventTimerActive: (id) => this.isEventTimerActive(id),
             addEventTimer: (opts) => this.addEventTimer(opts),
-            removeEventTimer: (id) => this.eventTimerManager.removeTimer(id),
+            removeEventTimer: (id) => this.removeEventTimer(id),
             broadcastMountChange: () => this.broadcastMountChange(),
             getPositionX: () => this.positionX,
             getPositionY: () => this.positionY,
@@ -321,6 +333,7 @@ export default class Player extends Character {
                 config,
                 experienceManager,
                 player: this,
+                mobManager,
             },
         );
         this.battle = new PlayerBattle(this, logger);
@@ -371,6 +384,7 @@ export default class Player extends Character {
         });
 
         this.sendInventory();
+        this.sendQuickSlot();
 
         await this.questManager.addQuests(this);
         this.questManager.onLogin(this);
@@ -389,8 +403,8 @@ export default class Player extends Character {
         //     manaCost: 0,
         //     value: 200
         // });
-        this.eventTimerManager.addTimer({
-            id: 'INVISIBLE',
+        this.addEventTimer({
+            id: TimedEventsEnum.INVISIBILITY,
             eventFunction: () => {
                 this.removeAffectFlag(AffectBitsTypeEnum.REVIVE_INVISIBLE);
                 this.updateView();
@@ -405,7 +419,7 @@ export default class Player extends Character {
 
     async onDespawn(): Promise<void> {
         this.horse.despawn();
-        this.eventTimerManager.clearAllTimers();
+        this.removeTimers();
         this.forgetMeAsTarget();
         //TODO: logout from party
         //TODO: logout from guild
@@ -420,10 +434,8 @@ export default class Player extends Character {
         super.die(killer);
 
         //TODO: death penalty
-        this.eventTimerManager.removeTimer('STUN');
-        this.eventTimerManager.removeTimer('POISON');
-        this.eventTimerManager.removeTimer('FIRE');
-        this.eventTimerManager.removeTimer('SLOW');
+
+        this.removeTimers();
 
         //TODO: reset killer mode
         this.connection?.setState(ConnectionStateEnum.DEAD);
@@ -575,13 +587,13 @@ export default class Player extends Character {
         this.points.calcPointsAndResetValues();
         this.sendPoints();
 
-        this.eventTimerManager.addTimer({
-            id: 'REGEN_HEALTH',
+        this.addEventTimer({
+            id: TimedEventsEnum.REGEN_HEALTH,
             eventFunction: this.regenHealth.bind(this),
             options: { interval: REGEN_INTERVAL },
         });
-        this.eventTimerManager.addTimer({
-            id: 'REGEN_MANA',
+        this.addEventTimer({
+            id: TimedEventsEnum.REGEN_MANA,
             eventFunction: this.regenMana.bind(this),
             options: { interval: REGEN_INTERVAL },
         });
@@ -920,8 +932,8 @@ export default class Player extends Character {
     }
 
     private createTimedEvent(command: 'QUIT' | 'SELECT' | 'LOGOUT', prefix: string) {
-        if (this.eventTimerManager.isTimerActive(TIMED_EVENT)) {
-            this.eventTimerManager.removeTimer(TIMED_EVENT);
+        if (this.isEventTimerActive(TimedEventsEnum.COUNTDOWN)) {
+            this.removeEventTimer(TimedEventsEnum.COUNTDOWN);
             this.chat({
                 message: `[SYSTEM] ${prefix} canceled`,
                 messageType: ChatMessageTypeEnum.INFO,
@@ -936,7 +948,7 @@ export default class Player extends Character {
 
         const SECONDS_TO_LEAVE = 10;
 
-        this.eventTimerManager.addTimer({
+        this.addEventTimer({
             eventFunction: (count: number) => {
                 if (
                     !this.isPosOneOf([
@@ -947,7 +959,7 @@ export default class Player extends Character {
                         PositionEnum.RESTING,
                     ])
                 ) {
-                    this.eventTimerManager.removeTimer(TIMED_EVENT);
+                    this.removeEventTimer(TimedEventsEnum.COUNTDOWN);
                     this.chat({
                         message: `[SYSTEM] ${prefix} canceled`,
                         messageType: ChatMessageTypeEnum.INFO,
@@ -979,7 +991,7 @@ export default class Player extends Character {
                     messageType: ChatMessageTypeEnum.INFO,
                 });
             },
-            id: TIMED_EVENT,
+            id: TimedEventsEnum.COUNTDOWN,
             options: {
                 interval: 1_000,
                 repeatCount: SECONDS_TO_LEAVE,
@@ -1884,6 +1896,108 @@ export default class Player extends Character {
         }
     }
 
+    /**
+     * Quickslot area
+     */
+
+    addQuickSlot(slot: number, type: QuickSlotTypeEnum, position: number) {
+        for (const [existingSlot, existingSlotData] of this.quickSlot.entries()) {
+            if (type === QuickSlotTypeEnum.NONE) {
+                continue;
+            }
+            if (existingSlotData.type === type && existingSlotData.position === position) {
+                this.removeQuickSlot(existingSlot);
+            }
+        }
+
+        switch (type) {
+            case QuickSlotTypeEnum.ITEM:
+                {
+                    const item = this.getInventory().getItem(position);
+                    if (!item) {
+                        this.chat({
+                            message: `[SYSTEM] No item found in inventory at position ${position}`,
+                            messageType: ChatMessageTypeEnum.INFO,
+                        });
+                        return;
+                    }
+                }
+                break;
+            case QuickSlotTypeEnum.SKILL:
+                //TODO
+                break;
+            case QuickSlotTypeEnum.COMMAND:
+                return;
+            default:
+                this.chat({
+                    message: `[SYSTEM] Invalid quickslot type: ${type}`,
+                    messageType: ChatMessageTypeEnum.INFO,
+                });
+                return;
+        }
+
+        this.quickSlot.set(slot, { type, position: position });
+        this.connection?.send(
+            new QuickSlotAddResponsePacket({
+                position: position,
+                slot: slot,
+                type: type,
+            }),
+        );
+    }
+
+    removeQuickSlot(slot: number) {
+        this.quickSlot.delete(slot);
+        this.connection?.send(
+            new QuickSlotRemoveResponsePacket({
+                slot: slot,
+            }),
+        );
+    }
+
+    swapQuickSlot(slotA: number, slotB: number) {
+        const slotAData = this.quickSlot.get(slotA);
+        const slotBData = this.quickSlot.get(slotB);
+
+        if (!slotAData && !slotBData) {
+            this.chat({
+                message: `[SYSTEM] Both quickslots ${slotA} and ${slotB} are empty`,
+                messageType: ChatMessageTypeEnum.INFO,
+            });
+            return;
+        }
+
+        this.quickSlot.delete(slotA);
+        this.quickSlot.delete(slotB);
+
+        if (slotBData) {
+            this.quickSlot.set(slotA, slotBData);
+        }
+
+        if (slotAData) {
+            this.quickSlot.set(slotB, slotAData);
+        }
+
+        this.connection?.send(
+            new QuickSlotSwapResponsePacket({
+                slotA: slotA,
+                slotB: slotB,
+            }),
+        );
+    }
+
+    sendQuickSlot() {
+        for (const [slot, slotData] of this.quickSlot.entries()) {
+            this.connection?.send(
+                new QuickSlotAddResponsePacket({
+                    position: slotData.position,
+                    slot: slot,
+                    type: slotData.type,
+                }),
+            );
+        }
+    }
+
     static create(
         {
             id,
@@ -1924,6 +2038,7 @@ export default class Player extends Character {
             attackPerIqPoint,
             baseAttackSpeed,
             baseMovementSpeed,
+            quickSlot,
             horseLevel,
             horseHealth,
             horseStamina,
@@ -1967,6 +2082,7 @@ export default class Player extends Character {
             attackPerIqPoint: number;
             baseAttackSpeed: number;
             baseMovementSpeed: number;
+            quickSlot: Map<number, { type: QuickSlotTypeEnum; position: number }>;
             horseLevel?: number;
             horseHealth?: number;
             horseStamina?: number;
@@ -1979,6 +2095,7 @@ export default class Player extends Character {
             logger,
             saveCharacterService,
             questManager,
+            eventTimerManager,
             mobManager,
         }: {
             animationManager: AnimationManager;
@@ -1987,6 +2104,7 @@ export default class Player extends Character {
             logger: Logger;
             saveCharacterService: SaveCharacterService;
             questManager: QuestManager;
+            eventTimerManager: GlobalEventTimerManager;
             mobManager: MobManager;
         },
     ) {
@@ -2030,12 +2148,22 @@ export default class Player extends Character {
                 attackPerIqPoint,
                 baseAttackSpeed,
                 baseMovementSpeed,
+                quickSlot,
                 horseLevel,
                 horseHealth,
                 horseStamina,
                 horseName,
             },
-            { animationManager, config, experienceManager, logger, saveCharacterService, questManager, mobManager },
+            {
+                animationManager,
+                config,
+                experienceManager,
+                logger,
+                saveCharacterService,
+                questManager,
+                eventTimerManager,
+                mobManager,
+            },
         );
     }
 
@@ -2065,6 +2193,7 @@ export default class Player extends Character {
             givenStatusPoints: this.points.getGivenStatusPoints(),
             availableStatusPoints: this.points.getPoint(PointsEnum.STATUS_POINTS),
             slot: this.slot,
+            quickSlot: this.quickSlot,
             horseLevel: this.getHorseLevel(),
             horseHealth: this.getHorseHealth(),
             horseStamina: this.getHorseStamina(),
@@ -2173,6 +2302,8 @@ export default class Player extends Character {
         for (const entity of this.nearbyEntities.values()) {
             this.onNearbyEntityAdded(entity);
         }
+
+        this.sendPoints();
 
         // Sync affect flag
         if (vnum > 0) {

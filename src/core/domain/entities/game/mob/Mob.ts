@@ -16,6 +16,7 @@ import { PositionEnum } from '@/core/enum/PositionEnum';
 import { EntityStateEnum } from '@/core/enum/EntityStateEnum';
 import { QuestManager } from '@/core/domain/quests/QuestManager';
 import AnimationManager from '@/core/domain/manager/AnimationManager';
+import GlobalEventTimerManager from '@/core/domain/manager/GlobalEventTimeManager';
 
 enum MobSizeEnum {
     RESERVED = 0,
@@ -176,7 +177,15 @@ export abstract class Mob extends Character {
 
     constructor(
         params: MobParams,
-        { animationManager, questManager }: { animationManager: AnimationManager; questManager: QuestManager },
+        {
+            animationManager,
+            questManager,
+            eventTimerManager,
+        }: {
+            animationManager: AnimationManager;
+            questManager: QuestManager;
+            eventTimerManager: GlobalEventTimerManager;
+        },
     ) {
         super(
             {
@@ -189,7 +198,11 @@ export abstract class Mob extends Character {
                 name: params.proto.name,
                 empire: Number(params.proto.empire),
             },
-            { animationManager, questManager },
+            {
+                animationManager,
+                questManager,
+                eventTimerManager,
+            },
         );
         const proto = params.proto;
 
