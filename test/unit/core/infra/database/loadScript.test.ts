@@ -20,7 +20,7 @@ describe('loadScript', () => {
         expect(accountInserts.length).to.be.greaterThan(0);
 
         const hashMatch = accountInserts[0].match(/\$2[aby]\$\d{2}\$[./A-Za-z0-9]{53}/);
-        expect(hashMatch).to.not.be.equal(null);
+        expect(hashMatch).to.not.be.null;
 
         const isDefaultPassword = await bcrypt.compare(process.env.SEED_ADMIN_PASSWORD || 'admin', hashMatch![0]);
         expect(isDefaultPassword).to.be.equal(true);
