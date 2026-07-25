@@ -1818,35 +1818,39 @@ export default class Player extends Character {
         const isRiding = this.horse.isRiding();
         const parts = [this.getBody()?.getId() ?? 0, this.getWeapon()?.getId() ?? 0, 0, this.getHair()?.getId() ?? 0];
 
-        const spawnPacket = new CharacterSpawnPacket({
-            vid: this.getVirtualId(),
-            playerClass: this.getClassId(),
-            entityType: this.getEntityType(),
-            attackSpeed: this.getAttackSpeed(),
-            movementSpeed: this.getMovementSpeed(),
-            positionX: this.positionX,
-            positionY: this.positionY,
-            positionZ: 0,
-            rotation: this.getRotation(),
-            affects: this.getAffectFlags(),
-            state: this.isDead() ? 1 : 0,
-        });
+        // Packets are single-use (pack() advances the internal buffer cursor),
+        // so a fresh instance is required per recipient.
+        const createSpawnPacket = () =>
+            new CharacterSpawnPacket({
+                vid: this.getVirtualId(),
+                playerClass: this.getClassId(),
+                entityType: this.getEntityType(),
+                attackSpeed: this.getAttackSpeed(),
+                movementSpeed: this.getMovementSpeed(),
+                positionX: this.positionX,
+                positionY: this.positionY,
+                positionZ: 0,
+                rotation: this.getRotation(),
+                affects: this.getAffectFlags(),
+                state: this.isDead() ? 1 : 0,
+            });
 
-        const infoPacket = new CharacterInfoPacket({
-            vid: this.getVirtualId(),
-            empireId: this.empire,
-            level: this.getLevel(),
-            playerName: this.name,
-            parts: parts,
-            guildId: 0,
-            mountId: mountVnum,
-            pkMode: 0,
-            rankPoints: 0,
-        });
+        const createInfoPacket = () =>
+            new CharacterInfoPacket({
+                vid: this.getVirtualId(),
+                empireId: this.empire,
+                level: this.getLevel(),
+                playerName: this.name,
+                parts: parts,
+                guildId: 0,
+                mountId: mountVnum,
+                pkMode: 0,
+                rankPoints: 0,
+            });
 
         // Send CharacterSpawnPacket and CharacterInfoPacket to self first
-        this.connection?.send(spawnPacket);
-        this.connection?.send(infoPacket);
+        this.connection?.send(createSpawnPacket());
+        this.connection?.send(createInfoPacket());
 
         // Send CharacterUpdatePacket to self with new mount info
         this.connection?.send(
@@ -1879,8 +1883,8 @@ export default class Player extends Character {
         for (const entity of this.nearbyEntities.values()) {
             if (entity instanceof Player) {
                 // Send CharacterSpawnPacket and CharacterInfoPacket to other players
-                entity.connection?.send(spawnPacket);
-                entity.connection?.send(infoPacket);
+                entity.connection?.send(createSpawnPacket());
+                entity.connection?.send(createInfoPacket());
                 // Also send CharacterUpdatePacket with the new mount info
                 entity.otherEntityUpdated({
                     vid: this.getVirtualId(),
