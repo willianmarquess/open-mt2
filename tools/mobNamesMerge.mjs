@@ -20,19 +20,22 @@
  *   4. NPC without any data     -> "Unknown NPC"
  *   5. anything else            -> "Unknown Monster"
  *
- * Usage: node tools/mobNamesMerge.js <path-to-mob_names.txt>
+ * Usage: node tools/mobNamesMerge.mjs <path-to-locale-mob_names.txt>
  */
-const fs = require('fs');
-const path = require('path');
+import fs from 'node:fs';
+import path from 'node:path';
+import process from 'node:process';
+import { fileURLToPath } from 'node:url';
 
 const namesFile = process.argv[2];
 if (!namesFile) {
-    console.error('Usage: node tools/mobNamesMerge.js <path-to-locale-mob_names.txt>');
-    console.error('       (tab-separated client dump: VNUM\\tLOCALE_NAME)');
+    console.error('Usage: node tools/mobNamesMerge.mjs <path-to-locale-mob_names.txt>');
+    console.error('       (tab-separated client dump: VNUM\tLOCALE_NAME)');
     process.exit(1);
 }
 
-const mobsPath = path.resolve(__dirname, '../src/core/infra/config/data/mobs.json');
+const toolDir = path.dirname(fileURLToPath(import.meta.url));
+const mobsPath = path.resolve(toolDir, '../src/core/infra/config/data/mobs.json');
 const mobs = JSON.parse(fs.readFileSync(mobsPath, 'utf8'));
 
 const localeNames = new Map();
