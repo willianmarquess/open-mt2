@@ -1,7 +1,7 @@
 [
   {
     "vnum": "101",
-    "name": "??",
+    "name": "Wild Dog",
     "rank": "PAWN",
     "type": "MONSTER",
     "battle_type": "MELEE",
@@ -74,7 +74,7 @@
   },
   {
     "vnum": "102",
-    "name": "??",
+    "name": "Wolf",
     "rank": "PAWN",
     "type": "MONSTER",
     "battle_type": "MELEE",
@@ -147,7 +147,7 @@
   },
   {
     "vnum": "103",
-    "name": "????",
+    "name": "Alpha Wolf",
     "rank": "PAWN",
     "type": "MONSTER",
     "battle_type": "MELEE",
@@ -220,7 +220,7 @@
   },
   {
     "vnum": "104",
-    "name": "????",
+    "name": "Blue Wolf",
     "rank": "PAWN",
     "type": "MONSTER",
     "battle_type": "MELEE",
@@ -293,7 +293,7 @@
   },
   {
     "vnum": "105",
-    "name": "?? ????",
+    "name": "Alpha Blue Wolf",
     "rank": "PAWN",
     "type": "MONSTER",
     "battle_type": "MELEE",
@@ -366,7 +366,7 @@
   },
   {
     "vnum": "106",
-    "name": "????",
+    "name": "Grey Wolf",
     "rank": "PAWN",
     "type": "MONSTER",
     "battle_type": "MELEE",
@@ -439,7 +439,7 @@
   },
   {
     "vnum": "107",
-    "name": "?? ????",
+    "name": "Alpha Grey Wolf",
     "rank": "S_PAWN",
     "type": "MONSTER",
     "battle_type": "MELEE",
@@ -512,7 +512,7 @@
   },
   {
     "vnum": "108",
-    "name": "???",
+    "name": "Wild Boar",
     "rank": "PAWN",
     "type": "MONSTER",
     "battle_type": "MELEE",
@@ -585,7 +585,7 @@
   },
   {
     "vnum": "109",
-    "name": "?? ???",
+    "name": "Red Wild Boar",
     "rank": "S_PAWN",
     "type": "MONSTER",
     "battle_type": "MELEE",
@@ -658,7 +658,7 @@
   },
   {
     "vnum": "110",
-    "name": "?",
+    "name": "Bear",
     "rank": "PAWN",
     "type": "MONSTER",
     "battle_type": "POWER",
@@ -731,7 +731,7 @@
   },
   {
     "vnum": "111",
-    "name": "???",
+    "name": "Grizzly Bear",
     "rank": "S_PAWN",
     "type": "MONSTER",
     "battle_type": "TANKER",
@@ -804,7 +804,7 @@
   },
   {
     "vnum": "112",
-    "name": "???",
+    "name": "Black Bear",
     "rank": "PAWN",
     "type": "MONSTER",
     "battle_type": "POWER",
@@ -877,7 +877,7 @@
   },
   {
     "vnum": "113",
-    "name": "??",
+    "name": "Brown Bear",
     "rank": "S_PAWN",
     "type": "MONSTER",
     "battle_type": "POWER",
@@ -950,7 +950,7 @@
   },
   {
     "vnum": "114",
-    "name": "???",
+    "name": "Tiger",
     "rank": "PAWN",
     "type": "MONSTER",
     "battle_type": "POWER",
@@ -1023,7 +1023,7 @@
   },
   {
     "vnum": "115",
-    "name": "??",
+    "name": "White Tiger",
     "rank": "S_PAWN",
     "type": "MONSTER",
     "battle_type": "POWER",
@@ -1096,7 +1096,7 @@
   },
   {
     "vnum": "131",
-    "name": "???? ??",
+    "name": "Cursed Wolf",
     "rank": "KNIGHT",
     "type": "MONSTER",
     "battle_type": "MELEE",
@@ -1169,7 +1169,7 @@
   },
   {
     "vnum": "132",
-    "name": "???? ????",
+    "name": "Cursed Alpha Wolf",
     "rank": "S_KNIGHT",
     "type": "MONSTER",
     "battle_type": "MELEE",
@@ -1242,7 +1242,7 @@
   },
   {
     "vnum": "133",
-    "name": "???? ????",
+    "name": "Cursed Blue Wolf",
     "rank": "KNIGHT",
     "type": "MONSTER",
     "battle_type": "MELEE",
@@ -1315,7 +1315,7 @@
   },
   {
     "vnum": "134",
-    "name": "???? ?? ????",
+    "name": "Cursed Alpha Blue Wolf",
     "rank": "S_KNIGHT",
     "type": "MONSTER",
     "battle_type": "MELEE",
@@ -1388,7 +1388,7 @@
   },
   {
     "vnum": "135",
-    "name": "???? ????",
+    "name": "Cursed Grey Wolf",
     "rank": "KNIGHT",
     "type": "MONSTER",
     "battle_type": "MELEE",
@@ -1461,7 +1461,7 @@
   },
   {
     "vnum": "136",
-    "name": "???? ?? ????",
+    "name": "Cursed Alpha Grey Wolf",
     "rank": "S_KNIGHT",
     "type": "MONSTER",
     "battle_type": "MELEE",
@@ -1534,7 +1534,7 @@
   },
   {
     "vnum": "137",
-    "name": "???? ???",
+    "name": "Cursed Wild Boar",
     "rank": "KNIGHT",
     "type": "MONSTER",
     "battle_type": "MELEE",
@@ -1607,7 +1607,7 @@
   },
   {
     "vnum": "138",
-    "name": "???? ?? ???",
+    "name": "Cursed Red Wild Boar",
     "rank": "S_KNIGHT",
     "type": "MONSTER",
     "battle_type": "MELEE",
@@ -1680,7 +1680,7 @@
   },
   {
     "vnum": "139",
-    "name": "???? ?",
+    "name": "Cursed Bear",
     "rank": "KNIGHT",
     "type": "MONSTER",
     "battle_type": "MELEE",
@@ -1753,7 +1753,7 @@
   },
   {
     "vnum": "140",
-    "name": "???? ???",
+    "name": "Cursed Grizzly Bear",
     "rank": "S_KNIGHT",
     "type": "MONSTER",
     "battle_type": "TANKER",
@@ -1826,7 +1826,7 @@
   },
   {
     "vnum": "141",
-    "name": "???? ???",
+    "name": "Cursed Black Bear",
     "rank": "KNIGHT",
     "type": "MONSTER",
     "battle_type": "TANKER",
@@ -1899,7 +1899,7 @@
   },
   {
     "vnum": "142",
-    "name": "???? ??",
+    "name": "Cursed Brown Bear",
     "rank": "S_KNIGHT",
     "type": "MONSTER",
     "battle_type": "TANKER",
@@ -1972,7 +1972,7 @@
   },
   {
     "vnum": "143",
-    "name": "???? ???",
+    "name": "Cursed Tiger",
     "rank": "KNIGHT",
     "type": "MONSTER",
     "battle_type": "POWER",
@@ -2045,7 +2045,7 @@
   },
   {
     "vnum": "144",
-    "name": "???? ??",
+    "name": "Cursed White Tiger",
     "rank": "S_KNIGHT",
     "type": "MONSTER",
     "battle_type": "POWER",
@@ -2118,7 +2118,7 @@
   },
   {
     "vnum": "151",
-    "name": "?? ???? ??",
+    "name": "Cung-Mok",
     "rank": "S_KNIGHT",
     "type": "MONSTER",
     "battle_type": "MELEE",
@@ -2191,7 +2191,7 @@
   },
   {
     "vnum": "152",
-    "name": "?? ???? ??",
+    "name": "Mu-Rang",
     "rank": "S_KNIGHT",
     "type": "MONSTER",
     "battle_type": "MELEE",
@@ -2264,7 +2264,7 @@
   },
   {
     "vnum": "153",
-    "name": "?? ??? ??",
+    "name": "Jug-Hyul",
     "rank": "S_KNIGHT",
     "type": "MONSTER",
     "battle_type": "MELEE",
@@ -2337,7 +2337,7 @@
   },
   {
     "vnum": "154",
-    "name": "?? ??",
+    "name": "Young-Ji",
     "rank": "S_KNIGHT",
     "type": "MONSTER",
     "battle_type": "POWER",
@@ -2410,7 +2410,7 @@
   },
   {
     "vnum": "155",
-    "name": "?? ??",
+    "name": "Li-An",
     "rank": "S_KNIGHT",
     "type": "MONSTER",
     "battle_type": "POWER",
@@ -2483,7 +2483,7 @@
   },
   {
     "vnum": "171",
-    "name": "??? ??",
+    "name": "Hungry Stray Dog",
     "rank": "PAWN",
     "type": "MONSTER",
     "battle_type": "MELEE",
@@ -2556,7 +2556,7 @@
   },
   {
     "vnum": "172",
-    "name": "??? ??",
+    "name": "Hungry Wolf",
     "rank": "PAWN",
     "type": "MONSTER",
     "battle_type": "MELEE",
@@ -2629,7 +2629,7 @@
   },
   {
     "vnum": "173",
-    "name": "??? ????",
+    "name": "Hungry Alpha Wolf",
     "rank": "PAWN",
     "type": "MONSTER",
     "battle_type": "MELEE",
@@ -2702,7 +2702,7 @@
   },
   {
     "vnum": "174",
-    "name": "??? ????",
+    "name": "Hungry Blue Wolf",
     "rank": "PAWN",
     "type": "MONSTER",
     "battle_type": "MELEE",
@@ -2775,7 +2775,7 @@
   },
   {
     "vnum": "175",
-    "name": "??? ?? ????",
+    "name": "Hungry Alpha Blue Wolf",
     "rank": "PAWN",
     "type": "MONSTER",
     "battle_type": "MELEE",
@@ -2848,7 +2848,7 @@
   },
   {
     "vnum": "176",
-    "name": "??? ????",
+    "name": "Hungry Grey Wolf",
     "rank": "PAWN",
     "type": "MONSTER",
     "battle_type": "MELEE",
@@ -2921,7 +2921,7 @@
   },
   {
     "vnum": "177",
-    "name": "??? ?? ????",
+    "name": "Hungry Alpha Grey Wolf",
     "rank": "S_PAWN",
     "type": "MONSTER",
     "battle_type": "MELEE",
@@ -2994,7 +2994,7 @@
   },
   {
     "vnum": "178",
-    "name": "??? ???",
+    "name": "Hungry Wild Boar",
     "rank": "PAWN",
     "type": "MONSTER",
     "battle_type": "MELEE",
@@ -3067,7 +3067,7 @@
   },
   {
     "vnum": "179",
-    "name": "??? ?? ???",
+    "name": "Hungry Red Boar",
     "rank": "S_PAWN",
     "type": "MONSTER",
     "battle_type": "MELEE",
@@ -3140,7 +3140,7 @@
   },
   {
     "vnum": "180",
-    "name": "??? ?",
+    "name": "Hungry Bear",
     "rank": "PAWN",
     "type": "MONSTER",
     "battle_type": "POWER",
@@ -3213,7 +3213,7 @@
   },
   {
     "vnum": "181",
-    "name": "??? ???",
+    "name": "Hungry Grizzly",
     "rank": "S_PAWN",
     "type": "MONSTER",
     "battle_type": "TANKER",
@@ -3286,7 +3286,7 @@
   },
   {
     "vnum": "182",
-    "name": "??? ???",
+    "name": "Hungry Black Bear",
     "rank": "PAWN",
     "type": "MONSTER",
     "battle_type": "POWER",
@@ -3359,7 +3359,7 @@
   },
   {
     "vnum": "183",
-    "name": "??? ??",
+    "name": "Hungry Brown Bear",
     "rank": "S_PAWN",
     "type": "MONSTER",
     "battle_type": "POWER",
@@ -3432,7 +3432,7 @@
   },
   {
     "vnum": "184",
-    "name": "??? ???",
+    "name": "Hungry Tiger",
     "rank": "PAWN",
     "type": "MONSTER",
     "battle_type": "POWER",
@@ -3505,7 +3505,7 @@
   },
   {
     "vnum": "185",
-    "name": "??? ??",
+    "name": "Hungry White Tiger",
     "rank": "S_PAWN",
     "type": "MONSTER",
     "battle_type": "POWER",
@@ -3578,7 +3578,7 @@
   },
   {
     "vnum": "191",
-    "name": "???",
+    "name": "Lykos",
     "rank": "S_KNIGHT",
     "type": "MONSTER",
     "battle_type": "MELEE",
@@ -3651,7 +3651,7 @@
   },
   {
     "vnum": "192",
-    "name": "??",
+    "name": "Scrofa",
     "rank": "S_KNIGHT",
     "type": "MONSTER",
     "battle_type": "MELEE",
@@ -3724,7 +3724,7 @@
   },
   {
     "vnum": "193",
-    "name": "??",
+    "name": "Bera",
     "rank": "S_KNIGHT",
     "type": "MONSTER",
     "battle_type": "TANKER",
@@ -3797,7 +3797,7 @@
   },
   {
     "vnum": "194",
-    "name": "??",
+    "name": "Tigris",
     "rank": "S_KNIGHT",
     "type": "MONSTER",
     "battle_type": "POWER",
@@ -3870,7 +3870,7 @@
   },
   {
     "vnum": "301",
-    "name": "????",
+    "name": "White Oath Soldier",
     "rank": "PAWN",
     "type": "MONSTER",
     "battle_type": "MAGIC",
@@ -3943,7 +3943,7 @@
   },
   {
     "vnum": "302",
-    "name": "????",
+    "name": "White Oath Archer",
     "rank": "PAWN",
     "type": "MONSTER",
     "battle_type": "MAGIC",
@@ -4016,7 +4016,7 @@
   },
   {
     "vnum": "303",
-    "name": "???? ??",
+    "name": "White Oath General",
     "rank": "S_PAWN",
     "type": "MONSTER",
     "battle_type": "MAGIC",
@@ -4089,7 +4089,7 @@
   },
   {
     "vnum": "304",
-    "name": "???? ??",
+    "name": "White Oath Commander",
     "rank": "S_PAWN",
     "type": "MONSTER",
     "battle_type": "MAGIC",
@@ -4162,7 +4162,7 @@
   },
   {
     "vnum": "331",
-    "name": "???? ??",
+    "name": "White Oath Soldier",
     "rank": "S_PAWN",
     "type": "MONSTER",
     "battle_type": "MELEE",
@@ -4235,7 +4235,7 @@
   },
   {
     "vnum": "332",
-    "name": "???? ??",
+    "name": "White Oath Archer",
     "rank": "S_PAWN",
     "type": "MONSTER",
     "battle_type": "RANGE",
@@ -4308,7 +4308,7 @@
   },
   {
     "vnum": "333",
-    "name": "???? ??",
+    "name": "White Oath General",
     "rank": "KNIGHT",
     "type": "MONSTER",
     "battle_type": "MELEE",
@@ -4381,7 +4381,7 @@
   },
   {
     "vnum": "334",
-    "name": "???? ??",
+    "name": "White Oath Commander",
     "rank": "KNIGHT",
     "type": "MONSTER",
     "battle_type": "MELEE",
@@ -4454,7 +4454,7 @@
   },
   {
     "vnum": "351",
-    "name": "??? ????",
+    "name": "Craven White Oath Sold.",
     "rank": "S_PAWN",
     "type": "MONSTER",
     "battle_type": "MAGIC",
@@ -4527,7 +4527,7 @@
   },
   {
     "vnum": "352",
-    "name": "??? ????",
+    "name": "Craven White Oath Archer",
     "rank": "S_PAWN",
     "type": "MONSTER",
     "battle_type": "MAGIC",
@@ -4600,7 +4600,7 @@
   },
   {
     "vnum": "353",
-    "name": "??? ???? ??",
+    "name": "Craven White Oath Gen.",
     "rank": "KNIGHT",
     "type": "MONSTER",
     "battle_type": "MAGIC",
@@ -4673,7 +4673,7 @@
   },
   {
     "vnum": "354",
-    "name": "??? ???? ??",
+    "name": "Craven Wh. Oath Com.",
     "rank": "KNIGHT",
     "type": "MONSTER",
     "battle_type": "MAGIC",
@@ -4746,7 +4746,7 @@
   },
   {
     "vnum": "391",
-    "name": "??",
+    "name": "Mi-Jung",
     "rank": "S_KNIGHT",
     "type": "MONSTER",
     "battle_type": "MAGIC",
@@ -4819,7 +4819,7 @@
   },
   {
     "vnum": "392",
-    "name": "??",
+    "name": "Eun-Jung",
     "rank": "S_KNIGHT",
     "type": "MONSTER",
     "battle_type": "MAGIC",
@@ -4892,7 +4892,7 @@
   },
   {
     "vnum": "393",
-    "name": "??",
+    "name": "Se-Rang",
     "rank": "S_KNIGHT",
     "type": "MONSTER",
     "battle_type": "MAGIC",
@@ -4965,7 +4965,7 @@
   },
   {
     "vnum": "394",
-    "name": "??",
+    "name": "Jin-Hee",
     "rank": "S_KNIGHT",
     "type": "MONSTER",
     "battle_type": "MAGIC",
@@ -5038,7 +5038,7 @@
   },
   {
     "vnum": "395",
-    "name": "??? ??",
+    "name": "Dispirited Mi-Jung",
     "rank": "S_KNIGHT",
     "type": "MONSTER",
     "battle_type": "MAGIC",
@@ -5111,7 +5111,7 @@
   },
   {
     "vnum": "396",
-    "name": "??? ??",
+    "name": "Dispirited Eun-Jung",
     "rank": "S_KNIGHT",
     "type": "MONSTER",
     "battle_type": "MAGIC",
@@ -5184,7 +5184,7 @@
   },
   {
     "vnum": "397",
-    "name": "??? ??",
+    "name": "Dispirited Se-Rang",
     "rank": "S_KNIGHT",
     "type": "MONSTER",
     "battle_type": "MAGIC",
@@ -5257,7 +5257,7 @@
   },
   {
     "vnum": "398",
-    "name": "??? ??",
+    "name": "Dispirited Jin-Hee",
     "rank": "S_KNIGHT",
     "type": "MONSTER",
     "battle_type": "MAGIC",
@@ -5330,7 +5330,7 @@
   },
   {
     "vnum": "401",
-    "name": "????",
+    "name": "Black Wind Soldier",
     "rank": "PAWN",
     "type": "MONSTER",
     "battle_type": "MELEE",
@@ -5403,7 +5403,7 @@
   },
   {
     "vnum": "402",
-    "name": "?????",
+    "name": "Black Wind Maniac",
     "rank": "PAWN",
     "type": "MONSTER",
     "battle_type": "MELEE",
@@ -5476,7 +5476,7 @@
   },
   {
     "vnum": "403",
-    "name": "????",
+    "name": "Black Wind Archer",
     "rank": "PAWN",
     "type": "MONSTER",
     "battle_type": "RANGE",
@@ -5549,7 +5549,7 @@
   },
   {
     "vnum": "404",
-    "name": "???? ??",
+    "name": "Black Wind Jak-To",
     "rank": "S_PAWN",
     "type": "MONSTER",
     "battle_type": "POWER",
@@ -5622,7 +5622,7 @@
   },
   {
     "vnum": "405",
-    "name": "???? ??",
+    "name": "Black Wind To-Su",
     "rank": "S_PAWN",
     "type": "MONSTER",
     "battle_type": "MELEE",
@@ -5695,7 +5695,7 @@
   },
   {
     "vnum": "406",
-    "name": "???? ??",
+    "name": "Black Wind Gu-Ryung",
     "rank": "S_PAWN",
     "type": "MONSTER",
     "battle_type": "MELEE",
@@ -5768,7 +5768,7 @@
   },
   {
     "vnum": "431",
-    "name": "???? ??",
+    "name": "Black Storm Soldier",
     "rank": "KNIGHT",
     "type": "MONSTER",
     "battle_type": "MELEE",
@@ -5841,7 +5841,7 @@
   },
   {
     "vnum": "432",
-    "name": "????? ??",
+    "name": "Black Storm Maniac",
     "rank": "KNIGHT",
     "type": "MONSTER",
     "battle_type": "MELEE",
@@ -5914,7 +5914,7 @@
   },
   {
     "vnum": "433",
-    "name": "???? ??",
+    "name": "Black Storm Archer",
     "rank": "KNIGHT",
     "type": "MONSTER",
     "battle_type": "RANGE",
@@ -5987,7 +5987,7 @@
   },
   {
     "vnum": "434",
-    "name": "???? ??",
+    "name": "Black Storm Joh-Hwan",
     "rank": "S_KNIGHT",
     "type": "MONSTER",
     "battle_type": "MELEE",
@@ -6060,7 +6060,7 @@
   },
   {
     "vnum": "435",
-    "name": "???? ??",
+    "name": "Black Storm Kyuk-Jang",
     "rank": "S_KNIGHT",
     "type": "MONSTER",
     "battle_type": "MELEE",
@@ -6133,7 +6133,7 @@
   },
   {
     "vnum": "436",
-    "name": "???? ??",
+    "name": "Black Storm Pho-Hwan",
     "rank": "S_KNIGHT",
     "type": "MONSTER",
     "battle_type": "MELEE",
@@ -6206,7 +6206,7 @@
   },
   {
     "vnum": "451",
-    "name": "??? ????",
+    "name": "Evil Bl. Storm Soldier",
     "rank": "PAWN",
     "type": "MONSTER",
     "battle_type": "MELEE",
@@ -6279,7 +6279,7 @@
   },
   {
     "vnum": "452",
-    "name": "??? ?????",
+    "name": "Evil Bl. Storm Maniac",
     "rank": "PAWN",
     "type": "MONSTER",
     "battle_type": "MELEE",
@@ -6352,7 +6352,7 @@
   },
   {
     "vnum": "453",
-    "name": "??? ????",
+    "name": "Evil Bl. Storm Archer",
     "rank": "PAWN",
     "type": "MONSTER",
     "battle_type": "RANGE",
@@ -6425,7 +6425,7 @@
   },
   {
     "vnum": "454",
-    "name": "??? ???? ??",
+    "name": "Evil Bl. Storm Joh-Hwan",
     "rank": "S_PAWN",
     "type": "MONSTER",
     "battle_type": "POWER",
@@ -6498,7 +6498,7 @@
   },
   {
     "vnum": "455",
-    "name": "??? ???? ??",
+    "name": "Evil Bl. Storm Kyuk-Jang",
     "rank": "S_PAWN",
     "type": "MONSTER",
     "battle_type": "MELEE",
@@ -6571,7 +6571,7 @@
   },
   {
     "vnum": "456",
-    "name": "??? ???? ??",
+    "name": "Evil Bl. Storm Pho-Hwa",
     "rank": "S_PAWN",
     "type": "MONSTER",
     "battle_type": "MELEE",
@@ -6644,7 +6644,7 @@
   },
   {
     "vnum": "491",
-    "name": "??",
+    "name": "Mahon",
     "rank": "S_KNIGHT",
     "type": "MONSTER",
     "battle_type": "TANKER",
@@ -6717,7 +6717,7 @@
   },
   {
     "vnum": "492",
-    "name": "??",
+    "name": "Bou",
     "rank": "S_KNIGHT",
     "type": "MONSTER",
     "battle_type": "MELEE",
@@ -6790,7 +6790,7 @@
   },
   {
     "vnum": "493",
-    "name": "??",
+    "name": "Goo-Pae",
     "rank": "S_KNIGHT",
     "type": "MONSTER",
     "battle_type": "POWER",
@@ -6863,7 +6863,7 @@
   },
   {
     "vnum": "494",
-    "name": "??",
+    "name": "Chuong",
     "rank": "S_KNIGHT",
     "type": "MONSTER",
     "battle_type": "MELEE",
@@ -6936,7 +6936,7 @@
   },
   {
     "vnum": "501",
-    "name": "?????",
+    "name": "Savage Infantryman",
     "rank": "PAWN",
     "type": "MONSTER",
     "battle_type": "MELEE",
@@ -7009,7 +7009,7 @@
   },
   {
     "vnum": "502",
-    "name": "?????",
+    "name": "Savage Minion",
     "rank": "PAWN",
     "type": "MONSTER",
     "battle_type": "MELEE",
@@ -7082,7 +7082,7 @@
   },
   {
     "vnum": "503",
-    "name": "?????",
+    "name": "Savage Archer",
     "rank": "S_PAWN",
     "type": "MONSTER",
     "battle_type": "RANGE",
@@ -7155,7 +7155,7 @@
   },
   {
     "vnum": "504",
-    "name": "?????",
+    "name": "Savage General",
     "rank": "KNIGHT",
     "type": "MONSTER",
     "battle_type": "MELEE",
@@ -7228,7 +7228,7 @@
   },
   {
     "vnum": "531",
-    "name": "????? ??",
+    "name": "Bestial Soldier",
     "rank": "KNIGHT",
     "type": "MONSTER",
     "battle_type": "MELEE",
@@ -7301,7 +7301,7 @@
   },
   {
     "vnum": "532",
-    "name": "????? ??",
+    "name": "Bestial Maniac",
     "rank": "KNIGHT",
     "type": "MONSTER",
     "battle_type": "MELEE",
@@ -7374,7 +7374,7 @@
   },
   {
     "vnum": "533",
-    "name": "????? ??",
+    "name": "Bestial Archer",
     "rank": "S_KNIGHT",
     "type": "MONSTER",
     "battle_type": "RANGE",
@@ -7447,7 +7447,7 @@
   },
   {
     "vnum": "534",
-    "name": "?????? ??",
+    "name": "Bestial Specialist",
     "rank": "S_KNIGHT",
     "type": "MONSTER",
     "battle_type": "MELEE",
@@ -7520,7 +7520,7 @@
   },
   {
     "vnum": "551",
-    "name": "??? ?????",
+    "name": "Strong Savage Infantry",
     "rank": "PAWN",
     "type": "MONSTER",
     "battle_type": "MELEE",
@@ -7593,7 +7593,7 @@
   },
   {
     "vnum": "552",
-    "name": "??? ?????",
+    "name": "Strong Savage Minion",
     "rank": "PAWN",
     "type": "MONSTER",
     "battle_type": "MELEE",
@@ -7666,7 +7666,7 @@
   },
   {
     "vnum": "553",
-    "name": "??? ?????",
+    "name": "Strong Savage Archer",
     "rank": "S_PAWN",
     "type": "MONSTER",
     "battle_type": "RANGE",
@@ -7739,7 +7739,7 @@
   },
   {
     "vnum": "554",
-    "name": "??? ?????",
+    "name": "Strong Savage General",
     "rank": "KNIGHT",
     "type": "MONSTER",
     "battle_type": "MELEE",
@@ -7812,7 +7812,7 @@
   },
   {
     "vnum": "591",
-    "name": "?????",
+    "name": "Bestial Captain",
     "rank": "BOSS",
     "type": "MONSTER",
     "battle_type": "MELEE",
@@ -7885,7 +7885,7 @@
   },
   {
     "vnum": "595",
-    "name": "????? ??",
+    "name": "Bestial Geum-Chul",
     "rank": "KNIGHT",
     "type": "MONSTER",
     "battle_type": "RANGE",
@@ -7958,7 +7958,7 @@
   },
   {
     "vnum": "601",
-    "name": "???? ???",
+    "name": "Orc",
     "rank": "PAWN",
     "type": "MONSTER",
     "battle_type": "MELEE",
@@ -8031,7 +8031,7 @@
   },
   {
     "vnum": "602",
-    "name": "??? ??? ???",
+    "name": "Orc Scout",
     "rank": "S_PAWN",
     "type": "MONSTER",
     "battle_type": "MELEE",
@@ -8104,7 +8104,7 @@
   },
   {
     "vnum": "603",
-    "name": "??? ?? ???",
+    "name": "Orc Fighter",
     "rank": "S_PAWN",
     "type": "MONSTER",
     "battle_type": "MELEE",
@@ -8177,7 +8177,7 @@
   },
   {
     "vnum": "604",
-    "name": "??? ?? ???",
+    "name": "Orc Sorcerer",
     "rank": "KNIGHT",
     "type": "MONSTER",
     "battle_type": "MAGIC",
@@ -8250,7 +8250,7 @@
   },
   {
     "vnum": "631",
-    "name": "????",
+    "name": "Elite Orc",
     "rank": "PAWN",
     "type": "MONSTER",
     "battle_type": "MELEE",
@@ -8323,7 +8323,7 @@
   },
   {
     "vnum": "632",
-    "name": "??? ???",
+    "name": "Elite Orc Scout",
     "rank": "S_PAWN",
     "type": "MONSTER",
     "battle_type": "MELEE",
@@ -8396,7 +8396,7 @@
   },
   {
     "vnum": "633",
-    "name": "??? ??",
+    "name": "Elite Orc Fighter",
     "rank": "S_PAWN",
     "type": "MONSTER",
     "battle_type": "MELEE",
@@ -8469,7 +8469,7 @@
   },
   {
     "vnum": "634",
-    "name": "??? ??",
+    "name": "Elite Orc Sorcerer",
     "rank": "KNIGHT",
     "type": "MONSTER",
     "battle_type": "MAGIC",
@@ -8542,7 +8542,7 @@
   },
   {
     "vnum": "635",
-    "name": "??? ??",
+    "name": "Elite Orc General",
     "rank": "KNIGHT",
     "type": "MONSTER",
     "battle_type": "MELEE",
@@ -8615,7 +8615,7 @@
   },
   {
     "vnum": "636",
-    "name": "???",
+    "name": "Black Orc",
     "rank": "S_KNIGHT",
     "type": "MONSTER",
     "battle_type": "MELEE",
@@ -8688,7 +8688,7 @@
   },
   {
     "vnum": "637",
-    "name": "?? ???",
+    "name": "Black Orc Giant",
     "rank": "S_KNIGHT",
     "type": "MONSTER",
     "battle_type": "MELEE",
@@ -8761,7 +8761,7 @@
   },
   {
     "vnum": "651",
-    "name": "??? ????",
+    "name": "Bold Big Orc",
     "rank": "PAWN",
     "type": "MONSTER",
     "battle_type": "MELEE",
@@ -8834,7 +8834,7 @@
   },
   {
     "vnum": "652",
-    "name": "??? ??? ???",
+    "name": "Bold Big Orc Scout",
     "rank": "S_PAWN",
     "type": "MONSTER",
     "battle_type": "MELEE",
@@ -8907,7 +8907,7 @@
   },
   {
     "vnum": "653",
-    "name": "??? ??? ??",
+    "name": "Bold Big Orc Fighter",
     "rank": "S_PAWN",
     "type": "MONSTER",
     "battle_type": "MELEE",
@@ -8980,7 +8980,7 @@
   },
   {
     "vnum": "654",
-    "name": "??? ??? ??",
+    "name": "Bold Big Orc Sorcerer",
     "rank": "KNIGHT",
     "type": "MONSTER",
     "battle_type": "MAGIC",
@@ -9053,7 +9053,7 @@
   },
   {
     "vnum": "655",
-    "name": "??? ??? ??",
+    "name": "Bold Big Orc General",
     "rank": "KNIGHT",
     "type": "MONSTER",
     "battle_type": "MELEE",
@@ -9126,7 +9126,7 @@
   },
   {
     "vnum": "656",
-    "name": "??? ???",
+    "name": "Bold Black Orc",
     "rank": "S_KNIGHT",
     "type": "MONSTER",
     "battle_type": "MELEE",
@@ -9199,7 +9199,7 @@
   },
   {
     "vnum": "657",
-    "name": "??? ?? ???",
+    "name": "Bold Black Giant Orc",
     "rank": "S_KNIGHT",
     "type": "MONSTER",
     "battle_type": "MELEE",
@@ -9272,7 +9272,7 @@
   },
   {
     "vnum": "691",
-    "name": "?? ??",
+    "name": "Chief Orc",
     "rank": "BOSS",
     "type": "MONSTER",
     "battle_type": "MELEE",
@@ -9345,7 +9345,7 @@
   },
   {
     "vnum": "692",
-    "name": "??? ??",
+    "name": "Chief Elite Orc",
     "rank": "BOSS",
     "type": "MONSTER",
     "battle_type": "MELEE",
@@ -9418,7 +9418,7 @@
   },
   {
     "vnum": "693",
-    "name": "?????",
+    "name": "Reborn Chief Ork",
     "rank": "KING",
     "type": "MONSTER",
     "battle_type": "MELEE",
@@ -9491,7 +9491,7 @@
   },
   {
     "vnum": "701",
-    "name": "?????",
+    "name": "Dark Fanatic",
     "rank": "PAWN",
     "type": "MONSTER",
     "battle_type": "MELEE",
@@ -9564,7 +9564,7 @@
   },
   {
     "vnum": "702",
-    "name": "?????",
+    "name": "Dark Arahan",
     "rank": "S_PAWN",
     "type": "MONSTER",
     "battle_type": "MELEE",
@@ -9637,7 +9637,7 @@
   },
   {
     "vnum": "703",
-    "name": "??????",
+    "name": "Esoteric Arahan Fighter",
     "rank": "S_PAWN",
     "type": "MONSTER",
     "battle_type": "MELEE",
@@ -9710,7 +9710,7 @@
   },
   {
     "vnum": "704",
-    "name": "?????",
+    "name": "Chief Esoteric Arahan",
     "rank": "KNIGHT",
     "type": "MONSTER",
     "battle_type": "TANKER",
@@ -9783,7 +9783,7 @@
   },
   {
     "vnum": "705",
-    "name": "?????",
+    "name": "Esoteric Executioner",
     "rank": "S_PAWN",
     "type": "MONSTER",
     "battle_type": "POWER",
@@ -9856,7 +9856,7 @@
   },
   {
     "vnum": "706",
-    "name": "?????",
+    "name": "Dark Tormentor",
     "rank": "S_KNIGHT",
     "type": "MONSTER",
     "battle_type": "MELEE",
@@ -9929,7 +9929,7 @@
   },
   {
     "vnum": "707",
-    "name": "?????",
+    "name": "Dark Summoner",
     "rank": "S_KNIGHT",
     "type": "MONSTER",
     "battle_type": "MAGIC",
@@ -10002,7 +10002,7 @@
   },
   {
     "vnum": "731",
-    "name": "??????",
+    "name": "Proud Dark Fanatic",
     "rank": "PAWN",
     "type": "MONSTER",
     "battle_type": "MELEE",
@@ -10075,7 +10075,7 @@
   },
   {
     "vnum": "732",
-    "name": "??????",
+    "name": "Proud Dark Arahan",
     "rank": "S_PAWN",
     "type": "MONSTER",
     "battle_type": "MELEE",
@@ -10148,7 +10148,7 @@
   },
   {
     "vnum": "733",
-    "name": "???????",
+    "name": "Proud Dark Fighter",
     "rank": "S_PAWN",
     "type": "MONSTER",
     "battle_type": "MELEE",
@@ -10221,7 +10221,7 @@
   },
   {
     "vnum": "734",
-    "name": "??????",
+    "name": "Proud Dark Colonel",
     "rank": "KNIGHT",
     "type": "MONSTER",
     "battle_type": "TANKER",
@@ -10294,7 +10294,7 @@
   },
   {
     "vnum": "735",
-    "name": "??????",
+    "name": "Proud Dark Rifleman",
     "rank": "S_PAWN",
     "type": "MONSTER",
     "battle_type": "POWER",
@@ -10367,7 +10367,7 @@
   },
   {
     "vnum": "736",
-    "name": "??????",
+    "name": "Elite Esoteric Tormentor",
     "rank": "S_KNIGHT",
     "type": "MONSTER",
     "battle_type": "MELEE",
@@ -10440,7 +10440,7 @@
   },
   {
     "vnum": "737",
-    "name": "??????",
+    "name": "Elite Esoteric Summoner",
     "rank": "S_KNIGHT",
     "type": "MONSTER",
     "battle_type": "MAGIC",
@@ -10513,7 +10513,7 @@
   },
   {
     "vnum": "751",
-    "name": "??? ?????",
+    "name": "High Fanatic",
     "rank": "PAWN",
     "type": "MONSTER",
     "battle_type": "MELEE",
@@ -10586,7 +10586,7 @@
   },
   {
     "vnum": "752",
-    "name": "??? ?????",
+    "name": "High Arahan",
     "rank": "S_PAWN",
     "type": "MONSTER",
     "battle_type": "MELEE",
@@ -10659,7 +10659,7 @@
   },
   {
     "vnum": "753",
-    "name": "??? ??????",
+    "name": "High Arahan Fighter",
     "rank": "S_PAWN",
     "type": "MONSTER",
     "battle_type": "MELEE",
@@ -10732,7 +10732,7 @@
   },
   {
     "vnum": "754",
-    "name": "??? ?????",
+    "name": "High Elite Arahan",
     "rank": "KNIGHT",
     "type": "MONSTER",
     "battle_type": "TANKER",
@@ -10805,7 +10805,7 @@
   },
   {
     "vnum": "755",
-    "name": "??? ?????",
+    "name": "High Deathsman",
     "rank": "S_PAWN",
     "type": "MONSTER",
     "battle_type": "POWER",
@@ -10878,7 +10878,7 @@
   },
   {
     "vnum": "756",
-    "name": "??? ?????",
+    "name": "High Tormentor",
     "rank": "S_KNIGHT",
     "type": "MONSTER",
     "battle_type": "MELEE",
@@ -10951,7 +10951,7 @@
   },
   {
     "vnum": "757",
-    "name": "??? ?????",
+    "name": "High Evocator",
     "rank": "S_KNIGHT",
     "type": "MONSTER",
     "battle_type": "MAGIC",
@@ -11024,7 +11024,7 @@
   },
   {
     "vnum": "771",
-    "name": "??? ??????",
+    "name": "Bestial Fanatic",
     "rank": "PAWN",
     "type": "MONSTER",
     "battle_type": "MELEE",
@@ -11097,7 +11097,7 @@
   },
   {
     "vnum": "772",
-    "name": "??? ??????",
+    "name": "Bestial Arahan",
     "rank": "S_PAWN",
     "type": "MONSTER",
     "battle_type": "MELEE",
@@ -11170,7 +11170,7 @@
   },
   {
     "vnum": "773",
-    "name": "??? ???????",
+    "name": "Bestial Arahan Fighter",
     "rank": "S_PAWN",
     "type": "MONSTER",
     "battle_type": "MELEE",
@@ -11243,7 +11243,7 @@
   },
   {
     "vnum": "774",
-    "name": "??? ??????",
+    "name": "Bestial Chief Arahan",
     "rank": "KNIGHT",
     "type": "MONSTER",
     "battle_type": "TANKER",
@@ -11316,7 +11316,7 @@
   },
   {
     "vnum": "775",
-    "name": "??? ??????",
+    "name": "Bestial Deathsman",
     "rank": "S_PAWN",
     "type": "MONSTER",
     "battle_type": "POWER",
@@ -11389,7 +11389,7 @@
   },
   {
     "vnum": "776",
-    "name": "??? ??????",
+    "name": "Bestial Tormentor",
     "rank": "S_KNIGHT",
     "type": "MONSTER",
     "battle_type": "MELEE",
@@ -11462,7 +11462,7 @@
   },
   {
     "vnum": "777",
-    "name": "??? ??????",
+    "name": "Bestial Evocator",
     "rank": "S_KNIGHT",
     "type": "MONSTER",
     "battle_type": "MAGIC",
@@ -11535,7 +11535,7 @@
   },
   {
     "vnum": "791",
-    "name": "????",
+    "name": "Dark Leader",
     "rank": "BOSS",
     "type": "MONSTER",
     "battle_type": "MELEE",
@@ -11608,7 +11608,7 @@
   },
   {
     "vnum": "792",
-    "name": "??? ????",
+    "name": "Dark-Ghost Leader",
     "rank": "KING",
     "type": "MONSTER",
     "battle_type": "MELEE",
@@ -11681,7 +11681,7 @@
   },
   {
     "vnum": "793",
-    "name": "?????",
+    "name": "Elite Dark Leader",
     "rank": "BOSS",
     "type": "MONSTER",
     "battle_type": "RANGE",
@@ -11754,7 +11754,7 @@
   },
   {
     "vnum": "794",
-    "name": "??? ?????",
+    "name": "Elite Dark-Ghost Leader",
     "rank": "KING",
     "type": "MONSTER",
     "battle_type": "RANGE",
@@ -11827,7 +11827,7 @@
   },
   {
     "vnum": "795",
-    "name": "?????",
+    "name": "Elite Fighter",
     "rank": "KING",
     "type": "MONSTER",
     "battle_type": "MELEE",
@@ -11900,7 +11900,7 @@
   },
   {
     "vnum": "796",
-    "name": "??? ?????",
+    "name": "Elite Esoteric Fighter",
     "rank": "KING",
     "type": "MONSTER",
     "battle_type": "MELEE",
@@ -11973,7 +11973,7 @@
   },
   {
     "vnum": "901",
-    "name": "??",
+    "name": "Dead Body Ghost",
     "rank": "S_PAWN",
     "type": "MONSTER",
     "battle_type": "MELEE",
@@ -12046,7 +12046,7 @@
   },
   {
     "vnum": "902",
-    "name": "?????",
+    "name": "Plagued Dog",
     "rank": "S_PAWN",
     "type": "MONSTER",
     "battle_type": "MELEE",
@@ -12119,7 +12119,7 @@
   },
   {
     "vnum": "903",
-    "name": "?????",
+    "name": "Plagued Man",
     "rank": "S_PAWN",
     "type": "MONSTER",
     "battle_type": "MELEE",
@@ -12192,7 +12192,7 @@
   },
   {
     "vnum": "904",
-    "name": "?????",
+    "name": "Plagued Swordman",
     "rank": "KNIGHT",
     "type": "MONSTER",
     "battle_type": "MELEE",
@@ -12265,7 +12265,7 @@
   },
   {
     "vnum": "905",
-    "name": "??????",
+    "name": "Plagued Spearman",
     "rank": "KNIGHT",
     "type": "MONSTER",
     "battle_type": "MELEE",
@@ -12338,7 +12338,7 @@
   },
   {
     "vnum": "906",
-    "name": "??????",
+    "name": "Plagued Archer",
     "rank": "KNIGHT",
     "type": "MONSTER",
     "battle_type": "RANGE",
@@ -12411,7 +12411,7 @@
   },
   {
     "vnum": "907",
-    "name": "??????",
+    "name": "Plagued Leader",
     "rank": "S_KNIGHT",
     "type": "MONSTER",
     "battle_type": "MELEE",
@@ -12484,7 +12484,7 @@
   },
   {
     "vnum": "931",
-    "name": "??? ??",
+    "name": "Angry Dead Body Ghost",
     "rank": "S_PAWN",
     "type": "MONSTER",
     "battle_type": "MELEE",
@@ -12557,7 +12557,7 @@
   },
   {
     "vnum": "932",
-    "name": "??? ?????",
+    "name": "Angry Plagued Dog",
     "rank": "S_PAWN",
     "type": "MONSTER",
     "battle_type": "MELEE",
@@ -12630,7 +12630,7 @@
   },
   {
     "vnum": "933",
-    "name": "??? ?????",
+    "name": "Angry Plagued Man",
     "rank": "S_PAWN",
     "type": "MONSTER",
     "battle_type": "MELEE",
@@ -12703,7 +12703,7 @@
   },
   {
     "vnum": "934",
-    "name": "??? ?????",
+    "name": "Angry Plagued Fighter",
     "rank": "KNIGHT",
     "type": "MONSTER",
     "battle_type": "MELEE",
@@ -12776,7 +12776,7 @@
   },
   {
     "vnum": "935",
-    "name": "??? ??????",
+    "name": "Angry Plagued Spearman",
     "rank": "KNIGHT",
     "type": "MONSTER",
     "battle_type": "MELEE",
@@ -12849,7 +12849,7 @@
   },
   {
     "vnum": "936",
-    "name": "??? ??????",
+    "name": "Angry Plagued Archer",
     "rank": "KNIGHT",
     "type": "MONSTER",
     "battle_type": "RANGE",
@@ -12922,7 +12922,7 @@
   },
   {
     "vnum": "937",
-    "name": "??? ??????",
+    "name": "Angry Plagued Leader",
     "rank": "S_KNIGHT",
     "type": "MONSTER",
     "battle_type": "MELEE",
@@ -12995,7 +12995,7 @@
   },
   {
     "vnum": "991",
-    "name": "?????",
+    "name": "Plagued Egg",
     "rank": "S_KNIGHT",
     "type": "MONSTER",
     "battle_type": "MELEE",
@@ -13068,7 +13068,7 @@
   },
   {
     "vnum": "992",
-    "name": "???????",
+    "name": "Plague Carrier",
     "rank": "S_KNIGHT",
     "type": "MONSTER",
     "battle_type": "MELEE",
@@ -13141,7 +13141,7 @@
   },
   {
     "vnum": "993",
-    "name": "???????",
+    "name": "Giant Plague Carrier",
     "rank": "KING",
     "type": "MONSTER",
     "battle_type": "MELEE",
@@ -13214,7 +13214,7 @@
   },
   {
     "vnum": "1001",
-    "name": "???",
+    "name": "Demon Soldier",
     "rank": "S_PAWN",
     "type": "MONSTER",
     "battle_type": "MELEE",
@@ -13287,7 +13287,7 @@
   },
   {
     "vnum": "1002",
-    "name": "????",
+    "name": "Demon Archer",
     "rank": "S_PAWN",
     "type": "MONSTER",
     "battle_type": "RANGE",
@@ -13360,7 +13360,7 @@
   },
   {
     "vnum": "1003",
-    "name": "????",
+    "name": "Demon Spearman",
     "rank": "S_PAWN",
     "type": "MONSTER",
     "battle_type": "MELEE",
@@ -13433,7 +13433,7 @@
   },
   {
     "vnum": "1004",
-    "name": "?????",
+    "name": "Demon Shaman",
     "rank": "KNIGHT",
     "type": "MONSTER",
     "battle_type": "MAGIC",
@@ -13506,7 +13506,7 @@
   },
   {
     "vnum": "1031",
-    "name": "???",
+    "name": "Vile Demon Soldier",
     "rank": "KNIGHT",
     "type": "MONSTER",
     "battle_type": "MELEE",
@@ -13579,7 +13579,7 @@
   },
   {
     "vnum": "1032",
-    "name": "????",
+    "name": "Vile Demon Archer",
     "rank": "KNIGHT",
     "type": "MONSTER",
     "battle_type": "RANGE",
@@ -13652,7 +13652,7 @@
   },
   {
     "vnum": "1033",
-    "name": "????",
+    "name": "Vile Demon Spearman",
     "rank": "KNIGHT",
     "type": "MONSTER",
     "battle_type": "MELEE",
@@ -13725,7 +13725,7 @@
   },
   {
     "vnum": "1034",
-    "name": "?????",
+    "name": "Vile Demon Shaman",
     "rank": "KNIGHT",
     "type": "MONSTER",
     "battle_type": "MAGIC",
@@ -13798,7 +13798,7 @@
   },
   {
     "vnum": "1035",
-    "name": "??? ??",
+    "name": "Ghost of Grudge",
     "rank": "KNIGHT",
     "type": "MONSTER",
     "battle_type": "MELEE",
@@ -13871,7 +13871,7 @@
   },
   {
     "vnum": "1036",
-    "name": "??? ??",
+    "name": "Ghost of Chaos",
     "rank": "KNIGHT",
     "type": "MONSTER",
     "battle_type": "MAGIC",
@@ -13944,7 +13944,7 @@
   },
   {
     "vnum": "1037",
-    "name": "???",
+    "name": "Vile Demon Leader",
     "rank": "S_KNIGHT",
     "type": "MONSTER",
     "battle_type": "MELEE",
@@ -14017,7 +14017,7 @@
   },
   {
     "vnum": "1038",
-    "name": "???",
+    "name": "Skull Sword Master",
     "rank": "S_KNIGHT",
     "type": "MONSTER",
     "battle_type": "MELEE",
@@ -14090,7 +14090,7 @@
   },
   {
     "vnum": "1039",
-    "name": "???",
+    "name": "Flying Skull",
     "rank": "S_KNIGHT",
     "type": "MONSTER",
     "battle_type": "MAGIC",
@@ -14163,7 +14163,7 @@
   },
   {
     "vnum": "1040",
-    "name": "???",
+    "name": "Immortal Ghost",
     "rank": "S_KNIGHT",
     "type": "MONSTER",
     "battle_type": "MELEE",
@@ -14236,7 +14236,7 @@
   },
   {
     "vnum": "1041",
-    "name": "????",
+    "name": "Demonic Beast",
     "rank": "S_KNIGHT",
     "type": "MONSTER",
     "battle_type": "MAGIC",
@@ -14309,7 +14309,7 @@
   },
   {
     "vnum": "1061",
-    "name": "??? ???",
+    "name": "Brutal Demon Soldier",
     "rank": "KNIGHT",
     "type": "MONSTER",
     "battle_type": "MELEE",
@@ -14382,7 +14382,7 @@
   },
   {
     "vnum": "1062",
-    "name": "??? ????",
+    "name": "Brutal Demon Archer",
     "rank": "KNIGHT",
     "type": "MONSTER",
     "battle_type": "RANGE",
@@ -14455,7 +14455,7 @@
   },
   {
     "vnum": "1063",
-    "name": "??? ????",
+    "name": "Brutal Demonspearman",
     "rank": "KNIGHT",
     "type": "MONSTER",
     "battle_type": "MELEE",
@@ -14528,7 +14528,7 @@
   },
   {
     "vnum": "1064",
-    "name": "??? ?????",
+    "name": "Brutal Demon Shaman",
     "rank": "KNIGHT",
     "type": "MONSTER",
     "battle_type": "MAGIC",
@@ -14601,7 +14601,7 @@
   },
   {
     "vnum": "1065",
-    "name": "??? ??? ??",
+    "name": "Brutal Ghost of Grudge",
     "rank": "KNIGHT",
     "type": "MONSTER",
     "battle_type": "MELEE",
@@ -14674,7 +14674,7 @@
   },
   {
     "vnum": "1066",
-    "name": "??? ??? ??",
+    "name": "Brutal Ghost of Chaos",
     "rank": "KNIGHT",
     "type": "MONSTER",
     "battle_type": "MAGIC",
@@ -14747,7 +14747,7 @@
   },
   {
     "vnum": "1067",
-    "name": "??? ???",
+    "name": "Brutal Demon Leader",
     "rank": "S_KNIGHT",
     "type": "MONSTER",
     "battle_type": "MELEE",
@@ -14820,7 +14820,7 @@
   },
   {
     "vnum": "1068",
-    "name": "??? ???",
+    "name": "Ghost Sword Master",
     "rank": "S_KNIGHT",
     "type": "MONSTER",
     "battle_type": "MELEE",
@@ -14893,7 +14893,7 @@
   },
   {
     "vnum": "1069",
-    "name": "??? ???",
+    "name": "Brutal Flying Skull",
     "rank": "S_KNIGHT",
     "type": "MONSTER",
     "battle_type": "MAGIC",
@@ -14966,7 +14966,7 @@
   },
   {
     "vnum": "1070",
-    "name": "??? ???",
+    "name": "Immortal Ghost",
     "rank": "S_KNIGHT",
     "type": "MONSTER",
     "battle_type": "MELEE",
@@ -15039,7 +15039,7 @@
   },
   {
     "vnum": "1071",
-    "name": "??? ????",
+    "name": "Demonic Beast",
     "rank": "S_KNIGHT",
     "type": "MONSTER",
     "battle_type": "MAGIC",
@@ -15112,7 +15112,7 @@
   },
   {
     "vnum": "1091",
-    "name": "???",
+    "name": "Demon King",
     "rank": "BOSS",
     "type": "MONSTER",
     "battle_type": "MELEE",
@@ -15185,7 +15185,7 @@
   },
   {
     "vnum": "1092",
-    "name": "????",
+    "name": "Proud Demon King",
     "rank": "BOSS",
     "type": "MONSTER",
     "battle_type": "MELEE",
@@ -15258,7 +15258,7 @@
   },
   {
     "vnum": "1093",
-    "name": "??",
+    "name": "Death Reaper",
     "rank": "KING",
     "type": "MONSTER",
     "battle_type": "MELEE",
@@ -15331,7 +15331,7 @@
   },
   {
     "vnum": "1094",
-    "name": "????",
+    "name": "Elite Vile Demon King",
     "rank": "KING",
     "type": "MONSTER",
     "battle_type": "MELEE",
@@ -15404,7 +15404,7 @@
   },
   {
     "vnum": "1095",
-    "name": "??",
+    "name": "Blue Death",
     "rank": "KING",
     "type": "MONSTER",
     "battle_type": "MELEE",
@@ -15477,7 +15477,7 @@
   },
   {
     "vnum": "1096",
-    "name": "????",
+    "name": "Skeleton King",
     "rank": "BOSS",
     "type": "MONSTER",
     "battle_type": "MELEE",
@@ -15550,7 +15550,7 @@
   },
   {
     "vnum": "1101",
-    "name": "??",
+    "name": "Enchanted Ice",
     "rank": "S_PAWN",
     "type": "MONSTER",
     "battle_type": "MAGIC",
@@ -15623,7 +15623,7 @@
   },
   {
     "vnum": "1102",
-    "name": "??????",
+    "name": "Ice Killer Whale",
     "rank": "S_PAWN",
     "type": "MONSTER",
     "battle_type": "MELEE",
@@ -15696,7 +15696,7 @@
   },
   {
     "vnum": "1103",
-    "name": "??",
+    "name": "Ice Bug",
     "rank": "S_PAWN",
     "type": "MONSTER",
     "battle_type": "MELEE",
@@ -15769,7 +15769,7 @@
   },
   {
     "vnum": "1104",
-    "name": "??",
+    "name": "Ice Lion",
     "rank": "KNIGHT",
     "type": "MONSTER",
     "battle_type": "MELEE",
@@ -15842,7 +15842,7 @@
   },
   {
     "vnum": "1105",
-    "name": "??",
+    "name": "Frosty Ice Man",
     "rank": "KNIGHT",
     "type": "MONSTER",
     "battle_type": "MELEE",
@@ -15915,7 +15915,7 @@
   },
   {
     "vnum": "1106",
-    "name": "???",
+    "name": "Yeti",
     "rank": "KNIGHT",
     "type": "MONSTER",
     "battle_type": "MELEE",
@@ -15988,7 +15988,7 @@
   },
   {
     "vnum": "1107",
-    "name": "????",
+    "name": "Ice Golem",
     "rank": "S_KNIGHT",
     "type": "MONSTER",
     "battle_type": "MELEE",
@@ -16061,7 +16061,7 @@
   },
   {
     "vnum": "1131",
-    "name": "????",
+    "name": "Underworld Ice Splinters",
     "rank": "S_PAWN",
     "type": "MONSTER",
     "battle_type": "MAGIC",
@@ -16134,7 +16134,7 @@
   },
   {
     "vnum": "1132",
-    "name": "????????",
+    "name": "Underwrld IceKillerWhale",
     "rank": "S_PAWN",
     "type": "MONSTER",
     "battle_type": "MELEE",
@@ -16207,7 +16207,7 @@
   },
   {
     "vnum": "1133",
-    "name": "????",
+    "name": "Underworld Ice Bug",
     "rank": "S_PAWN",
     "type": "MONSTER",
     "battle_type": "MELEE",
@@ -16280,7 +16280,7 @@
   },
   {
     "vnum": "1134",
-    "name": "????",
+    "name": "Underworld Ice Lion",
     "rank": "KNIGHT",
     "type": "MONSTER",
     "battle_type": "MELEE",
@@ -16353,7 +16353,7 @@
   },
   {
     "vnum": "1135",
-    "name": "????",
+    "name": "Underworld Ice Man",
     "rank": "KNIGHT",
     "type": "MONSTER",
     "battle_type": "MELEE",
@@ -16426,7 +16426,7 @@
   },
   {
     "vnum": "1136",
-    "name": "?????",
+    "name": "Underworld Yeti",
     "rank": "KNIGHT",
     "type": "MONSTER",
     "battle_type": "MELEE",
@@ -16499,7 +16499,7 @@
   },
   {
     "vnum": "1137",
-    "name": "??????",
+    "name": "Underworld Ice Golem",
     "rank": "S_KNIGHT",
     "type": "MONSTER",
     "battle_type": "MELEE",
@@ -16572,7 +16572,7 @@
   },
   {
     "vnum": "1151",
-    "name": "??",
+    "name": "Ice Devil",
     "rank": "S_PAWN",
     "type": "MONSTER",
     "battle_type": "MAGIC",
@@ -16645,7 +16645,7 @@
   },
   {
     "vnum": "1152",
-    "name": "??????",
+    "name": "Icehorn Killer Whale",
     "rank": "S_PAWN",
     "type": "MONSTER",
     "battle_type": "MELEE",
@@ -16718,7 +16718,7 @@
   },
   {
     "vnum": "1153",
-    "name": "??",
+    "name": "Ice Bug",
     "rank": "S_PAWN",
     "type": "MONSTER",
     "battle_type": "MELEE",
@@ -16791,7 +16791,7 @@
   },
   {
     "vnum": "1154",
-    "name": "??",
+    "name": "Seol-Gu",
     "rank": "KNIGHT",
     "type": "MONSTER",
     "battle_type": "MELEE",
@@ -16864,7 +16864,7 @@
   },
   {
     "vnum": "1155",
-    "name": "??",
+    "name": "Ice Man",
     "rank": "KNIGHT",
     "type": "MONSTER",
     "battle_type": "MELEE",
@@ -16937,7 +16937,7 @@
   },
   {
     "vnum": "1156",
-    "name": "???",
+    "name": "Ice Giant",
     "rank": "KNIGHT",
     "type": "MONSTER",
     "battle_type": "MELEE",
@@ -17010,7 +17010,7 @@
   },
   {
     "vnum": "1157",
-    "name": "????",
+    "name": "Ice Golem",
     "rank": "S_KNIGHT",
     "type": "MONSTER",
     "battle_type": "MELEE",
@@ -17083,7 +17083,7 @@
   },
   {
     "vnum": "1171",
-    "name": "??? ??",
+    "name": "Mean Enchanted Ice",
     "rank": "S_PAWN",
     "type": "MONSTER",
     "battle_type": "MAGIC",
@@ -17156,7 +17156,7 @@
   },
   {
     "vnum": "1172",
-    "name": "??? ??????",
+    "name": "Mean Ice Killer Whale",
     "rank": "S_PAWN",
     "type": "MONSTER",
     "battle_type": "MELEE",
@@ -17229,7 +17229,7 @@
   },
   {
     "vnum": "1173",
-    "name": "??? ??",
+    "name": "Mean Ice Bug",
     "rank": "S_PAWN",
     "type": "MONSTER",
     "battle_type": "MELEE",
@@ -17302,7 +17302,7 @@
   },
   {
     "vnum": "1174",
-    "name": "??? ??",
+    "name": "Mean Ice Lion",
     "rank": "KNIGHT",
     "type": "MONSTER",
     "battle_type": "MELEE",
@@ -17375,7 +17375,7 @@
   },
   {
     "vnum": "1175",
-    "name": "??? ??",
+    "name": "Mean Ice Man",
     "rank": "KNIGHT",
     "type": "MONSTER",
     "battle_type": "MELEE",
@@ -17448,7 +17448,7 @@
   },
   {
     "vnum": "1176",
-    "name": "??? ???",
+    "name": "Mean Yeti",
     "rank": "KNIGHT",
     "type": "MONSTER",
     "battle_type": "MELEE",
@@ -17521,7 +17521,7 @@
   },
   {
     "vnum": "1177",
-    "name": "??? ????",
+    "name": "Mean Ice Golem",
     "rank": "S_KNIGHT",
     "type": "MONSTER",
     "battle_type": "MELEE",
@@ -17594,7 +17594,7 @@
   },
   {
     "vnum": "1191",
-    "name": "???",
+    "name": "Ice Witch",
     "rank": "BOSS",
     "type": "MONSTER",
     "battle_type": "MELEE",
@@ -17667,7 +17667,7 @@
   },
   {
     "vnum": "1192",
-    "name": "???",
+    "name": "Mighty Ice Witch",
     "rank": "BOSS",
     "type": "MONSTER",
     "battle_type": "MAGIC",
@@ -17740,7 +17740,7 @@
   },
   {
     "vnum": "1301",
-    "name": "???",
+    "name": "Tree Frog Soldier",
     "rank": "S_PAWN",
     "type": "MONSTER",
     "battle_type": "MELEE",
@@ -17813,7 +17813,7 @@
   },
   {
     "vnum": "1302",
-    "name": "???",
+    "name": "Tree Frog Leader",
     "rank": "S_KNIGHT",
     "type": "MONSTER",
     "battle_type": "MELEE",
@@ -17886,7 +17886,7 @@
   },
   {
     "vnum": "1303",
-    "name": "???????",
+    "name": "Leflet Bogeyman",
     "rank": "S_PAWN",
     "type": "MONSTER",
     "battle_type": "MELEE",
@@ -17959,7 +17959,7 @@
   },
   {
     "vnum": "1304",
-    "name": "????",
+    "name": "Yellow Tiger Ghost",
     "rank": "BOSS",
     "type": "MONSTER",
     "battle_type": "MELEE",
@@ -18032,7 +18032,7 @@
   },
   {
     "vnum": "1305",
-    "name": "?????",
+    "name": "Bullfrog General",
     "rank": "S_KNIGHT",
     "type": "MONSTER",
     "battle_type": "MELEE",
@@ -18105,7 +18105,7 @@
   },
   {
     "vnum": "1306",
-    "name": "?????",
+    "name": "Elite Yellow Tiger Ghost",
     "rank": "BOSS",
     "type": "MONSTER",
     "battle_type": "MELEE",
@@ -18178,7 +18178,7 @@
   },
   {
     "vnum": "1307",
-    "name": "?????",
+    "name": "Elite Yellow Tiger Ghost",
     "rank": "KING",
     "type": "MONSTER",
     "battle_type": "MELEE",
@@ -18470,7 +18470,7 @@
   },
   {
     "vnum": "1331",
-    "name": "??? ???",
+    "name": "Big Tree Frog Soldier",
     "rank": "S_PAWN",
     "type": "MONSTER",
     "battle_type": "MELEE",
@@ -18543,7 +18543,7 @@
   },
   {
     "vnum": "1332",
-    "name": "??? ???",
+    "name": "Big Tree Frog Leader",
     "rank": "S_KNIGHT",
     "type": "MONSTER",
     "battle_type": "MELEE",
@@ -18616,7 +18616,7 @@
   },
   {
     "vnum": "1333",
-    "name": "??? ???????",
+    "name": "Big Bogeyman",
     "rank": "S_PAWN",
     "type": "MONSTER",
     "battle_type": "MELEE",
@@ -18689,7 +18689,7 @@
   },
   {
     "vnum": "1334",
-    "name": "??? ????",
+    "name": "Big Yellow Tiger Ghost",
     "rank": "BOSS",
     "type": "MONSTER",
     "battle_type": "MELEE",
@@ -18762,7 +18762,7 @@
   },
   {
     "vnum": "1335",
-    "name": "??? ?????",
+    "name": "Evil Bullfrog General",
     "rank": "S_KNIGHT",
     "type": "MONSTER",
     "battle_type": "MELEE",
@@ -18835,7 +18835,7 @@
   },
   {
     "vnum": "1401",
-    "name": "???",
+    "name": "Destroyer",
     "rank": "S_PAWN",
     "type": "MONSTER",
     "battle_type": "MELEE",
@@ -18908,7 +18908,7 @@
   },
   {
     "vnum": "1402",
-    "name": "?????",
+    "name": "Axe Fighter",
     "rank": "KNIGHT",
     "type": "MONSTER",
     "battle_type": "MELEE",
@@ -18981,7 +18981,7 @@
   },
   {
     "vnum": "1403",
-    "name": "?????",
+    "name": "Thousand Fighter",
     "rank": "S_KNIGHT",
     "type": "MONSTER",
     "battle_type": "MELEE",
@@ -19054,7 +19054,7 @@
   },
   {
     "vnum": "1501",
-    "name": "??",
+    "name": "Stone Golem",
     "rank": "S_PAWN",
     "type": "MONSTER",
     "battle_type": "MELEE",
@@ -19127,7 +19127,7 @@
   },
   {
     "vnum": "1502",
-    "name": "???",
+    "name": "Stone Golem",
     "rank": "S_PAWN",
     "type": "MONSTER",
     "battle_type": "MELEE",
@@ -19200,7 +19200,7 @@
   },
   {
     "vnum": "1503",
-    "name": "?????",
+    "name": "Giant Rock Golem",
     "rank": "KNIGHT",
     "type": "MONSTER",
     "battle_type": "MELEE",
@@ -19273,7 +19273,7 @@
   },
   {
     "vnum": "1601",
-    "name": "????",
+    "name": "Ogre Warrior",
     "rank": "PAWN",
     "type": "MONSTER",
     "battle_type": "MELEE",
@@ -19346,7 +19346,7 @@
   },
   {
     "vnum": "1602",
-    "name": "?????",
+    "name": "Ogre Butcher",
     "rank": "KNIGHT",
     "type": "MONSTER",
     "battle_type": "MELEE",
@@ -19419,7 +19419,7 @@
   },
   {
     "vnum": "1603",
-    "name": "?????",
+    "name": "Ogre Berserk",
     "rank": "KNIGHT",
     "type": "MONSTER",
     "battle_type": "MELEE",
@@ -19492,7 +19492,7 @@
   },
   {
     "vnum": "1901",
-    "name": "???",
+    "name": "Nine Tails",
     "rank": "BOSS",
     "type": "MONSTER",
     "battle_type": "MELEE",
@@ -19565,7 +19565,7 @@
   },
   {
     "vnum": "1902",
-    "name": "????",
+    "name": "Elite Nine Tails",
     "rank": "BOSS",
     "type": "MONSTER",
     "battle_type": "MELEE",
@@ -19638,7 +19638,7 @@
   },
   {
     "vnum": "1903",
-    "name": "????",
+    "name": "Elite Nine Tails",
     "rank": "KING",
     "type": "MONSTER",
     "battle_type": "MELEE",
@@ -19930,7 +19930,7 @@
   },
   {
     "vnum": "2001",
-    "name": "????",
+    "name": "Baby Spider",
     "rank": "PAWN",
     "type": "MONSTER",
     "battle_type": "MELEE",
@@ -20003,7 +20003,7 @@
   },
   {
     "vnum": "2002",
-    "name": "???",
+    "name": "Poison Spider",
     "rank": "PAWN",
     "type": "MONSTER",
     "battle_type": "MELEE",
@@ -20076,7 +20076,7 @@
   },
   {
     "vnum": "2003",
-    "name": "?????",
+    "name": "Red Poison Spider",
     "rank": "S_PAWN",
     "type": "MONSTER",
     "battle_type": "MELEE",
@@ -20149,7 +20149,7 @@
   },
   {
     "vnum": "2004",
-    "name": "????",
+    "name": "Claw Spider",
     "rank": "S_PAWN",
     "type": "MONSTER",
     "battle_type": "MELEE",
@@ -20222,7 +20222,7 @@
   },
   {
     "vnum": "2005",
-    "name": "????",
+    "name": "Soldier Spider",
     "rank": "S_PAWN",
     "type": "MONSTER",
     "battle_type": "MELEE",
@@ -20295,7 +20295,7 @@
   },
   {
     "vnum": "2031",
-    "name": "?????",
+    "name": "Baby Poison Spider",
     "rank": "KNIGHT",
     "type": "MONSTER",
     "battle_type": "MELEE",
@@ -20368,7 +20368,7 @@
   },
   {
     "vnum": "2032",
-    "name": "????",
+    "name": "Deadly Poison Spider",
     "rank": "KNIGHT",
     "type": "MONSTER",
     "battle_type": "MELEE",
@@ -20441,7 +20441,7 @@
   },
   {
     "vnum": "2033",
-    "name": "??????",
+    "name": "Red Angry Poison Spider",
     "rank": "S_KNIGHT",
     "type": "MONSTER",
     "battle_type": "MELEE",
@@ -20514,7 +20514,7 @@
   },
   {
     "vnum": "2034",
-    "name": "?????",
+    "name": "Claw Poison Spider",
     "rank": "S_KNIGHT",
     "type": "MONSTER",
     "battle_type": "MELEE",
@@ -20587,7 +20587,7 @@
   },
   {
     "vnum": "2035",
-    "name": "?????",
+    "name": "Soldier Poison Spider",
     "rank": "S_KNIGHT",
     "type": "MONSTER",
     "battle_type": "MELEE",
@@ -20660,7 +20660,7 @@
   },
   {
     "vnum": "2036",
-    "name": "??????",
+    "name": "Proud Soldier Spider",
     "rank": "S_KNIGHT",
     "type": "MONSTER",
     "battle_type": "MELEE",
@@ -20733,7 +20733,7 @@
   },
   {
     "vnum": "2051",
-    "name": "??? ????",
+    "name": "Mean Baby Poison Spider",
     "rank": "PAWN",
     "type": "MONSTER",
     "battle_type": "MELEE",
@@ -20806,7 +20806,7 @@
   },
   {
     "vnum": "2052",
-    "name": "??? ???",
+    "name": "Mean Dead. Poison Spider",
     "rank": "PAWN",
     "type": "MONSTER",
     "battle_type": "MELEE",
@@ -20879,7 +20879,7 @@
   },
   {
     "vnum": "2053",
-    "name": "??? ?????",
+    "name": "Mean Red Poison Spider",
     "rank": "S_PAWN",
     "type": "MONSTER",
     "battle_type": "MELEE",
@@ -20952,7 +20952,7 @@
   },
   {
     "vnum": "2054",
-    "name": "??? ????",
+    "name": "Mean Claw Poison Spider",
     "rank": "S_PAWN",
     "type": "MONSTER",
     "battle_type": "MELEE",
@@ -21025,7 +21025,7 @@
   },
   {
     "vnum": "2055",
-    "name": "??? ????",
+    "name": "Mean Sold. Poison Spider",
     "rank": "S_PAWN",
     "type": "MONSTER",
     "battle_type": "MELEE",
@@ -21098,7 +21098,7 @@
   },
   {
     "vnum": "2061",
-    "name": "?????",
+    "name": "Small Poison Spider",
     "rank": "PAWN",
     "type": "MONSTER",
     "battle_type": "MELEE",
@@ -21171,7 +21171,7 @@
   },
   {
     "vnum": "2062",
-    "name": "????",
+    "name": "Deadly Poison Spider",
     "rank": "S_PAWN",
     "type": "MONSTER",
     "battle_type": "MELEE",
@@ -21244,7 +21244,7 @@
   },
   {
     "vnum": "2063",
-    "name": "??????",
+    "name": "Red Deadly Poison Spider",
     "rank": "KNIGHT",
     "type": "MONSTER",
     "battle_type": "MELEE",
@@ -21317,7 +21317,7 @@
   },
   {
     "vnum": "2064",
-    "name": "?????",
+    "name": "Claw Poison Spider",
     "rank": "KNIGHT",
     "type": "MONSTER",
     "battle_type": "MELEE",
@@ -21390,7 +21390,7 @@
   },
   {
     "vnum": "2065",
-    "name": "?????",
+    "name": "Soldier Poison Spider",
     "rank": "S_KNIGHT",
     "type": "MONSTER",
     "battle_type": "MELEE",
@@ -22266,7 +22266,7 @@
   },
   {
     "vnum": "2101",
-    "name": "????",
+    "name": "Desert Fox",
     "rank": "S_PAWN",
     "type": "MONSTER",
     "battle_type": "MELEE",
@@ -22339,7 +22339,7 @@
   },
   {
     "vnum": "2102",
-    "name": "????",
+    "name": "Deserts Flying Eye",
     "rank": "S_PAWN",
     "type": "MONSTER",
     "battle_type": "MELEE",
@@ -22412,7 +22412,7 @@
   },
   {
     "vnum": "2103",
-    "name": "????",
+    "name": "King Scorpion",
     "rank": "S_PAWN",
     "type": "MONSTER",
     "battle_type": "MELEE",
@@ -22485,7 +22485,7 @@
   },
   {
     "vnum": "2104",
-    "name": "????",
+    "name": "Young Scorpion Man",
     "rank": "KNIGHT",
     "type": "MONSTER",
     "battle_type": "MELEE",
@@ -22558,7 +22558,7 @@
   },
   {
     "vnum": "2105",
-    "name": "????",
+    "name": "Scorpion Archer",
     "rank": "KNIGHT",
     "type": "MONSTER",
     "battle_type": "RANGE",
@@ -22631,7 +22631,7 @@
   },
   {
     "vnum": "2106",
-    "name": "??????",
+    "name": "Snake Swordsman",
     "rank": "KNIGHT",
     "type": "MONSTER",
     "battle_type": "MELEE",
@@ -22704,7 +22704,7 @@
   },
   {
     "vnum": "2107",
-    "name": "??????",
+    "name": "Snake Archer",
     "rank": "KNIGHT",
     "type": "MONSTER",
     "battle_type": "RANGE",
@@ -22777,7 +22777,7 @@
   },
   {
     "vnum": "2108",
-    "name": "??????",
+    "name": "Desert Outlaw",
     "rank": "S_KNIGHT",
     "type": "MONSTER",
     "battle_type": "MELEE",
@@ -22850,7 +22850,7 @@
   },
   {
     "vnum": "2131",
-    "name": "????",
+    "name": "Bestial Scorpion Man",
     "rank": "PAWN",
     "type": "MONSTER",
     "battle_type": "MELEE",
@@ -22923,7 +22923,7 @@
   },
   {
     "vnum": "2132",
-    "name": "????",
+    "name": "Scorpion Archer",
     "rank": "S_PAWN",
     "type": "MONSTER",
     "battle_type": "RANGE",
@@ -22996,7 +22996,7 @@
   },
   {
     "vnum": "2133",
-    "name": "??????",
+    "name": "Snake Swordman",
     "rank": "KNIGHT",
     "type": "MONSTER",
     "battle_type": "MELEE",
@@ -23069,7 +23069,7 @@
   },
   {
     "vnum": "2134",
-    "name": "??????",
+    "name": "Snake Archer",
     "rank": "KNIGHT",
     "type": "MONSTER",
     "battle_type": "RANGE",
@@ -23142,7 +23142,7 @@
   },
   {
     "vnum": "2135",
-    "name": "??????",
+    "name": "Desert Outlaw",
     "rank": "S_KNIGHT",
     "type": "MONSTER",
     "battle_type": "MELEE",
@@ -23215,7 +23215,7 @@
   },
   {
     "vnum": "2151",
-    "name": "??? ????",
+    "name": "Strong Desert Fox",
     "rank": "S_PAWN",
     "type": "MONSTER",
     "battle_type": "MELEE",
@@ -23288,7 +23288,7 @@
   },
   {
     "vnum": "2152",
-    "name": "??? ????",
+    "name": "Strong Dervish",
     "rank": "S_PAWN",
     "type": "MONSTER",
     "battle_type": "MELEE",
@@ -23361,7 +23361,7 @@
   },
   {
     "vnum": "2153",
-    "name": "??? ????",
+    "name": "Strong Scorpion King",
     "rank": "S_PAWN",
     "type": "MONSTER",
     "battle_type": "MELEE",
@@ -23434,7 +23434,7 @@
   },
   {
     "vnum": "2154",
-    "name": "??? ????",
+    "name": "Strong Scorpion Man",
     "rank": "KNIGHT",
     "type": "MONSTER",
     "battle_type": "MELEE",
@@ -23507,7 +23507,7 @@
   },
   {
     "vnum": "2155",
-    "name": "??? ????",
+    "name": "Strong Scorpion Archer",
     "rank": "S_PAWN",
     "type": "MONSTER",
     "battle_type": "RANGE",
@@ -23580,7 +23580,7 @@
   },
   {
     "vnum": "2156",
-    "name": "??? ??????",
+    "name": "Strong Snake Swordman",
     "rank": "KNIGHT",
     "type": "MONSTER",
     "battle_type": "MELEE",
@@ -23653,7 +23653,7 @@
   },
   {
     "vnum": "2157",
-    "name": "??? ??????",
+    "name": "Strong Snake Archer",
     "rank": "KNIGHT",
     "type": "MONSTER",
     "battle_type": "RANGE",
@@ -23726,7 +23726,7 @@
   },
   {
     "vnum": "2158",
-    "name": "??? ??????",
+    "name": "Strong Desert Outlaw",
     "rank": "S_KNIGHT",
     "type": "MONSTER",
     "battle_type": "MELEE",
@@ -23799,7 +23799,7 @@
   },
   {
     "vnum": "2191",
-    "name": "??????",
+    "name": "Giant Tortoise",
     "rank": "BOSS",
     "type": "MONSTER",
     "battle_type": "MELEE",
@@ -23872,7 +23872,7 @@
   },
   {
     "vnum": "2192",
-    "name": "???????",
+    "name": "Dark Giant Tortoise",
     "rank": "KING",
     "type": "MONSTER",
     "battle_type": "MELEE",
@@ -23945,7 +23945,7 @@
   },
   {
     "vnum": "2201",
-    "name": "?????",
+    "name": "Fighting Tiger Minion",
     "rank": "S_PAWN",
     "type": "MONSTER",
     "battle_type": "MELEE",
@@ -24018,7 +24018,7 @@
   },
   {
     "vnum": "2202",
-    "name": "??",
+    "name": "Flame Ghost",
     "rank": "S_PAWN",
     "type": "MONSTER",
     "battle_type": "MAGIC",
@@ -24091,7 +24091,7 @@
   },
   {
     "vnum": "2203",
-    "name": "???",
+    "name": "Fighting Tiger",
     "rank": "KNIGHT",
     "type": "MONSTER",
     "battle_type": "MELEE",
@@ -24164,7 +24164,7 @@
   },
   {
     "vnum": "2204",
-    "name": "???",
+    "name": "Flame",
     "rank": "KNIGHT",
     "type": "MONSTER",
     "battle_type": "POWER",
@@ -24237,7 +24237,7 @@
   },
   {
     "vnum": "2205",
-    "name": "????",
+    "name": "Flame Warrior",
     "rank": "S_KNIGHT",
     "type": "MONSTER",
     "battle_type": "POWER",
@@ -24310,7 +24310,7 @@
   },
   {
     "vnum": "2206",
-    "name": "???",
+    "name": "Flame King",
     "rank": "BOSS",
     "type": "MONSTER",
     "battle_type": "MELEE",
@@ -24383,7 +24383,7 @@
   },
   {
     "vnum": "2207",
-    "name": "????",
+    "name": "Dark Flame King",
     "rank": "BOSS",
     "type": "MONSTER",
     "battle_type": "MELEE",
@@ -24456,7 +24456,7 @@
   },
   {
     "vnum": "2231",
-    "name": "??? ?????",
+    "name": "Strong Fight Tiger Slave",
     "rank": "S_PAWN",
     "type": "MONSTER",
     "battle_type": "MELEE",
@@ -24529,7 +24529,7 @@
   },
   {
     "vnum": "2232",
-    "name": "??? ??",
+    "name": "Strong Flame Ghost",
     "rank": "S_PAWN",
     "type": "MONSTER",
     "battle_type": "MAGIC",
@@ -24602,7 +24602,7 @@
   },
   {
     "vnum": "2233",
-    "name": "??? ???",
+    "name": "Strong Fighting Tiger",
     "rank": "KNIGHT",
     "type": "MONSTER",
     "battle_type": "MELEE",
@@ -24675,7 +24675,7 @@
   },
   {
     "vnum": "2234",
-    "name": "??? ???",
+    "name": "Strong Flame Ghost",
     "rank": "KNIGHT",
     "type": "MONSTER",
     "battle_type": "POWER",
@@ -24748,7 +24748,7 @@
   },
   {
     "vnum": "2235",
-    "name": "??? ????",
+    "name": "Strong Flame Warrior",
     "rank": "S_KNIGHT",
     "type": "MONSTER",
     "battle_type": "POWER",
@@ -24821,7 +24821,7 @@
   },
   {
     "vnum": "2291",
-    "name": "??",
+    "name": "Red Dragon",
     "rank": "KING",
     "type": "MONSTER",
     "battle_type": "MELEE",
@@ -24894,7 +24894,7 @@
   },
   {
     "vnum": "2301",
-    "name": "??",
+    "name": "Ghost Tree",
     "rank": "PAWN",
     "type": "MONSTER",
     "battle_type": "RANGE",
@@ -24967,7 +24967,7 @@
   },
   {
     "vnum": "2302",
-    "name": "????",
+    "name": "Ghost Stump",
     "rank": "PAWN",
     "type": "MONSTER",
     "battle_type": "MELEE",
@@ -25040,7 +25040,7 @@
   },
   {
     "vnum": "2303",
-    "name": "??",
+    "name": "Dryad",
     "rank": "S_PAWN",
     "type": "MONSTER",
     "battle_type": "RANGE",
@@ -25113,7 +25113,7 @@
   },
   {
     "vnum": "2304",
-    "name": "????",
+    "name": "Ghost Willow",
     "rank": "S_PAWN",
     "type": "MONSTER",
     "battle_type": "MELEE",
@@ -25186,7 +25186,7 @@
   },
   {
     "vnum": "2305",
-    "name": "???",
+    "name": "Evil Tree",
     "rank": "KNIGHT",
     "type": "MONSTER",
     "battle_type": "MELEE",
@@ -25259,7 +25259,7 @@
   },
   {
     "vnum": "2306",
-    "name": "????",
+    "name": "Giant Ghost Tree",
     "rank": "BOSS",
     "type": "MONSTER",
     "battle_type": "MELEE",
@@ -25332,7 +25332,7 @@
   },
   {
     "vnum": "2307",
-    "name": "????",
+    "name": "Ghost Tree Lord",
     "rank": "KING",
     "type": "MONSTER",
     "battle_type": "MELEE",
@@ -25405,7 +25405,7 @@
   },
   {
     "vnum": "2311",
-    "name": "???",
+    "name": "Red Ghost Tree",
     "rank": "S_PAWN",
     "type": "MONSTER",
     "battle_type": "RANGE",
@@ -25478,7 +25478,7 @@
   },
   {
     "vnum": "2312",
-    "name": "?????",
+    "name": "Red Ghost Stump",
     "rank": "KNIGHT",
     "type": "MONSTER",
     "battle_type": "MELEE",
@@ -25551,7 +25551,7 @@
   },
   {
     "vnum": "2313",
-    "name": "???",
+    "name": "Red Dryad",
     "rank": "KNIGHT",
     "type": "MONSTER",
     "battle_type": "RANGE",
@@ -25624,7 +25624,7 @@
   },
   {
     "vnum": "2314",
-    "name": "?????",
+    "name": "Red Ghost Willow",
     "rank": "S_KNIGHT",
     "type": "MONSTER",
     "battle_type": "MELEE",
@@ -25697,7 +25697,7 @@
   },
   {
     "vnum": "2315",
-    "name": "????",
+    "name": "Red Evil Tree",
     "rank": "S_KNIGHT",
     "type": "MONSTER",
     "battle_type": "MELEE",
@@ -25770,7 +25770,7 @@
   },
   {
     "vnum": "2401",
-    "name": "????",
+    "name": "Setaou Fighter",
     "rank": "PAWN",
     "type": "MONSTER",
     "battle_type": "MELEE",
@@ -25843,7 +25843,7 @@
   },
   {
     "vnum": "2402",
-    "name": "????",
+    "name": "Setaou Hunter",
     "rank": "PAWN",
     "type": "MONSTER",
     "battle_type": "RANGE",
@@ -25916,7 +25916,7 @@
   },
   {
     "vnum": "2403",
-    "name": "????",
+    "name": "Setaou Mystic",
     "rank": "S_PAWN",
     "type": "MONSTER",
     "battle_type": "RANGE",
@@ -25989,7 +25989,7 @@
   },
   {
     "vnum": "2404",
-    "name": "????",
+    "name": "Setaou Leader",
     "rank": "S_PAWN",
     "type": "MONSTER",
     "battle_type": "MELEE",
@@ -26062,7 +26062,7 @@
   },
   {
     "vnum": "2411",
-    "name": "?????",
+    "name": "Setaou Soldier",
     "rank": "S_PAWN",
     "type": "MONSTER",
     "battle_type": "MELEE",
@@ -26135,7 +26135,7 @@
   },
   {
     "vnum": "2412",
-    "name": "?????",
+    "name": "Setaou Archer",
     "rank": "KNIGHT",
     "type": "MONSTER",
     "battle_type": "RANGE",
@@ -26208,7 +26208,7 @@
   },
   {
     "vnum": "2413",
-    "name": "?????",
+    "name": "Setaou Magistrate",
     "rank": "KNIGHT",
     "type": "MONSTER",
     "battle_type": "RANGE",
@@ -26281,7 +26281,7 @@
   },
   {
     "vnum": "2414",
-    "name": "?????",
+    "name": "Setaou Commander",
     "rank": "S_KNIGHT",
     "type": "MONSTER",
     "battle_type": "MELEE",
@@ -26354,7 +26354,7 @@
   },
   {
     "vnum": "2431",
-    "name": "????",
+    "name": "Footman",
     "rank": "PAWN",
     "type": "MONSTER",
     "battle_type": "MELEE",
@@ -26427,7 +26427,7 @@
   },
   {
     "vnum": "2432",
-    "name": "????",
+    "name": "Bowman",
     "rank": "PAWN",
     "type": "MONSTER",
     "battle_type": "RANGE",
@@ -26500,7 +26500,7 @@
   },
   {
     "vnum": "2433",
-    "name": "????",
+    "name": "Magician",
     "rank": "S_PAWN",
     "type": "MONSTER",
     "battle_type": "RANGE",
@@ -26573,7 +26573,7 @@
   },
   {
     "vnum": "2434",
-    "name": "????",
+    "name": "Officer",
     "rank": "S_PAWN",
     "type": "MONSTER",
     "battle_type": "MELEE",
@@ -26646,7 +26646,7 @@
   },
   {
     "vnum": "2451",
-    "name": "?????",
+    "name": "Footman",
     "rank": "S_PAWN",
     "type": "MONSTER",
     "battle_type": "MELEE",
@@ -26719,7 +26719,7 @@
   },
   {
     "vnum": "2452",
-    "name": "?????",
+    "name": "Bowman",
     "rank": "KNIGHT",
     "type": "MONSTER",
     "battle_type": "RANGE",
@@ -26792,7 +26792,7 @@
   },
   {
     "vnum": "2453",
-    "name": "?????",
+    "name": "Magician",
     "rank": "KNIGHT",
     "type": "MONSTER",
     "battle_type": "RANGE",
@@ -26865,7 +26865,7 @@
   },
   {
     "vnum": "2454",
-    "name": "?????",
+    "name": "Officer",
     "rank": "S_KNIGHT",
     "type": "MONSTER",
     "battle_type": "MELEE",
@@ -26938,7 +26938,7 @@
   },
   {
     "vnum": "2491",
-    "name": "????",
+    "name": "Captain Yonghan",
     "rank": "S_KNIGHT",
     "type": "MONSTER",
     "battle_type": "MELEE",
@@ -27011,7 +27011,7 @@
   },
   {
     "vnum": "2492",
-    "name": "?????",
+    "name": "General Yonghan",
     "rank": "BOSS",
     "type": "MONSTER",
     "battle_type": "MELEE",
@@ -27084,7 +27084,7 @@
   },
   {
     "vnum": "2493",
-    "name": "??",
+    "name": "Beran-Setaou",
     "rank": "KING",
     "type": "MONSTER",
     "battle_type": "MELEE",
@@ -27157,7 +27157,7 @@
   },
   {
     "vnum": "2494",
-    "name": "????",
+    "name": "Captain Huashin",
     "rank": "S_KNIGHT",
     "type": "MONSTER",
     "battle_type": "MELEE",
@@ -27230,7 +27230,7 @@
   },
   {
     "vnum": "2495",
-    "name": "?????",
+    "name": "General Huashin",
     "rank": "BOSS",
     "type": "MONSTER",
     "battle_type": "MELEE",
@@ -27303,7 +27303,7 @@
   },
   {
     "vnum": "2501",
-    "name": "??",
+    "name": "Jellyfish of Hell",
     "rank": "PAWN",
     "type": "MONSTER",
     "battle_type": "MELEE",
@@ -27376,7 +27376,7 @@
   },
   {
     "vnum": "2502",
-    "name": "???",
+    "name": "Hell Hound",
     "rank": "S_PAWN",
     "type": "MONSTER",
     "battle_type": "MELEE",
@@ -27449,7 +27449,7 @@
   },
   {
     "vnum": "2503",
-    "name": "??? ?????",
+    "name": "Zombie",
     "rank": "S_PAWN",
     "type": "MONSTER",
     "battle_type": "MELEE",
@@ -27522,7 +27522,7 @@
   },
   {
     "vnum": "2504",
-    "name": "??? ?????",
+    "name": "Hell Officer",
     "rank": "KNIGHT",
     "type": "MONSTER",
     "battle_type": "MELEE",
@@ -27595,7 +27595,7 @@
   },
   {
     "vnum": "2505",
-    "name": "??? ???? ???",
+    "name": "Hell Guard",
     "rank": "KNIGHT",
     "type": "MONSTER",
     "battle_type": "MELEE",
@@ -27668,7 +27668,7 @@
   },
   {
     "vnum": "2506",
-    "name": "??? ???? ???",
+    "name": "Double-head Hell Archer",
     "rank": "S_KNIGHT",
     "type": "MONSTER",
     "battle_type": "RANGE",
@@ -27741,7 +27741,7 @@
   },
   {
     "vnum": "2507",
-    "name": "??? ???? ???",
+    "name": "Infernal Claw",
     "rank": "S_KNIGHT",
     "type": "MONSTER",
     "battle_type": "RANGE",
@@ -27814,7 +27814,7 @@
   },
   {
     "vnum": "2508",
-    "name": "????",
+    "name": "Hell Warrior",
     "rank": "PAWN",
     "type": "MONSTER",
     "battle_type": "MELEE",
@@ -27887,7 +27887,7 @@
   },
   {
     "vnum": "2509",
-    "name": "??? ???",
+    "name": "Hell Archer",
     "rank": "S_PAWN",
     "type": "MONSTER",
     "battle_type": "MELEE",
@@ -27960,7 +27960,7 @@
   },
   {
     "vnum": "2510",
-    "name": "??? ???",
+    "name": "Hell Spearman",
     "rank": "S_PAWN",
     "type": "MONSTER",
     "battle_type": "MELEE",
@@ -28033,7 +28033,7 @@
   },
   {
     "vnum": "2511",
-    "name": "??? ????",
+    "name": "Hell Priest",
     "rank": "KNIGHT",
     "type": "MONSTER",
     "battle_type": "RANGE",
@@ -28106,7 +28106,7 @@
   },
   {
     "vnum": "2512",
-    "name": "??? ???",
+    "name": "Hell Major",
     "rank": "KNIGHT",
     "type": "MONSTER",
     "battle_type": "MELEE",
@@ -28179,7 +28179,7 @@
   },
   {
     "vnum": "2513",
-    "name": "??? ????",
+    "name": "Hell Slaughterer",
     "rank": "S_KNIGHT",
     "type": "MONSTER",
     "battle_type": "RANGE",
@@ -28252,7 +28252,7 @@
   },
   {
     "vnum": "2514",
-    "name": "??? ????",
+    "name": "Hell General",
     "rank": "S_KNIGHT",
     "type": "MONSTER",
     "battle_type": "MELEE",
@@ -28325,7 +28325,7 @@
   },
   {
     "vnum": "2541",
-    "name": "????? ????",
+    "name": "Evil Hell Warrior",
     "rank": "PAWN",
     "type": "MONSTER",
     "battle_type": "MELEE",
@@ -28398,7 +28398,7 @@
   },
   {
     "vnum": "2542",
-    "name": "????? ??? ???",
+    "name": "Evil Hell Archer",
     "rank": "S_PAWN",
     "type": "MONSTER",
     "battle_type": "MELEE",
@@ -28471,7 +28471,7 @@
   },
   {
     "vnum": "2543",
-    "name": "????? ??? ???",
+    "name": "Evil Hell Spearman",
     "rank": "S_PAWN",
     "type": "MONSTER",
     "battle_type": "MELEE",
@@ -28544,7 +28544,7 @@
   },
   {
     "vnum": "2544",
-    "name": "????? ??? ????",
+    "name": "Evil Hell Priest",
     "rank": "KNIGHT",
     "type": "MONSTER",
     "battle_type": "RANGE",
@@ -28617,7 +28617,7 @@
   },
   {
     "vnum": "2545",
-    "name": "????? ??? ???",
+    "name": "Evil Hell Major",
     "rank": "KNIGHT",
     "type": "MONSTER",
     "battle_type": "MELEE",
@@ -28690,7 +28690,7 @@
   },
   {
     "vnum": "2546",
-    "name": "????? ??? ????",
+    "name": "Evil Hell Slaughterer",
     "rank": "S_KNIGHT",
     "type": "MONSTER",
     "battle_type": "RANGE",
@@ -28763,7 +28763,7 @@
   },
   {
     "vnum": "2547",
-    "name": "????? ??? ????",
+    "name": "Evil Hell General",
     "rank": "S_KNIGHT",
     "type": "MONSTER",
     "battle_type": "MELEE",
@@ -28836,7 +28836,7 @@
   },
   {
     "vnum": "2591",
-    "name": "??????",
+    "name": "Tartaros",
     "rank": "BOSS",
     "type": "MONSTER",
     "battle_type": "MELEE",
@@ -28909,7 +28909,7 @@
   },
   {
     "vnum": "2592",
-    "name": "??????",
+    "name": "Hell Bastard",
     "rank": "BOSS",
     "type": "MONSTER",
     "battle_type": "MELEE",
@@ -28982,7 +28982,7 @@
   },
   {
     "vnum": "2593",
-    "name": "??????",
+    "name": "Hell Bastard",
     "rank": "BOSS",
     "type": "MONSTER",
     "battle_type": "MELEE",
@@ -29055,7 +29055,7 @@
   },
   {
     "vnum": "2594",
-    "name": "??????",
+    "name": "Hell Bastard",
     "rank": "BOSS",
     "type": "MONSTER",
     "battle_type": "MELEE",
@@ -29128,7 +29128,7 @@
   },
   {
     "vnum": "2595",
-    "name": "??????",
+    "name": "Erebos",
     "rank": "BOSS",
     "type": "MONSTER",
     "battle_type": "MELEE",
@@ -29201,7 +29201,7 @@
   },
   {
     "vnum": "2596",
-    "name": "??????",
+    "name": "Azrael's Spawn",
     "rank": "BOSS",
     "type": "MONSTER",
     "battle_type": "MELEE",
@@ -29274,7 +29274,7 @@
   },
   {
     "vnum": "2597",
-    "name": "???? ???",
+    "name": "Charon",
     "rank": "KING",
     "type": "MONSTER",
     "battle_type": "MELEE",
@@ -29347,7 +29347,7 @@
   },
   {
     "vnum": "2598",
-    "name": "?????? ???",
+    "name": "Azrael",
     "rank": "KING",
     "type": "MONSTER",
     "battle_type": "MELEE",
@@ -35479,7 +35479,7 @@
   },
   {
     "vnum": "5001",
-    "name": "?? ???",
+    "name": "Pirate Tanaka",
     "rank": "BOSS",
     "type": "MONSTER",
     "battle_type": "MELEE",
@@ -35552,7 +35552,7 @@
   },
   {
     "vnum": "5002",
-    "name": "??",
+    "name": "Hae-Tae",
     "rank": "BOSS",
     "type": "MONSTER",
     "battle_type": "MELEE",
@@ -35625,7 +35625,7 @@
   },
   {
     "vnum": "5003",
-    "name": "???",
+    "name": "Monkey",
     "rank": "PAWN",
     "type": "MONSTER",
     "battle_type": "MELEE",
@@ -35698,7 +35698,7 @@
   },
   {
     "vnum": "5004",
-    "name": "?? ???",
+    "name": "Pirate Tanaka",
     "rank": "PAWN",
     "type": "MONSTER",
     "battle_type": "MELEE",
@@ -35771,7 +35771,7 @@
   },
   {
     "vnum": "5101",
-    "name": "??? ??",
+    "name": "Weak Ape Soldier",
     "rank": "PAWN",
     "type": "MONSTER",
     "battle_type": "MELEE",
@@ -35844,7 +35844,7 @@
   },
   {
     "vnum": "5102",
-    "name": "??? ????",
+    "name": "Weak Ape Thrower",
     "rank": "S_PAWN",
     "type": "MONSTER",
     "battle_type": "RANGE",
@@ -35917,7 +35917,7 @@
   },
   {
     "vnum": "5103",
-    "name": "??? ????",
+    "name": "Weak Ape Fighter",
     "rank": "KNIGHT",
     "type": "MONSTER",
     "battle_type": "MELEE",
@@ -35990,7 +35990,7 @@
   },
   {
     "vnum": "5104",
-    "name": "??? ???",
+    "name": "Weak Ape General",
     "rank": "S_KNIGHT",
     "type": "MONSTER",
     "battle_type": "MELEE",
@@ -36063,7 +36063,7 @@
   },
   {
     "vnum": "5111",
-    "name": "??? ??",
+    "name": "Apesoldier",
     "rank": "PAWN",
     "type": "MONSTER",
     "battle_type": "MELEE",
@@ -36136,7 +36136,7 @@
   },
   {
     "vnum": "5112",
-    "name": "??? ????",
+    "name": "Apethrower",
     "rank": "S_PAWN",
     "type": "MONSTER",
     "battle_type": "RANGE",
@@ -36209,7 +36209,7 @@
   },
   {
     "vnum": "5113",
-    "name": "??? ????",
+    "name": "Apefighter",
     "rank": "KNIGHT",
     "type": "MONSTER",
     "battle_type": "MELEE",
@@ -36282,7 +36282,7 @@
   },
   {
     "vnum": "5114",
-    "name": "??? ???",
+    "name": "Apegeneral",
     "rank": "S_KNIGHT",
     "type": "MONSTER",
     "battle_type": "MELEE",
@@ -36355,7 +36355,7 @@
   },
   {
     "vnum": "5115",
-    "name": "??? ????",
+    "name": "Stone Ape",
     "rank": "S_KNIGHT",
     "type": "MONSTER",
     "battle_type": "MELEE",
@@ -36428,7 +36428,7 @@
   },
   {
     "vnum": "5116",
-    "name": "??? ?????",
+    "name": "Ape Leader",
     "rank": "S_KNIGHT",
     "type": "MONSTER",
     "battle_type": "MELEE",
@@ -36501,7 +36501,7 @@
   },
   {
     "vnum": "5121",
-    "name": "??? ??",
+    "name": "Strong Ape Soldier",
     "rank": "PAWN",
     "type": "MONSTER",
     "battle_type": "MELEE",
@@ -36574,7 +36574,7 @@
   },
   {
     "vnum": "5122",
-    "name": "??? ????",
+    "name": "Strong Ape Thrower",
     "rank": "S_PAWN",
     "type": "MONSTER",
     "battle_type": "RANGE",
@@ -36647,7 +36647,7 @@
   },
   {
     "vnum": "5123",
-    "name": "??? ????",
+    "name": "Strong Ape Fighter",
     "rank": "KNIGHT",
     "type": "MONSTER",
     "battle_type": "MELEE",
@@ -36720,7 +36720,7 @@
   },
   {
     "vnum": "5124",
-    "name": "??? ???",
+    "name": "Strong Ape General",
     "rank": "S_KNIGHT",
     "type": "MONSTER",
     "battle_type": "MELEE",
@@ -36793,7 +36793,7 @@
   },
   {
     "vnum": "5125",
-    "name": "??? ????",
+    "name": "Strong Stone Ape",
     "rank": "S_KNIGHT",
     "type": "MONSTER",
     "battle_type": "MELEE",
@@ -36866,7 +36866,7 @@
   },
   {
     "vnum": "5126",
-    "name": "??? ????",
+    "name": "Strong Gold Ape",
     "rank": "S_KNIGHT",
     "type": "MONSTER",
     "battle_type": "MELEE",
@@ -36939,7 +36939,7 @@
   },
   {
     "vnum": "5127",
-    "name": "??? ?????",
+    "name": "Strong Leader Ape",
     "rank": "S_KNIGHT",
     "type": "MONSTER",
     "battle_type": "MELEE",
@@ -37012,7 +37012,7 @@
   },
   {
     "vnum": "5131",
-    "name": "??? ??? ??",
+    "name": "Clever small Apesoldier",
     "rank": "PAWN",
     "type": "MONSTER",
     "battle_type": "MELEE",
@@ -37085,7 +37085,7 @@
   },
   {
     "vnum": "5132",
-    "name": "??? ??? ????",
+    "name": "Clever small Apethrower",
     "rank": "S_PAWN",
     "type": "MONSTER",
     "battle_type": "RANGE",
@@ -37158,7 +37158,7 @@
   },
   {
     "vnum": "5133",
-    "name": "??? ??? ????",
+    "name": "Clever small Apefighter",
     "rank": "KNIGHT",
     "type": "MONSTER",
     "battle_type": "MELEE",
@@ -37231,7 +37231,7 @@
   },
   {
     "vnum": "5134",
-    "name": "??? ??? ???",
+    "name": "Clever small Apegeneral",
     "rank": "S_KNIGHT",
     "type": "MONSTER",
     "battle_type": "MELEE",
@@ -37304,7 +37304,7 @@
   },
   {
     "vnum": "5141",
-    "name": "??? ??? ??",
+    "name": "Clever Apesoldier",
     "rank": "PAWN",
     "type": "MONSTER",
     "battle_type": "MELEE",
@@ -37377,7 +37377,7 @@
   },
   {
     "vnum": "5142",
-    "name": "??? ??? ????",
+    "name": "Clever Apethrower",
     "rank": "S_PAWN",
     "type": "MONSTER",
     "battle_type": "RANGE",
@@ -37450,7 +37450,7 @@
   },
   {
     "vnum": "5143",
-    "name": "??? ??? ????",
+    "name": "Clever Apefighter",
     "rank": "KNIGHT",
     "type": "MONSTER",
     "battle_type": "MELEE",
@@ -37523,7 +37523,7 @@
   },
   {
     "vnum": "5144",
-    "name": "??? ??? ???",
+    "name": "Clever Apegeneral",
     "rank": "S_KNIGHT",
     "type": "MONSTER",
     "battle_type": "MELEE",
@@ -37596,7 +37596,7 @@
   },
   {
     "vnum": "5145",
-    "name": "??? ??? ????",
+    "name": "Clever Stoneape",
     "rank": "S_KNIGHT",
     "type": "MONSTER",
     "battle_type": "MELEE",
@@ -37669,7 +37669,7 @@
   },
   {
     "vnum": "5146",
-    "name": "??? ??? ?????",
+    "name": "Clever Apeleader",
     "rank": "S_KNIGHT",
     "type": "MONSTER",
     "battle_type": "MELEE",
@@ -37742,7 +37742,7 @@
   },
   {
     "vnum": "5151",
-    "name": "??? ??? ??",
+    "name": "Evil strong Apesoldier",
     "rank": "PAWN",
     "type": "MONSTER",
     "battle_type": "MELEE",
@@ -37815,7 +37815,7 @@
   },
   {
     "vnum": "5152",
-    "name": "??? ??? ????",
+    "name": "Evil strong Apethrower",
     "rank": "S_PAWN",
     "type": "MONSTER",
     "battle_type": "RANGE",
@@ -37888,7 +37888,7 @@
   },
   {
     "vnum": "5153",
-    "name": "??? ??? ????",
+    "name": "Evil strong Apefighter",
     "rank": "KNIGHT",
     "type": "MONSTER",
     "battle_type": "MELEE",
@@ -37961,7 +37961,7 @@
   },
   {
     "vnum": "5154",
-    "name": "??? ??? ???",
+    "name": "Evil strong Apegeneral",
     "rank": "S_KNIGHT",
     "type": "MONSTER",
     "battle_type": "MELEE",
@@ -38034,7 +38034,7 @@
   },
   {
     "vnum": "5155",
-    "name": "??? ??? ????",
+    "name": "Evil strong Stoneape",
     "rank": "S_KNIGHT",
     "type": "MONSTER",
     "battle_type": "MELEE",
@@ -38107,7 +38107,7 @@
   },
   {
     "vnum": "5156",
-    "name": "??? ??? ????",
+    "name": "Evil strong Goldape",
     "rank": "S_KNIGHT",
     "type": "MONSTER",
     "battle_type": "MELEE",
@@ -38180,7 +38180,7 @@
   },
   {
     "vnum": "5157",
-    "name": "??? ??? ?????",
+    "name": "Evil strong Apeleader",
     "rank": "S_KNIGHT",
     "type": "MONSTER",
     "battle_type": "MELEE",
@@ -38253,7 +38253,7 @@
   },
   {
     "vnum": "5161",
-    "name": "????",
+    "name": "Rock Ape",
     "rank": "BOSS",
     "type": "MONSTER",
     "battle_type": "MELEE",
@@ -38326,7 +38326,7 @@
   },
   {
     "vnum": "5162",
-    "name": "????",
+    "name": "Walking Ape",
     "rank": "BOSS",
     "type": "MONSTER",
     "battle_type": "MELEE",
@@ -38399,7 +38399,7 @@
   },
   {
     "vnum": "5163",
-    "name": "????",
+    "name": "Ape Lord",
     "rank": "BOSS",
     "type": "MONSTER",
     "battle_type": "MELEE",
@@ -40078,7 +40078,7 @@
   },
   {
     "vnum": "7001",
-    "name": "??? ??",
+    "name": "Apesoldier",
     "rank": "S_PAWN",
     "type": "MONSTER",
     "battle_type": "MAGIC",
@@ -40151,7 +40151,7 @@
   },
   {
     "vnum": "7002",
-    "name": "??? ????",
+    "name": "Aperider",
     "rank": "S_PAWN",
     "type": "MONSTER",
     "battle_type": "MELEE",
@@ -40224,7 +40224,7 @@
   },
   {
     "vnum": "7003",
-    "name": "??? ????",
+    "name": "Gimu Apesoldier",
     "rank": "S_PAWN",
     "type": "MONSTER",
     "battle_type": "MELEE",
@@ -40297,7 +40297,7 @@
   },
   {
     "vnum": "7004",
-    "name": "??? ???",
+    "name": "Ape Commander",
     "rank": "KNIGHT",
     "type": "MONSTER",
     "battle_type": "MELEE",
@@ -40370,7 +40370,7 @@
   },
   {
     "vnum": "7005",
-    "name": "??? ????",
+    "name": "Stone Ape",
     "rank": "KNIGHT",
     "type": "MONSTER",
     "battle_type": "MELEE",
@@ -40443,7 +40443,7 @@
   },
   {
     "vnum": "7006",
-    "name": "??? ????",
+    "name": "Gold Ape",
     "rank": "KNIGHT",
     "type": "MONSTER",
     "battle_type": "MELEE",
@@ -40516,7 +40516,7 @@
   },
   {
     "vnum": "7007",
-    "name": "??? ?????",
+    "name": "Ape General",
     "rank": "S_KNIGHT",
     "type": "MONSTER",
     "battle_type": "MELEE",
@@ -40589,7 +40589,7 @@
   },
   {
     "vnum": "7008",
-    "name": "????",
+    "name": "Tu-Gui Worker",
     "rank": "S_PAWN",
     "type": "MONSTER",
     "battle_type": "MELEE",
@@ -40662,7 +40662,7 @@
   },
   {
     "vnum": "7009",
-    "name": "?????",
+    "name": "Tu-Gui Soldier Tester",
     "rank": "S_KNIGHT",
     "type": "MONSTER",
     "battle_type": "MELEE",
@@ -40735,7 +40735,7 @@
   },
   {
     "vnum": "7010",
-    "name": "?????",
+    "name": "Tu-Gui White Commander",
     "rank": "S_PAWN",
     "type": "MONSTER",
     "battle_type": "MELEE",
@@ -40808,7 +40808,7 @@
   },
   {
     "vnum": "7012",
-    "name": "????",
+    "name": "Bi-Ma-Gui-An",
     "rank": "S_PAWN",
     "type": "MONSTER",
     "battle_type": "MELEE",
@@ -40881,7 +40881,7 @@
   },
   {
     "vnum": "7013",
-    "name": "????",
+    "name": "Scorpion King",
     "rank": "S_PAWN",
     "type": "MONSTER",
     "battle_type": "MELEE",
@@ -40954,7 +40954,7 @@
   },
   {
     "vnum": "7014",
-    "name": "????",
+    "name": "Smart Scorpion Man",
     "rank": "KNIGHT",
     "type": "MONSTER",
     "battle_type": "MELEE",
@@ -41027,7 +41027,7 @@
   },
   {
     "vnum": "7015",
-    "name": "????",
+    "name": "Scorpion Archer",
     "rank": "S_PAWN",
     "type": "MONSTER",
     "battle_type": "RANGE",
@@ -41100,7 +41100,7 @@
   },
   {
     "vnum": "7016",
-    "name": "??????",
+    "name": "Snake Swordfighter",
     "rank": "KNIGHT",
     "type": "MONSTER",
     "battle_type": "MELEE",
@@ -41173,7 +41173,7 @@
   },
   {
     "vnum": "7017",
-    "name": "??????",
+    "name": "Snake Archer",
     "rank": "KNIGHT",
     "type": "MONSTER",
     "battle_type": "RANGE",
@@ -41246,7 +41246,7 @@
   },
   {
     "vnum": "7018",
-    "name": "??????",
+    "name": "Desert Outlaw",
     "rank": "S_KNIGHT",
     "type": "MONSTER",
     "battle_type": "MELEE",
@@ -41319,7 +41319,7 @@
   },
   {
     "vnum": "7019",
-    "name": "?????",
+    "name": "Tu-Ji Soldier",
     "rank": "S_PAWN",
     "type": "MONSTER",
     "battle_type": "MELEE",
@@ -41392,7 +41392,7 @@
   },
   {
     "vnum": "7020",
-    "name": "??",
+    "name": "Hwa-ryung",
     "rank": "S_PAWN",
     "type": "MONSTER",
     "battle_type": "MAGIC",
@@ -41465,7 +41465,7 @@
   },
   {
     "vnum": "7021",
-    "name": "???",
+    "name": "Tu-Ji Bum",
     "rank": "KNIGHT",
     "type": "MONSTER",
     "battle_type": "MELEE",
@@ -41538,7 +41538,7 @@
   },
   {
     "vnum": "7022",
-    "name": "???",
+    "name": "Cham-Ma",
     "rank": "KNIGHT",
     "type": "MONSTER",
     "battle_type": "POWER",
@@ -41611,7 +41611,7 @@
   },
   {
     "vnum": "7023",
-    "name": "????",
+    "name": "Teawha-Mu",
     "rank": "S_KNIGHT",
     "type": "MONSTER",
     "battle_type": "POWER",
@@ -41684,7 +41684,7 @@
   },
   {
     "vnum": "7024",
-    "name": "???",
+    "name": "Juk-gui",
     "rank": "S_PAWN",
     "type": "MONSTER",
     "battle_type": "RANGE",
@@ -41757,7 +41757,7 @@
   },
   {
     "vnum": "7025",
-    "name": "?????",
+    "name": "Dung-Juk",
     "rank": "KNIGHT",
     "type": "MONSTER",
     "battle_type": "MELEE",
@@ -41830,7 +41830,7 @@
   },
   {
     "vnum": "7026",
-    "name": "???",
+    "name": "Juk-Mok",
     "rank": "KNIGHT",
     "type": "MONSTER",
     "battle_type": "RANGE",
@@ -41903,7 +41903,7 @@
   },
   {
     "vnum": "7027",
-    "name": "?????",
+    "name": "Hwaryu Juk",
     "rank": "S_KNIGHT",
     "type": "MONSTER",
     "battle_type": "MELEE",
@@ -41976,7 +41976,7 @@
   },
   {
     "vnum": "7028",
-    "name": "????",
+    "name": "Black Juk-Guimok",
     "rank": "S_KNIGHT",
     "type": "MONSTER",
     "battle_type": "MELEE",
@@ -42049,7 +42049,7 @@
   },
   {
     "vnum": "7029",
-    "name": "..",
+    "name": "Ice Devil",
     "rank": "S_PAWN",
     "type": "MONSTER",
     "battle_type": "MAGIC",
@@ -42195,7 +42195,7 @@
   },
   {
     "vnum": "7031",
-    "name": "..",
+    "name": "Ice Bug",
     "rank": "S_PAWN",
     "type": "MONSTER",
     "battle_type": "MELEE",
@@ -42268,7 +42268,7 @@
   },
   {
     "vnum": "7032",
-    "name": "..",
+    "name": "Seol-Gu",
     "rank": "KNIGHT",
     "type": "MONSTER",
     "battle_type": "MELEE",
@@ -42341,7 +42341,7 @@
   },
   {
     "vnum": "7033",
-    "name": "..",
+    "name": "Ice Man",
     "rank": "KNIGHT",
     "type": "MONSTER",
     "battle_type": "MELEE",
@@ -42560,7 +42560,7 @@
   },
   {
     "vnum": "7036",
-    "name": "..",
+    "name": "Ice Devil",
     "rank": "S_PAWN",
     "type": "MONSTER",
     "battle_type": "MAGIC",
@@ -42706,7 +42706,7 @@
   },
   {
     "vnum": "7038",
-    "name": "..",
+    "name": "Ice Bug",
     "rank": "S_PAWN",
     "type": "MONSTER",
     "battle_type": "MELEE",
@@ -42779,7 +42779,7 @@
   },
   {
     "vnum": "7039",
-    "name": "..",
+    "name": "Seol-Gu",
     "rank": "KNIGHT",
     "type": "MONSTER",
     "battle_type": "MELEE",
@@ -42852,7 +42852,7 @@
   },
   {
     "vnum": "7040",
-    "name": "..",
+    "name": "Ice Man",
     "rank": "KNIGHT",
     "type": "MONSTER",
     "battle_type": "MELEE",
@@ -43071,7 +43071,7 @@
   },
   {
     "vnum": "7043",
-    "name": "..",
+    "name": "Ice Devil",
     "rank": "S_PAWN",
     "type": "MONSTER",
     "battle_type": "MAGIC",
@@ -43217,7 +43217,7 @@
   },
   {
     "vnum": "7045",
-    "name": "..",
+    "name": "NoNAme",
     "rank": "S_PAWN",
     "type": "MONSTER",
     "battle_type": "MELEE",
@@ -43290,7 +43290,7 @@
   },
   {
     "vnum": "7046",
-    "name": "..",
+    "name": "Seol-Gu",
     "rank": "KNIGHT",
     "type": "MONSTER",
     "battle_type": "MELEE",
@@ -43363,7 +43363,7 @@
   },
   {
     "vnum": "7047",
-    "name": "..",
+    "name": "Ice Man",
     "rank": "KNIGHT",
     "type": "MONSTER",
     "battle_type": "MELEE",
@@ -45188,7 +45188,7 @@
   },
   {
     "vnum": "7072",
-    "name": "..",
+    "name": "Flame Spirit",
     "rank": "S_PAWN",
     "type": "MONSTER",
     "battle_type": "MAGIC",
@@ -45553,7 +45553,7 @@
   },
   {
     "vnum": "7077",
-    "name": "..",
+    "name": "Flame Spirit",
     "rank": "S_PAWN",
     "type": "MONSTER",
     "battle_type": "MAGIC",
@@ -45918,7 +45918,7 @@
   },
   {
     "vnum": "7082",
-    "name": "..",
+    "name": "Flame Spirit",
     "rank": "S_PAWN",
     "type": "MONSTER",
     "battle_type": "MAGIC",
@@ -46283,7 +46283,7 @@
   },
   {
     "vnum": "7087",
-    "name": "..",
+    "name": "Dryad",
     "rank": "S_PAWN",
     "type": "MONSTER",
     "battle_type": "RANGE",
@@ -46575,7 +46575,7 @@
   },
   {
     "vnum": "7091",
-    "name": "..",
+    "name": "Dryad",
     "rank": "S_PAWN",
     "type": "MONSTER",
     "battle_type": "RANGE",
@@ -46867,7 +46867,7 @@
   },
   {
     "vnum": "7095",
-    "name": "..",
+    "name": "Dryad",
     "rank": "S_PAWN",
     "type": "MONSTER",
     "battle_type": "RANGE",
@@ -47013,7 +47013,7 @@
   },
   {
     "vnum": "8001",
-    "name": "???",
+    "name": "Metin of Sorrow",
     "rank": "KING",
     "type": "STONE",
     "battle_type": "SPECIAL",
@@ -47086,7 +47086,7 @@
   },
   {
     "vnum": "8002",
-    "name": "???",
+    "name": "Metin of Combat",
     "rank": "KING",
     "type": "STONE",
     "battle_type": "SPECIAL",
@@ -47159,7 +47159,7 @@
   },
   {
     "vnum": "8003",
-    "name": "???",
+    "name": "Metin of Battle",
     "rank": "KING",
     "type": "STONE",
     "battle_type": "SPECIAL",
@@ -47232,7 +47232,7 @@
   },
   {
     "vnum": "8004",
-    "name": "???",
+    "name": "Metin of Greed",
     "rank": "KING",
     "type": "STONE",
     "battle_type": "SPECIAL",
@@ -47305,7 +47305,7 @@
   },
   {
     "vnum": "8005",
-    "name": "???",
+    "name": "Metin of Black",
     "rank": "KING",
     "type": "STONE",
     "battle_type": "SPECIAL",
@@ -47378,7 +47378,7 @@
   },
   {
     "vnum": "8006",
-    "name": "???",
+    "name": "Metin of Darkness",
     "rank": "KING",
     "type": "STONE",
     "battle_type": "SPECIAL",
@@ -47451,7 +47451,7 @@
   },
   {
     "vnum": "8007",
-    "name": "???",
+    "name": "Metin of Jealousy",
     "rank": "KING",
     "type": "STONE",
     "battle_type": "SPECIAL",
@@ -47524,7 +47524,7 @@
   },
   {
     "vnum": "8008",
-    "name": "???",
+    "name": "Metin of Soul",
     "rank": "KING",
     "type": "STONE",
     "battle_type": "SPECIAL",
@@ -47597,7 +47597,7 @@
   },
   {
     "vnum": "8009",
-    "name": "???",
+    "name": "Metin of Shadow",
     "rank": "KING",
     "type": "STONE",
     "battle_type": "SPECIAL",
@@ -47670,7 +47670,7 @@
   },
   {
     "vnum": "8010",
-    "name": "???",
+    "name": "Metin of Toughness",
     "rank": "KING",
     "type": "STONE",
     "battle_type": "SPECIAL",
@@ -47743,7 +47743,7 @@
   },
   {
     "vnum": "8011",
-    "name": "???",
+    "name": "Metin of Devil",
     "rank": "KING",
     "type": "STONE",
     "battle_type": "SPECIAL",
@@ -47816,7 +47816,7 @@
   },
   {
     "vnum": "8012",
-    "name": "???",
+    "name": "Metin of Fall",
     "rank": "KING",
     "type": "STONE",
     "battle_type": "SPECIAL",
@@ -47889,7 +47889,7 @@
   },
   {
     "vnum": "8013",
-    "name": "???",
+    "name": "Metin of Death",
     "rank": "KING",
     "type": "STONE",
     "battle_type": "SPECIAL",
@@ -47962,7 +47962,7 @@
   },
   {
     "vnum": "8014",
-    "name": "???",
+    "name": "Metin of Murder",
     "rank": "KING",
     "type": "STONE",
     "battle_type": "SPECIAL",
@@ -48035,7 +48035,7 @@
   },
   {
     "vnum": "8015",
-    "name": "???",
+    "name": "Metin of Toughness",
     "rank": "KING",
     "type": "STONE",
     "battle_type": "SPECIAL",
@@ -48108,7 +48108,7 @@
   },
   {
     "vnum": "8016",
-    "name": "???",
+    "name": "Metin of Devil",
     "rank": "KING",
     "type": "STONE",
     "battle_type": "SPECIAL",
@@ -48181,7 +48181,7 @@
   },
   {
     "vnum": "8017",
-    "name": "???",
+    "name": "Metin of Fall",
     "rank": "KING",
     "type": "STONE",
     "battle_type": "SPECIAL",
@@ -48254,7 +48254,7 @@
   },
   {
     "vnum": "8018",
-    "name": "???",
+    "name": "Metin of Death",
     "rank": "KING",
     "type": "STONE",
     "battle_type": "SPECIAL",
@@ -48327,7 +48327,7 @@
   },
   {
     "vnum": "8019",
-    "name": "???",
+    "name": "Metin of Murder",
     "rank": "KING",
     "type": "STONE",
     "battle_type": "SPECIAL",
@@ -48400,7 +48400,7 @@
   },
   {
     "vnum": "8020",
-    "name": "???",
+    "name": "Shinsoo Rock",
     "rank": "KING",
     "type": "STONE",
     "battle_type": "SPECIAL",
@@ -48473,7 +48473,7 @@
   },
   {
     "vnum": "8021",
-    "name": "???",
+    "name": "Jinno Rock",
     "rank": "KING",
     "type": "STONE",
     "battle_type": "SPECIAL",
@@ -48546,7 +48546,7 @@
   },
   {
     "vnum": "8022",
-    "name": "???",
+    "name": "Chunjo Rock",
     "rank": "KING",
     "type": "STONE",
     "battle_type": "SPECIAL",
@@ -48619,7 +48619,7 @@
   },
   {
     "vnum": "8023",
-    "name": "???",
+    "name": "Emperor Rock",
     "rank": "KING",
     "type": "STONE",
     "battle_type": "SPECIAL",
@@ -48692,7 +48692,7 @@
   },
   {
     "vnum": "8024",
-    "name": "???",
+    "name": "Metin Pung-Ma",
     "rank": "KING",
     "type": "STONE",
     "battle_type": "SPECIAL",
@@ -48765,7 +48765,7 @@
   },
   {
     "vnum": "8025",
-    "name": "???",
+    "name": "Metin Ma-An",
     "rank": "KING",
     "type": "STONE",
     "battle_type": "SPECIAL",
@@ -48838,7 +48838,7 @@
   },
   {
     "vnum": "8026",
-    "name": "???",
+    "name": "Metin Tu-Young",
     "rank": "KING",
     "type": "STONE",
     "battle_type": "SPECIAL",
@@ -48911,7 +48911,7 @@
   },
   {
     "vnum": "8027",
-    "name": "???",
+    "name": "Metin Jeon-Un",
     "rank": "KING",
     "type": "STONE",
     "battle_type": "SPECIAL",
@@ -48984,7 +48984,7 @@
   },
   {
     "vnum": "8031",
-    "name": "????",
+    "name": "Metin of the Mountain",
     "rank": "KING",
     "type": "STONE",
     "battle_type": "MELEE",
@@ -49057,7 +49057,7 @@
   },
   {
     "vnum": "8032",
-    "name": "????",
+    "name": "Metin of Vengeance",
     "rank": "KING",
     "type": "STONE",
     "battle_type": "MELEE",
@@ -49130,7 +49130,7 @@
   },
   {
     "vnum": "8033",
-    "name": "????",
+    "name": "Metin of Solitude",
     "rank": "KING",
     "type": "STONE",
     "battle_type": "MELEE",
@@ -49203,7 +49203,7 @@
   },
   {
     "vnum": "8034",
-    "name": "????",
+    "name": "Metin of Arrogance",
     "rank": "KING",
     "type": "STONE",
     "battle_type": "MELEE",
@@ -49276,7 +49276,7 @@
   },
   {
     "vnum": "8035",
-    "name": "???",
+    "name": "Metin of Redemption",
     "rank": "KING",
     "type": "STONE",
     "battle_type": "MELEE",
@@ -49349,7 +49349,7 @@
   },
   {
     "vnum": "8036",
-    "name": "?????",
+    "name": "Metin of Treason",
     "rank": "KING",
     "type": "STONE",
     "battle_type": "MELEE",
@@ -49422,7 +49422,7 @@
   },
   {
     "vnum": "8037",
-    "name": "?????",
+    "name": "Metin of Resentment",
     "rank": "KING",
     "type": "STONE",
     "battle_type": "MELEE",
@@ -49495,7 +49495,7 @@
   },
   {
     "vnum": "8038",
-    "name": "??????",
+    "name": "Metin of Retribution",
     "rank": "KING",
     "type": "STONE",
     "battle_type": "MELEE",
@@ -49568,7 +49568,7 @@
   },
   {
     "vnum": "8039",
-    "name": "??????",
+    "name": "Metin of Pride",
     "rank": "KING",
     "type": "STONE",
     "battle_type": "MELEE",
@@ -49641,7 +49641,7 @@
   },
   {
     "vnum": "8040",
-    "name": "??????",
+    "name": "Metin of Malevolence",
     "rank": "KING",
     "type": "STONE",
     "battle_type": "MELEE",
@@ -49714,7 +49714,7 @@
   },
   {
     "vnum": "8041",
-    "name": "?????",
+    "name": "Easter Metin",
     "rank": "KING",
     "type": "STONE",
     "battle_type": "MELEE",
@@ -49787,7 +49787,7 @@
   },
   {
     "vnum": "8042",
-    "name": "?????",
+    "name": "Easter Metin",
     "rank": "KING",
     "type": "STONE",
     "battle_type": "MELEE",
@@ -49860,7 +49860,7 @@
   },
   {
     "vnum": "8043",
-    "name": "?????",
+    "name": "Easter Metin",
     "rank": "KING",
     "type": "STONE",
     "battle_type": "MELEE",
@@ -49933,7 +49933,7 @@
   },
   {
     "vnum": "8044",
-    "name": "?????",
+    "name": "Easter Metin",
     "rank": "KING",
     "type": "STONE",
     "battle_type": "MELEE",
@@ -50006,7 +50006,7 @@
   },
   {
     "vnum": "8045",
-    "name": "?????",
+    "name": "Easter Metin",
     "rank": "KING",
     "type": "STONE",
     "battle_type": "MELEE",
@@ -50079,7 +50079,7 @@
   },
   {
     "vnum": "8046",
-    "name": "?????",
+    "name": "Easter Metin",
     "rank": "KING",
     "type": "STONE",
     "battle_type": "MELEE",
@@ -50152,7 +50152,7 @@
   },
   {
     "vnum": "8047",
-    "name": "?????",
+    "name": "Easter Metin",
     "rank": "KING",
     "type": "STONE",
     "battle_type": "MELEE",
@@ -50225,7 +50225,7 @@
   },
   {
     "vnum": "8048",
-    "name": "?????",
+    "name": "Easter Metin",
     "rank": "KING",
     "type": "STONE",
     "battle_type": "MELEE",
@@ -50298,7 +50298,7 @@
   },
   {
     "vnum": "8049",
-    "name": "?????",
+    "name": "Easter Metin",
     "rank": "KING",
     "type": "STONE",
     "battle_type": "MELEE",
@@ -50371,7 +50371,7 @@
   },
   {
     "vnum": "8050",
-    "name": "?????",
+    "name": "Easter Metin",
     "rank": "KING",
     "type": "STONE",
     "battle_type": "MELEE",
@@ -50955,7 +50955,7 @@
   },
   {
     "vnum": "8101",
-    "name": "???",
+    "name": "Metin of Sorrow",
     "rank": "KING",
     "type": "STONE",
     "battle_type": "SPECIAL",
@@ -51028,7 +51028,7 @@
   },
   {
     "vnum": "8102",
-    "name": "???",
+    "name": "Metin of Combat",
     "rank": "KING",
     "type": "STONE",
     "battle_type": "SPECIAL",
@@ -51101,7 +51101,7 @@
   },
   {
     "vnum": "8103",
-    "name": "???",
+    "name": "Metin of Battle",
     "rank": "KING",
     "type": "STONE",
     "battle_type": "SPECIAL",
@@ -51174,7 +51174,7 @@
   },
   {
     "vnum": "8104",
-    "name": "???",
+    "name": "Metin of Greed",
     "rank": "KING",
     "type": "STONE",
     "battle_type": "SPECIAL",
@@ -51247,7 +51247,7 @@
   },
   {
     "vnum": "8105",
-    "name": "???",
+    "name": "Metin of Black",
     "rank": "KING",
     "type": "STONE",
     "battle_type": "SPECIAL",
@@ -51320,7 +51320,7 @@
   },
   {
     "vnum": "8106",
-    "name": "???",
+    "name": "Metin of Darkness",
     "rank": "KING",
     "type": "STONE",
     "battle_type": "SPECIAL",
@@ -51393,7 +51393,7 @@
   },
   {
     "vnum": "8107",
-    "name": "???",
+    "name": "Metin of Jealousy",
     "rank": "KING",
     "type": "STONE",
     "battle_type": "SPECIAL",
@@ -51466,7 +51466,7 @@
   },
   {
     "vnum": "8108",
-    "name": "???",
+    "name": "Metin of Soul",
     "rank": "KING",
     "type": "STONE",
     "battle_type": "SPECIAL",
@@ -51539,7 +51539,7 @@
   },
   {
     "vnum": "8109",
-    "name": "???",
+    "name": "Metin of Shadow",
     "rank": "KING",
     "type": "STONE",
     "battle_type": "SPECIAL",
@@ -51612,7 +51612,7 @@
   },
   {
     "vnum": "8110",
-    "name": "???",
+    "name": "Metin of Toughness",
     "rank": "KING",
     "type": "STONE",
     "battle_type": "SPECIAL",
@@ -51685,7 +51685,7 @@
   },
   {
     "vnum": "8111",
-    "name": "???",
+    "name": "Metin of Devil",
     "rank": "KING",
     "type": "STONE",
     "battle_type": "SPECIAL",
@@ -51758,7 +51758,7 @@
   },
   {
     "vnum": "8112",
-    "name": "???",
+    "name": "Metin of Fall",
     "rank": "KING",
     "type": "STONE",
     "battle_type": "SPECIAL",
@@ -51831,7 +51831,7 @@
   },
   {
     "vnum": "8113",
-    "name": "???",
+    "name": "Metin of Death",
     "rank": "KING",
     "type": "STONE",
     "battle_type": "SPECIAL",
@@ -51904,7 +51904,7 @@
   },
   {
     "vnum": "8114",
-    "name": "???",
+    "name": "Metin of Murder",
     "rank": "KING",
     "type": "STONE",
     "battle_type": "SPECIAL",
@@ -51977,7 +51977,7 @@
   },
   {
     "vnum": "8501",
-    "name": "??",
+    "name": "Wild Dog",
     "rank": "PAWN",
     "type": "MONSTER",
     "battle_type": "MELEE",
@@ -52050,7 +52050,7 @@
   },
   {
     "vnum": "8502",
-    "name": "???",
+    "name": "Wild Boar",
     "rank": "PAWN",
     "type": "MONSTER",
     "battle_type": "MELEE",
@@ -52123,7 +52123,7 @@
   },
   {
     "vnum": "8503",
-    "name": "?",
+    "name": "Bear",
     "rank": "PAWN",
     "type": "MONSTER",
     "battle_type": "MELEE",
@@ -52196,7 +52196,7 @@
   },
   {
     "vnum": "8504",
-    "name": "??",
+    "name": "White Tiger",
     "rank": "PAWN",
     "type": "MONSTER",
     "battle_type": "MELEE",
@@ -52269,7 +52269,7 @@
   },
   {
     "vnum": "8505",
-    "name": "?? ???",
+    "name": "Black Giant Orc",
     "rank": "PAWN",
     "type": "MONSTER",
     "battle_type": "MELEE",
@@ -52342,7 +52342,7 @@
   },
   {
     "vnum": "8506",
-    "name": "???",
+    "name": "Tree Frog Leader",
     "rank": "PAWN",
     "type": "MONSTER",
     "battle_type": "MELEE",
@@ -52415,7 +52415,7 @@
   },
   {
     "vnum": "8507",
-    "name": "??????",
+    "name": "Desert Outlaw",
     "rank": "PAWN",
     "type": "MONSTER",
     "battle_type": "MELEE",
@@ -52488,7 +52488,7 @@
   },
   {
     "vnum": "8508",
-    "name": "?????",
+    "name": "Esoteric Tormentor",
     "rank": "PAWN",
     "type": "MONSTER",
     "battle_type": "MELEE",
@@ -52561,7 +52561,7 @@
   },
   {
     "vnum": "8509",
-    "name": "?????",
+    "name": "Esoteric Summoner",
     "rank": "PAWN",
     "type": "MONSTER",
     "battle_type": "MELEE",
@@ -52634,7 +52634,7 @@
   },
   {
     "vnum": "8510",
-    "name": "????",
+    "name": "Flame Warrior",
     "rank": "PAWN",
     "type": "MONSTER",
     "battle_type": "MELEE",
@@ -52707,7 +52707,7 @@
   },
   {
     "vnum": "8511",
-    "name": "????",
+    "name": "Ice Golem",
     "rank": "PAWN",
     "type": "MONSTER",
     "battle_type": "MELEE",
@@ -52780,7 +52780,7 @@
   },
   {
     "vnum": "8600",
-    "name": "?????",
+    "name": "Orc Lord",
     "rank": "BOSS",
     "type": "MONSTER",
     "battle_type": "MELEE",
@@ -52853,7 +52853,7 @@
   },
   {
     "vnum": "8601",
-    "name": "?????",
+    "name": "Orc Lord",
     "rank": "KING",
     "type": "MONSTER",
     "battle_type": "MELEE",
@@ -52926,7 +52926,7 @@
   },
   {
     "vnum": "8602",
-    "name": "?????",
+    "name": "Milgyo Founder",
     "rank": "BOSS",
     "type": "MONSTER",
     "battle_type": "MELEE",
@@ -52999,7 +52999,7 @@
   },
   {
     "vnum": "8603",
-    "name": "?????",
+    "name": "Milgyo Founder",
     "rank": "KING",
     "type": "MONSTER",
     "battle_type": "MELEE",
@@ -53072,7 +53072,7 @@
   },
   {
     "vnum": "8604",
-    "name": "????",
+    "name": "Skeleton King",
     "rank": "BOSS",
     "type": "MONSTER",
     "battle_type": "MELEE",
@@ -53145,7 +53145,7 @@
   },
   {
     "vnum": "8605",
-    "name": "????",
+    "name": "Skeleton King",
     "rank": "KING",
     "type": "MONSTER",
     "battle_type": "MELEE",
@@ -53218,7 +53218,7 @@
   },
   {
     "vnum": "8606",
-    "name": "??",
+    "name": "Skeleton God",
     "rank": "BOSS",
     "type": "MONSTER",
     "battle_type": "MELEE",
@@ -53291,7 +53291,7 @@
   },
   {
     "vnum": "8607",
-    "name": "??",
+    "name": "Skeleton God",
     "rank": "KING",
     "type": "MONSTER",
     "battle_type": "MELEE",
@@ -53364,7 +53364,7 @@
   },
   {
     "vnum": "8608",
-    "name": "???",
+    "name": "Fox Ninetail",
     "rank": "BOSS",
     "type": "MONSTER",
     "battle_type": "MELEE",
@@ -53437,7 +53437,7 @@
   },
   {
     "vnum": "8609",
-    "name": "???",
+    "name": "Fox Ninetail",
     "rank": "KING",
     "type": "MONSTER",
     "battle_type": "MELEE",
@@ -53510,7 +53510,7 @@
   },
   {
     "vnum": "8610",
-    "name": "?????",
+    "name": "Yellow Tigerman",
     "rank": "BOSS",
     "type": "MONSTER",
     "battle_type": "MELEE",
@@ -53583,7 +53583,7 @@
   },
   {
     "vnum": "8611",
-    "name": "?????",
+    "name": "Yellow Tigerman",
     "rank": "KING",
     "type": "MONSTER",
     "battle_type": "MELEE",
@@ -53656,7 +53656,7 @@
   },
   {
     "vnum": "8612",
-    "name": "????",
+    "name": "Spider Queen",
     "rank": "BOSS",
     "type": "MONSTER",
     "battle_type": "MELEE",
@@ -53729,7 +53729,7 @@
   },
   {
     "vnum": "8613",
-    "name": "????",
+    "name": "Spider Queen",
     "rank": "KING",
     "type": "MONSTER",
     "battle_type": "MELEE",
@@ -53802,7 +53802,7 @@
   },
   {
     "vnum": "8614",
-    "name": "??????",
+    "name": "Giant Desert Turtle",
     "rank": "BOSS",
     "type": "MONSTER",
     "battle_type": "MELEE",
@@ -53875,7 +53875,7 @@
   },
   {
     "vnum": "8615",
-    "name": "??????",
+    "name": "Giant Desert Turtle",
     "rank": "KING",
     "type": "MONSTER",
     "battle_type": "MELEE",
@@ -53948,7 +53948,7 @@
   },
   {
     "vnum": "9001",
-    "name": "???? ??",
+    "name": "Weapon Shop Dealer",
     "rank": "KING",
     "type": "NPC",
     "battle_type": "MELEE",
@@ -54021,7 +54021,7 @@
   },
   {
     "vnum": "9002",
-    "name": "????? ??",
+    "name": "Armour Shop Dealer",
     "rank": "KING",
     "type": "NPC",
     "battle_type": "MELEE",
@@ -54167,7 +54167,7 @@
   },
   {
     "vnum": "9004",
-    "name": "????? ??",
+    "name": "Event Helper",
     "rank": "KING",
     "type": "NPC",
     "battle_type": "MELEE",
@@ -54240,7 +54240,7 @@
   },
   {
     "vnum": "9005",
-    "name": "???? ????",
+    "name": "Storekeeper",
     "rank": "KING",
     "type": "NPC",
     "battle_type": "MELEE",
@@ -54313,7 +54313,7 @@
   },
   {
     "vnum": "9006",
-    "name": "??",
+    "name": "Old Lady",
     "rank": "KING",
     "type": "NPC",
     "battle_type": "MELEE",
@@ -54386,7 +54386,7 @@
   },
   {
     "vnum": "9007",
-    "name": "???? ??",
+    "name": "Weapon Shop Dealer",
     "rank": "KING",
     "type": "NPC",
     "battle_type": "MELEE",
@@ -54459,7 +54459,7 @@
   },
   {
     "vnum": "9008",
-    "name": "????? ??",
+    "name": "Armour Shop Dealer",
     "rank": "KING",
     "type": "NPC",
     "battle_type": "MELEE",
@@ -54532,7 +54532,7 @@
   },
   {
     "vnum": "9009",
-    "name": "??",
+    "name": "Fisherman",
     "rank": "KING",
     "type": "NPC",
     "battle_type": "MELEE",
@@ -54605,7 +54605,7 @@
   },
   {
     "vnum": "9010",
-    "name": "?????? ??",
+    "name": "General Store",
     "rank": "KING",
     "type": "NPC",
     "battle_type": "MELEE",
@@ -54678,7 +54678,7 @@
   },
   {
     "vnum": "9011",
-    "name": "????? ??",
+    "name": "Wedding Planner",
     "rank": "KING",
     "type": "NPC",
     "battle_type": "MELEE",
@@ -54751,7 +54751,7 @@
   },
   {
     "vnum": "9012",
-    "name": "??????",
+    "name": "Teleporter",
     "rank": "KING",
     "type": "NPC",
     "battle_type": "MELEE",
@@ -54824,7 +54824,7 @@
   },
   {
     "vnum": "10001",
-    "name": "??? 4002 8995",
+    "name": "Yayang_Area 4002 8995",
     "rank": "PAWN",
     "type": "WARP",
     "battle_type": "SPECIAL",
@@ -54897,7 +54897,7 @@
   },
   {
     "vnum": "10002",
-    "name": "???? 4503 9050",
+    "name": "Yongan_Area 4503 9050",
     "rank": "PAWN",
     "type": "WARP",
     "battle_type": "SPECIAL",
@@ -54970,7 +54970,7 @@
   },
   {
     "vnum": "10003",
-    "name": "??? 1118 2161",
+    "name": "Bokjung_Area 1118 2161",
     "rank": "PAWN",
     "type": "WARP",
     "battle_type": "SPECIAL",
@@ -55043,7 +55043,7 @@
   },
   {
     "vnum": "10004",
-    "name": "???? 876 2131",
+    "name": "Joan_Area 876 2131",
     "rank": "PAWN",
     "type": "WARP",
     "battle_type": "SPECIAL",
@@ -55116,7 +55116,7 @@
   },
   {
     "vnum": "10005",
-    "name": "??? 9064 2214",
+    "name": "Bakra_Area 9064 2214",
     "rank": "PAWN",
     "type": "WARP",
     "battle_type": "SPECIAL",
@@ -55189,7 +55189,7 @@
   },
   {
     "vnum": "10006",
-    "name": "???? 9372 2188",
+    "name": "Pyungmoo_Area 9372 2188",
     "rank": "PAWN",
     "type": "WARP",
     "battle_type": "SPECIAL",
@@ -55262,7 +55262,7 @@
   },
   {
     "vnum": "10007",
-    "name": "???? 4188 9560",
+    "name": "Yongan_Area 4188 9560",
     "rank": "PAWN",
     "type": "WARP",
     "battle_type": "SPECIAL",
@@ -55335,7 +55335,7 @@
   },
   {
     "vnum": "10008",
-    "name": "??? 3179 8332",
+    "name": "Yayang_Area 3179 8332",
     "rank": "PAWN",
     "type": "WARP",
     "battle_type": "SPECIAL",
@@ -55408,7 +55408,7 @@
   },
   {
     "vnum": "10009",
-    "name": "???? 897 1127",
+    "name": "Joan_Area 897 1127",
     "rank": "PAWN",
     "type": "WARP",
     "battle_type": "SPECIAL",
@@ -55481,7 +55481,7 @@
   },
   {
     "vnum": "10010",
-    "name": "??? 1759 2210",
+    "name": "Bokjung_Area 1759 2210",
     "rank": "PAWN",
     "type": "WARP",
     "battle_type": "SPECIAL",
@@ -55554,7 +55554,7 @@
   },
   {
     "vnum": "10011",
-    "name": "???? 9343 3143",
+    "name": "Pyungmoo_Area 9343 3143",
     "rank": "PAWN",
     "type": "WARP",
     "battle_type": "SPECIAL",
@@ -55627,7 +55627,7 @@
   },
   {
     "vnum": "10012",
-    "name": "??? 8348 2926",
+    "name": "Bakra_Area 8348 2926",
     "rank": "PAWN",
     "type": "WARP",
     "battle_type": "SPECIAL",
@@ -55700,7 +55700,7 @@
   },
   {
     "vnum": "10013",
-    "name": "???? 5536 1441",
+    "name": "Hwang_Temple 5536 1441",
     "rank": "PAWN",
     "type": "WARP",
     "battle_type": "SPECIAL",
@@ -55773,7 +55773,7 @@
   },
   {
     "vnum": "10014",
-    "name": "??? 3326 7468",
+    "name": "Seungryong 3326 7468",
     "rank": "PAWN",
     "type": "WARP",
     "battle_type": "SPECIAL",
@@ -55846,7 +55846,7 @@
   },
   {
     "vnum": "10015",
-    "name": "???? 3467 6329",
+    "name": "Yongbi_Desert 3467 6329",
     "rank": "PAWN",
     "type": "WARP",
     "battle_type": "SPECIAL",
@@ -55919,7 +55919,7 @@
   },
   {
     "vnum": "10016",
-    "name": "???? 600 4960",
+    "name": "Kuahlo_Dong 600 4960",
     "rank": "PAWN",
     "type": "WARP",
     "battle_type": "SPECIAL",
@@ -55992,7 +55992,7 @@
   },
   {
     "vnum": "10017",
-    "name": "???? 5906 1102",
+    "name": "Hwang_Temple 5906 1102",
     "rank": "PAWN",
     "type": "WARP",
     "battle_type": "SPECIAL",
@@ -56065,7 +56065,7 @@
   },
   {
     "vnum": "10018",
-    "name": "???? 2165 7270",
+    "name": "Gumsan_Tower 2165 7270",
     "rank": "PAWN",
     "type": "WARP",
     "battle_type": "SPECIAL",
@@ -56138,7 +56138,7 @@
   },
   {
     "vnum": "10019",
-    "name": "??? 3211 9009",
+    "name": "Yayang_Area 3211 9009",
     "rank": "PAWN",
     "type": "WARP",
     "battle_type": "SPECIAL",
@@ -56211,7 +56211,7 @@
   },
   {
     "vnum": "10020",
-    "name": "??? 1356 43",
+    "name": "Jungrang 1356 43",
     "rank": "PAWN",
     "type": "WARP",
     "battle_type": "SPECIAL",
@@ -56284,7 +56284,7 @@
   },
   {
     "vnum": "10021",
-    "name": "??? 1168 2920",
+    "name": "Bokjung_Area 1168 2920",
     "rank": "PAWN",
     "type": "WARP",
     "battle_type": "SPECIAL",
@@ -56357,7 +56357,7 @@
   },
   {
     "vnum": "10022",
-    "name": "??? 2219 93",
+    "name": "Waryong 2219 93",
     "rank": "PAWN",
     "type": "WARP",
     "battle_type": "SPECIAL",
@@ -56430,7 +56430,7 @@
   },
   {
     "vnum": "10023",
-    "name": "??? 9098 2948",
+    "name": "Bakra_Area 9098 2948",
     "rank": "PAWN",
     "type": "WARP",
     "battle_type": "SPECIAL",
@@ -56503,7 +56503,7 @@
   },
   {
     "vnum": "10024",
-    "name": "??? 2718 130",
+    "name": "Imha 2718 130",
     "rank": "PAWN",
     "type": "WARP",
     "battle_type": "SPECIAL",
@@ -56576,7 +56576,7 @@
   },
   {
     "vnum": "10025",
-    "name": "??? 4993 2984",
+    "name": "Mount_Sohan 4993 2984",
     "rank": "PAWN",
     "type": "WARP",
     "battle_type": "SPECIAL",
@@ -56649,7 +56649,7 @@
   },
   {
     "vnum": "10026",
-    "name": "??? 2887 57",
+    "name": "Lungsam 2887 57",
     "rank": "PAWN",
     "type": "WARP",
     "battle_type": "SPECIAL",
@@ -56722,7 +56722,7 @@
   },
   {
     "vnum": "10027",
-    "name": "??? 2866 437",
+    "name": "Lungsam 2866 437",
     "rank": "PAWN",
     "type": "WARP",
     "battle_type": "SPECIAL",
@@ -56795,7 +56795,7 @@
   },
   {
     "vnum": "10028",
-    "name": "???? 11199 708",
+    "name": "Red_Forest 11199 708",
     "rank": "PAWN",
     "type": "WARP",
     "battle_type": "SPECIAL",
@@ -56868,7 +56868,7 @@
   },
   {
     "vnum": "10029",
-    "name": "???? 10590 7262",
+    "name": "Snakefield 10590 7262",
     "rank": "PAWN",
     "type": "WARP",
     "battle_type": "SPECIAL",
@@ -56941,7 +56941,7 @@
   },
   {
     "vnum": "10030",
-    "name": "???? 3519 6223",
+    "name": "Yongbi_Desert 3519 6223",
     "rank": "PAWN",
     "type": "WARP",
     "battle_type": "SPECIAL",
@@ -57014,7 +57014,7 @@
   },
   {
     "vnum": "10031",
-    "name": "???? 10594 7525",
+    "name": "Snakefield 10590 7262",
     "rank": "PAWN",
     "type": "WARP",
     "battle_type": "SPECIAL",
@@ -57087,7 +57087,7 @@
   },
   {
     "vnum": "10032",
-    "name": "??? 8283 7635",
+    "name": "Land_of_Giants 8283 7635",
     "rank": "PAWN",
     "type": "WARP",
     "battle_type": "SPECIAL",
@@ -57160,7 +57160,7 @@
   },
   {
     "vnum": "10033",
-    "name": "????1? 10594 7525",
+    "name": "Zin-Grotto 10594 7525",
     "rank": "PAWN",
     "type": "WARP",
     "battle_type": "SPECIAL",
@@ -57233,7 +57233,7 @@
   },
   {
     "vnum": "10034",
-    "name": "????2? 10594 7525",
+    "name": "2_Zin-Grotto 10594 7525",
     "rank": "PAWN",
     "type": "WARP",
     "battle_type": "SPECIAL",
@@ -57306,7 +57306,7 @@
   },
   {
     "vnum": "10035",
-    "name": "???? 917 5253",
+    "name": "Deon-Zeon 917 5253",
     "rank": "PAWN",
     "type": "WARP",
     "battle_type": "SPECIAL",
@@ -57379,7 +57379,7 @@
   },
   {
     "vnum": "10036",
-    "name": "?????? 7041 4642",
+    "name": "2_Deon-Zeon 7041 4642",
     "rank": "PAWN",
     "type": "WARP",
     "battle_type": "SPECIAL",
@@ -57452,7 +57452,7 @@
   },
   {
     "vnum": "10037",
-    "name": "??? 3809 8233",
+    "name": "Warp Gate",
     "rank": "PAWN",
     "type": "WARP",
     "battle_type": "SPECIAL",
@@ -57525,7 +57525,7 @@
   },
   {
     "vnum": "10038",
-    "name": "??? 9752 1330",
+    "name": "Warp Gate",
     "rank": "PAWN",
     "type": "WARP",
     "battle_type": "SPECIAL",
@@ -57598,7 +57598,7 @@
   },
   {
     "vnum": "10039",
-    "name": "??? 1917 2900",
+    "name": "Warp Gate",
     "rank": "PAWN",
     "type": "WARP",
     "battle_type": "SPECIAL",
@@ -57671,7 +57671,7 @@
   },
   {
     "vnum": "10040",
-    "name": "??? 9239 1836",
+    "name": "Warp Gate",
     "rank": "PAWN",
     "type": "WARP",
     "battle_type": "SPECIAL",
@@ -57744,7 +57744,7 @@
   },
   {
     "vnum": "10041",
-    "name": "??? 8316 2154",
+    "name": "Warp Gate",
     "rank": "PAWN",
     "type": "WARP",
     "battle_type": "SPECIAL",
@@ -57817,7 +57817,7 @@
   },
   {
     "vnum": "10042",
-    "name": "??? 9772 1850",
+    "name": "Warp Gate",
     "rank": "PAWN",
     "type": "WARP",
     "battle_type": "SPECIAL",
@@ -57890,7 +57890,7 @@
   },
   {
     "vnum": "10043",
-    "name": "??? 3819 2969",
+    "name": "Warp Gate",
     "rank": "PAWN",
     "type": "WARP",
     "battle_type": "SPECIAL",
@@ -57963,7 +57963,7 @@
   },
   {
     "vnum": "10044",
-    "name": "??? 10189 1484",
+    "name": "Warp Gate",
     "rank": "PAWN",
     "type": "WARP",
     "battle_type": "SPECIAL",
@@ -58036,7 +58036,7 @@
   },
   {
     "vnum": "10045",
-    "name": "??? 3819 2969",
+    "name": "Warp Gate",
     "rank": "PAWN",
     "type": "WARP",
     "battle_type": "SPECIAL",
@@ -58109,7 +58109,7 @@
   },
   {
     "vnum": "10046",
-    "name": "??? 9774 1501",
+    "name": "Warp Gate",
     "rank": "PAWN",
     "type": "WARP",
     "battle_type": "SPECIAL",
@@ -58182,7 +58182,7 @@
   },
   {
     "vnum": "10047",
-    "name": "??? 2699 6752",
+    "name": "Warp Gate",
     "rank": "PAWN",
     "type": "WARP",
     "battle_type": "SPECIAL",
@@ -58255,7 +58255,7 @@
   },
   {
     "vnum": "10048",
-    "name": "??? 9679 1994",
+    "name": "Warp Gate",
     "rank": "PAWN",
     "type": "WARP",
     "battle_type": "SPECIAL",
@@ -58328,7 +58328,7 @@
   },
   {
     "vnum": "10049",
-    "name": "??? 2699 6752",
+    "name": "Warp Gate",
     "rank": "PAWN",
     "type": "WARP",
     "battle_type": "SPECIAL",
@@ -58401,7 +58401,7 @@
   },
   {
     "vnum": "10050",
-    "name": "??? 9256 2012",
+    "name": "Warp Gate",
     "rank": "PAWN",
     "type": "WARP",
     "battle_type": "SPECIAL",
@@ -58474,7 +58474,7 @@
   },
   {
     "vnum": "10051",
-    "name": "???? 3478 6189",
+    "name": "Warp Gate",
     "rank": "PAWN",
     "type": "WARP",
     "battle_type": "SPECIAL",
@@ -58547,7 +58547,7 @@
   },
   {
     "vnum": "10052",
-    "name": "??? 9780 1995",
+    "name": "Warp Gate",
     "rank": "PAWN",
     "type": "WARP",
     "battle_type": "SPECIAL",
@@ -58620,7 +58620,7 @@
   },
   {
     "vnum": "10053",
-    "name": "???? 3478 6189",
+    "name": "Warp Gate",
     "rank": "PAWN",
     "type": "WARP",
     "battle_type": "SPECIAL",
@@ -58693,7 +58693,7 @@
   },
   {
     "vnum": "10054",
-    "name": "??? 10190 2002",
+    "name": "Warp Gate",
     "rank": "PAWN",
     "type": "WARP",
     "battle_type": "SPECIAL",
@@ -58766,7 +58766,7 @@
   },
   {
     "vnum": "10055",
-    "name": "???? 6011 6874",
+    "name": "Warp Gate",
     "rank": "PAWN",
     "type": "WARP",
     "battle_type": "SPECIAL",
@@ -58839,7 +58839,7 @@
   },
   {
     "vnum": "10056",
-    "name": "??? 4368 2158",
+    "name": "Warp Gate",
     "rank": "PAWN",
     "type": "WARP",
     "battle_type": "SPECIAL",
@@ -58912,7 +58912,7 @@
   },
   {
     "vnum": "10057",
-    "name": "??? 3355 7558",
+    "name": "Warp Gate",
     "rank": "PAWN",
     "type": "WARP",
     "battle_type": "SPECIAL",
@@ -58985,7 +58985,7 @@
   },
   {
     "vnum": "10058",
-    "name": "???? 5943 1337",
+    "name": "Warp Gate",
     "rank": "PAWN",
     "type": "WARP",
     "battle_type": "SPECIAL",
@@ -59058,7 +59058,7 @@
   },
   {
     "vnum": "10059",
-    "name": "???1 0 10496",
+    "name": "Warp Gate",
     "rank": "PAWN",
     "type": "WARP",
     "battle_type": "SPECIAL",
@@ -59131,7 +59131,7 @@
   },
   {
     "vnum": "10060",
-    "name": "????1 1536 10496",
+    "name": "Warp Gate",
     "rank": "PAWN",
     "type": "WARP",
     "battle_type": "SPECIAL",
@@ -59204,7 +59204,7 @@
   },
   {
     "vnum": "10061",
-    "name": "????1 4608 10496",
+    "name": "Warp Gate",
     "rank": "PAWN",
     "type": "WARP",
     "battle_type": "SPECIAL",
@@ -59277,7 +59277,7 @@
   },
   {
     "vnum": "10062",
-    "name": "???1 6144 10496",
+    "name": "Warp Gate",
     "rank": "PAWN",
     "type": "WARP",
     "battle_type": "SPECIAL",
@@ -59350,7 +59350,7 @@
   },
   {
     "vnum": "10063",
-    "name": "??? 3031 266",
+    "name": "Warp Gate",
     "rank": "PAWN",
     "type": "WARP",
     "battle_type": "SPECIAL",
@@ -59423,7 +59423,7 @@
   },
   {
     "vnum": "10064",
-    "name": "???? 11133 534",
+    "name": "Warp Gate",
     "rank": "PAWN",
     "type": "WARP",
     "battle_type": "SPECIAL",
@@ -59496,7 +59496,7 @@
   },
   {
     "vnum": "10065",
-    "name": "???? 7754 10553",
+    "name": "Warp Gate",
     "rank": "PAWN",
     "type": "WARP",
     "battle_type": "SPECIAL",
@@ -59569,7 +59569,7 @@
   },
   {
     "vnum": "10066",
-    "name": "????? 9915 11195",
+    "name": "Warp Gate",
     "rank": "PAWN",
     "type": "WARP",
     "battle_type": "SPECIAL",
@@ -59642,7 +59642,7 @@
   },
   {
     "vnum": "10067",
-    "name": "??? 7752  4477",
+    "name": "MonkeyDungeon 7752 4477",
     "rank": "PAWN",
     "type": "WARP",
     "battle_type": "SPECIAL",
@@ -59715,7 +59715,7 @@
   },
   {
     "vnum": "10068",
-    "name": "??? 4062 8756",
+    "name": "Yayang_Area 4062 8756",
     "rank": "PAWN",
     "type": "WARP",
     "battle_type": "SPECIAL",
@@ -59788,7 +59788,7 @@
   },
   {
     "vnum": "10069",
-    "name": "??? 8520  4477",
+    "name": "MonkeyDungeon 8520 4477",
     "rank": "PAWN",
     "type": "WARP",
     "battle_type": "SPECIAL",
@@ -59861,7 +59861,7 @@
   },
   {
     "vnum": "10070",
-    "name": "??? 1611 2130",
+    "name": "Bokjung_Area 1611 2130",
     "rank": "PAWN",
     "type": "WARP",
     "battle_type": "SPECIAL",
@@ -59934,7 +59934,7 @@
   },
   {
     "vnum": "10071",
-    "name": "??? 9288  4477",
+    "name": "MonkeyDungeon 9288 4477",
     "rank": "PAWN",
     "type": "WARP",
     "battle_type": "SPECIAL",
@@ -60007,7 +60007,7 @@
   },
   {
     "vnum": "10072",
-    "name": "??? 8727 2100",
+    "name": "Bakra_Area 8727 2100",
     "rank": "PAWN",
     "type": "WARP",
     "battle_type": "SPECIAL",
@@ -60080,7 +60080,7 @@
   },
   {
     "vnum": "10073",
-    "name": "???? 3061 6202",
+    "name": "Yongbi_Desert 3061 6202",
     "rank": "PAWN",
     "type": "WARP",
     "battle_type": "SPECIAL",
@@ -60153,7 +60153,7 @@
   },
   {
     "vnum": "10074",
-    "name": "??? 1352  6532",
+    "name": "MonkeyDungeon 1352 6532",
     "rank": "PAWN",
     "type": "WARP",
     "battle_type": "SPECIAL",
@@ -60226,7 +60226,7 @@
   },
   {
     "vnum": "10075",
-    "name": "???? 2879 5407",
+    "name": "Yongbi_Desert 2879 5407",
     "rank": "PAWN",
     "type": "WARP",
     "battle_type": "SPECIAL",
@@ -60299,7 +60299,7 @@
   },
   {
     "vnum": "10076",
-    "name": "??? 1352  7300",
+    "name": "MonkeyDungeon 1352 7300",
     "rank": "PAWN",
     "type": "WARP",
     "battle_type": "SPECIAL",
@@ -60372,7 +60372,7 @@
   },
   {
     "vnum": "10077",
-    "name": "????1? 9 12078",
+    "name": "Warp Gate",
     "rank": "PAWN",
     "type": "WARP",
     "battle_type": "SPECIAL",
@@ -60445,7 +60445,7 @@
   },
   {
     "vnum": "10078",
-    "name": "??? 2842 8106",
+    "name": "Warp Gate",
     "rank": "PAWN",
     "type": "WARP",
     "battle_type": "SPECIAL",
@@ -60518,7 +60518,7 @@
   },
   {
     "vnum": "10079",
-    "name": "????1? 1459 13236",
+    "name": "Warp Gate",
     "rank": "PAWN",
     "type": "WARP",
     "battle_type": "SPECIAL",
@@ -60591,7 +60591,7 @@
   },
   {
     "vnum": "10080",
-    "name": "????2? 2413 12755",
+    "name": "Warp Gate",
     "rank": "PAWN",
     "type": "WARP",
     "battle_type": "SPECIAL",
@@ -60664,7 +60664,7 @@
   },
   {
     "vnum": "10081",
-    "name": "????1? 99 13618",
+    "name": "Warp Gate",
     "rank": "PAWN",
     "type": "WARP",
     "battle_type": "SPECIAL",
@@ -60737,7 +60737,7 @@
   },
   {
     "vnum": "10082",
-    "name": "???? 5028 9998",
+    "name": "Warp Gate",
     "rank": "PAWN",
     "type": "WARP",
     "battle_type": "SPECIAL",
@@ -60810,7 +60810,7 @@
   },
   {
     "vnum": "10083",
-    "name": "????1? 1360 14972",
+    "name": "Warp Gate",
     "rank": "PAWN",
     "type": "WARP",
     "battle_type": "SPECIAL",
@@ -60883,7 +60883,7 @@
   },
   {
     "vnum": "10084",
-    "name": "????2? 2414 14289",
+    "name": "Warp Gate",
     "rank": "PAWN",
     "type": "WARP",
     "battle_type": "SPECIAL",
@@ -60956,7 +60956,7 @@
   },
   {
     "vnum": "10085",
-    "name": "????1? 99 15154",
+    "name": "Warp Gate",
     "rank": "PAWN",
     "type": "WARP",
     "battle_type": "SPECIAL",
@@ -61029,7 +61029,7 @@
   },
   {
     "vnum": "10086",
-    "name": "???? 616 1148",
+    "name": "Warp Gate",
     "rank": "PAWN",
     "type": "WARP",
     "battle_type": "SPECIAL",
@@ -61102,7 +61102,7 @@
   },
   {
     "vnum": "10087",
-    "name": "????1? 1360 16508",
+    "name": "Warp Gate",
     "rank": "PAWN",
     "type": "WARP",
     "battle_type": "SPECIAL",
@@ -61175,7 +61175,7 @@
   },
   {
     "vnum": "10088",
-    "name": "????2? 2414 15825",
+    "name": "Warp Gate",
     "rank": "PAWN",
     "type": "WARP",
     "battle_type": "SPECIAL",
@@ -61248,7 +61248,7 @@
   },
   {
     "vnum": "10089",
-    "name": "????1? 99 16690",
+    "name": "Warp Gate",
     "rank": "PAWN",
     "type": "WARP",
     "battle_type": "SPECIAL",
@@ -61321,7 +61321,7 @@
   },
   {
     "vnum": "10090",
-    "name": "???? 9609 3188",
+    "name": "Warp Gate",
     "rank": "PAWN",
     "type": "WARP",
     "battle_type": "SPECIAL",
@@ -61394,7 +61394,7 @@
   },
   {
     "vnum": "10091",
-    "name": "????1? 1360 18044",
+    "name": "Warp Gate",
     "rank": "PAWN",
     "type": "WARP",
     "battle_type": "SPECIAL",
@@ -61467,7 +61467,7 @@
   },
   {
     "vnum": "10092",
-    "name": "????2? 2414 17361",
+    "name": "Warp Gate",
     "rank": "PAWN",
     "type": "WARP",
     "battle_type": "SPECIAL",
@@ -61540,7 +61540,7 @@
   },
   {
     "vnum": "10093",
-    "name": "????? 1731 12205",
+    "name": "Dragon_Gate 1731 12205",
     "rank": "PAWN",
     "type": "WARP",
     "battle_type": "SPECIAL",
@@ -61613,7 +61613,7 @@
   },
   {
     "vnum": "10094",
-    "name": "????? 1733  13743",
+    "name": "Dragon_Gate 1733 13743",
     "rank": "PAWN",
     "type": "WARP",
     "battle_type": "SPECIAL",
@@ -61686,7 +61686,7 @@
   },
   {
     "vnum": "10095",
-    "name": "????? 1728 15277",
+    "name": "Dragon_Gate 1728 15277",
     "rank": "PAWN",
     "type": "WARP",
     "battle_type": "SPECIAL",
@@ -61759,7 +61759,7 @@
   },
   {
     "vnum": "10096",
-    "name": "????? 1724 16824",
+    "name": "Dragon_Gate 1724 16824",
     "rank": "PAWN",
     "type": "WARP",
     "battle_type": "SPECIAL",
@@ -70592,7 +70592,7 @@
   },
   {
     "vnum": "11000",
-    "name": "???",
+    "name": "Guardian",
     "rank": "KNIGHT",
     "type": "NPC",
     "battle_type": "MELEE",
@@ -70665,7 +70665,7 @@
   },
   {
     "vnum": "11001",
-    "name": "???",
+    "name": "Battle Bailiff",
     "rank": "KNIGHT",
     "type": "NPC",
     "battle_type": "RANGE",
@@ -70738,7 +70738,7 @@
   },
   {
     "vnum": "11002",
-    "name": "???",
+    "name": "Guardian",
     "rank": "KNIGHT",
     "type": "NPC",
     "battle_type": "MELEE",
@@ -70811,7 +70811,7 @@
   },
   {
     "vnum": "11003",
-    "name": "???",
+    "name": "Battle Bailiff",
     "rank": "KNIGHT",
     "type": "NPC",
     "battle_type": "RANGE",
@@ -70884,7 +70884,7 @@
   },
   {
     "vnum": "11004",
-    "name": "???",
+    "name": "Guardian",
     "rank": "KNIGHT",
     "type": "NPC",
     "battle_type": "MELEE",
@@ -70957,7 +70957,7 @@
   },
   {
     "vnum": "11005",
-    "name": "???",
+    "name": "Battle Bailiff",
     "rank": "KNIGHT",
     "type": "NPC",
     "battle_type": "RANGE",
@@ -71030,7 +71030,7 @@
   },
   {
     "vnum": "11100",
-    "name": "???",
+    "name": "Guardian",
     "rank": "KNIGHT",
     "type": "MONSTER",
     "battle_type": "MELEE",
@@ -71103,7 +71103,7 @@
   },
   {
     "vnum": "11101",
-    "name": "???",
+    "name": "Battle Bailiff",
     "rank": "KNIGHT",
     "type": "MONSTER",
     "battle_type": "RANGE",
@@ -71176,7 +71176,7 @@
   },
   {
     "vnum": "11102",
-    "name": "???",
+    "name": "Guardian",
     "rank": "KNIGHT",
     "type": "MONSTER",
     "battle_type": "MELEE",
@@ -71249,7 +71249,7 @@
   },
   {
     "vnum": "11103",
-    "name": "???",
+    "name": "Battle Bailiff",
     "rank": "KNIGHT",
     "type": "MONSTER",
     "battle_type": "RANGE",
@@ -71322,7 +71322,7 @@
   },
   {
     "vnum": "11104",
-    "name": "???",
+    "name": "Guardian",
     "rank": "KNIGHT",
     "type": "MONSTER",
     "battle_type": "MELEE",
@@ -71395,7 +71395,7 @@
   },
   {
     "vnum": "11105",
-    "name": "???",
+    "name": "Battle Bailiff",
     "rank": "KNIGHT",
     "type": "MONSTER",
     "battle_type": "RANGE",
@@ -71468,7 +71468,7 @@
   },
   {
     "vnum": "11106",
-    "name": "???",
+    "name": "Unknown Monster",
     "rank": "KNIGHT",
     "type": "MONSTER",
     "battle_type": "MELEE",
@@ -71541,7 +71541,7 @@
   },
   {
     "vnum": "11107",
-    "name": "???",
+    "name": "Unknown Monster",
     "rank": "KNIGHT",
     "type": "MONSTER",
     "battle_type": "RANGE",
@@ -71614,7 +71614,7 @@
   },
   {
     "vnum": "11108",
-    "name": "???",
+    "name": "Unknown Monster",
     "rank": "KNIGHT",
     "type": "MONSTER",
     "battle_type": "MELEE",
@@ -71687,7 +71687,7 @@
   },
   {
     "vnum": "11109",
-    "name": "???",
+    "name": "Unknown Monster",
     "rank": "KNIGHT",
     "type": "MONSTER",
     "battle_type": "RANGE",
@@ -71760,7 +71760,7 @@
   },
   {
     "vnum": "11110",
-    "name": "???",
+    "name": "Unknown Monster",
     "rank": "KNIGHT",
     "type": "MONSTER",
     "battle_type": "MELEE",
@@ -71833,7 +71833,7 @@
   },
   {
     "vnum": "11111",
-    "name": "???",
+    "name": "Unknown Monster",
     "rank": "KNIGHT",
     "type": "MONSTER",
     "battle_type": "RANGE",
@@ -71906,7 +71906,7 @@
   },
   {
     "vnum": "11112",
-    "name": "???",
+    "name": "Unknown Monster",
     "rank": "KNIGHT",
     "type": "MONSTER",
     "battle_type": "MELEE",
@@ -71979,7 +71979,7 @@
   },
   {
     "vnum": "11113",
-    "name": "???",
+    "name": "Unknown Monster",
     "rank": "KNIGHT",
     "type": "MONSTER",
     "battle_type": "RANGE",
@@ -72052,7 +72052,7 @@
   },
   {
     "vnum": "11114",
-    "name": "???",
+    "name": "Unknown Monster",
     "rank": "KNIGHT",
     "type": "MONSTER",
     "battle_type": "MELEE",
@@ -72125,7 +72125,7 @@
   },
   {
     "vnum": "11115",
-    "name": "???",
+    "name": "Unknown Monster",
     "rank": "KNIGHT",
     "type": "MONSTER",
     "battle_type": "RANGE",
@@ -72198,7 +72198,7 @@
   },
   {
     "vnum": "11116",
-    "name": "???",
+    "name": "Unknown Monster",
     "rank": "KNIGHT",
     "type": "MONSTER",
     "battle_type": "MELEE",
@@ -72271,7 +72271,7 @@
   },
   {
     "vnum": "11117",
-    "name": "???",
+    "name": "Unknown Monster",
     "rank": "KNIGHT",
     "type": "MONSTER",
     "battle_type": "RANGE",
@@ -72344,7 +72344,7 @@
   },
   {
     "vnum": "11505",
-    "name": "?????",
+    "name": "Gold Frog",
     "rank": "KNIGHT",
     "type": "MONSTER",
     "battle_type": "RANGE",
@@ -72417,7 +72417,7 @@
   },
   {
     "vnum": "11506",
-    "name": "??",
+    "name": "Unknown Monster",
     "rank": "KNIGHT",
     "type": "MONSTER",
     "battle_type": "MELEE",
@@ -72490,7 +72490,7 @@
   },
   {
     "vnum": "11507",
-    "name": "??",
+    "name": "Unknown Monster",
     "rank": "KNIGHT",
     "type": "MONSTER",
     "battle_type": "MELEE",
@@ -72563,7 +72563,7 @@
   },
   {
     "vnum": "11508",
-    "name": "??",
+    "name": "Unknown Monster",
     "rank": "KNIGHT",
     "type": "MONSTER",
     "battle_type": "MELEE",
@@ -72636,7 +72636,7 @@
   },
   {
     "vnum": "11509",
-    "name": "??",
+    "name": "Unknown Monster",
     "rank": "KNIGHT",
     "type": "MONSTER",
     "battle_type": "MELEE",
@@ -72709,7 +72709,7 @@
   },
   {
     "vnum": "11510",
-    "name": "??",
+    "name": "Unknown Monster",
     "rank": "KNIGHT",
     "type": "MONSTER",
     "battle_type": "MELEE",
@@ -72782,7 +72782,7 @@
   },
   {
     "vnum": "12000",
-    "name": "???",
+    "name": "Campfire",
     "rank": "PAWN",
     "type": "NPC",
     "battle_type": "SPECIAL",
@@ -72855,7 +72855,7 @@
   },
   {
     "vnum": "13000",
-    "name": "???",
+    "name": "Wooden Gate",
     "rank": "KING",
     "type": "DOOR",
     "battle_type": "SPECIAL",
@@ -72928,7 +72928,7 @@
   },
   {
     "vnum": "13001",
-    "name": "??",
+    "name": "Stone Gate",
     "rank": "KING",
     "type": "DOOR",
     "battle_type": "SPECIAL",
@@ -73001,7 +73001,7 @@
   },
   {
     "vnum": "14000",
-    "name": "???",
+    "name": "Workshop",
     "rank": "KING",
     "type": "BUILDING",
     "battle_type": "SPECIAL",
@@ -73074,7 +73074,7 @@
   },
   {
     "vnum": "14001",
-    "name": "???",
+    "name": "Workshop",
     "rank": "KING",
     "type": "BUILDING",
     "battle_type": "SPECIAL",
@@ -73147,7 +73147,7 @@
   },
   {
     "vnum": "14002",
-    "name": "???",
+    "name": "Workshop",
     "rank": "KING",
     "type": "BUILDING",
     "battle_type": "SPECIAL",
@@ -73220,7 +73220,7 @@
   },
   {
     "vnum": "14003",
-    "name": "???",
+    "name": "Workshop",
     "rank": "KING",
     "type": "BUILDING",
     "battle_type": "SPECIAL",
@@ -73293,7 +73293,7 @@
   },
   {
     "vnum": "14004",
-    "name": "???",
+    "name": "Workshop",
     "rank": "KING",
     "type": "BUILDING",
     "battle_type": "SPECIAL",
@@ -73366,7 +73366,7 @@
   },
   {
     "vnum": "14005",
-    "name": "???",
+    "name": "Workshop",
     "rank": "KING",
     "type": "BUILDING",
     "battle_type": "SPECIAL",
@@ -73439,7 +73439,7 @@
   },
   {
     "vnum": "14006",
-    "name": "???",
+    "name": "Workshop",
     "rank": "KING",
     "type": "BUILDING",
     "battle_type": "SPECIAL",
@@ -73512,7 +73512,7 @@
   },
   {
     "vnum": "14007",
-    "name": "???",
+    "name": "Workshop",
     "rank": "KING",
     "type": "BUILDING",
     "battle_type": "SPECIAL",
@@ -73585,7 +73585,7 @@
   },
   {
     "vnum": "14008",
-    "name": "???",
+    "name": "Workshop",
     "rank": "KING",
     "type": "BUILDING",
     "battle_type": "SPECIAL",
@@ -73658,7 +73658,7 @@
   },
   {
     "vnum": "14009",
-    "name": "???",
+    "name": "Workshop",
     "rank": "KING",
     "type": "BUILDING",
     "battle_type": "SPECIAL",
@@ -73731,7 +73731,7 @@
   },
   {
     "vnum": "14010",
-    "name": "??",
+    "name": "Altar",
     "rank": "KING",
     "type": "BUILDING",
     "battle_type": "SPECIAL",
@@ -73804,7 +73804,7 @@
   },
   {
     "vnum": "14011",
-    "name": "??",
+    "name": "Altar",
     "rank": "KING",
     "type": "BUILDING",
     "battle_type": "SPECIAL",
@@ -73877,7 +73877,7 @@
   },
   {
     "vnum": "14012",
-    "name": "??",
+    "name": "Altar",
     "rank": "KING",
     "type": "BUILDING",
     "battle_type": "SPECIAL",
@@ -73950,7 +73950,7 @@
   },
   {
     "vnum": "14013",
-    "name": "??",
+    "name": "Altar",
     "rank": "KING",
     "type": "BUILDING",
     "battle_type": "SPECIAL",
@@ -74023,7 +74023,7 @@
   },
   {
     "vnum": "14014",
-    "name": "??",
+    "name": "Altar",
     "rank": "KING",
     "type": "BUILDING",
     "battle_type": "SPECIAL",
@@ -74096,7 +74096,7 @@
   },
   {
     "vnum": "14015",
-    "name": "??",
+    "name": "Altar",
     "rank": "KING",
     "type": "BUILDING",
     "battle_type": "SPECIAL",
@@ -74169,7 +74169,7 @@
   },
   {
     "vnum": "14016",
-    "name": "??",
+    "name": "Altar",
     "rank": "KING",
     "type": "BUILDING",
     "battle_type": "SPECIAL",
@@ -74242,7 +74242,7 @@
   },
   {
     "vnum": "14017",
-    "name": "??",
+    "name": "Altar",
     "rank": "KING",
     "type": "BUILDING",
     "battle_type": "SPECIAL",
@@ -74315,7 +74315,7 @@
   },
   {
     "vnum": "14018",
-    "name": "??",
+    "name": "Altar",
     "rank": "KING",
     "type": "BUILDING",
     "battle_type": "SPECIAL",
@@ -74388,7 +74388,7 @@
   },
   {
     "vnum": "14019",
-    "name": "??",
+    "name": "Altar",
     "rank": "KING",
     "type": "BUILDING",
     "battle_type": "SPECIAL",
@@ -74461,7 +74461,7 @@
   },
   {
     "vnum": "14020",
-    "name": "???",
+    "name": "Headquarters",
     "rank": "KING",
     "type": "BUILDING",
     "battle_type": "SPECIAL",
@@ -74534,7 +74534,7 @@
   },
   {
     "vnum": "14021",
-    "name": "???",
+    "name": "Headquarters",
     "rank": "KING",
     "type": "BUILDING",
     "battle_type": "SPECIAL",
@@ -74607,7 +74607,7 @@
   },
   {
     "vnum": "14022",
-    "name": "???",
+    "name": "Headquarters",
     "rank": "KING",
     "type": "BUILDING",
     "battle_type": "SPECIAL",
@@ -74680,7 +74680,7 @@
   },
   {
     "vnum": "14023",
-    "name": "???",
+    "name": "Headquarters",
     "rank": "KING",
     "type": "BUILDING",
     "battle_type": "SPECIAL",
@@ -74753,7 +74753,7 @@
   },
   {
     "vnum": "14024",
-    "name": "???",
+    "name": "Headquarters",
     "rank": "KING",
     "type": "BUILDING",
     "battle_type": "SPECIAL",
@@ -74826,7 +74826,7 @@
   },
   {
     "vnum": "14025",
-    "name": "???",
+    "name": "Headquarters",
     "rank": "KING",
     "type": "BUILDING",
     "battle_type": "SPECIAL",
@@ -74899,7 +74899,7 @@
   },
   {
     "vnum": "14026",
-    "name": "???",
+    "name": "Headquarters",
     "rank": "KING",
     "type": "BUILDING",
     "battle_type": "SPECIAL",
@@ -74972,7 +74972,7 @@
   },
   {
     "vnum": "14027",
-    "name": "???",
+    "name": "Headquarters",
     "rank": "KING",
     "type": "BUILDING",
     "battle_type": "SPECIAL",
@@ -75045,7 +75045,7 @@
   },
   {
     "vnum": "14028",
-    "name": "???",
+    "name": "Headquarters",
     "rank": "KING",
     "type": "BUILDING",
     "battle_type": "SPECIAL",
@@ -75118,7 +75118,7 @@
   },
   {
     "vnum": "14029",
-    "name": "???",
+    "name": "Headquarters",
     "rank": "KING",
     "type": "BUILDING",
     "battle_type": "SPECIAL",
@@ -75191,7 +75191,7 @@
   },
   {
     "vnum": "14030",
-    "name": "???",
+    "name": "Training Camp",
     "rank": "KING",
     "type": "BUILDING",
     "battle_type": "SPECIAL",
@@ -75264,7 +75264,7 @@
   },
   {
     "vnum": "14031",
-    "name": "???",
+    "name": "Training Camp",
     "rank": "KING",
     "type": "BUILDING",
     "battle_type": "SPECIAL",
@@ -75337,7 +75337,7 @@
   },
   {
     "vnum": "14032",
-    "name": "???",
+    "name": "Training Camp",
     "rank": "KING",
     "type": "BUILDING",
     "battle_type": "SPECIAL",
@@ -75410,7 +75410,7 @@
   },
   {
     "vnum": "14033",
-    "name": "???",
+    "name": "Training Camp",
     "rank": "KING",
     "type": "BUILDING",
     "battle_type": "SPECIAL",
@@ -75483,7 +75483,7 @@
   },
   {
     "vnum": "14034",
-    "name": "???",
+    "name": "Training Camp",
     "rank": "KING",
     "type": "BUILDING",
     "battle_type": "SPECIAL",
@@ -75556,7 +75556,7 @@
   },
   {
     "vnum": "14035",
-    "name": "???",
+    "name": "Training Camp",
     "rank": "KING",
     "type": "BUILDING",
     "battle_type": "SPECIAL",
@@ -75629,7 +75629,7 @@
   },
   {
     "vnum": "14036",
-    "name": "???",
+    "name": "Training Camp",
     "rank": "KING",
     "type": "BUILDING",
     "battle_type": "SPECIAL",
@@ -75702,7 +75702,7 @@
   },
   {
     "vnum": "14037",
-    "name": "???",
+    "name": "Training Camp",
     "rank": "KING",
     "type": "BUILDING",
     "battle_type": "SPECIAL",
@@ -75775,7 +75775,7 @@
   },
   {
     "vnum": "14038",
-    "name": "???",
+    "name": "Training Camp",
     "rank": "KING",
     "type": "BUILDING",
     "battle_type": "SPECIAL",
@@ -75848,7 +75848,7 @@
   },
   {
     "vnum": "14039",
-    "name": "???",
+    "name": "Training Camp",
     "rank": "KING",
     "type": "BUILDING",
     "battle_type": "SPECIAL",
@@ -75921,7 +75921,7 @@
   },
   {
     "vnum": "14040",
-    "name": "???",
+    "name": "Furnace",
     "rank": "KING",
     "type": "BUILDING",
     "battle_type": "SPECIAL",
@@ -75994,7 +75994,7 @@
   },
   {
     "vnum": "14041",
-    "name": "???",
+    "name": "Furnace",
     "rank": "KING",
     "type": "BUILDING",
     "battle_type": "SPECIAL",
@@ -76067,7 +76067,7 @@
   },
   {
     "vnum": "14042",
-    "name": "???",
+    "name": "Furnace",
     "rank": "KING",
     "type": "BUILDING",
     "battle_type": "SPECIAL",
@@ -76140,7 +76140,7 @@
   },
   {
     "vnum": "14043",
-    "name": "???",
+    "name": "Furnace",
     "rank": "KING",
     "type": "BUILDING",
     "battle_type": "SPECIAL",
@@ -76213,7 +76213,7 @@
   },
   {
     "vnum": "14044",
-    "name": "???",
+    "name": "Furnace",
     "rank": "KING",
     "type": "BUILDING",
     "battle_type": "SPECIAL",
@@ -76286,7 +76286,7 @@
   },
   {
     "vnum": "14045",
-    "name": "???",
+    "name": "Furnace",
     "rank": "KING",
     "type": "BUILDING",
     "battle_type": "SPECIAL",
@@ -76359,7 +76359,7 @@
   },
   {
     "vnum": "14046",
-    "name": "???",
+    "name": "Furnace",
     "rank": "KING",
     "type": "BUILDING",
     "battle_type": "SPECIAL",
@@ -76432,7 +76432,7 @@
   },
   {
     "vnum": "14047",
-    "name": "???",
+    "name": "Furnace",
     "rank": "KING",
     "type": "BUILDING",
     "battle_type": "SPECIAL",
@@ -76505,7 +76505,7 @@
   },
   {
     "vnum": "14048",
-    "name": "???",
+    "name": "Furnace",
     "rank": "KING",
     "type": "BUILDING",
     "battle_type": "SPECIAL",
@@ -76578,7 +76578,7 @@
   },
   {
     "vnum": "14049",
-    "name": "???",
+    "name": "Furnace",
     "rank": "KING",
     "type": "BUILDING",
     "battle_type": "SPECIAL",
@@ -76651,7 +76651,7 @@
   },
   {
     "vnum": "20001",
-    "name": "????",
+    "name": "Alchemist",
     "rank": "KING",
     "type": "NPC",
     "battle_type": "MELEE",
@@ -76724,7 +76724,7 @@
   },
   {
     "vnum": "20002",
-    "name": "???",
+    "name": "Aranyo",
     "rank": "KING",
     "type": "NPC",
     "battle_type": "MELEE",
@@ -76797,7 +76797,7 @@
   },
   {
     "vnum": "20003",
-    "name": "??",
+    "name": "Ah-Yu",
     "rank": "KING",
     "type": "NPC",
     "battle_type": "MELEE",
@@ -76870,7 +76870,7 @@
   },
   {
     "vnum": "20004",
-    "name": "??",
+    "name": "Beggar",
     "rank": "KING",
     "type": "NPC",
     "battle_type": "MELEE",
@@ -76943,7 +76943,7 @@
   },
   {
     "vnum": "20005",
-    "name": "???",
+    "name": "Yonah",
     "rank": "KING",
     "type": "NPC",
     "battle_type": "MELEE",
@@ -77016,7 +77016,7 @@
   },
   {
     "vnum": "20006",
-    "name": "???",
+    "name": "Mirine",
     "rank": "KING",
     "type": "NPC",
     "battle_type": "MELEE",
@@ -77089,7 +77089,7 @@
   },
   {
     "vnum": "20007",
-    "name": "???",
+    "name": "Storekeeper",
     "rank": "KING",
     "type": "NPC",
     "battle_type": "MELEE",
@@ -77162,7 +77162,7 @@
   },
   {
     "vnum": "20008",
-    "name": "??",
+    "name": "Octavio",
     "rank": "KING",
     "type": "NPC",
     "battle_type": "MELEE",
@@ -77235,7 +77235,7 @@
   },
   {
     "vnum": "20009",
-    "name": "??",
+    "name": "Old Man",
     "rank": "KING",
     "type": "NPC",
     "battle_type": "MELEE",
@@ -77308,7 +77308,7 @@
   },
   {
     "vnum": "20010",
-    "name": "???",
+    "name": "Peddler",
     "rank": "KING",
     "type": "NPC",
     "battle_type": "MELEE",
@@ -77381,7 +77381,7 @@
   },
   {
     "vnum": "20011",
-    "name": "???",
+    "name": "Uriel",
     "rank": "KING",
     "type": "NPC",
     "battle_type": "MELEE",
@@ -77454,7 +77454,7 @@
   },
   {
     "vnum": "20012",
-    "name": "??",
+    "name": "Yu-Rang",
     "rank": "KING",
     "type": "NPC",
     "battle_type": "MELEE",
@@ -77527,7 +77527,7 @@
   },
   {
     "vnum": "20013",
-    "name": "??",
+    "name": "Fisherman",
     "rank": "KING",
     "type": "NPC",
     "battle_type": "MELEE",
@@ -77600,7 +77600,7 @@
   },
   {
     "vnum": "20014",
-    "name": "???",
+    "name": "Taurean",
     "rank": "KING",
     "type": "NPC",
     "battle_type": "MELEE",
@@ -77673,7 +77673,7 @@
   },
   {
     "vnum": "20015",
-    "name": "??? ??",
+    "name": "Deokbae",
     "rank": "KING",
     "type": "NPC",
     "battle_type": "MELEE",
@@ -77819,7 +77819,7 @@
   },
   {
     "vnum": "20017",
-    "name": "??",
+    "name": "Yu-Hwan",
     "rank": "KING",
     "type": "NPC",
     "battle_type": "MELEE",
@@ -77892,7 +77892,7 @@
   },
   {
     "vnum": "20018",
-    "name": "??",
+    "name": "Baek-Go",
     "rank": "KING",
     "type": "NPC",
     "battle_type": "MELEE",
@@ -77965,7 +77965,7 @@
   },
   {
     "vnum": "20019",
-    "name": "??",
+    "name": "Yang-Shin",
     "rank": "KING",
     "type": "NPC",
     "battle_type": "MELEE",
@@ -78038,7 +78038,7 @@
   },
   {
     "vnum": "20020",
-    "name": "??? ??",
+    "name": "Traitor Balso",
     "rank": "KING",
     "type": "NPC",
     "battle_type": "MELEE",
@@ -78111,7 +78111,7 @@
   },
   {
     "vnum": "20021",
-    "name": "???",
+    "name": "Ariyoung",
     "rank": "KING",
     "type": "NPC",
     "battle_type": "MELEE",
@@ -78184,7 +78184,7 @@
   },
   {
     "vnum": "20022",
-    "name": "???",
+    "name": "Huahn-So",
     "rank": "KING",
     "type": "NPC",
     "battle_type": "MELEE",
@@ -78257,7 +78257,7 @@
   },
   {
     "vnum": "20023",
-    "name": "???",
+    "name": "Soon",
     "rank": "KING",
     "type": "NPC",
     "battle_type": "MELEE",
@@ -78330,7 +78330,7 @@
   },
   {
     "vnum": "20024",
-    "name": "???",
+    "name": "Harang",
     "rank": "KING",
     "type": "NPC",
     "battle_type": "MELEE",
@@ -78403,7 +78403,7 @@
   },
   {
     "vnum": "20025",
-    "name": ".",
+    "name": "Unknown NPC",
     "rank": "KING",
     "type": "NPC",
     "battle_type": "MELEE",
@@ -78476,7 +78476,7 @@
   },
   {
     "vnum": "20026",
-    "name": "???",
+    "name": "Ji-Ryu",
     "rank": "KING",
     "type": "NPC",
     "battle_type": "MELEE",
@@ -78549,7 +78549,7 @@
   },
   {
     "vnum": "20027",
-    "name": "???",
+    "name": "Gillian",
     "rank": "KING",
     "type": "NPC",
     "battle_type": "MELEE",
@@ -78622,7 +78622,7 @@
   },
   {
     "vnum": "20028",
-    "name": "?????",
+    "name": "Mirine Brother",
     "rank": "KING",
     "type": "NPC",
     "battle_type": "MELEE",
@@ -78695,7 +78695,7 @@
   },
   {
     "vnum": "20029",
-    "name": "???",
+    "name": "Pony",
     "rank": "KING",
     "type": "NPC",
     "battle_type": "MELEE",
@@ -78768,7 +78768,7 @@
   },
   {
     "vnum": "20030",
-    "name": "?",
+    "name": "Horse",
     "rank": "KING",
     "type": "NPC",
     "battle_type": "MELEE",
@@ -78841,7 +78841,7 @@
   },
   {
     "vnum": "20031",
-    "name": "?????",
+    "name": "Santa Claus",
     "rank": "KING",
     "type": "NPC",
     "battle_type": "MELEE",
@@ -78914,7 +78914,7 @@
   },
   {
     "vnum": "20032",
-    "name": "????? ??",
+    "name": "Christmas Tree",
     "rank": "KING",
     "type": "NPC",
     "battle_type": "MELEE",
@@ -78987,7 +78987,7 @@
   },
   {
     "vnum": "20033",
-    "name": "????? ??",
+    "name": "Christmas Tree",
     "rank": "KING",
     "type": "NPC",
     "battle_type": "MELEE",
@@ -79060,7 +79060,7 @@
   },
   {
     "vnum": "20034",
-    "name": "????? ??",
+    "name": "Christmas Tree",
     "rank": "KING",
     "type": "NPC",
     "battle_type": "MELEE",
@@ -79133,7 +79133,7 @@
   },
   {
     "vnum": "20035",
-    "name": "??",
+    "name": "Flag",
     "rank": "KING",
     "type": "NPC",
     "battle_type": "MELEE",
@@ -79206,7 +79206,7 @@
   },
   {
     "vnum": "20036",
-    "name": "??",
+    "name": "Flag",
     "rank": "KING",
     "type": "NPC",
     "battle_type": "MELEE",
@@ -79279,7 +79279,7 @@
   },
   {
     "vnum": "20037",
-    "name": "??",
+    "name": "Flag",
     "rank": "KING",
     "type": "NPC",
     "battle_type": "MELEE",
@@ -79352,7 +79352,7 @@
   },
   {
     "vnum": "20038",
-    "name": "..",
+    "name": "Unknown NPC",
     "rank": "KING",
     "type": "NPC",
     "battle_type": "MELEE",
@@ -79425,7 +79425,7 @@
   },
   {
     "vnum": "20039",
-    "name": ".",
+    "name": "Goto Point",
     "rank": "KING",
     "type": "GOTO",
     "battle_type": "MELEE",
@@ -79498,7 +79498,7 @@
   },
   {
     "vnum": "20040",
-    "name": "????",
+    "name": "Land Agent",
     "rank": "KING",
     "type": "NPC",
     "battle_type": "MELEE",
@@ -79571,7 +79571,7 @@
   },
   {
     "vnum": "20041",
-    "name": "??? ??",
+    "name": "Shabby Pedestrian",
     "rank": "KING",
     "type": "NPC",
     "battle_type": "MELEE",
@@ -79644,7 +79644,7 @@
   },
   {
     "vnum": "20042",
-    "name": "??? ???",
+    "name": "Peddler",
     "rank": "KING",
     "type": "NPC",
     "battle_type": "MELEE",
@@ -79717,7 +79717,7 @@
   },
   {
     "vnum": "20043",
-    "name": ".",
+    "name": "Unknown NPC",
     "rank": "KING",
     "type": "NPC",
     "battle_type": "MELEE",
@@ -79790,7 +79790,7 @@
   },
   {
     "vnum": "20044",
-    "name": "?? ???? ??",
+    "name": "Weaponsmith, Stanley",
     "rank": "KING",
     "type": "NPC",
     "battle_type": "MELEE",
@@ -79863,7 +79863,7 @@
   },
   {
     "vnum": "20045",
-    "name": "??? ???? ??",
+    "name": "Armoursmith, Stanton",
     "rank": "KING",
     "type": "NPC",
     "battle_type": "MELEE",
@@ -79936,7 +79936,7 @@
   },
   {
     "vnum": "20046",
-    "name": "???? ???? ??",
+    "name": "Acc. Designer, Starbuck",
     "rank": "KING",
     "type": "NPC",
     "battle_type": "MELEE",
@@ -80009,7 +80009,7 @@
   },
   {
     "vnum": "20047",
-    "name": "???????",
+    "name": "Vein Of Diamond Ore",
     "rank": "KING",
     "type": "NPC",
     "battle_type": "MELEE",
@@ -80082,7 +80082,7 @@
   },
   {
     "vnum": "20048",
-    "name": "????",
+    "name": "Vein Of Amber Ore",
     "rank": "KING",
     "type": "NPC",
     "battle_type": "MELEE",
@@ -80155,7 +80155,7 @@
   },
   {
     "vnum": "20049",
-    "name": "?????",
+    "name": "Vein Of Fossil Trunk Ore",
     "rank": "KING",
     "type": "NPC",
     "battle_type": "MELEE",
@@ -80228,7 +80228,7 @@
   },
   {
     "vnum": "20050",
-    "name": "????",
+    "name": "Vein Of Copper Ore",
     "rank": "KING",
     "type": "NPC",
     "battle_type": "MELEE",
@@ -80301,7 +80301,7 @@
   },
   {
     "vnum": "20051",
-    "name": "??",
+    "name": "Vein Of Silver Ore",
     "rank": "KING",
     "type": "NPC",
     "battle_type": "MELEE",
@@ -80374,7 +80374,7 @@
   },
   {
     "vnum": "20052",
-    "name": "??",
+    "name": "Vein Of Gold Ore",
     "rank": "KING",
     "type": "NPC",
     "battle_type": "MELEE",
@@ -80447,7 +80447,7 @@
   },
   {
     "vnum": "20053",
-    "name": "???",
+    "name": "Vein Of Jade Ore",
     "rank": "KING",
     "type": "NPC",
     "battle_type": "MELEE",
@@ -80520,7 +80520,7 @@
   },
   {
     "vnum": "20054",
-    "name": "????",
+    "name": "Vein Of Ebony Ore",
     "rank": "KING",
     "type": "NPC",
     "battle_type": "MELEE",
@@ -80593,7 +80593,7 @@
   },
   {
     "vnum": "20055",
-    "name": "?????",
+    "name": "Pile Of Clams",
     "rank": "KING",
     "type": "NPC",
     "battle_type": "MELEE",
@@ -80666,7 +80666,7 @@
   },
   {
     "vnum": "20056",
-    "name": "???",
+    "name": "Vein Of White Gold Ore",
     "rank": "KING",
     "type": "NPC",
     "battle_type": "MELEE",
@@ -80739,7 +80739,7 @@
   },
   {
     "vnum": "20057",
-    "name": "????",
+    "name": "Vein Of Crystal Ore",
     "rank": "KING",
     "type": "NPC",
     "battle_type": "MELEE",
@@ -80812,7 +80812,7 @@
   },
   {
     "vnum": "20058",
-    "name": "?????",
+    "name": "Vein Of Amethyst Ore",
     "rank": "KING",
     "type": "NPC",
     "battle_type": "MELEE",
@@ -80885,7 +80885,7 @@
   },
   {
     "vnum": "20059",
-    "name": "????",
+    "name": "Heaven's Tear Vein",
     "rank": "KING",
     "type": "NPC",
     "battle_type": "MELEE",
@@ -80958,7 +80958,7 @@
   },
   {
     "vnum": "20060",
-    "name": "????? ???? ??",
+    "name": "Diamond Alchemist",
     "rank": "KING",
     "type": "NPC",
     "battle_type": "MELEE",
@@ -81031,7 +81031,7 @@
   },
   {
     "vnum": "20061",
-    "name": "?? ???? ??",
+    "name": "Amber Alchemist",
     "rank": "KING",
     "type": "NPC",
     "battle_type": "MELEE",
@@ -81104,7 +81104,7 @@
   },
   {
     "vnum": "20062",
-    "name": "??? ???? ??",
+    "name": "Fossil Wood Alch.",
     "rank": "KING",
     "type": "NPC",
     "battle_type": "MELEE",
@@ -81177,7 +81177,7 @@
   },
   {
     "vnum": "20063",
-    "name": "?? ???? ??",
+    "name": "Copper Alchemist",
     "rank": "KING",
     "type": "NPC",
     "battle_type": "MELEE",
@@ -81250,7 +81250,7 @@
   },
   {
     "vnum": "20064",
-    "name": "? ???? ??",
+    "name": "Silver Alchemist",
     "rank": "KING",
     "type": "NPC",
     "battle_type": "MELEE",
@@ -81323,7 +81323,7 @@
   },
   {
     "vnum": "20065",
-    "name": "? ???? ???",
+    "name": "Gold Alchemist",
     "rank": "KING",
     "type": "NPC",
     "battle_type": "MELEE",
@@ -81396,7 +81396,7 @@
   },
   {
     "vnum": "20066",
-    "name": "?? ???? ??",
+    "name": "Jade Alchemist",
     "rank": "KING",
     "type": "NPC",
     "battle_type": "MELEE",
@@ -81469,7 +81469,7 @@
   },
   {
     "vnum": "20067",
-    "name": "?? ???? ???",
+    "name": "Ebony Alchemist",
     "rank": "KING",
     "type": "NPC",
     "battle_type": "MELEE",
@@ -81542,7 +81542,7 @@
   },
   {
     "vnum": "20068",
-    "name": "?? ???? ??",
+    "name": "Pearl Alchemist",
     "rank": "KING",
     "type": "NPC",
     "battle_type": "MELEE",
@@ -81615,7 +81615,7 @@
   },
   {
     "vnum": "20069",
-    "name": "?? ???? ??",
+    "name": "White Gold Alch.",
     "rank": "KING",
     "type": "NPC",
     "battle_type": "MELEE",
@@ -81688,7 +81688,7 @@
   },
   {
     "vnum": "20070",
-    "name": "?? ???? ??",
+    "name": "Crystal Alchemist",
     "rank": "KING",
     "type": "NPC",
     "battle_type": "MELEE",
@@ -81761,7 +81761,7 @@
   },
   {
     "vnum": "20071",
-    "name": "??? ???? ??",
+    "name": "Amethyst Alchemist",
     "rank": "KING",
     "type": "NPC",
     "battle_type": "MELEE",
@@ -81834,7 +81834,7 @@
   },
   {
     "vnum": "20072",
-    "name": "?? ???? ??",
+    "name": "Heaven's Tear Alch.",
     "rank": "KING",
     "type": "NPC",
     "battle_type": "MELEE",
@@ -81907,7 +81907,7 @@
   },
   {
     "vnum": "20073",
-    "name": "???",
+    "name": "Ancient Seal",
     "rank": "KING",
     "type": "NPC",
     "battle_type": "MELEE",
@@ -81980,7 +81980,7 @@
   },
   {
     "vnum": "20074",
-    "name": "??? ?? ????",
+    "name": "Demon Tower Weaponsmith",
     "rank": "KING",
     "type": "NPC",
     "battle_type": "MELEE",
@@ -82053,7 +82053,7 @@
   },
   {
     "vnum": "20075",
-    "name": "??? ??? ????",
+    "name": "Demon Tower Armorsmith",
     "rank": "KING",
     "type": "NPC",
     "battle_type": "MELEE",
@@ -82126,7 +82126,7 @@
   },
   {
     "vnum": "20076",
-    "name": "??? ???? ????",
+    "name": "Demon Tower Jeweler",
     "rank": "KING",
     "type": "NPC",
     "battle_type": "MELEE",
@@ -82199,7 +82199,7 @@
   },
   {
     "vnum": "20077",
-    "name": "???? ??? ??",
+    "name": "Altar Guard",
     "rank": "KING",
     "type": "NPC",
     "battle_type": "MELEE",
@@ -82272,7 +82272,7 @@
   },
   {
     "vnum": "20078",
-    "name": "???? ??? ??",
+    "name": "Altar Guard",
     "rank": "KING",
     "type": "NPC",
     "battle_type": "MELEE",
@@ -82345,7 +82345,7 @@
   },
   {
     "vnum": "20079",
-    "name": "???? ??? ??",
+    "name": "Altar Guard",
     "rank": "KING",
     "type": "NPC",
     "battle_type": "MELEE",
@@ -82418,7 +82418,7 @@
   },
   {
     "vnum": "20080",
-    "name": "??? ??? ??",
+    "name": "Training Leader",
     "rank": "KING",
     "type": "NPC",
     "battle_type": "MELEE",
@@ -82491,7 +82491,7 @@
   },
   {
     "vnum": "20081",
-    "name": "?? ???",
+    "name": "Stolen Gangway Seal",
     "rank": "KING",
     "type": "NPC",
     "battle_type": "MELEE",
@@ -82564,7 +82564,7 @@
   },
   {
     "vnum": "20082",
-    "name": "???",
+    "name": "Master",
     "rank": "KING",
     "type": "NPC",
     "battle_type": "MELEE",
@@ -82637,7 +82637,7 @@
   },
   {
     "vnum": "20083",
-    "name": "????? ????",
+    "name": "Jegal-Tunseok",
     "rank": "KING",
     "type": "NPC",
     "battle_type": "MELEE",
@@ -82710,7 +82710,7 @@
   },
   {
     "vnum": "20084",
-    "name": "???? ???",
+    "name": "Biologist Chaegirab",
     "rank": "KING",
     "type": "NPC",
     "battle_type": "MELEE",
@@ -82783,7 +82783,7 @@
   },
   {
     "vnum": "20085",
-    "name": "???? ???",
+    "name": "Jimjunja",
     "rank": "KING",
     "type": "NPC",
     "battle_type": "MELEE",
@@ -82856,7 +82856,7 @@
   },
   {
     "vnum": "20086",
-    "name": "???",
+    "name": "Handu-Up",
     "rank": "KING",
     "type": "NPC",
     "battle_type": "MELEE",
@@ -82929,7 +82929,7 @@
   },
   {
     "vnum": "20087",
-    "name": "???",
+    "name": "Wonda-Rim",
     "rank": "KING",
     "type": "NPC",
     "battle_type": "MELEE",
@@ -83002,7 +83002,7 @@
   },
   {
     "vnum": "20088",
-    "name": "??? ??",
+    "name": "Chuk-Sal",
     "rank": "KING",
     "type": "NPC",
     "battle_type": "MELEE",
@@ -83075,7 +83075,7 @@
   },
   {
     "vnum": "20089",
-    "name": "?? ???",
+    "name": "Pung-Ho",
     "rank": "KING",
     "type": "NPC",
     "battle_type": "MELEE",
@@ -83148,7 +83148,7 @@
   },
   {
     "vnum": "20090",
-    "name": "??? ??",
+    "name": "Heuk-Young",
     "rank": "KING",
     "type": "NPC",
     "battle_type": "MELEE",
@@ -83221,7 +83221,7 @@
   },
   {
     "vnum": "20091",
-    "name": "?? ??",
+    "name": "Seon-Pyeong",
     "rank": "KING",
     "type": "NPC",
     "battle_type": "MELEE",
@@ -83294,7 +83294,7 @@
   },
   {
     "vnum": "20092",
-    "name": "??? ??",
+    "name": "Hwa-Hee",
     "rank": "KING",
     "type": "NPC",
     "battle_type": "MELEE",
@@ -83367,7 +83367,7 @@
   },
   {
     "vnum": "20093",
-    "name": "??? ??",
+    "name": "Koe-Pung",
     "rank": "KING",
     "type": "NPC",
     "battle_type": "MELEE",
@@ -83440,7 +83440,7 @@
   },
   {
     "vnum": "20094",
-    "name": "?? ??",
+    "name": "Hong-Hae",
     "rank": "KING",
     "type": "NPC",
     "battle_type": "MELEE",
@@ -83513,7 +83513,7 @@
   },
   {
     "vnum": "20095",
-    "name": "??? ??",
+    "name": "Seon-Hae",
     "rank": "KING",
     "type": "NPC",
     "battle_type": "MELEE",
@@ -83586,7 +83586,7 @@
   },
   {
     "vnum": "20096",
-    "name": "??? ???",
+    "name": "Unknown NPC",
     "rank": "KING",
     "type": "NPC",
     "battle_type": "MELEE",
@@ -83659,7 +83659,7 @@
   },
   {
     "vnum": "20097",
-    "name": "????",
+    "name": "Castle Gate",
     "rank": "KING",
     "type": "NPC",
     "battle_type": "MELEE",
@@ -83732,7 +83732,7 @@
   },
   {
     "vnum": "20098",
-    "name": "????",
+    "name": "Castle Gate",
     "rank": "KING",
     "type": "NPC",
     "battle_type": "MELEE",
@@ -83805,7 +83805,7 @@
   },
   {
     "vnum": "20099",
-    "name": "????",
+    "name": "Castle Gate",
     "rank": "KING",
     "type": "NPC",
     "battle_type": "MELEE",
@@ -83878,7 +83878,7 @@
   },
   {
     "vnum": "20101",
-    "name": "??",
+    "name": "White Horse",
     "rank": "KING",
     "type": "NPC",
     "battle_type": "MELEE",
@@ -83951,7 +83951,7 @@
   },
   {
     "vnum": "20102",
-    "name": "??",
+    "name": "Brown Horse",
     "rank": "KING",
     "type": "NPC",
     "battle_type": "MELEE",
@@ -84024,7 +84024,7 @@
   },
   {
     "vnum": "20103",
-    "name": "??",
+    "name": "Black Horse",
     "rank": "KING",
     "type": "NPC",
     "battle_type": "MELEE",
@@ -84097,7 +84097,7 @@
   },
   {
     "vnum": "20104",
-    "name": "??",
+    "name": "White Horse",
     "rank": "KING",
     "type": "NPC",
     "battle_type": "MELEE",
@@ -84170,7 +84170,7 @@
   },
   {
     "vnum": "20105",
-    "name": "??",
+    "name": "Brown Horse",
     "rank": "KING",
     "type": "NPC",
     "battle_type": "MELEE",
@@ -84243,7 +84243,7 @@
   },
   {
     "vnum": "20106",
-    "name": "??",
+    "name": "Black Horse",
     "rank": "KING",
     "type": "NPC",
     "battle_type": "MELEE",
@@ -84316,7 +84316,7 @@
   },
   {
     "vnum": "20107",
-    "name": "??",
+    "name": "White Horse",
     "rank": "KING",
     "type": "NPC",
     "battle_type": "MELEE",
@@ -84389,7 +84389,7 @@
   },
   {
     "vnum": "20108",
-    "name": "??",
+    "name": "Brown Horse",
     "rank": "KING",
     "type": "NPC",
     "battle_type": "MELEE",
@@ -84462,7 +84462,7 @@
   },
   {
     "vnum": "20109",
-    "name": "??",
+    "name": "Black Horse",
     "rank": "KING",
     "type": "NPC",
     "battle_type": "MELEE",
@@ -85265,7 +85265,7 @@
   },
   {
     "vnum": "20120",
-    "name": "?????",
+    "name": "Pony",
     "rank": "KING",
     "type": "NPC",
     "battle_type": "MELEE",
@@ -85338,7 +85338,7 @@
   },
   {
     "vnum": "20121",
-    "name": "?????",
+    "name": "Pony",
     "rank": "KING",
     "type": "NPC",
     "battle_type": "MELEE",
@@ -85411,7 +85411,7 @@
   },
   {
     "vnum": "20122",
-    "name": "?????",
+    "name": "Pony",
     "rank": "KING",
     "type": "NPC",
     "battle_type": "MELEE",
@@ -85484,7 +85484,7 @@
   },
   {
     "vnum": "20123",
-    "name": "?????",
+    "name": "Pony",
     "rank": "KING",
     "type": "NPC",
     "battle_type": "MELEE",
@@ -85557,7 +85557,7 @@
   },
   {
     "vnum": "20124",
-    "name": "?????",
+    "name": "Pony",
     "rank": "KING",
     "type": "NPC",
     "battle_type": "MELEE",
@@ -85630,7 +85630,7 @@
   },
   {
     "vnum": "20125",
-    "name": "?????",
+    "name": "Pony",
     "rank": "KING",
     "type": "NPC",
     "battle_type": "MELEE",
@@ -85703,7 +85703,7 @@
   },
   {
     "vnum": "20126",
-    "name": "???????",
+    "name": "Santa Claus",
     "rank": "KING",
     "type": "NPC",
     "battle_type": "MELEE",
@@ -85776,7 +85776,7 @@
   },
   {
     "vnum": "20201",
-    "name": "??????",
+    "name": "Boar",
     "rank": "KING",
     "type": "NPC",
     "battle_type": "MELEE",
@@ -85849,7 +85849,7 @@
   },
   {
     "vnum": "20202",
-    "name": "??????",
+    "name": "Dog God",
     "rank": "KING",
     "type": "NPC",
     "battle_type": "MELEE",
@@ -85922,7 +85922,7 @@
   },
   {
     "vnum": "20203",
-    "name": "?????",
+    "name": "Unknown NPC",
     "rank": "KING",
     "type": "NPC",
     "battle_type": "MELEE",
@@ -85995,7 +85995,7 @@
   },
   {
     "vnum": "20204",
-    "name": "???????",
+    "name": "Lion",
     "rank": "KING",
     "type": "NPC",
     "battle_type": "MELEE",
@@ -86068,7 +86068,7 @@
   },
   {
     "vnum": "20205",
-    "name": "?????? ??????",
+    "name": "Boar",
     "rank": "KING",
     "type": "NPC",
     "battle_type": "MELEE",
@@ -86141,7 +86141,7 @@
   },
   {
     "vnum": "20206",
-    "name": "?????? ??????",
+    "name": "Dog God",
     "rank": "KING",
     "type": "NPC",
     "battle_type": "MELEE",
@@ -86214,7 +86214,7 @@
   },
   {
     "vnum": "20207",
-    "name": "?????? ?????",
+    "name": "Unknown NPC",
     "rank": "KING",
     "type": "NPC",
     "battle_type": "MELEE",
@@ -86287,7 +86287,7 @@
   },
   {
     "vnum": "20208",
-    "name": "?????? ???????",
+    "name": "Lion",
     "rank": "KING",
     "type": "NPC",
     "battle_type": "MELEE",
@@ -86360,7 +86360,7 @@
   },
   {
     "vnum": "20209",
-    "name": "?????? ??????",
+    "name": "Boar",
     "rank": "KING",
     "type": "NPC",
     "battle_type": "MELEE",
@@ -86433,7 +86433,7 @@
   },
   {
     "vnum": "20210",
-    "name": "?????? ??????",
+    "name": "Dog God",
     "rank": "KING",
     "type": "NPC",
     "battle_type": "MELEE",
@@ -86506,7 +86506,7 @@
   },
   {
     "vnum": "20211",
-    "name": "?????? ?????",
+    "name": "Unknown NPC",
     "rank": "KING",
     "type": "NPC",
     "battle_type": "MELEE",
@@ -86579,7 +86579,7 @@
   },
   {
     "vnum": "20212",
-    "name": "?????? ???????",
+    "name": "Lion",
     "rank": "KING",
     "type": "NPC",
     "battle_type": "MELEE",
@@ -86652,7 +86652,7 @@
   },
   {
     "vnum": "20213",
-    "name": "?????????",
+    "name": "Unknown NPC",
     "rank": "KING",
     "type": "NPC",
     "battle_type": "MELEE",
@@ -86725,7 +86725,7 @@
   },
   {
     "vnum": "20214",
-    "name": "?????? ?????????",
+    "name": "Unknown NPC",
     "rank": "KING",
     "type": "NPC",
     "battle_type": "MELEE",
@@ -86798,7 +86798,7 @@
   },
   {
     "vnum": "20215",
-    "name": "?????? ?????????",
+    "name": "Unknown NPC",
     "rank": "KING",
     "type": "NPC",
     "battle_type": "MELEE",
@@ -86871,7 +86871,7 @@
   },
   {
     "vnum": "20216",
-    "name": "????????",
+    "name": "Unknown NPC",
     "rank": "KING",
     "type": "NPC",
     "battle_type": "MELEE",
@@ -86944,7 +86944,7 @@
   },
   {
     "vnum": "20217",
-    "name": "?????? ????????",
+    "name": "Unknown NPC",
     "rank": "KING",
     "type": "NPC",
     "battle_type": "MELEE",
@@ -87017,7 +87017,7 @@
   },
   {
     "vnum": "20218",
-    "name": "?????? ????????",
+    "name": "Unknown NPC",
     "rank": "KING",
     "type": "NPC",
     "battle_type": "MELEE",
@@ -87747,7 +87747,7 @@
   },
   {
     "vnum": "20300",
-    "name": "??? ?? ??",
+    "name": "Body-Force Teacher",
     "rank": "KING",
     "type": "NPC",
     "battle_type": "MELEE",
@@ -87820,7 +87820,7 @@
   },
   {
     "vnum": "20301",
-    "name": "??? ?? ??",
+    "name": "Mental-Fight Teacher",
     "rank": "KING",
     "type": "NPC",
     "battle_type": "MELEE",
@@ -87893,7 +87893,7 @@
   },
   {
     "vnum": "20302",
-    "name": "??? ?? ??",
+    "name": "Blade-Fight Teacher",
     "rank": "KING",
     "type": "NPC",
     "battle_type": "MELEE",
@@ -87966,7 +87966,7 @@
   },
   {
     "vnum": "20303",
-    "name": "??? ?? ??",
+    "name": "Archery Teacher",
     "rank": "KING",
     "type": "NPC",
     "battle_type": "MELEE",
@@ -88039,7 +88039,7 @@
   },
   {
     "vnum": "20304",
-    "name": "??? ?? ???",
+    "name": "Weaponry Teacher",
     "rank": "KING",
     "type": "NPC",
     "battle_type": "MELEE",
@@ -88112,7 +88112,7 @@
   },
   {
     "vnum": "20305",
-    "name": "??? ?? ??",
+    "name": "Black Magic Teacher",
     "rank": "KING",
     "type": "NPC",
     "battle_type": "MELEE",
@@ -88185,7 +88185,7 @@
   },
   {
     "vnum": "20306",
-    "name": "??? ?? ??",
+    "name": "Dragon Force Teacher",
     "rank": "KING",
     "type": "NPC",
     "battle_type": "MELEE",
@@ -88258,7 +88258,7 @@
   },
   {
     "vnum": "20307",
-    "name": "??? ?? ??",
+    "name": "Healing Force Teacher",
     "rank": "KING",
     "type": "NPC",
     "battle_type": "MELEE",
@@ -88331,7 +88331,7 @@
   },
   {
     "vnum": "20320",
-    "name": "??? ?? ??",
+    "name": "Body-Force Teacher",
     "rank": "KING",
     "type": "NPC",
     "battle_type": "MELEE",
@@ -88404,7 +88404,7 @@
   },
   {
     "vnum": "20321",
-    "name": "??? ?? ??",
+    "name": "Mental-Fight Teacher",
     "rank": "KING",
     "type": "NPC",
     "battle_type": "MELEE",
@@ -88477,7 +88477,7 @@
   },
   {
     "vnum": "20322",
-    "name": "??? ?? ??",
+    "name": "Blade-Fight Teacher",
     "rank": "KING",
     "type": "NPC",
     "battle_type": "MELEE",
@@ -88550,7 +88550,7 @@
   },
   {
     "vnum": "20323",
-    "name": "??? ?? ??",
+    "name": "Archery Teacher",
     "rank": "KING",
     "type": "NPC",
     "battle_type": "MELEE",
@@ -88623,7 +88623,7 @@
   },
   {
     "vnum": "20324",
-    "name": "??? ?? ??",
+    "name": "Weaponry Teacher",
     "rank": "KING",
     "type": "NPC",
     "battle_type": "MELEE",
@@ -88696,7 +88696,7 @@
   },
   {
     "vnum": "20325",
-    "name": "??? ?? ??",
+    "name": "Black Magic Teacher",
     "rank": "KING",
     "type": "NPC",
     "battle_type": "MELEE",
@@ -88769,7 +88769,7 @@
   },
   {
     "vnum": "20326",
-    "name": "??? ?? ???",
+    "name": "Dragon Force Teacher",
     "rank": "KING",
     "type": "NPC",
     "battle_type": "MELEE",
@@ -88842,7 +88842,7 @@
   },
   {
     "vnum": "20327",
-    "name": "??? ?? ??",
+    "name": "Healing Force Teacher",
     "rank": "KING",
     "type": "NPC",
     "battle_type": "MELEE",
@@ -88915,7 +88915,7 @@
   },
   {
     "vnum": "20340",
-    "name": "??? ?? ??",
+    "name": "Body-Force Teacher",
     "rank": "KING",
     "type": "NPC",
     "battle_type": "MELEE",
@@ -88988,7 +88988,7 @@
   },
   {
     "vnum": "20341",
-    "name": "??? ?? ???",
+    "name": "Mental-Fight Teacher",
     "rank": "KING",
     "type": "NPC",
     "battle_type": "MELEE",
@@ -89061,7 +89061,7 @@
   },
   {
     "vnum": "20342",
-    "name": "??? ?? ???",
+    "name": "Blade-Fight Teacher",
     "rank": "KING",
     "type": "NPC",
     "battle_type": "MELEE",
@@ -89134,7 +89134,7 @@
   },
   {
     "vnum": "20343",
-    "name": "??? ?? ???",
+    "name": "Archery Teacher",
     "rank": "KING",
     "type": "NPC",
     "battle_type": "MELEE",
@@ -89207,7 +89207,7 @@
   },
   {
     "vnum": "20344",
-    "name": "??? ?? ???",
+    "name": "Weaponry Teacher",
     "rank": "KING",
     "type": "NPC",
     "battle_type": "MELEE",
@@ -89280,7 +89280,7 @@
   },
   {
     "vnum": "20345",
-    "name": "??? ?? ???",
+    "name": "Black Magic Teacher",
     "rank": "KING",
     "type": "NPC",
     "battle_type": "MELEE",
@@ -89353,7 +89353,7 @@
   },
   {
     "vnum": "20346",
-    "name": "??? ?? ??",
+    "name": "Dragon Force Teacher",
     "rank": "KING",
     "type": "NPC",
     "battle_type": "MELEE",
@@ -89426,7 +89426,7 @@
   },
   {
     "vnum": "20347",
-    "name": "??? ?? ??",
+    "name": "Healing Force Teacher",
     "rank": "KING",
     "type": "NPC",
     "battle_type": "MELEE",
@@ -89499,7 +89499,7 @@
   },
   {
     "vnum": "20348",
-    "name": "??? ???",
+    "name": "Demon Tower Guard",
     "rank": "KING",
     "type": "NPC",
     "battle_type": "MELEE",
@@ -89572,7 +89572,7 @@
   },
   {
     "vnum": "20349",
-    "name": "??? ???",
+    "name": "Stable Boy",
     "rank": "KING",
     "type": "NPC",
     "battle_type": "MELEE",
@@ -89645,7 +89645,7 @@
   },
   {
     "vnum": "20350",
-    "name": "?? ???",
+    "name": "Dungeon Guard",
     "rank": "KING",
     "type": "NPC",
     "battle_type": "MELEE",
@@ -89718,7 +89718,7 @@
   },
   {
     "vnum": "20351",
-    "name": "?? ???",
+    "name": "Hall Guard",
     "rank": "KING",
     "type": "NPC",
     "battle_type": "MELEE",
@@ -89791,7 +89791,7 @@
   },
   {
     "vnum": "20352",
-    "name": "??? ????",
+    "name": "Hasun Stone Memorial",
     "rank": "KING",
     "type": "NPC",
     "battle_type": "MELEE",
@@ -89864,7 +89864,7 @@
   },
   {
     "vnum": "20353",
-    "name": "??? ????",
+    "name": "Seul Rong Stone Memorial",
     "rank": "KING",
     "type": "NPC",
     "battle_type": "MELEE",
@@ -89937,7 +89937,7 @@
   },
   {
     "vnum": "20354",
-    "name": "???? ???",
+    "name": "City Guard",
     "rank": "KING",
     "type": "NPC",
     "battle_type": "MELEE",
@@ -90010,7 +90010,7 @@
   },
   {
     "vnum": "20355",
-    "name": "???? ???",
+    "name": "Captain",
     "rank": "KING",
     "type": "NPC",
     "battle_type": "MELEE",
@@ -90083,7 +90083,7 @@
   },
   {
     "vnum": "20356",
-    "name": "??? ?? ???",
+    "name": "Ginseng Collector",
     "rank": "KING",
     "type": "NPC",
     "battle_type": "MELEE",
@@ -90156,7 +90156,7 @@
   },
   {
     "vnum": "20357",
-    "name": "?????",
+    "name": "Weol Memorial",
     "rank": "KING",
     "type": "NPC",
     "battle_type": "MELEE",
@@ -90229,7 +90229,7 @@
   },
   {
     "vnum": "20358",
-    "name": "???? ?",
+    "name": "Nameless Flowers",
     "rank": "KING",
     "type": "NPC",
     "battle_type": "MELEE",
@@ -90302,7 +90302,7 @@
   },
   {
     "vnum": "20359",
-    "name": "????????",
+    "name": "Old Box with Papers",
     "rank": "KING",
     "type": "NPC",
     "battle_type": "MELEE",
@@ -90375,7 +90375,7 @@
   },
   {
     "vnum": "20360",
-    "name": "?????",
+    "name": "Wha Memorial",
     "rank": "KING",
     "type": "NPC",
     "battle_type": "MELEE",
@@ -90448,7 +90448,7 @@
   },
   {
     "vnum": "20361",
-    "name": "?????",
+    "name": "Su Memorial",
     "rank": "KING",
     "type": "NPC",
     "battle_type": "MELEE",
@@ -90521,7 +90521,7 @@
   },
   {
     "vnum": "20362",
-    "name": "?????",
+    "name": "Mok Memorial",
     "rank": "KING",
     "type": "NPC",
     "battle_type": "MELEE",
@@ -90594,7 +90594,7 @@
   },
   {
     "vnum": "20363",
-    "name": "?????",
+    "name": "Gum Memorial",
     "rank": "KING",
     "type": "NPC",
     "battle_type": "MELEE",
@@ -90667,7 +90667,7 @@
   },
   {
     "vnum": "20364",
-    "name": "????",
+    "name": "Nakajima",
     "rank": "KING",
     "type": "NPC",
     "battle_type": "MELEE",
@@ -90740,7 +90740,7 @@
   },
   {
     "vnum": "20365",
-    "name": "?????",
+    "name": "To Memorial",
     "rank": "KING",
     "type": "NPC",
     "battle_type": "MELEE",
@@ -90813,7 +90813,7 @@
   },
   {
     "vnum": "20366",
-    "name": "?????",
+    "name": "Sa-Soe",
     "rank": "KING",
     "type": "NPC",
     "battle_type": "MELEE",
@@ -90886,7 +90886,7 @@
   },
   {
     "vnum": "20367",
-    "name": "?????? ??????",
+    "name": "Catacomb Guard",
     "rank": "KING",
     "type": "NPC",
     "battle_type": "MELEE",
@@ -90959,7 +90959,7 @@
   },
   {
     "vnum": "20368",
-    "name": "?????? ?????",
+    "name": "Peddler",
     "rank": "KING",
     "type": "NPC",
     "battle_type": "MELEE",
@@ -93003,7 +93003,7 @@
   },
   {
     "vnum": "30000",
-    "name": "????",
+    "name": "Unknown NPC",
     "rank": "KING",
     "type": "NPC",
     "battle_type": "MELEE",
@@ -93076,7 +93076,7 @@
   },
   {
     "vnum": "30001",
-    "name": "????",
+    "name": "Unknown NPC",
     "rank": "KING",
     "type": "NPC",
     "battle_type": "MELEE",
@@ -93149,7 +93149,7 @@
   },
   {
     "vnum": "30101",
-    "name": "??????????",
+    "name": "Kud Statue",
     "rank": "KING",
     "type": "NPC",
     "battle_type": "MELEE",
@@ -93222,7 +93222,7 @@
   },
   {
     "vnum": "30102",
-    "name": "?????????",
+    "name": "Basalt Obelisk",
     "rank": "KING",
     "type": "NPC",
     "battle_type": "MELEE",
@@ -93295,7 +93295,7 @@
   },
   {
     "vnum": "30103",
-    "name": "?????",
+    "name": "Tortoise Rock",
     "rank": "KING",
     "type": "NPC",
     "battle_type": "MELEE",
@@ -93368,7 +93368,7 @@
   },
   {
     "vnum": "30104",
-    "name": "????",
+    "name": "Rune Stake",
     "rank": "KING",
     "type": "NPC",
     "battle_type": "MELEE",
@@ -93441,7 +93441,7 @@
   },
   {
     "vnum": "30111",
-    "name": "?????",
+    "name": "1st Gate of Perdition",
     "rank": "KNIGHT",
     "type": "DOOR",
     "battle_type": "SPECIAL",
@@ -93514,7 +93514,7 @@
   },
   {
     "vnum": "30112",
-    "name": "?????",
+    "name": "2nd Gate of Perdition",
     "rank": "KNIGHT",
     "type": "DOOR",
     "battle_type": "SPECIAL",
@@ -93587,7 +93587,7 @@
   },
   {
     "vnum": "30113",
-    "name": "?????",
+    "name": "3rd Gate of Perdition",
     "rank": "KNIGHT",
     "type": "DOOR",
     "battle_type": "SPECIAL",
@@ -93660,7 +93660,7 @@
   },
   {
     "vnum": "30114",
-    "name": "?????",
+    "name": "4th Gate of Perdition",
     "rank": "KNIGHT",
     "type": "DOOR",
     "battle_type": "SPECIAL",
@@ -93733,7 +93733,7 @@
   },
   {
     "vnum": "30115",
-    "name": "?????",
+    "name": "5th Gate of Perdition",
     "rank": "KNIGHT",
     "type": "DOOR",
     "battle_type": "SPECIAL",
@@ -93806,7 +93806,7 @@
   },
   {
     "vnum": "30116",
-    "name": "?????",
+    "name": "6th Gate of Perdition",
     "rank": "KNIGHT",
     "type": "DOOR",
     "battle_type": "SPECIAL",
@@ -93879,7 +93879,7 @@
   },
   {
     "vnum": "30117",
-    "name": "?????",
+    "name": "7th Gate of Perdition",
     "rank": "KNIGHT",
     "type": "DOOR",
     "battle_type": "SPECIAL",
@@ -93952,7 +93952,7 @@
   },
   {
     "vnum": "30118",
-    "name": "?????",
+    "name": "8th Gate of Perdition",
     "rank": "KNIGHT",
     "type": "DOOR",
     "battle_type": "SPECIAL",
@@ -94025,7 +94025,7 @@
   },
   {
     "vnum": "30119",
-    "name": "?????",
+    "name": "9th Gate of Perdition",
     "rank": "KNIGHT",
     "type": "DOOR",
     "battle_type": "SPECIAL",
@@ -94098,7 +94098,7 @@
   },
   {
     "vnum": "30120",
-    "name": "??????��??",
+    "name": "Herb Bag",
     "rank": "KING",
     "type": "NPC",
     "battle_type": "MELEE",
@@ -94171,7 +94171,7 @@
   },
   {
     "vnum": "30121",
-    "name": "??????",
+    "name": "Ghost of a Sura",
     "rank": "KING",
     "type": "NPC",
     "battle_type": "MELEE",
@@ -94244,7 +94244,7 @@
   },
   {
     "vnum": "30122",
-    "name": "??????",
+    "name": "Ghost of a Warrior",
     "rank": "KING",
     "type": "NPC",
     "battle_type": "MELEE",
@@ -94317,7 +94317,7 @@
   },
   {
     "vnum": "30123",
-    "name": "???????????",
+    "name": "Dark Shrine",
     "rank": "KING",
     "type": "NPC",
     "battle_type": "MELEE",
@@ -94390,7 +94390,7 @@
   },
   {
     "vnum": "30124",
-    "name": "???????1",
+    "name": "Sura-Skeleton 1",
     "rank": "KING",
     "type": "NPC",
     "battle_type": "MELEE",
@@ -94463,7 +94463,7 @@
   },
   {
     "vnum": "30125",
-    "name": "???????2",
+    "name": "Sura-Skeleton 2",
     "rank": "KING",
     "type": "NPC",
     "battle_type": "MELEE",
@@ -94536,7 +94536,7 @@
   },
   {
     "vnum": "30126",
-    "name": "???????3",
+    "name": "Sura-Skeleton 3",
     "rank": "KING",
     "type": "NPC",
     "battle_type": "MELEE",
@@ -94609,7 +94609,7 @@
   },
   {
     "vnum": "30127",
-    "name": "???????4",
+    "name": "Sura-Skeleton 4",
     "rank": "KING",
     "type": "NPC",
     "battle_type": "MELEE",
@@ -94682,7 +94682,7 @@
   },
   {
     "vnum": "30128",
-    "name": "???????5",
+    "name": "Sura-Skeleton 5",
     "rank": "KING",
     "type": "NPC",
     "battle_type": "MELEE",
@@ -94755,7 +94755,7 @@
   },
   {
     "vnum": "30129",
-    "name": "???????",
+    "name": "Easter Bunny",
     "rank": "KING",
     "type": "NPC",
     "battle_type": "MELEE",
@@ -95266,7 +95266,7 @@
   },
   {
     "vnum": "33001",
-    "name": "?????? ???",
+    "name": "Unknown NPC",
     "rank": "KING",
     "type": "NPC",
     "battle_type": "MELEE",
@@ -95339,7 +95339,7 @@
   },
   {
     "vnum": "33002",
-    "name": "?????? ????",
+    "name": "Historian",
     "rank": "KING",
     "type": "NPC",
     "battle_type": "MELEE",
@@ -95412,7 +95412,7 @@
   },
   {
     "vnum": "33003",
-    "name": "????? ?",
+    "name": "NoNAme",
     "rank": "KING",
     "type": "NPC",
     "battle_type": "MELEE",
@@ -95485,7 +95485,7 @@
   },
   {
     "vnum": "33004",
-    "name": "????? ?",
+    "name": "NoNAme",
     "rank": "KING",
     "type": "NPC",
     "battle_type": "MELEE",
@@ -95558,7 +95558,7 @@
   },
   {
     "vnum": "33005",
-    "name": "????? ?",
+    "name": "NoNAme",
     "rank": "KING",
     "type": "NPC",
     "battle_type": "MELEE",
@@ -95631,7 +95631,7 @@
   },
   {
     "vnum": "33006",
-    "name": "????? ?",
+    "name": "NoNAme",
     "rank": "KING",
     "type": "NPC",
     "battle_type": "MELEE",
@@ -95704,7 +95704,7 @@
   },
   {
     "vnum": "33007",
-    "name": "????? ?",
+    "name": "NoNAme",
     "rank": "KING",
     "type": "NPC",
     "battle_type": "MELEE",
@@ -95777,7 +95777,7 @@
   },
   {
     "vnum": "33008",
-    "name": "????? ??",
+    "name": "Jack Pumpkin",
     "rank": "KING",
     "type": "NPC",
     "battle_type": "MELEE",
@@ -95923,7 +95923,7 @@
   },
   {
     "vnum": "34002",
-    "name": "??? ???",
+    "name": "Reindeer Young",
     "rank": "KING",
     "type": "NPC",
     "battle_type": "MELEE",
@@ -95996,7 +95996,7 @@
   },
   {
     "vnum": "34003",
-    "name": "?????????",
+    "name": "Phoenix1",
     "rank": "KING",
     "type": "NPC",
     "battle_type": "MELEE",
@@ -97091,7 +97091,7 @@
   },
   {
     "vnum": "33010",
-    "name": "?? ???? ??",
+    "name": "Rubin Alchemist",
     "rank": "KING",
     "type": "NPC",
     "battle_type": "MELEE",
@@ -97164,7 +97164,7 @@
   },
   {
     "vnum": "33011",
-    "name": "?? ???? ??",
+    "name": "Garnet Alchemist",
     "rank": "KING",
     "type": "NPC",
     "battle_type": "MELEE",
@@ -97237,7 +97237,7 @@
   },
   {
     "vnum": "33012",
-    "name": "?? ???? ??",
+    "name": "Smaragd Alchemist",
     "rank": "KING",
     "type": "NPC",
     "battle_type": "MELEE",
@@ -97310,7 +97310,7 @@
   },
   {
     "vnum": "33013",
-    "name": "?? ???? ??",
+    "name": "Sapphire Alchemist",
     "rank": "KING",
     "type": "NPC",
     "battle_type": "MELEE",
