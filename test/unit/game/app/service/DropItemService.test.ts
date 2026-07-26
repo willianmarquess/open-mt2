@@ -32,7 +32,7 @@ describe('DropItemService', function () {
                 dropItem: sinon.spy(),
                 chat: sinon.spy(),
                 getName: sinon.stub().returns('TestPlayer'),
-            isItemLockedInPrivateShop: sinon.stub().returns(false),
+                isItemLockedInPrivateShop: sinon.stub().returns(false),
                 addPoint: sinon.spy(),
             };
 
@@ -55,7 +55,7 @@ describe('DropItemService', function () {
                 dropItem: sinon.spy(),
                 chat: sinon.spy(),
                 getName: sinon.stub().returns('TestPlayer'),
-            isItemLockedInPrivateShop: sinon.stub().returns(false),
+                isItemLockedInPrivateShop: sinon.stub().returns(false),
                 addPoint: sinon.spy(),
             };
 

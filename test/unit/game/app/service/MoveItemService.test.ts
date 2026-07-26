@@ -95,6 +95,7 @@ describe('MoveItemService', function () {
             };
             const playerMock = {
                 getId: sinon.stub().returns(1),
+                isItemLockedInPrivateShop: sinon.stub().returns(false),
                 getItem: sinon.stub(),
                 moveItem: sinon.stub(),
                 getInventory: sinon.stub().returns(inventoryMock),
@@ -130,6 +131,7 @@ describe('MoveItemService', function () {
             };
             const playerMock = {
                 getId: sinon.stub().returns(1),
+                isItemLockedInPrivateShop: sinon.stub().returns(false),
                 getItem: sinon.stub(),
                 moveItem: sinon.stub(),
                 getInventory: sinon.stub().returns(inventoryMock),
