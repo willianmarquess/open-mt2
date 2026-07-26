@@ -16,6 +16,8 @@ describe('PlayerFactory', () => {
     };
     const saveCharacterService: any = {};
     let questManager: any = {};
+    const eventTimerManager: any = {};
+    const mobManager: any = {};
 
     beforeEach(() => {
         config = {
@@ -57,7 +59,8 @@ describe('PlayerFactory', () => {
             logger,
             saveCharacterService,
             questManager,
-            mobManager: {} as any,
+            eventTimerManager,
+            mobManager,
         });
     });
 

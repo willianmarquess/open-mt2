@@ -4,6 +4,9 @@
     "color": true,
     "file": "test/setup.integration.ts",
     "timeout": 10000,
+    "node-option": [
+        "no-experimental-strip-types"
+    ],
     "require": [
         "ts-node/register"
     ]

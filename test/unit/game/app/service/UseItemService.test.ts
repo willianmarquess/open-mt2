@@ -22,6 +22,7 @@ describe('UseItemService', () => {
         });
         playerStub = {
             getItem: sinon.stub(),
+            isItemLockedInPrivateShop: sinon.stub().returns(false),
             getInventory: sinon.stub(),
             sendItemRemoved: sinon.stub(),
             sendItemAdded: sinon.stub(),

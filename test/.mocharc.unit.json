@@ -4,6 +4,9 @@
     ],
     "spec": "test/unit/**/*.test.ts",
     "color": true,
+    "node-option": [
+        "no-experimental-strip-types"
+    ],
     "require": [
         "ts-node/register"
     ],

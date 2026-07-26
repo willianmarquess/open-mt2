@@ -1,4 +1,6 @@
 import BufferWriter from '@/core/interface/networking/buffer/BufferWriter';
+import CharacterInfoPacket from '@/core/interface/networking/packets/packet/out/CharacterInfoPacket';
+import CharacterSpawnPacket from '@/core/interface/networking/packets/packet/out/CharacterSpawnPacket';
 import { expect } from 'chai';
 
 describe('BufferWriter', function () {
@@ -49,5 +51,57 @@ describe('BufferWriter', function () {
         const buffer = bufferWriter.getBuffer();
 
         expect(buffer.readFloatLE(1)).to.be.closeTo(3.14, 0.00001);
+    });
+
+    it('should reset the cursor on getBuffer so the writer can be reused', function () {
+        bufferWriter.writeUint8(0x02).writeUint32LE(1234);
+        const first = Buffer.from(bufferWriter.getBuffer());
+
+        bufferWriter.writeUint8(0x02).writeUint32LE(1234);
+        const second = Buffer.from(bufferWriter.getBuffer());
+
+        expect(second.equals(first)).to.be.equal(true);
+    });
+
+    describe('packet reuse (single-use packet regression)', function () {
+        it('should allow packing the same fixed-size packet more than once', function () {
+            const packet = new CharacterSpawnPacket({
+                vid: 1,
+                playerClass: 0,
+                entityType: 6,
+                attackSpeed: 100,
+                movementSpeed: 100,
+                positionX: 100,
+                positionY: 200,
+                positionZ: 0,
+                rotation: 0,
+                affects: [0, 0],
+                state: 0,
+            });
+
+            const first = Buffer.from(packet.pack());
+            const second = Buffer.from(packet.pack());
+
+            expect(second.equals(first)).to.be.equal(true);
+        });
+
+        it('should allow packing a string-field packet more than once', function () {
+            const packet = new CharacterInfoPacket({
+                vid: 1,
+                playerName: 'Rider',
+                parts: [1, 2, 0, 3],
+                empireId: 1,
+                guildId: 0,
+                level: 25,
+                rankPoints: 0,
+                pkMode: 0,
+                mountId: 20101,
+            });
+
+            const first = Buffer.from(packet.pack());
+            const second = Buffer.from(packet.pack());
+
+            expect(second.equals(first)).to.be.equal(true);
+        });
     });
 });

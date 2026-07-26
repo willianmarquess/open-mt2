@@ -9,6 +9,9 @@ import ItemManager from '../manager/ItemManager';
 import MathUtil from '../util/MathUtil';
 import { WindowTypeEnum } from '@/core/enum/WindowTypeEnum';
 
+// Sent by the client when the quest window is closed instead of picking an option.
+const CLOSE_WINDOW_ANSWER = 254;
+
 export abstract class AbstractQuest {
     private readonly id!: number;
     private name!: string;
@@ -250,9 +253,14 @@ export abstract class AbstractQuest {
         this.nextPagePromise.resolve();
     }
 
+    /**
+     * Release whatever the quest is currently waiting on (the player closed the
+     * quest window). A pending select resolves with the out-of-range close answer,
+     * so option checks in the quest script simply don't match and the quest ends.
+     */
     public cancel() {
         if (this.status === QuestStatusEnum.SELECT) {
-            this.currentChoicePromise.resolve(254);
+            this.currentChoicePromise.resolve(CLOSE_WINDOW_ANSWER);
             return;
         }
 

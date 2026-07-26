@@ -4,9 +4,8 @@ import { ItemAntiFlagEnum } from '@/core/enum/ItemAntiFlagEnum';
 import { ShopSubHeaderGC } from '@/core/enum/ShopSubHeaderEnum';
 import { PointsEnum } from '@/core/enum/PointsEnum';
 import { WindowTypeEnum } from '@/core/enum/WindowTypeEnum';
-import PrivateShop, { PrivateShopItem } from '@/core/domain/shop/PrivateShop';
+import PrivateShop, { PrivateShopItem, PRIVATE_SHOP_MAX_ITEMS } from '@/core/domain/shop/PrivateShop';
 import { MyShopItemEntry } from '@/core/interface/networking/packets/packet/in/myshop/MyShopPacket';
-import { PRIVATE_SHOP_MAX_ITEMS } from '@/core/domain/shop/PrivateShop';
 import ItemManager from '@/core/domain/manager/ItemManager';
 import SaveCharacterService from '@/game/domain/service/SaveCharacterService';
 
@@ -55,50 +54,8 @@ export default class PrivateShopService {
         const seenCellIndex = new Set<number>();
 
         for (const entry of itemEntries) {
-            // An out-of-range displayPos would grow the shop item array past the
-            // grid and overflow the fixed-size ShopStartPacket buffer later on.
-            if (entry.displayPos >= PRIVATE_SHOP_MAX_ITEMS) {
-                this.logger.debug(
-                    `[PrivateShopService] openPrivateShop: displayPos ${entry.displayPos} out of range, skipping`,
-                );
-                continue;
-            }
-
-            if (seenDisplayPos.has(entry.displayPos)) {
-                this.logger.debug(
-                    `[PrivateShopService] openPrivateShop: duplicate displayPos ${entry.displayPos}, skipping`,
-                );
-                continue;
-            }
-
-            if (seenCellIndex.has(entry.cellIndex)) {
-                this.logger.debug(
-                    `[PrivateShopService] openPrivateShop: duplicate cellIndex ${entry.cellIndex}, skipping`,
-                );
-                continue;
-            }
-
-            const item = player.getItem(entry.cellIndex);
-            if (!item) {
-                this.logger.debug(`[PrivateShopService] openPrivateShop: item not found at slot ${entry.cellIndex}`);
-                continue;
-            }
-
-            if (item.getAntiFlags().is(ItemAntiFlagEnum.ANTI_MYSHOP)) {
-                this.logger.debug(
-                    `[PrivateShopService] openPrivateShop: item at slot ${entry.cellIndex} has ANTI_MYSHOP flag`,
-                );
-                continue;
-            }
-
-            if (entry.price < 1) {
-                this.logger.debug(
-                    `[PrivateShopService] openPrivateShop: item at slot ${entry.cellIndex} has invalid price ${entry.price}`,
-                );
-                continue;
-            }
-
-            const price = Math.min(entry.price, MAX_ITEM_PRICE);
+            const item = this.validateShopEntry(player, entry, seenDisplayPos, seenCellIndex);
+            if (!item) continue;
 
             seenDisplayPos.add(entry.displayPos);
             seenCellIndex.add(entry.cellIndex);
@@ -106,7 +63,7 @@ export default class PrivateShopService {
             shopItems.push({
                 displayPos: entry.displayPos,
                 inventoryPos: entry.cellIndex,
-                price,
+                price: Math.min(entry.price, MAX_ITEM_PRICE),
                 item,
             });
         }
@@ -116,6 +73,65 @@ export default class PrivateShopService {
             return;
         }
 
+        await this.startPrivateShop(player, sign, shopItems);
+    }
+
+    /**
+     * Validates a single shop entry: in-range unique displayPos, unique
+     * cellIndex, an existing sellable item and a positive price.
+     * Returns the inventory item when the entry is valid, null otherwise.
+     */
+    private validateShopEntry(
+        player: Player,
+        entry: MyShopItemEntry,
+        seenDisplayPos: Set<number>,
+        seenCellIndex: Set<number>,
+    ) {
+        // An out-of-range displayPos would grow the shop item array past the
+        // grid and overflow the fixed-size ShopStartPacket buffer later on.
+        if (entry.displayPos >= PRIVATE_SHOP_MAX_ITEMS) {
+            this.logger.debug(
+                `[PrivateShopService] openPrivateShop: displayPos ${entry.displayPos} out of range, skipping`,
+            );
+            return null;
+        }
+
+        if (seenDisplayPos.has(entry.displayPos)) {
+            this.logger.debug(
+                `[PrivateShopService] openPrivateShop: duplicate displayPos ${entry.displayPos}, skipping`,
+            );
+            return null;
+        }
+
+        if (seenCellIndex.has(entry.cellIndex)) {
+            this.logger.debug(`[PrivateShopService] openPrivateShop: duplicate cellIndex ${entry.cellIndex}, skipping`);
+            return null;
+        }
+
+        const item = player.getItem(entry.cellIndex);
+        if (!item) {
+            this.logger.debug(`[PrivateShopService] openPrivateShop: item not found at slot ${entry.cellIndex}`);
+            return null;
+        }
+
+        if (item.getAntiFlags().is(ItemAntiFlagEnum.ANTI_MYSHOP)) {
+            this.logger.debug(
+                `[PrivateShopService] openPrivateShop: item at slot ${entry.cellIndex} has ANTI_MYSHOP flag`,
+            );
+            return null;
+        }
+
+        if (entry.price < 1) {
+            this.logger.debug(
+                `[PrivateShopService] openPrivateShop: item at slot ${entry.cellIndex} has invalid price ${entry.price}`,
+            );
+            return null;
+        }
+
+        return item;
+    }
+
+    private async startPrivateShop(player: Player, sign: string, shopItems: PrivateShopItem[]) {
         const privateShop = new PrivateShop({ owner: player, sign, items: shopItems });
         player.setPrivateShop(privateShop);
         player.setPolymorph(30000);

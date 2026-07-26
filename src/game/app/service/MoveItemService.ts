@@ -55,6 +55,7 @@ export default class MoveItemService {
         item,
     }: Omit<MoveItemServiceParams, 'fromPosition'> & { item: NonNullable<ReturnType<Player['getItem']>> }) {
         if (fromWindow !== WindowTypeEnum.INVENTORY || toWindow !== WindowTypeEnum.INVENTORY) return;
+        // Items listed in the player's open private shop are locked
         if (player.isItemLockedInPrivateShop(item)) return;
 
         const inventory = player.getInventory();

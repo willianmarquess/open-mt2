@@ -323,6 +323,10 @@ export class QuestManager {
 
             quest.unselect(answer);
         } else {
+            // Values above 250 come from the [NEXT] button or from the player
+            // closing the quest window. Release whatever the quest is waiting on —
+            // otherwise a quest left in SELECT stays running forever and blocks
+            // every further NPC interaction for this player.
             const pausedQuest = player.getQuestByStatus(QuestStatusEnum.PAUSE);
             if (pausedQuest) {
                 pausedQuest.unpause();

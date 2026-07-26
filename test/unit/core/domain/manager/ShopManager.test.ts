@@ -14,7 +14,7 @@ describe('ShopManager', () => {
     beforeEach(() => {
         loggerStub = sinon.createStubInstance(WinstonLoggerAdapter);
         itemManagerStub = sinon.createStubInstance(ItemManager);
-        itemManagerStub.getItem.returns({ getShopPrice: () => 100, getSize: () => 1 } as any);
+        itemManagerStub.getItem.returns({ getShopPrice: () => 100, getGold: () => 100, getSize: () => 1 } as any);
         service = new ShopService({
             config: makeGameConfig(),
             logger: loggerStub,
@@ -32,7 +32,7 @@ describe('ShopManager', () => {
 
     it('should load shops from npc_shop.json', () => {
         // Mock itemManager.getItem to return valid items
-        itemManagerStub.getItem.returns({ getShopPrice: () => 100, getSize: () => 1 } as any);
+        itemManagerStub.getItem.returns({ getShopPrice: () => 100, getGold: () => 100, getSize: () => 1 } as any);
 
         service.load();
 
@@ -43,7 +43,7 @@ describe('ShopManager', () => {
     });
 
     it('should return correct shop for valid NPC vnum', () => {
-        itemManagerStub.getItem.returns({ getShopPrice: () => 100, getSize: () => 1 } as any);
+        itemManagerStub.getItem.returns({ getShopPrice: () => 100, getGold: () => 100, getSize: () => 1 } as any);
 
         service.load();
 
@@ -55,7 +55,7 @@ describe('ShopManager', () => {
     });
 
     it('should return undefined for invalid NPC vnum', () => {
-        itemManagerStub.getItem.returns({ getShopPrice: () => 100, getSize: () => 1 } as any);
+        itemManagerStub.getItem.returns({ getShopPrice: () => 100, getGold: () => 100, getSize: () => 1 } as any);
 
         service.load();
 
@@ -64,7 +64,7 @@ describe('ShopManager', () => {
     });
 
     it('should indicate shop exists for loaded NPCs', () => {
-        itemManagerStub.getItem.returns({ getShopPrice: () => 100, getSize: () => 1 } as any);
+        itemManagerStub.getItem.returns({ getShopPrice: () => 100, getGold: () => 100, getSize: () => 1 } as any);
 
         service.load();
 
@@ -73,7 +73,7 @@ describe('ShopManager', () => {
     });
 
     it('should load all expected shops', () => {
-        itemManagerStub.getItem.returns({ getShopPrice: () => 100, getSize: () => 1 } as any);
+        itemManagerStub.getItem.returns({ getShopPrice: () => 100, getGold: () => 100, getSize: () => 1 } as any);
 
         service.load();
 
@@ -84,7 +84,7 @@ describe('ShopManager', () => {
     });
 
     it('should load shop items correctly', () => {
-        itemManagerStub.getItem.returns({ getShopPrice: () => 500, getSize: () => 1 } as any);
+        itemManagerStub.getItem.returns({ getShopPrice: () => 500, getGold: () => 500, getSize: () => 1 } as any);
 
         service.load();
 

@@ -120,7 +120,7 @@ export default abstract class Character extends GameEntity {
     }
 
     getAttackRating() {
-        return Math.min(90, this.getPoint(PointsEnum.DX) * 4 + (this.getPoint(PointsEnum.LEVEL) * 2) / 6);
+        return Math.min(90, (this.getPoint(PointsEnum.DX) * 4 + this.getPoint(PointsEnum.LEVEL) * 2) / 6);
     }
 
     abstract getHealthPercentage(): number;
