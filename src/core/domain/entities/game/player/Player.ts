@@ -86,6 +86,15 @@ const REGEN_INTERVAL = 3000;
 const MAX_DISTANCE_FROM_TARGET = 3500;
 const MAX_TIME_IDLE_IN_FIGHTING = 5_000;
 
+// Anti speed-hack: minimum time between two hits on the same victim, derived
+// from the attacker's attack speed. The reference is intentionally generous so
+// legitimate players (even with high attack speed) never trip it — it only
+// rejects packet floods, where hits arrive milliseconds apart. Mirrors the
+// original server's IS_SPEED_HACK check (which also builds in a large bonus so
+// normal play is never flagged).
+const ATTACK_SPEED_REFERENCE_MS = 15_000;
+const MIN_ATTACK_INTERVAL_MS = 80;
+
 export default class Player extends Character {
     private readonly accountId: number;
     private readonly playerClass: number;
@@ -114,6 +123,8 @@ export default class Player extends Character {
 
     //pos
     private lastTimeInBattle: number = 0;
+    private lastAttackTime: number = 0;
+    private lastAttackVictimVid: number = 0;
 
     //quests
     private readonly quests: Map<number, AbstractQuest> = new Map();
@@ -465,9 +476,29 @@ export default class Player extends Character {
             this.setPos(PositionEnum.STANDING);
             return;
         }
+
+        // Reject hits that arrive faster than the attack speed allows (packet
+        // flood / attack-speed hack). Only throttles repeated hits on the same
+        // victim, matching the original's per-target attack log.
+        const now = performance.now();
+        if (
+            victim.getVirtualId() === this.lastAttackVictimVid &&
+            now - this.lastAttackTime < this.getAttackCooldown()
+        ) {
+            return;
+        }
+        this.lastAttackVictimVid = victim.getVirtualId();
+        this.lastAttackTime = now;
+
         this.setPos(PositionEnum.FIGHTING);
-        this.lastTimeInBattle = performance.now();
+        this.lastTimeInBattle = now;
         this.battle.attack(attackType, victim);
+    }
+
+    /** Minimum milliseconds between two hits on the same victim. */
+    private getAttackCooldown() {
+        const attackSpeed = Math.max(1, this.getAttackSpeed());
+        return Math.max(MIN_ATTACK_INTERVAL_MS, Math.floor(ATTACK_SPEED_REFERENCE_MS / attackSpeed));
     }
 
     sendDetails() {
