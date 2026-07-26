@@ -1335,6 +1335,9 @@ export default class Player extends Character {
                 if (existing === item) continue;
                 if (existing.getWindow() !== WindowTypeEnum.INVENTORY) continue;
                 if (existing.getId() !== item.getId() || !existing.isStackable()) continue;
+                // Only merge into items actually present in the grid — a stale
+                // map entry (ghost) would swallow the units into an empty slot.
+                if (this.inventory.getItem(existing.getPosition()) !== existing) continue;
 
                 const room = MAX_ITEM_STACK - existing.getCount();
                 if (room <= 0) continue;
