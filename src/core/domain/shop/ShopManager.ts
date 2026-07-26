@@ -176,13 +176,24 @@ export default class ShopManager {
             return;
         }
 
-        const sellCount = Math.min(count, item.getCount() ?? 1);
+        // count 0 (or more than the stack) means "sell the whole stack",
+        // like the original server.
+        const stackCount = item.getCount() ?? 1;
+        const sellCount = count === 0 || count > stackCount ? stackCount : count;
         const sellPrice = Math.floor((item.getShopPrice() * sellCount) / 5);
 
-        // Remove item from inventory and notify client
-        player.getInventory().removeItem(pos, item.getSize());
-        player.sendItemRemoved({ window: WindowTypeEnum.INVENTORY, position: pos });
-        await this.itemManager.delete(item);
+        if (sellCount === stackCount) {
+            // Whole stack sold: remove the item entirely
+            player.getInventory().removeItem(pos, item.getSize());
+            player.sendItemRemoved({ window: WindowTypeEnum.INVENTORY, position: pos });
+            await this.itemManager.delete(item);
+        } else {
+            // Partial sale: split the stack instead of destroying it
+            item.setCount(stackCount - sellCount);
+            player.sendItemUpdate(item);
+            await this.itemManager.update(item);
+            await this.itemManager.flush(player.getId());
+        }
 
         player.addPoint(PointsEnum.GOLD, sellPrice);
 
