@@ -1,5 +1,5 @@
 import Player from '@/core/domain/entities/game/player/Player';
-import PlayerFactory from '@/core/domain/factories/PlayerFactory';
+import { PlayerFactory } from '@/core/domain/factories/PlayerFactory';
 import { PointsEnum } from '@/core/enum/PointsEnum';
 import Logger from '@/core/infra/logger/Logger';
 import { expect } from 'chai';

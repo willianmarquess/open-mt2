@@ -8,6 +8,7 @@ import SpawnManager from './manager/SpawnManager';
 import { PrivilegeManager } from './manager/PrivilegeManager';
 import SaveCharacterService from '@/game/domain/service/SaveCharacterService';
 import GlobalEventTimerManager from './manager/GlobalEventTimeManager';
+import { EntityManager } from './manager/EntityManager';
 
 const TICKS_PER_SECONDS = 20;
 const AREA_UNIT = 25600;
@@ -27,6 +28,7 @@ export default class World {
     private readonly spawnManager: SpawnManager;
     private readonly privilegeManager: PrivilegeManager;
     private readonly eventTimerManager: GlobalEventTimerManager;
+    private readonly entityManager: EntityManager;
 
     private virtualId = 0;
 
@@ -44,6 +46,7 @@ export default class World {
         spawnManager,
         privilegeManager,
         eventTimerManager,
+        entityManager,
     }: {
         logger: Logger;
         config: GameConfig;
@@ -51,6 +54,7 @@ export default class World {
         spawnManager: SpawnManager;
         privilegeManager: PrivilegeManager;
         eventTimerManager: GlobalEventTimerManager;
+        entityManager: EntityManager;
     }) {
         this.logger = logger;
         this.config = config;
@@ -58,6 +62,7 @@ export default class World {
         this.spawnManager = spawnManager;
         this.privilegeManager = privilegeManager;
         this.eventTimerManager = eventTimerManager;
+        this.entityManager = entityManager;
     }
 
     getWidth() {
@@ -145,11 +150,8 @@ export default class World {
                     goto,
                 },
                 {
-                    saveCharacterService: this.saveCharacterService,
-                    logger: this.logger,
-                    world: this,
                     spawnManager: this.spawnManager,
-                    eventTimerManager: this.eventTimerManager,
+                    entityManager: this.entityManager,
                 },
             );
             await area.load();
@@ -218,9 +220,9 @@ export default class World {
 
     close() {
         const promises: Array<Promise<void>> = [];
-        for (const area of this.areas.values()) {
-            promises.push(area.savePlayers());
-        }
+        // for (const area of this.areas.values()) {
+        //     promises.push(area.savePlayers());
+        // }
         return Promise.allSettled(promises);
     }
 
@@ -233,6 +235,7 @@ export default class World {
 
         this.privilegeManager.tick();
         this.eventTimerManager.tick();
+        this.entityManager.tick();
 
         const delta = performance.now() - startTickTime;
         this.deltas.push(delta);

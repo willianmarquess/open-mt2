@@ -36,8 +36,6 @@ export interface IHorseOwner {
     getName(): string;
     /** Get player's area for spawning entities. */
     getArea(): any; // Area type
-    /** Get MobManager for creating horse entities. */
-    getMobManager(): any; // MobManager type
     /** Set a point value (e.g., MOUNT, HORSE_SKILL). */
     setPoint(point: PointsEnum, value: number): void;
     /** Recalculate player combat points after mounting or dismounting. */
@@ -393,12 +391,9 @@ export class PlayerHorse {
         }
 
         const area = this.owner.getArea();
-        const mobManager = this.owner.getMobManager();
 
-        if (!area || !mobManager) {
-            this.owner.logger.debug(
-                `[PlayerHorse] cannot spawn horse: area=${Boolean(area)} mobManager=${Boolean(mobManager)} level=${this.level}`,
-            );
+        if (!area) {
+            this.owner.logger.debug(`[PlayerHorse] cannot spawn horse: no area, level=${this.level}`);
             return;
         }
 
@@ -415,12 +410,12 @@ export class PlayerHorse {
             // Get horse vnum based on level
             const horseVnum = getHorseVnumByLevel(this.level);
 
-            // Create horse entity via MobManager
-            // Direction: 180 (opposite direction)
-            const horseEntity = mobManager.getMob(horseVnum, spawnX, spawnY, 180);
+            // Create the horse mob (virtualId assigned by the entity manager)
+            // and spawn it in the area. Direction: 180 (opposite direction).
+            const horseEntity = area.spawnMob(horseVnum, spawnX, spawnY, 180);
 
             if (!horseEntity) {
-                this.owner.logger.debug(`[PlayerHorse] horse vnum ${horseVnum} was not found in MobManager`);
+                this.owner.logger.debug(`[PlayerHorse] horse vnum ${horseVnum} was not found`);
                 return;
             }
 
@@ -432,8 +427,6 @@ export class PlayerHorse {
             // m_chHorse->SetLevel(GetHorseLevel())).
             horseEntity.setPoint(PointsEnum.LEVEL, this.level);
 
-            // Spawn in the area with proper virtualId assignment
-            area.spawnMobEntity(horseEntity);
             this.spawnedHorse = horseEntity;
 
             if (this.health <= 0) {

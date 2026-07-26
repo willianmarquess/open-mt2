@@ -6,7 +6,7 @@ import GlobalEventTimerManager from '@/core/domain/manager/GlobalEventTimeManage
 
 export default class Stone extends Mob {
     constructor(
-        params: Omit<MobParams, 'virtualId' | 'entityType'>,
+        params: Omit<MobParams, 'entityType'>,
         {
             animationManager,
             questManager,

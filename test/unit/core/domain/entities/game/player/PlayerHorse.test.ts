@@ -1,5 +1,5 @@
 import { expect } from 'chai';
-import PlayerFactory from '@/core/domain/factories/PlayerFactory';
+import { PlayerFactory } from '@/core/domain/factories/PlayerFactory';
 import Player from '@/core/domain/entities/game/player/Player';
 import { PositionEnum } from '@/core/enum/PositionEnum';
 
@@ -111,14 +111,17 @@ const createFakeHorse = (virtualId: number) => {
     };
 };
 
-const createFakeArea = () => {
+const createFakeArea = (...horses: any[]) => {
     const despawned: any[] = [];
     const spawned: any[] = [];
+    const queue = [...horses];
     return {
         despawned,
         spawned,
-        spawnMobEntity: (entity: any) => {
-            spawned.push(entity);
+        spawnMob: () => {
+            const horse = queue.shift();
+            if (horse) spawned.push(horse);
+            return horse;
         },
         despawn: (entity: any) => {
             despawned.push(entity);
@@ -199,9 +202,9 @@ describe('PlayerHorse', () => {
     describe('dead horse', () => {
         it('should summon a dead horse as a corpse instead of a living entity', () => {
             const horse = createFakeHorse(999);
-            const factory = createFactory({ getMobProto: () => undefined, getMob: () => horse });
+            const factory = createFactory();
             const owner = createPlayer(factory, 1, 'Owner', true, 0);
-            const area = createFakeArea();
+            const area = createFakeArea(horse);
             owner.setConnection(createConnection().connection);
             owner.setArea(area as any);
 
@@ -213,9 +216,9 @@ describe('PlayerHorse', () => {
 
         it('should summon a living horse alive', () => {
             const horse = createFakeHorse(999);
-            const factory = createFactory({ getMobProto: () => undefined, getMob: () => horse });
+            const factory = createFactory();
             const owner = createPlayer(factory, 1, 'Owner', true, 100);
-            const area = createFakeArea();
+            const area = createFakeArea(horse);
             owner.setConnection(createConnection().connection);
             owner.setArea(area as any);
 
@@ -227,10 +230,10 @@ describe('PlayerHorse', () => {
 
         it('should turn the spawned horse into a corpse and notify watchers when it dies', () => {
             const horse = createFakeHorse(999);
-            const factory = createFactory({ getMobProto: () => undefined, getMob: () => horse });
+            const factory = createFactory();
             const owner = createPlayer(factory, 1, 'Owner', true, 100);
             const watcher = createPlayer(factory, 2, 'Watcher');
-            const area = createFakeArea();
+            const area = createFakeArea(horse);
             owner.setConnection(createConnection().connection);
             const watcherConn = createConnection();
             watcher.setConnection(watcherConn.connection);
@@ -251,10 +254,9 @@ describe('PlayerHorse', () => {
         it('should replace the corpse with a living horse on revive', () => {
             const corpse = createFakeHorse(999);
             const revived = createFakeHorse(1000);
-            const horses = [corpse, revived];
-            const factory = createFactory({ getMobProto: () => undefined, getMob: () => horses.shift() });
+            const factory = createFactory();
             const owner = createPlayer(factory, 1, 'Owner', true, 0);
-            const area = createFakeArea();
+            const area = createFakeArea(corpse, revived);
             owner.setConnection(createConnection().connection);
             owner.setArea(area as any);
 

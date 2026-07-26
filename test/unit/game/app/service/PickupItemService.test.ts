@@ -8,18 +8,27 @@ import sinon from 'sinon';
 describe('PickupItemService', function () {
     let worldMock;
     let itemRepositoryMock;
+    let entityManagerMock: any;
     let pickupItemService: PickupItemService;
 
     beforeEach(function () {
         worldMock = {
-            getEntityArea: sinon.stub(),
+            despawn: sinon.stub(),
         };
 
         itemRepositoryMock = {
             create: sinon.stub(),
         };
 
-        pickupItemService = new PickupItemService({ world: worldMock, itemRepository: itemRepositoryMock });
+        entityManagerMock = {
+            getEntity: sinon.stub(),
+        };
+
+        pickupItemService = new PickupItemService({
+            world: worldMock,
+            itemRepository: itemRepositoryMock,
+            entityManager: entityManagerMock,
+        });
     });
 
     describe('execute', function () {
@@ -35,17 +44,13 @@ describe('PickupItemService', function () {
                 getCount: sinon.stub().returns(100),
                 getOwnerName: sinon.stub().returns('player1'),
             };
-            const areaMock = {
-                getEntity: sinon.stub().returns(droppedItemMock),
-                despawn: sinon.spy(),
-            };
 
-            worldMock.getEntityArea.returns(areaMock);
+            entityManagerMock.getEntity.returns(droppedItemMock);
 
             await pickupItemService.execute(playerMock as unknown as Player, 1);
 
             expect(playerMock.addPoint.calledOnceWith(PointsEnum.GOLD, 100)).to.be.true;
-            expect(areaMock.despawn.calledOnceWith(droppedItemMock)).to.be.true;
+            expect(worldMock.despawn.calledOnceWith(droppedItemMock)).to.be.true;
         });
 
         it('should add item to the player and despawn the item if it is not gold and can be picked up', async function () {
@@ -65,17 +70,13 @@ describe('PickupItemService', function () {
                 getCount: sinon.stub().returns(1),
                 getOwnerName: sinon.stub().returns('player1'),
             };
-            const areaMock = {
-                getEntity: sinon.stub().returns(droppedItemMock),
-                despawn: sinon.spy(),
-            };
 
-            worldMock.getEntityArea.returns(areaMock);
+            entityManagerMock.getEntity.returns(droppedItemMock);
 
             await pickupItemService.execute(playerMock as unknown as Player, 1);
 
             expect(playerMock.addItemStacking.calledOnceWith(itemMock)).to.be.true;
-            expect(areaMock.despawn.calledOnceWith(droppedItemMock)).to.be.true;
+            expect(worldMock.despawn.calledOnceWith(droppedItemMock)).to.be.true;
             expect(itemRepositoryMock.create.calledOnceWith({})).to.be.true;
         });
 
@@ -91,12 +92,8 @@ describe('PickupItemService', function () {
                 getCount: sinon.stub().returns(1),
                 getOwnerName: sinon.stub().returns('player2'),
             };
-            const areaMock = {
-                getEntity: sinon.stub().returns(droppedItemMock),
-                despawn: sinon.spy(),
-            };
 
-            worldMock.getEntityArea.returns(areaMock);
+            entityManagerMock.getEntity.returns(droppedItemMock);
 
             await pickupItemService.execute(playerMock as unknown as Player, 1);
 
@@ -106,25 +103,8 @@ describe('PickupItemService', function () {
                     message: '[SYSTEM] This item is not yours',
                 }),
             ).to.be.true;
-            expect(areaMock.despawn.called).to.be.false;
+            expect(worldMock.despawn.called).to.be.false;
             expect(itemRepositoryMock.create.called).to.be.false;
-        });
-
-        it('should do nothing if the area is not found', async function () {
-            const playerMock = {
-                getName: sinon.stub().returns('player1'),
-                addItem: sinon.stub().returns(false),
-                chat: sinon.spy(),
-                addPoint: sinon.spy(),
-            };
-
-            worldMock.getEntityArea.returns(null);
-
-            await pickupItemService.execute(playerMock as unknown as Player, 1);
-
-            expect(playerMock.addPoint.called).to.be.false;
-            expect(playerMock.addItem.called).to.be.false;
-            expect(playerMock.chat.called).to.be.false;
         });
 
         it('should do nothing if the dropped item is not found', async function () {
@@ -134,12 +114,8 @@ describe('PickupItemService', function () {
                 chat: sinon.spy(),
                 addPoint: sinon.spy(),
             };
-            const areaMock = {
-                getEntity: sinon.stub().returns(null),
-                despawn: sinon.spy(),
-            };
 
-            worldMock.getEntityArea.returns(areaMock);
+            entityManagerMock.getEntity.returns(null);
 
             await pickupItemService.execute(playerMock as unknown as Player, 1);
 

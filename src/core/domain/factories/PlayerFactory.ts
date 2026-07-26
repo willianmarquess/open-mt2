@@ -10,7 +10,7 @@ import { QuestManager } from '../quests/QuestManager';
 import GlobalEventTimerManager from '../manager/GlobalEventTimeManager';
 import MobManager from '../manager/MobManager';
 
-type PlayerFactoryParams = {
+export type PlayerFactoryParams = {
     playerClass: number;
     accountId: number;
     appearance?: number;
@@ -45,7 +45,7 @@ type PlayerFactoryParams = {
     horseRiding?: number;
 };
 
-export default class PlayerFactory {
+export class PlayerFactory {
     private readonly config: GameConfig;
     private readonly animationManager: AnimationManager;
     private readonly experienceManager: ExperienceManager;

@@ -1,34 +1,27 @@
 import Monster from '@/core/domain/entities/game/mob/Monster';
 import Player from '@/core/domain/entities/game/player/Player';
-import World from '@/core/domain/World';
+import { EntityManager } from '@/core/domain/manager/EntityManager';
 import { AttackTypeEnum } from '@/core/enum/AttackTypeEnum';
 import Logger from '@/core/infra/logger/Logger';
 
 export default class CharacterAttackService {
     private readonly logger: Logger;
-    private readonly world: World;
+    private readonly entityManager: EntityManager;
 
-    constructor({ logger, world }: { logger: Logger; world: World }) {
+    constructor({ logger, entityManager }: { logger: Logger; entityManager: EntityManager }) {
         this.logger = logger;
-        this.world = world;
+        this.entityManager = entityManager;
     }
 
     async execute(player: Player, attackType: AttackTypeEnum, victimVirtualId: number) {
-        const area = this.world.getAreaByCoordinates(player.getPositionX(), player.getPositionY());
-
-        if (!area) {
-            this.logger.info(
-                `[CharacterAttackService] Area not found at x: ${player.getPositionX()}, y: ${player.getPositionY()}`,
-            );
-            return;
-        }
-
-        const victim = area.getEntity(victimVirtualId);
+        const victim = this.entityManager.getEntity(victimVirtualId);
 
         // Only players and monsters can be attacked. A client can send any VID
         // it has in view (including dropped items, which are GameEntity but not
-        // Character), so validate the type before the damage pipeline touches
-        // methods like isDead() that only exist on attackable entities.
+        // Character), and getEntity's generic is only a cast — so validate the
+        // real type before the damage pipeline calls methods like isDead() that
+        // only exist on attackable entities. Without this a crafted VID crashes
+        // the server with an unhandled TypeError.
         if (!(victim instanceof Player) && !(victim instanceof Monster)) {
             this.logger.info(`[CharacterAttackService] Invalid attack victim with virtualId ${victimVirtualId}`);
             return;

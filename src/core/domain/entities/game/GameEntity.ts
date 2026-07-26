@@ -2,6 +2,11 @@ import { EntityTypeEnum } from '@/core/enum/EntityTypeEnum';
 import Area from '../../Area';
 import { SpatialCell } from '@/core/util/SpatialGrid';
 import GlobalEventTimerManager, { addTimerParam } from '../../manager/GlobalEventTimeManager';
+import { Mob } from './mob/Mob';
+import Player from './player/Player';
+import NPC from './mob/NPC';
+import Monster from './mob/Monster';
+import Stone from './mob/Stone';
 
 export default abstract class GameEntity {
     protected virtualId: number;
@@ -118,15 +123,25 @@ export default abstract class GameEntity {
         this.eventTimerManager.removeAllTimersFromOwner(this.getVirtualId());
     }
 
-    isMonster() {
+    isMonster(): this is Monster {
         return this.getEntityType() === EntityTypeEnum.MONSTER;
     }
 
-    isNPC() {
+    isNPC(): this is NPC {
         return this.getEntityType() === EntityTypeEnum.NPC;
     }
 
-    isPlayer() {
+    isStone(): this is Stone {
+        return this.getEntityType() === EntityTypeEnum.METIN_STONE;
+    }
+
+    isPlayer(): this is Player {
         return this.getEntityType() === EntityTypeEnum.PLAYER;
     }
+
+    isMob(): this is Mob {
+        return this.isMonster() || this.isNPC() || this.isStone();
+    }
+
+    tick() {}
 }

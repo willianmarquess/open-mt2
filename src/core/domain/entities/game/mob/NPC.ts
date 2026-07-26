@@ -7,7 +7,7 @@ import GlobalEventTimerManager from '@/core/domain/manager/GlobalEventTimeManage
 
 export default class NPC extends Mob {
     constructor(
-        params: Omit<MobParams, 'virtualId' | 'entityType'>,
+        params: Omit<MobParams, 'entityType'>,
         {
             animationManager,
             questManager,

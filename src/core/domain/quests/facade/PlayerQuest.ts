@@ -59,4 +59,20 @@ export class PlayerQuest {
     getPlayerInstance(): Player {
         return this.player;
     }
+
+    isSura(): boolean {
+        return this.player.isSura();
+    }
+
+    isWarrior(): boolean {
+        return this.player.isWarrior();
+    }
+
+    isAssassin(): boolean {
+        return this.player.isAssassin();
+    }
+
+    isShaman(): boolean {
+        return this.player.isShaman();
+    }
 }
