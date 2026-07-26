@@ -38,6 +38,7 @@ describe('ShopService', () => {
         playerStub = {
             getId: sinon.stub().returns(1),
             getName: sinon.stub().returns('TestPlayer'),
+            isItemLockedInPrivateShop: sinon.stub().returns(false),
             setCurrentShop: sinon.stub(),
             getCurrentShop: sinon.stub(),
             getCurrentPrivateShopOwner: sinon.stub().returns(null),

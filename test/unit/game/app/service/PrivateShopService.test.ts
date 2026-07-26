@@ -29,6 +29,7 @@ const makeInventory = (items: Map<number, any> = new Map()) => ({
 const makePlayer = (overrides: Partial<any> = {}): any => ({
     getId: sinon.stub().returns(1),
     getName: sinon.stub().returns('TestPlayer'),
+    isItemLockedInPrivateShop: sinon.stub().returns(false),
     getVirtualId: sinon.stub().returns(1),
     isRunningPrivateShop: sinon.stub().returns(false),
     getPrivateShop: sinon.stub().returns(null),

@@ -36,6 +36,7 @@ export default class UseItemService {
         const item = player.getItem(position);
 
         if (!item) return;
+        if (player.isItemLockedInPrivateShop(item)) return;
 
         if (player.isWearable(item)) {
             await this.useWearableItem(player, item, position, window);

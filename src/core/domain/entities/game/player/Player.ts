@@ -1279,6 +1279,7 @@ export default class Player extends Character {
         const item = this.getItem(fromPosition);
 
         if (!item) return;
+        if (this.isItemLockedInPrivateShop(item)) return;
         if (fromWindow !== WindowTypeEnum.INVENTORY || toWindow !== WindowTypeEnum.INVENTORY) return;
         if (!this.getInventory().isValidPosition(toPosition)) return;
         if (!this.getInventory().haveAvailablePosition(toPosition, item.getSize())) return;
@@ -1628,6 +1629,15 @@ export default class Player extends Character {
 
     isRunningPrivateShop(): boolean {
         return this.privateShop !== null;
+    }
+
+    /**
+     * Whether this exact item instance is listed in the player's open private
+     * shop. Listed items are locked against move/use/drop/sell so the owner
+     * can't swap them around while a guest buys the slot (duplication exploit).
+     */
+    isItemLockedInPrivateShop(item: Item): boolean {
+        return this.privateShop?.hasItemListed(item) ?? false;
     }
 
     /** Records the current timestamp as the moment the player's private shop was closed. */
