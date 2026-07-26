@@ -6,7 +6,7 @@ import PacketOut from '@/core/interface/networking/packets/packet/out/PacketOut'
  * in the given slot was deleted so it can clear the slot on screen.
  */
 export default class DeleteCharacterSuccessPacket extends PacketOut {
-    private slot: number;
+    private readonly slot: number;
 
     constructor({ slot }: { slot: number }) {
         super({
