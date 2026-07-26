@@ -56,7 +56,6 @@ export default class MoveItemService {
         item,
     }: MoveItemServiceParams & { item: NonNullable<ReturnType<Player['getItem']>> }) {
         if (fromWindow !== WindowTypeEnum.INVENTORY || toWindow !== WindowTypeEnum.INVENTORY) return;
-        if (player.isItemLockedInPrivateShop(item)) return;
 
         const inventory = player.getInventory();
         if (!inventory.isValidPosition(toPosition)) return;
@@ -67,7 +66,6 @@ export default class MoveItemService {
         if (target) {
             // Merge the split units into a same-proto stack at the target slot
             if (target.getId() !== item.getId() || !target.isStackable()) return;
-            if (player.isItemLockedInPrivateShop(target)) return;
 
             const moved = Math.min(MAX_ITEM_STACK - target.getCount(), count);
             if (moved <= 0) return;
