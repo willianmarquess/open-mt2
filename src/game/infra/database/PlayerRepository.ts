@@ -84,9 +84,15 @@ export default class PlayerRepository implements IPlayerRepository {
     async nameAlreadyExists(name: string): Promise<boolean> {
         const [players] = await this.databaseManager
             .getConnection()
-            .query<PlayerRow[]>(`SELECT * FROM game.player WHERE name = ?;`, [name]);
+            .query<PlayerRow[]>(`SELECT * FROM game.player WHERE name = ? AND deletedAt IS NULL;`, [name]);
 
         return players.length > 0;
+    }
+
+    async softDelete(id: number): Promise<void> {
+        await this.databaseManager
+            .getConnection()
+            .query<ResultSetHeader>(`UPDATE game.player SET deletedAt = NOW() WHERE id = ?;`, [id]);
     }
 
     async update(player: PlayerState) {
@@ -170,7 +176,7 @@ export default class PlayerRepository implements IPlayerRepository {
     async getById(id: number): Promise<PlayerState | null> {
         const [players] = await this.databaseManager
             .getConnection()
-            .query<PlayerRow[]>(`SELECT * FROM game.player WHERE id = ?;`, [id]);
+            .query<PlayerRow[]>(`SELECT * FROM game.player WHERE id = ? AND deletedAt IS NULL;`, [id]);
 
         if (players.length === 0) {
             return null;
@@ -186,7 +192,7 @@ export default class PlayerRepository implements IPlayerRepository {
     async getByAccountId(accountId: number): Promise<PlayerState[]> {
         const [players] = await this.databaseManager
             .getConnection()
-            .query<PlayerRow[]>(`SELECT * FROM game.player WHERE accountId = ?;`, [accountId]);
+            .query<PlayerRow[]>(`SELECT * FROM game.player WHERE accountId = ? AND deletedAt IS NULL;`, [accountId]);
 
         const quickSlots = await Promise.all(players.map((p) => this.getQuickSlots(p.id)));
 
@@ -196,7 +202,10 @@ export default class PlayerRepository implements IPlayerRepository {
     async getByAccountIdAndSlot(accountId: number, slot: number): Promise<PlayerState | null> {
         const [players] = await this.databaseManager
             .getConnection()
-            .query<PlayerRow[]>(`SELECT * FROM game.player WHERE accountId = ? and slot = ?;`, [accountId, slot]);
+            .query<PlayerRow[]>(`SELECT * FROM game.player WHERE accountId = ? and slot = ? AND deletedAt IS NULL;`, [
+                accountId,
+                slot,
+            ]);
 
         if (players.length === 0) {
             return null;
