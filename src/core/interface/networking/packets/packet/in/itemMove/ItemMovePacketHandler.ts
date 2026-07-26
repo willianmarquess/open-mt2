@@ -38,6 +38,7 @@ export default class ItemMovePacketHandler extends PacketHandler<ItemMovePacket>
             fromPosition: packet.getFromPosition(),
             toWindow: packet.getToWindow(),
             toPosition: packet.getToPosition(),
+            count: packet.getCount(),
         });
     }
 }

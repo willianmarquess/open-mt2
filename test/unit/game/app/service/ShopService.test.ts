@@ -20,7 +20,13 @@ describe('ShopService', () => {
     beforeEach(() => {
         loggerStub = sinon.createStubInstance(WinstonLoggerAdapter);
         shopManagerStub = { getShop: sinon.stub(), hasShop: sinon.stub() };
-        itemManagerStub = { getItem: sinon.stub(), save: sinon.stub().resolves(), delete: sinon.stub().resolves() };
+        itemManagerStub = {
+            getItem: sinon.stub(),
+            save: sinon.stub().resolves(),
+            delete: sinon.stub().resolves(),
+            update: sinon.stub().resolves(),
+            flush: sinon.stub().resolves(),
+        };
 
         manager = new ShopManager({
             logger: loggerStub,
@@ -30,6 +36,7 @@ describe('ShopService', () => {
         });
 
         playerStub = {
+            getId: sinon.stub().returns(1),
             getName: sinon.stub().returns('TestPlayer'),
             setCurrentShop: sinon.stub(),
             getCurrentShop: sinon.stub(),
@@ -37,6 +44,7 @@ describe('ShopService', () => {
             getPoint: sinon.stub(),
             addPoint: sinon.stub(),
             addItem: sinon.stub(),
+            addItemStacking: sinon.stub(),
             getItem: sinon.stub(),
             getInventory: sinon.stub(),
             sendItemRemoved: sinon.stub(),
@@ -157,7 +165,7 @@ describe('ShopService', () => {
             playerStub.getCurrentShop.returns(shop);
             playerStub.getPoint.withArgs(PointsEnum.GOLD).returns(1000);
             itemManagerStub.getItem.returns(mockItem);
-            playerStub.addItem.returns(false);
+            playerStub.addItemStacking.returns(null);
 
             await manager.buy(playerStub, 0);
 
@@ -174,7 +182,7 @@ describe('ShopService', () => {
             playerStub.getCurrentShop.returns(shop);
             playerStub.getPoint.withArgs(PointsEnum.GOLD).returns(500);
             itemManagerStub.getItem.returns(mockItem);
-            playerStub.addItem.returns(true);
+            playerStub.addItemStacking.returns({ updated: [], inserted: mockItem });
 
             await manager.buy(playerStub, 0);
 

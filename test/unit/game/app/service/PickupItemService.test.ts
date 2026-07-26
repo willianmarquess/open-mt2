@@ -49,15 +49,16 @@ describe('PickupItemService', function () {
         });
 
         it('should add item to the player and despawn the item if it is not gold and can be picked up', async function () {
-            const playerMock = {
-                getName: sinon.stub().returns('player1'),
-                addItem: sinon.stub().returns(true),
-                chat: sinon.spy(),
-                addPoint: sinon.spy(),
-            };
             const itemMock = {
                 getId: sinon.stub().returns(2),
                 toDatabase: sinon.stub().returns({}),
+                setDbId: sinon.spy(),
+            };
+            const playerMock = {
+                getName: sinon.stub().returns('player1'),
+                addItemStacking: sinon.stub().returns({ updated: [], inserted: itemMock }),
+                chat: sinon.spy(),
+                addPoint: sinon.spy(),
             };
             const droppedItemMock = {
                 getItem: sinon.stub().returns(itemMock),
@@ -73,7 +74,7 @@ describe('PickupItemService', function () {
 
             await pickupItemService.execute(playerMock as unknown as Player, 1);
 
-            expect(playerMock.addItem.calledOnceWith(itemMock)).to.be.true;
+            expect(playerMock.addItemStacking.calledOnceWith(itemMock)).to.be.true;
             expect(areaMock.despawn.calledOnceWith(droppedItemMock)).to.be.true;
             expect(itemRepositoryMock.create.calledOnceWith({})).to.be.true;
         });

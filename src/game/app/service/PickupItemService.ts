@@ -45,9 +45,17 @@ export default class PickupItemService {
             return;
         }
 
-        if (player.addItem(item)) {
-            area.despawn(droppedItem);
-            await this.itemRepository.create(item.toDatabase());
+        const added = player.addItemStacking(item);
+        if (!added) return;
+
+        area.despawn(droppedItem);
+
+        for (const updated of added.updated) {
+            await this.itemRepository.update(updated.toDatabase());
+        }
+        if (added.inserted) {
+            const id = await this.itemRepository.create(added.inserted.toDatabase());
+            added.inserted.setDbId(id);
         }
     }
 }
