@@ -216,6 +216,11 @@ export default class Area {
     }
 
     tick() {
+        this.processSpawnQueue();
+        this.processDespawnQueue();
+    }
+
+    private processSpawnQueue() {
         for (const entity of this.entitiesToSpawn.dequeueIterator()) {
             if (!entity) continue;
             entity.onSpawn();
@@ -242,7 +247,9 @@ export default class Area {
             this.entityManager.addEntity(entity);
             entity.setArea(this);
         }
+    }
 
+    private processDespawnQueue() {
         for (const entity of this.entitiesToDespawn.dequeueIterator()) {
             if (!entity) continue;
             const entities = this.aoi.queryAround(entity, CHAR_VIEW_SIZE, EntityTypeEnum.PLAYER) as Map<number, Player>;

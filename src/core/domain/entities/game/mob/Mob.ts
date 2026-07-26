@@ -209,46 +209,12 @@ export abstract class Mob extends Character {
         this.rank = rankMapper[String(proto.rank)] || MobRankEnum.KNIGHT;
         this.battleType = battleTypeMapper[String(proto.battle_type)] || BattleTypeEnum.MELEE;
 
-        const aiFlags = proto.ai_flag?.split(',');
-        aiFlags?.forEach((aiFlag) => aiFlagMapper[aiFlag] && this.aiFlag.set(aiFlagMapper[aiFlag]));
-
-        const raceFlags = proto.race_flag?.split(',');
-        raceFlags?.forEach((raceFlag) => raceFlagMapper[raceFlag] && this.raceFlag.set(raceFlagMapper[raceFlag]));
-
-        const immuneFlags = proto.immune_flag?.split(',');
-        immuneFlags?.forEach(
-            (immuneFlag) => immuneFlagMapper[immuneFlag] && this.immuneFlag.set(immuneFlagMapper[immuneFlag]),
-        );
-
-        if (proto.enchant_curse) this.addEnchant(MobEnchantEnum.CURSE, Number(proto.enchant_curse));
-        if (proto.enchant_slow) this.addEnchant(MobEnchantEnum.SLOW, Number(proto.enchant_slow));
-        if (proto.enchant_poison) this.addEnchant(MobEnchantEnum.POISON, Number(proto.enchant_poison));
-        if (proto.enchant_stun) this.addEnchant(MobEnchantEnum.STUN, Number(proto.enchant_stun));
-        if (proto.enchant_critical) this.addEnchant(MobEnchantEnum.CRITICAL, Number(proto.enchant_critical));
-        if (proto.enchant_penetrate) this.addEnchant(MobEnchantEnum.PENETRATE, Number(proto.enchant_penetrate));
-
-        if (proto.resist_sword) this.addResist(MobResistEnum.SWORD, Number(proto.resist_sword));
-        if (proto.resist_twohand) this.addResist(MobResistEnum.TWOHAND, Number(proto.resist_twohand));
-        if (proto.resist_dagger) this.addResist(MobResistEnum.DAGGER, Number(proto.resist_dagger));
-        if (proto.resist_bell) this.addResist(MobResistEnum.BELL, Number(proto.resist_bell));
-        if (proto.resist_fan) this.addResist(MobResistEnum.FAN, Number(proto.resist_fan));
-        if (proto.resist_bow) this.addResist(MobResistEnum.BOW, Number(proto.resist_bow));
-        if (proto.resist_fire) this.addResist(MobResistEnum.FIRE, Number(proto.resist_fire));
-        if (proto.resist_elect) this.addResist(MobResistEnum.ELECT, Number(proto.resist_elect));
-        if (proto.resist_magic) this.addResist(MobResistEnum.MAGIC, Number(proto.resist_magic));
-        if (proto.resist_wind) this.addResist(MobResistEnum.WIND, Number(proto.resist_wind));
-        if (proto.resist_poison) this.addResist(MobResistEnum.POISON, Number(proto.resist_poison));
-
-        if (proto.skill_level0 && proto.skill_vnum0)
-            this.addSkill(Number(proto.skill_vnum0), Number(proto.skill_level0));
-        if (proto.skill_level1 && proto.skill_vnum1)
-            this.addSkill(Number(proto.skill_vnum1), Number(proto.skill_level1));
-        if (proto.skill_level2 && proto.skill_vnum2)
-            this.addSkill(Number(proto.skill_vnum2), Number(proto.skill_level2));
-        if (proto.skill_level3 && proto.skill_vnum3)
-            this.addSkill(Number(proto.skill_vnum3), Number(proto.skill_level3));
-        if (proto.skill_level4 && proto.skill_vnum4)
-            this.addSkill(Number(proto.skill_vnum4), Number(proto.skill_level4));
+        this.applyFlags(proto.ai_flag, aiFlagMapper, this.aiFlag);
+        this.applyFlags(proto.race_flag, raceFlagMapper, this.raceFlag);
+        this.applyFlags(proto.immune_flag, immuneFlagMapper, this.immuneFlag);
+        this.loadEnchants(proto);
+        this.loadResists(proto);
+        this.loadSkills(proto);
 
         this.size = Number(proto.size);
         this.mountCapacity = Number(proto.mount_capacity);
@@ -295,6 +261,60 @@ export abstract class Mob extends Character {
 
     protected getChanceToApplyEnchant(type: MobEnchantEnum) {
         return this.enchants.find((enchant) => enchant.type === type)?.value || 0;
+    }
+
+    private applyFlags(flagCsv: string | undefined, mapper: { [key: string]: number }, flag: BitFlag) {
+        const flags = flagCsv?.split(',');
+        flags?.forEach((value) => mapper[value] && flag.set(mapper[value]));
+    }
+
+    private loadEnchants(proto: MobsProto) {
+        const enchants: Array<[MobEnchantEnum, unknown]> = [
+            [MobEnchantEnum.CURSE, proto.enchant_curse],
+            [MobEnchantEnum.SLOW, proto.enchant_slow],
+            [MobEnchantEnum.POISON, proto.enchant_poison],
+            [MobEnchantEnum.STUN, proto.enchant_stun],
+            [MobEnchantEnum.CRITICAL, proto.enchant_critical],
+            [MobEnchantEnum.PENETRATE, proto.enchant_penetrate],
+        ];
+
+        for (const [type, value] of enchants) {
+            if (value) this.addEnchant(type, Number(value));
+        }
+    }
+
+    private loadResists(proto: MobsProto) {
+        const resists: Array<[MobResistEnum, unknown]> = [
+            [MobResistEnum.SWORD, proto.resist_sword],
+            [MobResistEnum.TWOHAND, proto.resist_twohand],
+            [MobResistEnum.DAGGER, proto.resist_dagger],
+            [MobResistEnum.BELL, proto.resist_bell],
+            [MobResistEnum.FAN, proto.resist_fan],
+            [MobResistEnum.BOW, proto.resist_bow],
+            [MobResistEnum.FIRE, proto.resist_fire],
+            [MobResistEnum.ELECT, proto.resist_elect],
+            [MobResistEnum.MAGIC, proto.resist_magic],
+            [MobResistEnum.WIND, proto.resist_wind],
+            [MobResistEnum.POISON, proto.resist_poison],
+        ];
+
+        for (const [type, value] of resists) {
+            if (value) this.addResist(type, Number(value));
+        }
+    }
+
+    private loadSkills(proto: MobsProto) {
+        const skills: Array<[unknown, unknown]> = [
+            [proto.skill_vnum0, proto.skill_level0],
+            [proto.skill_vnum1, proto.skill_level1],
+            [proto.skill_vnum2, proto.skill_level2],
+            [proto.skill_vnum3, proto.skill_level3],
+            [proto.skill_vnum4, proto.skill_level4],
+        ];
+
+        for (const [vnum, level] of skills) {
+            if (vnum && level) this.addSkill(Number(vnum), Number(level));
+        }
     }
 
     private addResist(type: MobResistEnum, value: number) {

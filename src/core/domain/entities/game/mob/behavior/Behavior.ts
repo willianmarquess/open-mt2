@@ -342,23 +342,7 @@ export default class Behavior {
 
     private findNextVictim(): boolean {
         for (const entity of this.monster.getNearbyEntities().values()) {
-            if (!(entity instanceof Player)) return false;
-            if (entity.isDead()) return false;
-            if (
-                entity.isAffectByFlag(AffectBitsTypeEnum.INVISIBILITY) ||
-                entity.isAffectByFlag(AffectBitsTypeEnum.STEALTH) ||
-                entity.isAffectByFlag(AffectBitsTypeEnum.REVIVE_INVISIBLE)
-            )
-                return false;
-            if (
-                entity.isAffectByFlag(AffectBitsTypeEnum.TERROR) &&
-                !this.monster.isImmuneByFlag(MobImmuneFlagEnum.TERROR) &&
-                entity.getLevel() >= this.monster.getLevel()
-            )
-                return false;
-            if (!this.monster.canAttackShinsu() && entity.isFromShinsu()) return false;
-            if (!this.monster.canAttackChunjo() && entity.isFromChunjo()) return false;
-            if (!this.monster.canAttackJinno() && entity.isFromJinno()) return false;
+            if (!this.isAttackableVictim(entity)) return false;
 
             const distance = this.getDistance(entity.getPositionX(), entity.getPositionY());
 
@@ -369,5 +353,25 @@ export default class Behavior {
         }
 
         return false;
+    }
+
+    private isAttackableVictim(entity: unknown): entity is Player {
+        if (!(entity instanceof Player)) return false;
+        if (entity.isDead()) return false;
+        if (
+            entity.isAffectByFlag(AffectBitsTypeEnum.INVISIBILITY) ||
+            entity.isAffectByFlag(AffectBitsTypeEnum.STEALTH) ||
+            entity.isAffectByFlag(AffectBitsTypeEnum.REVIVE_INVISIBLE)
+        )
+            return false;
+        if (
+            entity.isAffectByFlag(AffectBitsTypeEnum.TERROR) &&
+            !this.monster.isImmuneByFlag(MobImmuneFlagEnum.TERROR) &&
+            entity.getLevel() >= this.monster.getLevel()
+        )
+            return false;
+        if (!this.monster.canAttackShinsu() && entity.isFromShinsu()) return false;
+        if (!this.monster.canAttackChunjo() && entity.isFromChunjo()) return false;
+        return this.monster.canAttackJinno() || !entity.isFromJinno();
     }
 }
