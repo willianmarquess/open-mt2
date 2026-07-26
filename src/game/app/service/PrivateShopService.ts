@@ -345,7 +345,10 @@ export default class PrivateShopService {
         if (bundle.getCount() > 1) {
             bundle.decreaseCount(1);
             player.sendItemUpdate(bundle);
-            await this.itemManager.save(bundle);
+            // update, not save: save() INSERTs a new row and reassigns the dbId,
+            // duplicating the bundle stack in the DB on every shop open.
+            await this.itemManager.update(bundle);
+            await this.itemManager.flush(player.getId());
         } else {
             const position = bundle.getPosition();
             player.getInventory().removeItem(position, bundle.getSize());
