@@ -15,6 +15,7 @@ import CharacterAttackService from './app/service/CharacterAttackService';
 import CharacterMoveService from './app/service/CharacterMoveService';
 import CharacterUpdateTargetService from './app/service/CharacterUpdateTargetService';
 import CreateCharacterService from './app/service/CreateCharacterService';
+import DeleteCharacterService from './app/service/DeleteCharacterService';
 import DropItemService from './app/service/DropItemService';
 import EnterGameService from './app/service/EnterGameService';
 import LoadCharactersService from './app/service/LoadCharactersService';
@@ -28,6 +29,7 @@ import Commands from './domain/command/Commands';
 import AuthenticateService from './domain/service/AuthenticateService';
 import LeaveGameService from './domain/service/LeaveGameService';
 import SaveCharacterService from './domain/service/SaveCharacterService';
+import AccountRepository from './infra/database/AccountRepository';
 import ItemRepository from './infra/database/ItemRepository';
 import PlayerRepository from './infra/database/PlayerRepository';
 import GameServer from './interface/server/GameServer';
@@ -54,8 +56,10 @@ container.register({
     cacheProvider: asClass(RedisCacheProvider).singleton(),
     playerRepository: asClass(PlayerRepository).singleton(),
     itemRepository: asClass(ItemRepository).singleton(),
+    accountRepository: asClass(AccountRepository).singleton(),
     authenticateService: asClass(AuthenticateService).singleton(),
     createCharacterService: asClass(CreateCharacterService).singleton(),
+    deleteCharacterService: asClass(DeleteCharacterService).singleton(),
     loadCharactersService: asClass(LoadCharactersService).singleton(),
     selectEmpireService: asClass(SelectEmpireService).singleton(),
     selectCharacterService: asClass(SelectCharacterService).singleton(),
