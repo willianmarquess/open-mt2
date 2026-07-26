@@ -2,10 +2,10 @@ import PacketHeaderEnum from '@/core/enum/PacketHeaderEnum';
 import PacketOut from '@/core/interface/networking/packets/packet/out/PacketOut';
 
 export default class ChatOutPacket extends PacketOut {
-    private messageType: number;
-    private message: string;
-    private vid: number;
-    private empireId: number;
+    private readonly messageType: number;
+    private readonly message: string;
+    private readonly vid: number;
+    private readonly empireId: number;
 
     constructor({
         messageType,

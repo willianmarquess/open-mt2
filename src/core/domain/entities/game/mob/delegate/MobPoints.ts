@@ -4,7 +4,7 @@ import MathUtil from '@/core/domain/util/MathUtil';
 import { MobsProto } from '@/game/infra/config/GameConfig';
 
 export class MobPoints extends Points {
-    private mobProto: MobsProto;
+    private readonly mobProto: MobsProto;
     private attack: number = 0;
     private defense: number = 0;
     private health: number = 0;

@@ -10,8 +10,8 @@ type Token = {
 };
 
 export default class AuthenticateService {
-    private logger: Logger;
-    private cacheProvider: CacheProvider;
+    private readonly logger: Logger;
+    private readonly cacheProvider: CacheProvider;
 
     constructor({ logger, cacheProvider }: { logger: Logger; cacheProvider: CacheProvider }) {
         this.logger = logger;

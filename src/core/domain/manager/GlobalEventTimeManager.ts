@@ -27,8 +27,8 @@ interface TimerEntry {
 }
 
 export default class GlobalEventTimerManager {
-    private timers: Map<string, TimerEntry> = new Map();
-    private ownerTimers: Map<number, Set<string>> = new Map();
+    private readonly timers: Map<string, TimerEntry> = new Map();
+    private readonly ownerTimers: Map<number, Set<string>> = new Map();
 
     constructor() {}
 

@@ -1,8 +1,8 @@
 import crypto from 'node:crypto';
 
 export default class MathUtil {
-    private static max_uint = 1e9;
-    private static max_tiny = 255;
+    private static readonly max_uint = 1e9;
+    private static readonly max_tiny = 255;
 
     static get MAX_UINT() {
         return this.max_uint;

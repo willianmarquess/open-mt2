@@ -16,9 +16,9 @@ import PacketOut from '@/core/interface/networking/packets/packet/out/PacketOut'
  */
 
 export default class FlyPacket extends PacketOut {
-    private type: number;
-    private fromVirtualId: number;
-    private toVirtualId: number;
+    private readonly type: number;
+    private readonly fromVirtualId: number;
+    private readonly toVirtualId: number;
 
     constructor({ type, fromVirtualId, toVirtualId }: { type: number; fromVirtualId: number; toVirtualId: number }) {
         super({

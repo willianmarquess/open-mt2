@@ -5,8 +5,8 @@ import Logger from '@/core/infra/logger/Logger';
 import CharacterUpdateTargetService from '@/game/app/service/CharacterUpdateTargetService';
 
 export default class TargetPacketHandler extends PacketHandler<TargetPacket> {
-    private logger: Logger;
-    private characterUpdateTargetService: CharacterUpdateTargetService;
+    private readonly logger: Logger;
+    private readonly characterUpdateTargetService: CharacterUpdateTargetService;
 
     constructor({
         logger,

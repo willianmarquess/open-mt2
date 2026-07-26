@@ -1,7 +1,7 @@
 export default class Grid<T> {
-    private width: number;
-    private height: number;
-    private grid: Array<Array<T | undefined>>;
+    private readonly width: number;
+    private readonly height: number;
+    private readonly grid: Array<Array<T | undefined>>;
 
     constructor(width: number, height: number, defaultValue?: T) {
         this.width = width;

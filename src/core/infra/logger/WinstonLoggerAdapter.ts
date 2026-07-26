@@ -2,7 +2,7 @@ import winston from 'winston';
 import Logger from '@/core/infra/logger/Logger';
 
 export default class WinstonLoggerAdapter implements Logger {
-    private logger: winston.Logger;
+    private readonly logger: winston.Logger;
 
     constructor() {
         this.logger = winston.createLogger({

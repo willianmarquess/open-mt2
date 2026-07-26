@@ -98,11 +98,11 @@ const MIN_ATTACK_INTERVAL_MS = 80;
 export default class Player extends Character {
     private readonly accountId: number;
     private readonly playerClass: number;
-    private skillGroup: number;
-    private bodyPart: number;
-    private hairPart: number;
-    private slot: number;
-    private appearance: number;
+    private readonly skillGroup: number;
+    private readonly bodyPart: number;
+    private readonly hairPart: number;
+    private readonly slot: number;
+    private readonly appearance: number;
     private lastPlayTime: number = performance.now();
     private blockMode: number = BlockFlagEnum.NONE;
 

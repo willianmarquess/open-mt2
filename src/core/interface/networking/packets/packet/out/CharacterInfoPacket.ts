@@ -22,15 +22,15 @@ import PacketOut from '@/core/interface/networking/packets/packet/out/PacketOut'
  */
 
 export default class CharacterInfoPacket extends PacketOut {
-    private vid: number;
-    private playerName: string;
-    private parts: Array<number> = new Array(4).fill(0);
-    private empireId: number = 0;
-    private guildId: number = 0;
-    private level: number = 0;
-    private rankPoints: number = 0;
-    private pkMode: number;
-    private mountId: number = 0;
+    private readonly vid: number;
+    private readonly playerName: string;
+    private readonly parts: Array<number> = new Array(4).fill(0);
+    private readonly empireId: number = 0;
+    private readonly guildId: number = 0;
+    private readonly level: number = 0;
+    private readonly rankPoints: number = 0;
+    private readonly pkMode: number;
+    private readonly mountId: number = 0;
 
     constructor({
         vid,

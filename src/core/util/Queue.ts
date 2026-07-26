@@ -1,5 +1,5 @@
 export default class Queue<T = any> {
-    private maxSize: number;
+    private readonly maxSize: number;
     private items: { [key: number]: T };
     private frontPos: number;
     private rearPos: number;

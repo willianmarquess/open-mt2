@@ -2,11 +2,11 @@ import PacketHeaderEnum from '@/core/enum/PacketHeaderEnum';
 import PacketOut from '@/core/interface/networking/packets/packet/out/PacketOut';
 
 export default class ItemDroppedPacket extends PacketOut {
-    private positionX: number;
-    private positionY: number;
-    private positionZ: number = 0;
-    private virtualId: number;
-    private id: number;
+    private readonly positionX: number;
+    private readonly positionY: number;
+    private readonly positionZ: number = 0;
+    private readonly virtualId: number;
+    private readonly id: number;
 
     constructor({
         id,

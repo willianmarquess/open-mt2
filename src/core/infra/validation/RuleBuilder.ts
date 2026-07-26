@@ -5,8 +5,8 @@ interface ValidationError {
 }
 
 export default class RuleBuilder<T> {
-    private target: T;
-    private errors: ValidationError[];
+    private readonly target: T;
+    private readonly errors: ValidationError[];
     private targetName: string;
     private abstractValidator: FluentValidator;
     private isOptionalFlag: boolean = false;

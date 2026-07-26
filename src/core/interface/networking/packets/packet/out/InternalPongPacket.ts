@@ -14,7 +14,7 @@ import PacketOut from '@/core/interface/networking/packets/packet/out/PacketOut'
  */
 
 export default class InternalPongPacket extends PacketOut {
-    private time: number;
+    private readonly time: number;
 
     constructor({ time }: { time: number }) {
         super({

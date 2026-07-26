@@ -3,9 +3,9 @@ import { QuickSlotTypeEnum } from '@/core/enum/QuickSlotTypeEnum';
 import PacketOut from './PacketOut';
 
 export default class QuickSlotAddResponsePacket extends PacketOut {
-    private slot: number;
-    private type: QuickSlotTypeEnum;
-    private position: number;
+    private readonly slot: number;
+    private readonly type: QuickSlotTypeEnum;
+    private readonly position: number;
 
     constructor({ slot, type, position }: { slot: number; type: QuickSlotTypeEnum; position: number }) {
         super({

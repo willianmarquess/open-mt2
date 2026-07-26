@@ -5,8 +5,8 @@ import QuestButtonPacket from './QuestButtonPacket';
 import { QuestManager } from '@/core/domain/quests/QuestManager';
 
 export default class QuestButtonPacketHandler extends PacketHandler<QuestButtonPacket> {
-    private logger: Logger;
-    private questManager: QuestManager;
+    private readonly logger: Logger;
+    private readonly questManager: QuestManager;
 
     constructor({ logger, questManager }: { logger: Logger; questManager: QuestManager }) {
         super();

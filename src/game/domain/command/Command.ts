@@ -6,8 +6,8 @@ type CommandArgs = {
 };
 
 export default abstract class Command {
-    private args: Array<string>;
-    private validator?: CommandValidator;
+    private readonly args: Array<string>;
+    private readonly validator?: CommandValidator;
 
     constructor({ args = [], validator }: CommandArgs = {}) {
         this.args = args;
