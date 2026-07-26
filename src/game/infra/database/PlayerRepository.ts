@@ -44,11 +44,12 @@ export default class PlayerRepository implements IPlayerRepository {
             horseLevel,
             horseHealth,
             horseStamina,
-            horseName
+            horseName,
+            horseRiding
         )
             values
         (
-            ?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?
+            ?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?
         );
         `,
             [
@@ -81,6 +82,7 @@ export default class PlayerRepository implements IPlayerRepository {
                 player.horseHealth,
                 player.horseStamina,
                 player.horseName,
+                player.horseRiding,
             ],
         );
         if (player.quickSlot.size > 0) {
@@ -135,7 +137,8 @@ export default class PlayerRepository implements IPlayerRepository {
             horseLevel = ?,
             horseHealth = ?,
             horseStamina = ?,
-            horseName = ?
+            horseName = ?,
+            horseRiding = ?
         WHERE id = ?;
         `,
             [
@@ -168,6 +171,7 @@ export default class PlayerRepository implements IPlayerRepository {
                 player.horseHealth,
                 player.horseStamina,
                 player.horseName,
+                player.horseRiding,
                 player.id,
             ],
         );
@@ -298,6 +302,7 @@ export default class PlayerRepository implements IPlayerRepository {
             horseHealth,
             horseStamina,
             horseName,
+            horseRiding,
         } = player;
 
         return new PlayerState({
@@ -332,6 +337,7 @@ export default class PlayerRepository implements IPlayerRepository {
             horseHealth,
             horseStamina,
             horseName,
+            horseRiding,
         });
     }
 }

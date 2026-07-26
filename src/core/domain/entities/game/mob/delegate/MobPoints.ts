@@ -8,6 +8,8 @@ export class MobPoints extends Points {
     private attack: number = 0;
     private defense: number = 0;
     private health: number = 0;
+    /** Overrides the proto level when set (e.g. a summoned horse shows its real level). */
+    private levelOverride: number | null = null;
 
     constructor(mobProto: MobsProto) {
         super();
@@ -32,7 +34,10 @@ export class MobPoints extends Points {
             get: () => Number(this.mobProto.st),
         });
         this.points.set(PointsEnum.LEVEL, {
-            get: () => Number(this.mobProto.level),
+            get: () => (this.levelOverride !== null ? this.levelOverride : Number(this.mobProto.level)),
+            set: (value: number) => {
+                this.levelOverride = value;
+            },
         });
         this.points.set(PointsEnum.MAX_HEALTH, {
             get: () => Number(this.mobProto.max_hp),

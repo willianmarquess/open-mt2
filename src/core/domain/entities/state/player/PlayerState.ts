@@ -29,6 +29,7 @@ export default class PlayerState extends StateEntity {
     public readonly horseHealth: number;
     public readonly horseStamina: number;
     public readonly horseName: string;
+    public readonly horseRiding: number;
 
     constructor({
         id,
@@ -62,6 +63,7 @@ export default class PlayerState extends StateEntity {
         horseHealth = 0,
         horseStamina = 0,
         horseName = '',
+        horseRiding = 0,
     }: {
         id: number;
         updatedAt?: Date;
@@ -94,6 +96,7 @@ export default class PlayerState extends StateEntity {
         horseHealth?: number;
         horseStamina?: number;
         horseName?: string;
+        horseRiding?: number;
     }) {
         super(id, createdAt, updatedAt);
         this.accountId = accountId;
@@ -124,5 +127,6 @@ export default class PlayerState extends StateEntity {
         this.horseHealth = horseHealth;
         this.horseStamina = horseStamina;
         this.horseName = horseName;
+        this.horseRiding = horseRiding;
     }
 }

@@ -73,6 +73,8 @@ export class PlayerHorse {
     private mountVnum: number = 0;
     private spawnedHorse: NPC | null = null; // Spawned horse entity when not riding
     private horseName: string = '';
+    /** Player was riding at logout; restored once on enter-game (original: EnterHorse). */
+    private pendingRemount: boolean = false;
 
     private readonly owner: IHorseOwner;
 
@@ -80,7 +82,7 @@ export class PlayerHorse {
         this.owner = owner;
     }
 
-    initialize(level: number, health: number, stamina: number, name: string): void {
+    initialize(level: number, health: number, stamina: number, name: string, riding: boolean = false): void {
         this.level = Math.max(0, Math.min(Number(level) || 0, HORSE_MAX_LEVEL));
         const stat = HORSE_STATS[this.level];
         const parsedHealth = Number(health);
@@ -94,9 +96,21 @@ export class PlayerHorse {
             Math.min(Number.isFinite(parsedStamina) ? parsedStamina : stat.maxStamina, stat.maxStamina),
         );
         this.horseName = name || '';
+        this.pendingRemount = riding;
 
         this.owner.setPoint(PointsEnum.HORSE_SKILL, this.level);
         this.owner.recalculatePoints();
+    }
+
+    /**
+     * Remount the horse after entering the game if the player was riding at
+     * logout (original behaviour: CHorseRider::EnterHorse). Must run after the
+     * player is spawned so the mount change reaches nearby players.
+     */
+    restoreRidingState(): void {
+        if (!this.pendingRemount) return;
+        this.pendingRemount = false;
+        this.startRiding();
     }
 
     // ── Accessors ──────────────────────────────────────────────────────────────
@@ -413,6 +427,10 @@ export class PlayerHorse {
             // Set horse name to custom horse name or player's name + "'s Horse"
             const playerName = this.owner.getName();
             (horseEntity as any).name = this.horseName || `${playerName}'s Horse`;
+
+            // Show the horse's real level instead of the proto's (original:
+            // m_chHorse->SetLevel(GetHorseLevel())).
+            horseEntity.setPoint(PointsEnum.LEVEL, this.level);
 
             // Spawn in the area with proper virtualId assignment
             area.spawnMobEntity(horseEntity);

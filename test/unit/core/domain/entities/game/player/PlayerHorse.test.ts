@@ -103,6 +103,7 @@ const createFakeHorse = (virtualId: number) => {
         clearMovementNodes: () => {},
         continueMovementNodes: () => {},
         moveAlongNodes: () => {},
+        setPoint: () => {},
         getState: () => 'IDLE',
         getPositionX: () => 0,
         getPositionY: () => 0,
@@ -266,6 +267,42 @@ describe('PlayerHorse', () => {
             expect(area.spawned).to.include(revived);
             expect(revived.isDead()).to.be.equal(false);
             expect(owner.getHorseHealth()).to.be.greaterThan(0);
+        });
+
+        it('should remount on enter game when the player was riding at logout', () => {
+            const factory = createFactory();
+            const owner = factory.create({
+                playerClass: 0,
+                accountId: 1,
+                appearance: 0,
+                slot: 0,
+                virtualId: 1,
+                id: 1,
+                empire: 1,
+                skillGroup: 0,
+                playTime: 0,
+                level: 25,
+                experience: 0,
+                gold: 0,
+                name: 'Rider',
+                givenStatusPoints: 0,
+                availableStatusPoints: 0,
+                horseLevel: 11,
+                horseHealth: 100,
+                horseStamina: 100,
+                horseName: 'Pony',
+                horseRiding: 1,
+            } as any);
+            owner.setConnection(createConnection().connection);
+
+            expect(owner.isHorseRiding()).to.be.equal(false);
+            owner.restoreHorseRiding();
+            expect(owner.isHorseRiding()).to.be.equal(true);
+
+            // Restoring twice must not re-trigger anything
+            owner.stopRiding();
+            owner.restoreHorseRiding();
+            expect(owner.isHorseRiding()).to.be.equal(false);
         });
 
         it('should send the death packet when a dead entity enters a player view', () => {

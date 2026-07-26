@@ -17,7 +17,7 @@ describe('EnterGameService', function () {
 
     describe('execute', function () {
         it('should spawn the player and send inventory', function () {
-            const playerMock = {};
+            const playerMock = { restoreHorseRiding: sinon.spy() };
             enterGameService.execute(playerMock as unknown as Player);
             expect(worldMock.spawn.calledOnceWith(playerMock)).to.be.true;
         });

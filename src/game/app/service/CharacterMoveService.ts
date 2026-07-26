@@ -24,7 +24,7 @@ export default class CharacterMoveService {
         // player is snapped back to their real position inside isMoveAllowed.
         if (!player.isMoveAllowed(positionX, positionY)) {
             this.logger.info(
-                `[CharacterMoveService] Rejected move for ${player.getName()} to (${positionX}, ${positionY}) — too far`,
+                `[CharacterMoveService] Rejected move for ${player.getName()} to (${positionX}, ${positionY}) — too far from (${player.getPositionX()}, ${player.getPositionY()}), type=${movementType}`,
             );
             return;
         }

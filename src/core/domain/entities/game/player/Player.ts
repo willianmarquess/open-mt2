@@ -25,6 +25,7 @@ import CharacterPointsPacket from '@/core/interface/networking/packets/packet/ou
 import SkillLevelPacket, { SKILL_HORSE } from '@/core/interface/networking/packets/packet/out/SkillLevelPacket';
 import CharacterDetailsPacket from '@/core/interface/networking/packets/packet/out/CharacterDetailsPacket';
 import CharacterDiedPacket from '@/core/interface/networking/packets/packet/out/CharacterDiedPacket';
+import SyncPositionPacket from '@/core/interface/networking/packets/packet/out/SyncPositionPacket';
 import TeleportPacket from '@/core/interface/networking/packets/packet/out/TeleportPacket';
 import Ip from '@/core/util/Ip';
 import CharacterPointChangePacket from '@/core/interface/networking/packets/packet/out/CharacterPointChangePacket';
@@ -42,7 +43,6 @@ import ItemEquippedEvent from '../inventory/events/ItemEquippedEvent';
 import ItemUnequippedEvent from '../inventory/events/ItemUnequippedEvent';
 import { PlayerPoints } from './delegate/PlayerPoints';
 import { PositionEnum } from '@/core/enum/PositionEnum';
-import { MovementTypeEnum } from '@/core/enum/MovementTypeEnum';
 import { PlayerBattle } from './delegate/battle/PlayerBattle';
 import { AttackTypeEnum } from '@/core/enum/AttackTypeEnum';
 import type Monster from '../mob/Monster';
@@ -203,6 +203,7 @@ export default class Player extends Character {
             horseHealth = 0,
             horseStamina = 0,
             horseName = '',
+            horseRiding = 0,
         }: {
             id: number;
             accountId: number;
@@ -247,6 +248,7 @@ export default class Player extends Character {
             horseHealth?: number;
             horseStamina?: number;
             horseName?: string;
+            horseRiding?: number;
         },
         {
             animationManager,
@@ -359,7 +361,7 @@ export default class Player extends Character {
         this.battle = new PlayerBattle(this, logger);
 
         this.saveCharacterService = saveCharacterService;
-        this.horse.initialize(horseLevel, horseHealth, horseStamina, horseName);
+        this.horse.initialize(horseLevel, horseHealth, horseStamina, horseName, Boolean(horseRiding));
 
         this.stateMachine
             .addState({
@@ -572,17 +574,16 @@ export default class Player extends Character {
 
         if (distance <= max) return true;
 
-        // Warp the client back to the real position and stop movement.
-        this.updateOtherEntity({
-            virtualId: this.virtualId,
-            arg: 0,
-            movementType: MovementTypeEnum.WAIT,
-            time: 0,
-            rotation: this.getRotation(),
-            positionX: this.getPositionX(),
-            positionY: this.getPositionY(),
-            duration: 0,
-        });
+        // Snap the client back to the server-side position. SYNC_POSITION is
+        // the only packet the client applies to its own character, so a
+        // desynced client self-recovers instead of rubber-banding forever.
+        this.connection?.send(
+            new SyncPositionPacket({
+                virtualId: this.virtualId,
+                positionX: this.getPositionX(),
+                positionY: this.getPositionY(),
+            }),
+        );
         return false;
     }
 
@@ -1945,6 +1946,10 @@ export default class Player extends Character {
         return this.horse.summon();
     }
 
+    restoreHorseRiding(): void {
+        this.horse.restoreRidingState();
+    }
+
     startTemporaryRiding(mountVnum: number, durationMs: number): boolean {
         return this.horse.startTemporaryRiding(mountVnum, durationMs);
     }
@@ -2242,6 +2247,7 @@ export default class Player extends Character {
             horseHealth,
             horseStamina,
             horseName,
+            horseRiding,
         }: {
             id: number;
             accountId: number;
@@ -2286,6 +2292,7 @@ export default class Player extends Character {
             horseHealth?: number;
             horseStamina?: number;
             horseName?: string;
+            horseRiding?: number;
         },
         {
             animationManager,
@@ -2352,6 +2359,7 @@ export default class Player extends Character {
                 horseHealth,
                 horseStamina,
                 horseName,
+                horseRiding,
             },
             {
                 animationManager,
@@ -2397,6 +2405,7 @@ export default class Player extends Character {
             horseHealth: this.getHorseHealth(),
             horseStamina: this.getHorseStamina(),
             horseName: this.getHorseName(),
+            horseRiding: this.isHorseRiding() && !this.horse.isTemporaryRiding() ? 1 : 0,
         });
     }
 
