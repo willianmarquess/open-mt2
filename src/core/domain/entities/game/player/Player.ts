@@ -42,6 +42,7 @@ import ItemEquippedEvent from '../inventory/events/ItemEquippedEvent';
 import ItemUnequippedEvent from '../inventory/events/ItemUnequippedEvent';
 import { PlayerPoints } from './delegate/PlayerPoints';
 import { PositionEnum } from '@/core/enum/PositionEnum';
+import { MovementTypeEnum } from '@/core/enum/MovementTypeEnum';
 import { PlayerBattle } from './delegate/battle/PlayerBattle';
 import { AttackTypeEnum } from '@/core/enum/AttackTypeEnum';
 import type Monster from '../mob/Monster';
@@ -96,6 +97,12 @@ const MAX_TIME_IDLE_IN_FIGHTING = 5_000;
 // normal play is never flagged).
 const ATTACK_SPEED_REFERENCE_MS = 15_000;
 const MIN_ATTACK_INTERVAL_MS = 80;
+
+// Anti-teleport: max distance (map units, 100/m) a single move packet may cover.
+// The original rejects > 25m walking / 40m riding and warps the player back;
+// a legitimate client never sends a longer segment. Kept generous here.
+const MAX_MOVE_DISTANCE = 2500;
+const MAX_MOVE_DISTANCE_RIDING = 4000;
 
 export default class Player extends Character {
     private readonly accountId: number;
@@ -549,6 +556,33 @@ export default class Player extends Character {
     private getAttackCooldown() {
         const attackSpeed = Math.max(1, this.getAttackSpeed());
         return Math.max(MIN_ATTACK_INTERVAL_MS, Math.floor(ATTACK_SPEED_REFERENCE_MS / attackSpeed));
+    }
+
+    /**
+     * Rejects move packets that jump farther than a single step allows
+     * (teleport hack). A legitimate client segments long walks, so a request
+     * beyond the cap is either a hack or a desync — in both cases we snap the
+     * client back to the server's authoritative position and drop the move.
+     * Returns true when the requested destination is acceptable.
+     */
+    isMoveAllowed(x: number, y: number): boolean {
+        const distance = MathUtil.calcDistance(this.getPositionX(), this.getPositionY(), x, y);
+        const max = this.horse.isRiding() ? MAX_MOVE_DISTANCE_RIDING : MAX_MOVE_DISTANCE;
+
+        if (distance <= max) return true;
+
+        // Warp the client back to the real position and stop movement.
+        this.updateOtherEntity({
+            virtualId: this.virtualId,
+            arg: 0,
+            movementType: MovementTypeEnum.WAIT,
+            time: 0,
+            rotation: this.getRotation(),
+            positionX: this.getPositionX(),
+            positionY: this.getPositionY(),
+            duration: 0,
+        });
+        return false;
     }
 
     sendDetails() {
