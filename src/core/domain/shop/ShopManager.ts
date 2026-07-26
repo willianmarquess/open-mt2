@@ -9,6 +9,10 @@ import { WindowTypeEnum } from '@/core/enum/WindowTypeEnum';
 import PrivateShopService from '../../../game/app/service/PrivateShopService';
 import GameEntity from '@/core/domain/entities/game/GameEntity';
 import NPC from '../entities/game/mob/NPC';
+import MathUtil from '@/core/domain/util/MathUtil';
+
+/** Maximum distance (map units) between player and shop owner for shop interactions. */
+const SHOP_MAX_DISTANCE = 2000;
 
 export default class ShopManager {
     private readonly shopService: ShopService;
@@ -49,10 +53,22 @@ export default class ShopManager {
             return;
         }
 
-        //TODO: validate if player can open the shop (distance, isExchanging, HasShopOpened, etc)
-        //TODO: verify player distance to npc
+        // Leave any private shop being browsed first — buy() checks the
+        // private-shop state before the NPC shop, so a stale owner reference
+        // would route NPC-shop purchases to the private shop's display slots.
+        const privateOwner = player.getCurrentPrivateShopOwner();
+        if (privateOwner) {
+            privateOwner.getPrivateShop()?.removeGuest(player);
+            player.setCurrentPrivateShopOwner(null);
+        }
+
+        if (!this.isNearShopOwner(player, npc)) {
+            this.logger.debug(`[ShopManager] ${player.getName()} is too far from NPC ${npc.getId()} to open the shop`);
+            return;
+        }
 
         player.setCurrentShop(shop);
+        player.setCurrentShopNpc(npc);
 
         player.sendCurrentShop({
             ownerVid: npc.getVirtualId(),
@@ -80,6 +96,28 @@ export default class ShopManager {
             );
             await this.privateShopService.openShopForGuest(player, targetPlayer);
         }
+    }
+
+    private isNearShopOwner(player: Player, owner: GameEntity) {
+        return (
+            MathUtil.calcDistance(
+                player.getPositionX(),
+                player.getPositionY(),
+                owner.getPositionX(),
+                owner.getPositionY(),
+            ) <= SHOP_MAX_DISTANCE
+        );
+    }
+
+    /**
+     * Buy/sell keep working after walking away without this: the shop state
+     * stays open on the player until an explicit close. The original refuses
+     * transactions beyond 2000 units from the shop owner.
+     */
+    private isNearCurrentShopNpc(player: Player) {
+        const npc = player.getCurrentShopNpc();
+        if (!npc) return true;
+        return this.isNearShopOwner(player, npc);
     }
 
     async closeShop(player: Player) {
@@ -111,6 +149,11 @@ export default class ShopManager {
         const shop = player.getCurrentShop();
         if (!shop) {
             this.logger.debug(`[ShopManager] buy: player ${player.getName()} has no open shop`);
+            return;
+        }
+
+        if (!this.isNearCurrentShopNpc(player)) {
+            player.sendShopResult({ result: ShopSubHeaderGC.INVALID_POS });
             return;
         }
 
@@ -164,8 +207,19 @@ export default class ShopManager {
             return;
         }
 
+        if (!this.isNearCurrentShopNpc(player)) {
+            player.sendShopResult({ result: ShopSubHeaderGC.INVALID_POS });
+            return;
+        }
+
         const item = player.getItem(pos);
         if (!item) {
+            player.sendShopResult({ result: ShopSubHeaderGC.INVALID_POS });
+            return;
+        }
+
+        // Cannot sell equipped items (original rejects IsEquipped)
+        if (player.getInventory().isFromEquipmentSlots(pos)) {
             player.sendShopResult({ result: ShopSubHeaderGC.INVALID_POS });
             return;
         }
@@ -187,6 +241,13 @@ export default class ShopManager {
         const stackCount = item.getCount() ?? 1;
         const sellCount = count === 0 || count > stackCount ? stackCount : count;
         const sellPrice = Math.floor((item.getShopPrice() * sellCount) / 5);
+
+        // Refuse the sale when the gold would overflow the cap — the clamp
+        // would silently destroy the excess (the original refuses at GOLD_MAX).
+        if (player.getPoint(PointsEnum.GOLD) + sellPrice > MathUtil.MAX_UINT) {
+            player.sendShopResult({ result: ShopSubHeaderGC.INVALID_POS });
+            return;
+        }
 
         if (sellCount === stackCount) {
             // Whole stack sold: remove the item entirely

@@ -142,6 +142,9 @@ export default class UseItemService {
 
     private async useItemUsable(player: Player, item: Item) {
         switch (item.getSubType()) {
+            case ItemUseSubTypeEnum.USE_SPECIAL:
+                return this.useSpecialItem(player, item);
+
             case ItemUseSubTypeEnum.USE_POTION:
                 {
                     if (item.getCount() <= 0) {
@@ -161,9 +164,6 @@ export default class UseItemService {
                     }
                 }
                 break;
-
-            case ItemUseSubTypeEnum.USE_SPECIAL:
-                return this.useSpecialItem(player, item);
 
             default:
                 this.logger.info(
