@@ -19,7 +19,21 @@ export default class AuthServer extends Server {
         const packet = createPacket({});
         const handler = createHandler(this.container);
         this.logger.debug(`[IN][PACKET] name: ${handler.constructor.name}`);
-        handler.execute(connection, packet.unpack(data)).catch((err) => this.logger.error(err));
+
+        // A malformed packet makes unpack read past the buffer and throw; the
+        // rejection would escape the 'data' listener and kill the process.
+        let unpacked: typeof packet;
+        try {
+            unpacked = packet.unpack(data);
+        } catch (error) {
+            this.logger.error(
+                `[IN][PACKET] Malformed ${packet.getName()} packet from connection: ID: ${connection.getId()}, closing. ${error}`,
+            );
+            connection.close();
+            return;
+        }
+
+        handler.execute(connection, unpacked).catch((err) => this.logger.error(err));
     }
 
     createConnection(socket: Socket) {

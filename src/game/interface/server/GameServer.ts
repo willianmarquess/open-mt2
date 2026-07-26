@@ -50,9 +50,24 @@ export default class GameServer extends Server {
         const packet = createPacket({});
         const handler = createHandler(this.container);
         this.logger.debug(`[IN][PACKET] processing packet: ${handler.constructor.name}`);
+
+        // A malformed packet (e.g. lying about its item count) makes unpack read
+        // past the buffer and throw. Without this guard the rejection escapes the
+        // 'data' listener as an unhandledRejection and kills the whole server.
+        let unpacked: typeof packet;
+        try {
+            unpacked = packet.unpack(data);
+        } catch (error) {
+            this.logger.error(
+                `[IN][PACKET] Malformed ${packet.getName()} packet from connection: ID: ${connection.getId()}, closing. ${error}`,
+            );
+            connection.close();
+            return;
+        }
+
         connection.cork();
         await handler
-            .execute(connection, packet.unpack(data))
+            .execute(connection, unpacked)
             .catch((err) => this.logger.error(err))
             .finally(() => {
                 connection.uncork();

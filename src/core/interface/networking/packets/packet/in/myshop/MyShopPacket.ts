@@ -56,6 +56,15 @@ export default class MyShopPacket extends PacketIn {
         this.sign = this.bufferReader.readString(SIGN_FIELD_LEN);
         this.count = Math.min(this.bufferReader.readUInt8(), PRIVATE_SHOP_MAX_ITEMS);
 
+        // The declared count must match the bytes actually sent — a malformed
+        // packet lying about its count would make the reads below run past the
+        // end of the buffer.
+        if (buffer.byteLength < FIXED_SIZE + this.count * ITEM_ENTRY_SIZE) {
+            throw new Error(
+                `MyShopPacket: buffer too short for declared item count (count: ${this.count}, bytes: ${buffer.byteLength})`,
+            );
+        }
+
         this.items = [];
         for (let i = 0; i < this.count; i++) {
             const vnum = this.bufferReader.readUInt32LE();
