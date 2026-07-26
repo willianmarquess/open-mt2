@@ -283,9 +283,13 @@ export default class PrivateShopService {
 
         const item = entry.item;
 
-        // Verify the item is still in the owner's inventory at the expected slot
+        // Verify the exact listed item instance is still in the owner's
+        // inventory at the expected slot. Comparing by vnum here would let the
+        // owner swap another same-vnum item into the slot (moving the listed
+        // one elsewhere) and end up with both the sold item and a ghost copy —
+        // a duplication exploit.
         const ownerItem = owner.getItem(entry.inventoryPos);
-        if (ownerItem?.getId() !== item.getId()) {
+        if (ownerItem !== item) {
             shop.removeItemAtDisplaySlot(displaySlot);
             guest.sendShopResult({ result: ShopSubHeaderGC.SOLD_OUT });
             return;

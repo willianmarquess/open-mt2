@@ -176,6 +176,12 @@ export default class ShopManager {
             return;
         }
 
+        // Cannot sell items listed in the player's own open private shop
+        if (player.isItemLockedInPrivateShop(item)) {
+            player.sendShopResult({ result: ShopSubHeaderGC.INVALID_POS });
+            return;
+        }
+
         // count 0 (or more than the stack) means "sell the whole stack",
         // like the original server.
         const stackCount = item.getCount() ?? 1;
