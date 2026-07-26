@@ -304,6 +304,7 @@ export default class Player extends Character {
             addEventTimer: (opts) => this.addEventTimer(opts),
             removeEventTimer: (id) => this.removeEventTimer(id),
             broadcastMountChange: () => this.broadcastMountChange(),
+            broadcastEntityDeath: (entity) => this.broadcastEntityDeath(entity),
             getPositionX: () => this.positionX,
             getPositionY: () => this.positionY,
             getTargetPosition: () => this.getTargetPosition(),
@@ -832,6 +833,7 @@ export default class Player extends Character {
         name,
         rotation,
         mountId = 0,
+        state = 0,
     }: {
         virtualId: number;
         playerClass: number;
@@ -845,6 +847,7 @@ export default class Player extends Character {
         name: string;
         rotation: number;
         mountId?: number;
+        state?: number;
     }) {
         this.connection?.send(
             new CharacterSpawnPacket({
@@ -858,7 +861,7 @@ export default class Player extends Character {
                 positionZ: 0,
                 rotation,
                 affects: new Array(2).fill(0), //TODO
-                state: 0, //TODO
+                state,
             }),
         );
 
@@ -889,6 +892,7 @@ export default class Player extends Character {
         name,
         rotation,
         mountId = 0,
+        state = 0,
     }: {
         virtualId: number;
         playerClass: number;
@@ -902,6 +906,7 @@ export default class Player extends Character {
         name: string;
         rotation: number;
         mountId?: number;
+        state?: number;
     }) {
         this.showEntity({
             virtualId,
@@ -916,6 +921,7 @@ export default class Player extends Character {
             name,
             rotation,
             mountId,
+            state,
         });
     }
 
@@ -1638,7 +1644,14 @@ export default class Player extends Character {
                 name: otherEntity.getName(),
                 rotation: otherEntity.getRotation(),
                 mountId: otherEntity instanceof Player ? otherEntity.getMountVnum() : 0,
+                state: otherEntity.isDead() ? 1 : 0,
             });
+
+            // Entities that are already dead (e.g. a summoned dead horse) must
+            // be rendered lying on the ground, not standing idle.
+            if (otherEntity.isDead()) {
+                this.otherEntityDied(otherEntity);
+            }
 
             if (otherEntity instanceof Player) {
                 this.otherEntityUpdated({
@@ -1978,6 +1991,15 @@ export default class Player extends Character {
 
     setHorseName(name: string): number {
         return this.horse.setName(name);
+    }
+
+    /** Announce a non-player entity's death to every player that can see it. */
+    private broadcastEntityDeath(entity: Character): void {
+        for (const other of entity.getNearbyEntities().values()) {
+            if (other instanceof Player) {
+                other.otherEntityDied(entity);
+            }
+        }
     }
 
     private broadcastMountChange(): void {

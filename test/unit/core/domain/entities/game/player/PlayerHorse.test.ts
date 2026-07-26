@@ -1,6 +1,7 @@
 import { expect } from 'chai';
 import PlayerFactory from '@/core/domain/factories/PlayerFactory';
 import Player from '@/core/domain/entities/game/player/Player';
+import { PositionEnum } from '@/core/enum/PositionEnum';
 
 const logger: any = { info: () => {}, error: () => {}, debug: () => {} };
 
@@ -31,7 +32,7 @@ const config: any = {
     },
 };
 
-const createFactory = () =>
+const createFactory = (mobManager?: any) =>
     new PlayerFactory({
         config,
         animationManager: { getAnimation: () => undefined } as any,
@@ -45,7 +46,7 @@ const createFactory = () =>
             isTimerActive: () => false,
             clearTimersByOwner: () => {},
         } as any,
-        mobManager: { getMobProto: () => undefined } as any,
+        mobManager: mobManager ?? ({ getMobProto: () => undefined } as any),
     });
 
 const createConnection = () => {
@@ -61,7 +62,13 @@ const createConnection = () => {
     };
 };
 
-const createPlayer = (factory: PlayerFactory, virtualId: number, name: string, horse?: boolean): Player => {
+const createPlayer = (
+    factory: PlayerFactory,
+    virtualId: number,
+    name: string,
+    horse?: boolean,
+    horseHealth: number = 100,
+): Player => {
     return factory.create({
         playerClass: 0,
         accountId: virtualId,
@@ -78,8 +85,44 @@ const createPlayer = (factory: PlayerFactory, virtualId: number, name: string, h
         name,
         givenStatusPoints: 0,
         availableStatusPoints: 0,
-        ...(horse ? { horseLevel: 11, horseHealth: 100, horseStamina: 100, horseName: 'Pony' } : {}),
+        ...(horse ? { horseLevel: 11, horseHealth, horseStamina: 100, horseName: 'Pony' } : {}),
     } as any);
+};
+
+const createFakeHorse = (virtualId: number) => {
+    let dead = false;
+    const nearby = new Map<number, any>();
+    return {
+        name: '',
+        nearby,
+        die: () => {
+            dead = true;
+        },
+        isDead: () => dead,
+        getVirtualId: () => virtualId,
+        clearMovementNodes: () => {},
+        continueMovementNodes: () => {},
+        moveAlongNodes: () => {},
+        getState: () => 'IDLE',
+        getPositionX: () => 0,
+        getPositionY: () => 0,
+        getNearbyEntities: () => nearby,
+    };
+};
+
+const createFakeArea = () => {
+    const despawned: any[] = [];
+    const spawned: any[] = [];
+    return {
+        despawned,
+        spawned,
+        spawnMobEntity: (entity: any) => {
+            spawned.push(entity);
+        },
+        despawn: (entity: any) => {
+            despawned.push(entity);
+        },
+    };
 };
 
 describe('PlayerHorse', () => {
@@ -149,6 +192,95 @@ describe('PlayerHorse', () => {
 
             const names = watcherConn.sentPackets.map((p) => p.name);
             expect(names).to.include('CharacterSpawnPacket');
+        });
+    });
+
+    describe('dead horse', () => {
+        it('should summon a dead horse as a corpse instead of a living entity', () => {
+            const horse = createFakeHorse(999);
+            const factory = createFactory({ getMobProto: () => undefined, getMob: () => horse });
+            const owner = createPlayer(factory, 1, 'Owner', true, 0);
+            const area = createFakeArea();
+            owner.setConnection(createConnection().connection);
+            owner.setArea(area as any);
+
+            expect(owner.summonHorse()).to.be.equal(true);
+
+            expect(area.spawned).to.include(horse);
+            expect(horse.isDead()).to.be.equal(true);
+        });
+
+        it('should summon a living horse alive', () => {
+            const horse = createFakeHorse(999);
+            const factory = createFactory({ getMobProto: () => undefined, getMob: () => horse });
+            const owner = createPlayer(factory, 1, 'Owner', true, 100);
+            const area = createFakeArea();
+            owner.setConnection(createConnection().connection);
+            owner.setArea(area as any);
+
+            expect(owner.summonHorse()).to.be.equal(true);
+
+            expect(area.spawned).to.include(horse);
+            expect(horse.isDead()).to.be.equal(false);
+        });
+
+        it('should turn the spawned horse into a corpse and notify watchers when it dies', () => {
+            const horse = createFakeHorse(999);
+            const factory = createFactory({ getMobProto: () => undefined, getMob: () => horse });
+            const owner = createPlayer(factory, 1, 'Owner', true, 100);
+            const watcher = createPlayer(factory, 2, 'Watcher');
+            const area = createFakeArea();
+            owner.setConnection(createConnection().connection);
+            const watcherConn = createConnection();
+            watcher.setConnection(watcherConn.connection);
+            owner.setArea(area as any);
+
+            expect(owner.summonHorse()).to.be.equal(true);
+            horse.nearby.set(2, watcher);
+
+            owner.setHorseHealth(0);
+
+            expect(horse.isDead()).to.be.equal(true);
+            // The corpse stays in the area (no immediate despawn)
+            expect(area.despawned).to.not.include(horse);
+            const names = watcherConn.sentPackets.map((p) => p.name);
+            expect(names).to.include('CharacterDiedPacket');
+        });
+
+        it('should replace the corpse with a living horse on revive', () => {
+            const corpse = createFakeHorse(999);
+            const revived = createFakeHorse(1000);
+            const horses = [corpse, revived];
+            const factory = createFactory({ getMobProto: () => undefined, getMob: () => horses.shift() });
+            const owner = createPlayer(factory, 1, 'Owner', true, 0);
+            const area = createFakeArea();
+            owner.setConnection(createConnection().connection);
+            owner.setArea(area as any);
+
+            expect(owner.summonHorse()).to.be.equal(true);
+            expect(corpse.isDead()).to.be.equal(true);
+
+            expect(owner.reviveHorse()).to.be.equal(true);
+
+            expect(area.despawned).to.include(corpse);
+            expect(area.spawned).to.include(revived);
+            expect(revived.isDead()).to.be.equal(false);
+            expect(owner.getHorseHealth()).to.be.greaterThan(0);
+        });
+
+        it('should send the death packet when a dead entity enters a player view', () => {
+            const factory = createFactory();
+            const watcher = createPlayer(factory, 1, 'Watcher');
+            const deadPlayer = createPlayer(factory, 2, 'Ghost');
+            const watcherConn = createConnection();
+            watcher.setConnection(watcherConn.connection);
+
+            deadPlayer.setPos(PositionEnum.DEAD);
+            watcher.addNearbyEntity(deadPlayer);
+
+            const names = watcherConn.sentPackets.map((p) => p.name);
+            expect(names).to.include('CharacterSpawnPacket');
+            expect(names).to.include('CharacterDiedPacket');
         });
     });
 });

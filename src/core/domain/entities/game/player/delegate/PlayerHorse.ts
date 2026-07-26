@@ -24,6 +24,8 @@ export interface IHorseOwner {
     removeEventTimer(id: string): void;
     /** Broadcast updated mountId to self + nearby players. */
     broadcastMountChange(): void;
+    /** Announce an entity's death to every player that can see it. */
+    broadcastEntityDeath(entity: NPC): void;
     /** Get player's current position X. */
     getPositionX(): number;
     /** Get player's current position Y. */
@@ -53,6 +55,10 @@ const HORSE_FOLLOW_DISTANCE = 400;
 const HORSE_FOLLOW_MIN_APPROACH = 150;
 const HORSE_FOLLOW_MAX_APPROACH = 300;
 const HORSE_FOLLOW_TIMER = 'HORSE_FOLLOW';
+// Original behaviour (char_horse.cpp horse_dead_event): a dead horse lies on
+// the ground for 60 seconds and then despawns automatically.
+const HORSE_DEAD_DESPAWN_TIMER = 'HORSE_DEAD_DESPAWN';
+const HORSE_DEAD_DESPAWN_MS = 60 * 1_000;
 
 const TEMPORARY_HORSE_RIDE = 'TEMPORARY_HORSE_RIDE';
 const HORSE_STAMINA_REGEN = 'HORSE_STAMINA_REGEN';
@@ -296,6 +302,14 @@ export class PlayerHorse {
         const stat = HORSE_STATS[this.level];
         this.health = stat.maxHealth;
         this.stamina = stat.maxStamina;
+
+        // Replace the corpse with a living horse entity (original: ReviveHorse
+        // does HorseSummon(false) followed by HorseSummon(true)).
+        if (this.spawnedHorse) {
+            this.despawnHorseEntity();
+            this.spawnHorseEntity();
+        }
+
         this.sendHorseState();
         this.owner.save();
         return true;
@@ -333,7 +347,16 @@ export class PlayerHorse {
         this.owner.removeEventTimer(HORSE_STAMINA_CONSUME);
         this.owner.removeEventTimer(HORSE_STAMINA_REGEN);
         this.owner.removeEventTimer(HORSE_FOLLOW_TIMER);
-        this.despawnHorseEntity(); // TODO: replace with death animation, and dead state
+
+        // Turn the spawned horse into a corpse: stop following, play the death
+        // animation for everyone nearby and leave the body on the ground for a
+        // while before it despawns.
+        if (this.spawnedHorse) {
+            this.spawnedHorse.clearMovementNodes();
+            this.spawnedHorse.die();
+            this.owner.broadcastEntityDeath(this.spawnedHorse);
+            this.startDeadDespawnTimer();
+        }
 
         if (this.riding) {
             this.riding = false;
@@ -394,9 +417,19 @@ export class PlayerHorse {
             // Spawn in the area with proper virtualId assignment
             area.spawnMobEntity(horseEntity);
             this.spawnedHorse = horseEntity;
-            this.startHorseFollow();
+
+            if (this.health <= 0) {
+                // A dead horse is summoned lying on the ground and despawns on
+                // its own after a while (original: HorseSummon + POS_DEAD).
+                horseEntity.die();
+                this.owner.broadcastEntityDeath(horseEntity);
+                this.startDeadDespawnTimer();
+            } else {
+                this.startHorseFollow();
+            }
+
             this.owner.logger.debug(
-                `[PlayerHorse] spawned horse vnum=${horseVnum} vid=${horseEntity.getVirtualId()} at=${spawnX},${spawnY}`,
+                `[PlayerHorse] spawned horse vnum=${horseVnum} vid=${horseEntity.getVirtualId()} at=${spawnX},${spawnY} dead=${this.health <= 0}`,
             );
         } catch (error) {
             this.owner.logger.error(error instanceof Error ? error : String(error));
@@ -408,6 +441,7 @@ export class PlayerHorse {
      */
     private despawnHorseEntity(): void {
         this.owner.removeEventTimer(HORSE_FOLLOW_TIMER);
+        this.owner.removeEventTimer(HORSE_DEAD_DESPAWN_TIMER);
 
         if (!this.spawnedHorse) {
             return;
@@ -421,6 +455,14 @@ export class PlayerHorse {
         }
 
         this.spawnedHorse = null;
+    }
+
+    private startDeadDespawnTimer(): void {
+        this.owner.addEventTimer({
+            id: HORSE_DEAD_DESPAWN_TIMER,
+            eventFunction: () => this.despawnHorseEntity(),
+            options: { interval: HORSE_DEAD_DESPAWN_MS, duration: HORSE_DEAD_DESPAWN_MS },
+        });
     }
 
     private startHorseFollow(): void {
