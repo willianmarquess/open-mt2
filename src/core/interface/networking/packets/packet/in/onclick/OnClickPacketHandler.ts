@@ -5,25 +5,30 @@ import OnClickPacket from './OnClickPacket';
 import { QuestManager } from '@/core/domain/quests/QuestManager';
 import NPC from '@/core/domain/entities/game/mob/NPC';
 import ShopManager from '@/core/domain/shop/ShopManager';
+import { EntityManager } from '@/core/domain/manager/EntityManager';
 
 export default class OnClickPacketHandler extends PacketHandler<OnClickPacket> {
     private readonly logger: Logger;
     private readonly questManager: QuestManager;
     private readonly shopManager: ShopManager;
+    private readonly entityManager: EntityManager;
 
     constructor({
         logger,
         questManager,
         shopManager,
+        entityManager,
     }: {
         logger: Logger;
         questManager: QuestManager;
         shopManager: ShopManager;
+        entityManager: EntityManager;
     }) {
         super();
         this.logger = logger;
         this.questManager = questManager;
         this.shopManager = shopManager;
+        this.entityManager = entityManager;
     }
 
     async execute(connection: GameConnection, packet: OnClickPacket) {
@@ -44,23 +49,16 @@ export default class OnClickPacketHandler extends PacketHandler<OnClickPacket> {
             return;
         }
 
-        const area = player.getArea();
-
-        if (!area) {
-            this.logger.info(`[OnClickPacketHandler] The area not exists on player, this cannot happen`);
-            connection.close();
-            return;
-        }
-
-        const target = area.getEntity(packet.getTargetVirtualId());
+        const target = this.entityManager.getEntity(packet.getTargetVirtualId());
 
         if (!target) {
             this.logger.info(
                 `[OnClickPacketHandler] The targetId not exists with virtualId: ${packet.getTargetVirtualId()}`,
             );
-            connection.close();
             return;
         }
+
+        //TODO: validate id the target item is in the same map, maybe the distance too (avoid hacking)
 
         if (target instanceof NPC) {
             this.logger.info(`[OnClickPacketHandler] You have clicked on: ${target.getId()}`);

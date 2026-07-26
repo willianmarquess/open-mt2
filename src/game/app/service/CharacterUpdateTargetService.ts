@@ -1,28 +1,23 @@
 import Character from '@/core/domain/entities/game/Character';
 import Player from '@/core/domain/entities/game/player/Player';
-import World from '@/core/domain/World';
+import { EntityManager } from '@/core/domain/manager/EntityManager';
 import Logger from '@/core/infra/logger/Logger';
 
 export default class CharacterUpdateTargetService {
     private readonly logger: Logger;
-    private readonly world: World;
+    private readonly entityManager: EntityManager;
 
-    constructor({ logger, world }: { logger: Logger; world: World }) {
+    constructor({ logger, entityManager }: { logger: Logger; entityManager: EntityManager }) {
         this.logger = logger;
-        this.world = world;
+        this.entityManager = entityManager;
     }
 
     async execute(player: Player, targetVirtualId: number) {
-        const area = this.world.getAreaByCoordinates(player.getPositionX(), player.getPositionY());
+        console.log(`[CharacterUpdateTargetService]: targetVirtualId -> ${targetVirtualId}`);
 
-        if (!area) {
-            this.logger.info(
-                `[CharacterUpdateTargetService] Area not found at x: ${player.getPositionX()}, y: ${player.getPositionY()}`,
-            );
-            return;
-        }
+        const target = this.entityManager.getEntity<Character>(targetVirtualId);
 
-        const target = area.getEntity(targetVirtualId) as Character;
+        //TODO: validate id the target item is in the same map (avoid hacking)
 
         if (!target) {
             this.logger.info(`[CharacterUpdateTargetService] Target not found with virtualId ${targetVirtualId}`);

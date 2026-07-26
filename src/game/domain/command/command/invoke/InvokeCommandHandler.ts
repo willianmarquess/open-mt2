@@ -6,6 +6,7 @@ import MobManager from '@/core/domain/manager/MobManager';
 import Player from '@/core/domain/entities/game/player/Player';
 import { ChatMessageTypeEnum } from '@/core/enum/ChatMessageTypeEnum';
 import MathUtil from '@/core/domain/util/MathUtil';
+import { EntityManager } from '@/core/domain/manager/EntityManager';
 
 const MAX_MOB_TO_INVOKE = 20;
 const MAX_MOB_INVOKE_DISTANCE = 700;
@@ -14,12 +15,24 @@ export default class InvokeCommandHandler extends CommandHandler<InvokeCommand> 
     private readonly logger: Logger;
     private readonly world: World;
     private readonly mobManager: MobManager;
+    private readonly entityManager: EntityManager;
 
-    constructor({ logger, world, mobManager }: { logger: Logger; world: World; mobManager: MobManager }) {
+    constructor({
+        logger,
+        world,
+        mobManager,
+        entityManager,
+    }: {
+        logger: Logger;
+        world: World;
+        mobManager: MobManager;
+        entityManager: EntityManager;
+    }) {
         super();
         this.logger = logger;
         this.world = world;
         this.mobManager = mobManager;
+        this.entityManager = entityManager;
     }
 
     async execute(player: Player, invokeCommand: InvokeCommand) {
@@ -45,18 +58,24 @@ export default class InvokeCommandHandler extends CommandHandler<InvokeCommand> 
                 player.getPositionX() - MAX_MOB_INVOKE_DISTANCE,
                 player.getPositionX() + MAX_MOB_INVOKE_DISTANCE,
             );
+
             const positionY = MathUtil.getRandomInt(
                 player.getPositionY() - MAX_MOB_INVOKE_DISTANCE,
                 player.getPositionY() + MAX_MOB_INVOKE_DISTANCE,
             );
-            const mob = this.mobManager.getMob(Number(vnum), positionX, positionY);
+
+            const mob = this.entityManager.createMob({
+                id: Number(vnum),
+                positionX,
+                positionY,
+                direction: 0,
+            });
 
             if (!mob) {
                 this.logger.error(`[InvokeCommandHandler] Failed to create mob with vnum ${vnum}`);
                 continue;
             }
 
-            mob.setVirtualId(this.world.generateVirtualId());
             this.world.spawn(mob);
         }
     }

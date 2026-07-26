@@ -79,6 +79,8 @@ import QuickSlotAddResponsePacket from '@/core/interface/networking/packets/pack
 import QuickSlotRemoveResponsePacket from '@/core/interface/networking/packets/packet/out/QuickSlotRemoveResponsePacket';
 import QuickSlotSwapResponsePacket from '@/core/interface/networking/packets/packet/out/QuickSlotSwapResponsePacket';
 import MobManager from '@/core/domain/manager/MobManager';
+import { JobEnum } from '@/core/enum/JobEnum';
+import QuestTargetCreatePacket from '@/core/interface/networking/packets/packet/out/QuestTargetCreatePacket';
 
 const REGEN_INTERVAL = 3000;
 const MAX_DISTANCE_FROM_TARGET = 3500;
@@ -1149,7 +1151,7 @@ export default class Player extends Character {
         time: number;
         movementType: number;
     }) {
-        //remove invisible and cancel other things like mining
+        //TODO: remove invisible and cancel other things like mining
         this.rotation = rotation;
         this.move(positionX, positionY);
         this.area?.onCharacterMove({
@@ -2053,5 +2055,35 @@ export default class Player extends Character {
 
     getBlockMode() {
         return this.blockMode;
+    }
+
+    isSura(): boolean {
+        return this.playerClass === JobEnum.SURA_MALE || this.playerClass === JobEnum.SURA_FEMALE;
+    }
+
+    isWarrior(): boolean {
+        return this.playerClass === JobEnum.WARRIOR_MALE || this.playerClass === JobEnum.WARRIOR_FEMALE;
+    }
+
+    isAssassin(): boolean {
+        return this.playerClass === JobEnum.ASSASSIN_MALE || this.playerClass === JobEnum.ASSASSIN_FEMALE;
+    }
+
+    isShaman(): boolean {
+        return this.playerClass === JobEnum.SHAMAN_MALE || this.playerClass === JobEnum.SHAMAN_FEMALE;
+    }
+
+    sendQuestTarget({
+        id,
+        targetName,
+        targetVirtualId,
+        type,
+    }: {
+        id: number;
+        targetName: string;
+        targetVirtualId: number;
+        type: number;
+    }) {
+        this.connection?.send(new QuestTargetCreatePacket({ id, targetName, targetVirtualId, type }));
     }
 }

@@ -1,25 +1,20 @@
 import Queue from '../util/Queue';
 import GameEntity from './entities/game/GameEntity';
-import DroppedItem from './entities/game/item/DroppedItem';
 import Player from './entities/game/player/Player';
 import MathUtil from './util/MathUtil';
-import Logger from '@/core/infra/logger/Logger';
-import World from '@/core/domain/World';
 import SpawnManager from '@/core/domain/manager/SpawnManager';
 import { EntityTypeEnum } from '@/core/enum/EntityTypeEnum';
 import Character from './entities/game/Character';
 import MonsterMovedEvent from './entities/game/mob/events/MonsterMovedEvent';
 import SpatialGrid from '../util/SpatialGrid';
-import SaveCharacterService from '@/game/domain/service/SaveCharacterService';
 import { EmpireEnum } from '../enum/EmpireEnum';
 import EmpireUtil from './util/EmpireUtil';
 import Item from './entities/game/item/Item';
 import { AtlasInfoGoto } from '@/game/infra/config/GameConfig';
-import GlobalEventTimerManager from './manager/GlobalEventTimeManager';
+import { EntityManager } from './manager/EntityManager';
 
 const SIZE_QUEUE = 5_000;
 const CHAR_VIEW_SIZE = 8000;
-const SAVE_PLAYERS_INTERVAL = 120000;
 const SPAWN_POSITION_MULTIPLIER = 100;
 
 export default class Area {
@@ -31,17 +26,11 @@ export default class Area {
     private readonly aka?: string;
     private readonly goto?: AtlasInfoGoto | undefined;
 
-    private readonly entities = new Map<number, GameEntity>();
     private readonly entitiesToSpawn = new Queue<GameEntity>(SIZE_QUEUE);
     private readonly entitiesToDespawn = new Queue<GameEntity>(SIZE_QUEUE);
     private readonly aoi: SpatialGrid;
-
-    private readonly saveCharacterService: SaveCharacterService;
-    private readonly logger: Logger;
-
-    private readonly world: World;
     private readonly spawnManager: SpawnManager;
-    private readonly eventTimerManager: GlobalEventTimerManager;
+    private readonly entityManager: EntityManager;
 
     constructor(
         {
@@ -62,17 +51,11 @@ export default class Area {
             goto?: AtlasInfoGoto | undefined;
         },
         {
-            saveCharacterService,
-            logger,
-            world,
             spawnManager,
-            eventTimerManager,
+            entityManager,
         }: {
-            saveCharacterService: SaveCharacterService;
-            logger: Logger;
-            world: World;
             spawnManager: SpawnManager;
-            eventTimerManager: GlobalEventTimerManager;
+            entityManager: EntityManager;
         },
     ) {
         this.name = name;
@@ -82,24 +65,16 @@ export default class Area {
         this.height = height;
         this.aka = aka;
         this.goto = goto;
-        // this.aoi = new QuadTree(positionX, positionY, width * 25600, height * 25600, 50);
         this.aoi = new SpatialGrid(CHAR_VIEW_SIZE * 2);
 
-        this.saveCharacterService = saveCharacterService;
-        this.logger = logger;
-
-        this.world = world;
         this.spawnManager = spawnManager;
-        this.eventTimerManager = eventTimerManager;
-        setInterval(this.savePlayers.bind(this), SAVE_PLAYERS_INTERVAL);
+        this.entityManager = entityManager;
     }
 
     //TODO: add system do choose which map will be generated on this server
-    //to be able to only deal with the map we want to deal with.
     async load() {
         const entitiesToSpawn = await this.spawnManager.getEntities(this.name);
         entitiesToSpawn.forEach((entity) => {
-            entity.setVirtualId(this.world.generateVirtualId());
             entity.setPositionY(this.positionY + entity.getPositionY() * SPAWN_POSITION_MULTIPLIER);
             entity.setPositionX(this.positionX + entity.getPositionX() * SPAWN_POSITION_MULTIPLIER);
             entity.setRotation(MathUtil.calcRotationFromDirection(entity.getDirection()));
@@ -138,44 +113,9 @@ export default class Area {
         };
     }
 
-    getEntity(virtualId: number) {
-        return this.entities.get(virtualId);
-    }
-
     onItemDrop(itemDropEvent: { item: Item; count: number; positionX: number; positionY: number; ownerName: string }) {
-        const { item, count, positionX, positionY, ownerName } = itemDropEvent;
-        const virtualId = this.world.generateVirtualId();
-        const droppedItem = DroppedItem.create(
-            {
-                item,
-                count,
-                ownerName,
-                virtualId,
-                positionX,
-                positionY,
-            },
-            {
-                eventTimerManager: this.eventTimerManager,
-            },
-        );
+        const droppedItem = this.entityManager.createDroppedItem(itemDropEvent);
         this.spawn(droppedItem);
-    }
-
-    async savePlayers(): Promise<void> {
-        if (this.entities.size < 1) return;
-
-        const promises: Array<Promise<PromiseSettledResult<unknown>[]>> = [];
-
-        for (const entity of this.entities.values()) {
-            if (entity instanceof Player) {
-                this.logger.debug(`[AREA] Saving player: ${entity.getId()}, ${entity.getName()}`);
-                promises.push(this.saveCharacterService.execute(entity));
-            }
-        }
-        //TODO: refactor this sending to a queue and save behind scenes (other process)
-        await Promise.allSettled(promises).catch((error) =>
-            this.logger.error('[AREA] Error when try to save player: ', error),
-        );
     }
 
     spawn(entity: GameEntity) {
@@ -299,7 +239,7 @@ export default class Area {
                 }
             }
 
-            this.entities.set(entity.getVirtualId(), entity);
+            this.entityManager.addEntity(entity);
             entity.setArea(this);
         }
 
@@ -317,15 +257,9 @@ export default class Area {
                 }
             }
 
-            this.entities.delete(entity.getVirtualId());
+            this.entityManager.removeEntity(entity);
             this.aoi.remove(entity);
             entity.onDespawn();
-        }
-
-        for (const entity of this.entities.values()) {
-            if (entity instanceof Character) {
-                entity.tick();
-            }
         }
     }
 }

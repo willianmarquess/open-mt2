@@ -7,10 +7,9 @@ describe('SelectCharacterService', () => {
     let selectCharacterService: SelectCharacterService;
     let playerRepositoryStub;
     let loggerStub;
-    let playerFactoryStub;
-    let worldStub;
     let itemManagerStub;
     let connectionStub;
+    let entityManagerStub: any;
 
     beforeEach(() => {
         playerRepositoryStub = {
@@ -19,25 +18,21 @@ describe('SelectCharacterService', () => {
         loggerStub = {
             info: sinon.stub(),
         };
-        playerFactoryStub = {
-            create: sinon.stub(),
-        };
-        worldStub = {
-            generateVirtualId: sinon.stub(),
-        };
         itemManagerStub = {
             getItems: sinon.stub(),
         };
         connectionStub = {
             setPlayer: sinon.stub(),
         };
+        entityManagerStub = {
+            createPlayer: sinon.stub(),
+        };
 
         selectCharacterService = new SelectCharacterService({
             playerRepository: playerRepositoryStub,
             logger: loggerStub,
-            playerFactory: playerFactoryStub,
-            world: worldStub,
             itemManager: itemManagerStub,
+            entityManager: entityManagerStub,
         });
     });
 
@@ -63,8 +58,7 @@ describe('SelectCharacterService', () => {
             sendPoints: sinon.spy(),
         };
         playerRepositoryStub.getByAccountIdAndSlot.resolves(playerData);
-        playerFactoryStub.create.returns(playerData);
-        worldStub.generateVirtualId.returns(100);
+        entityManagerStub.createPlayer.returns(playerData);
         itemManagerStub.getItems.resolves([]);
 
         const result = await selectCharacterService.execute(1, 123, connectionStub);
@@ -72,9 +66,7 @@ describe('SelectCharacterService', () => {
         expect(result.isOk()).to.be.true;
         expect(result.getData()).to.exist;
         expect(result.getData()!.getId()).to.equal(playerData.id);
-        expect(worldStub.generateVirtualId.calledOnce).to.be.true;
         expect(itemManagerStub.getItems.calledOnce).to.be.true;
-        expect(playerData.setVirtualId.calledOnceWith(100)).to.be.true;
         expect(connectionStub.setPlayer.calledOnce).to.be.true;
     });
 });

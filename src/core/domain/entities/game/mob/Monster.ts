@@ -32,7 +32,7 @@ export default class Monster extends Mob {
     protected readonly battle: MonsterBattle;
 
     constructor(
-        params: Omit<MobParams, 'virtualId' | 'entityType'>,
+        params: Omit<MobParams, 'entityType'>,
         {
             animationManager,
             dropManager,

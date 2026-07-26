@@ -1,6 +1,6 @@
 import Result from '@/core/domain/util/Result';
 import Player from '@/core/domain/entities/game/player/Player';
-import PlayerFactory from '@/core/domain/factories/PlayerFactory';
+import { PlayerFactory } from '@/core/domain/factories/PlayerFactory';
 import { ErrorTypesEnum } from '@/core/enum/ErrorTypesEnum';
 import CacheProvider from '@/core/infra/cache/CacheProvider';
 import Logger from '@/core/infra/logger/Logger';

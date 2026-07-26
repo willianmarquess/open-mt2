@@ -7,9 +7,9 @@ import MonsterGroup from '../entities/game/mob/MonsterGroup';
 import MathUtil from '../util/MathUtil';
 import Monster from '../entities/game/mob/Monster';
 import Logger from '@/core/infra/logger/Logger';
-import MobManager from './MobManager';
 import { GameConfig, GroupCollection, Groups } from '@/game/infra/config/GameConfig';
 import { SpawnConfigTypeEnum } from '@/core/enum/SpawnConfigTypeEnum';
+import { EntityManager } from './EntityManager';
 
 const DEFAULT_SPAWN_CONFIG_PATH = 'src/core/infra/config/data/spawn';
 
@@ -31,15 +31,23 @@ type SpawnFile = {
 
 export default class SpawnManager {
     private readonly logger: Logger;
-    private readonly mobManager: MobManager;
+    private readonly entityManager: EntityManager;
     private readonly groups: Array<Groups>;
     private readonly groupsCollection: Array<GroupCollection>;
 
-    constructor({ logger, mobManager, config }: { logger: Logger; mobManager: MobManager; config: GameConfig }) {
+    constructor({
+        logger,
+        config,
+        entityManager,
+    }: {
+        logger: Logger;
+        config: GameConfig;
+        entityManager: EntityManager;
+    }) {
         this.logger = logger;
-        this.mobManager = mobManager;
         this.groups = config.groups;
         this.groupsCollection = config.groupsCollection;
+        this.entityManager = entityManager;
     }
 
     private createMonster({
@@ -60,7 +68,7 @@ export default class SpawnManager {
         const realX = MathUtil.getRandomInt(Number(x) - Number(rangeX), Number(x) + Number(rangeX));
         const realY = MathUtil.getRandomInt(Number(y) - Number(rangeY), Number(y) + Number(rangeY));
 
-        const monster = this.mobManager.getMob(Number(id), realX, realY, direction);
+        const monster = this.entityManager.createMob({ id: Number(id), positionX: realX, positionY: realY, direction });
         return monster;
     }
 
@@ -150,7 +158,12 @@ export default class SpawnManager {
         const entitiesToSpawn: Array<Mob> = [];
 
         for (const spawn of spawns.npc) {
-            const entity = this.mobManager.getMob(spawn.getId(), spawn.getX(), spawn.getY(), spawn.getDirection());
+            const entity = this.entityManager.createMob({
+                id: spawn.getId(),
+                positionX: spawn.getX(),
+                positionY: spawn.getY(),
+                direction: spawn.getDirection(),
+            });
             if (entity && entity instanceof Mob) {
                 entitiesToSpawn.push(entity);
             }

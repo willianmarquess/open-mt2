@@ -4,24 +4,33 @@ import World from '@/core/domain/World';
 import { ChatMessageTypeEnum } from '@/core/enum/ChatMessageTypeEnum';
 import { IItemRepository } from '@/core/domain/repository/IItemRepository';
 import { PointsEnum } from '@/core/enum/PointsEnum';
+import { EntityManager } from '@/core/domain/manager/EntityManager';
 
 export default class PickupItemService {
     private readonly world: World;
     private readonly itemRepository: IItemRepository;
+    private readonly entityManager: EntityManager;
 
-    constructor({ world, itemRepository }: { world: World; itemRepository: IItemRepository }) {
+    constructor({
+        world,
+        itemRepository,
+        entityManager,
+    }: {
+        world: World;
+        itemRepository: IItemRepository;
+        entityManager: EntityManager;
+    }) {
         this.world = world;
         this.itemRepository = itemRepository;
+        this.entityManager = entityManager;
     }
 
     async execute(player: Player, virtualId: number) {
-        const area = this.world.getEntityArea(player);
-
-        if (!area) return;
-
-        const droppedItem = area.getEntity(virtualId) as unknown as DroppedItem;
+        const droppedItem = this.entityManager.getEntity<DroppedItem>(virtualId);
 
         if (!droppedItem) return;
+
+        //TODO: validate id the dropped item is in the same map, and validate distance (avoid hacking)
 
         const item = droppedItem.getItem();
         const count = droppedItem.getCount();
@@ -31,7 +40,7 @@ export default class PickupItemService {
 
         if (isGold) {
             player.addPoint(PointsEnum.GOLD, Number(count));
-            area.despawn(droppedItem);
+            this.world.despawn(droppedItem);
             return;
         }
 
@@ -46,7 +55,7 @@ export default class PickupItemService {
         }
 
         if (player.addItem(item)) {
-            area.despawn(droppedItem);
+            this.world.despawn(droppedItem);
             await this.itemRepository.create(item.toDatabase());
         }
     }

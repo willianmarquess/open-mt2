@@ -1,29 +1,20 @@
 import Monster from '@/core/domain/entities/game/mob/Monster';
 import Player from '@/core/domain/entities/game/player/Player';
-import World from '@/core/domain/World';
+import { EntityManager } from '@/core/domain/manager/EntityManager';
 import { AttackTypeEnum } from '@/core/enum/AttackTypeEnum';
 import Logger from '@/core/infra/logger/Logger';
 
 export default class CharacterAttackService {
     private readonly logger: Logger;
-    private readonly world: World;
+    private readonly entityManager: EntityManager;
 
-    constructor({ logger, world }: { logger: Logger; world: World }) {
+    constructor({ logger, entityManager }: { logger: Logger; entityManager: EntityManager }) {
         this.logger = logger;
-        this.world = world;
+        this.entityManager = entityManager;
     }
 
     async execute(player: Player, attackType: AttackTypeEnum, victimVirtualId: number) {
-        const area = this.world.getAreaByCoordinates(player.getPositionX(), player.getPositionY());
-
-        if (!area) {
-            this.logger.info(
-                `[CharacterAttackService] Area not found at x: ${player.getPositionX()}, y: ${player.getPositionY()}`,
-            );
-            return;
-        }
-
-        const victim = area.getEntity(victimVirtualId) as Player | Monster;
+        const victim = this.entityManager.getEntity<Player | Monster>(victimVirtualId);
 
         if (!victim) {
             this.logger.info(`[CharacterAttackService] Victim not found with virtualId ${victimVirtualId}`);

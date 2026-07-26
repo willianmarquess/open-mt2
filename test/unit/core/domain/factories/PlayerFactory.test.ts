@@ -1,5 +1,5 @@
 import Player from '@/core/domain/entities/game/player/Player';
-import PlayerFactory from '@/core/domain/factories/PlayerFactory';
+import { PlayerFactory } from '@/core/domain/factories/PlayerFactory';
 import { PointsEnum } from '@/core/enum/PointsEnum';
 import Logger from '@/core/infra/logger/Logger';
 import { expect } from 'chai';
@@ -9,6 +9,8 @@ describe('PlayerFactory', () => {
     let animationManager: any;
     let playerFactory: PlayerFactory;
     let experienceManager: any;
+    let eventTimerManager: any;
+    let mobManager: any;
     const logger: Logger = {
         info: () => {},
         error: () => {},
@@ -48,8 +50,10 @@ describe('PlayerFactory', () => {
         experienceManager = {
             getNeededExperience: () => 100,
         };
+        eventTimerManager = {};
         animationManager = {};
         questManager = {};
+        mobManager = {};
         playerFactory = new PlayerFactory({
             config,
             animationManager,
@@ -57,6 +61,8 @@ describe('PlayerFactory', () => {
             logger,
             saveCharacterService,
             questManager,
+            eventTimerManager,
+            mobManager,
         });
     });
 

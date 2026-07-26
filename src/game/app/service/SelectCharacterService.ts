@@ -1,39 +1,34 @@
 import Result from '@/core/domain/util/Result';
 import Player from '@/core/domain/entities/game/player/Player';
-import PlayerFactory from '@/core/domain/factories/PlayerFactory';
 import ItemManager from '@/core/domain/manager/ItemManager';
-import World from '@/core/domain/World';
 import { ErrorTypesEnum } from '@/core/enum/ErrorTypesEnum';
 import Logger from '@/core/infra/logger/Logger';
 import { IPlayerRepository } from '@/core/domain/repository/IPlayerRepository';
 import GameConnection from '@/game/interface/networking/GameConnection';
 import Item from '@/core/domain/entities/game/item/Item';
+import { EntityManager } from '@/core/domain/manager/EntityManager';
 
 export default class SelectCharacterService {
     private readonly logger: Logger;
     private readonly playerRepository: IPlayerRepository;
-    private readonly playerFactory: PlayerFactory;
-    private readonly world: World;
     private readonly itemManager: ItemManager;
+    private readonly entityManager: EntityManager;
 
     constructor({
         playerRepository,
         logger,
-        playerFactory,
-        world,
         itemManager,
+        entityManager,
     }: {
         playerRepository: IPlayerRepository;
         logger: Logger;
-        playerFactory: PlayerFactory;
-        world: World;
         itemManager: ItemManager;
+        entityManager: EntityManager;
     }) {
         this.logger = logger;
         this.playerRepository = playerRepository;
-        this.playerFactory = playerFactory;
-        this.world = world;
         this.itemManager = itemManager;
+        this.entityManager = entityManager;
     }
 
     async execute(
@@ -48,9 +43,7 @@ export default class SelectCharacterService {
             return Result.error(ErrorTypesEnum.PLAYER_NOT_FOUND);
         }
 
-        const player = this.playerFactory.create({ ...playerFounded });
-
-        player.setVirtualId(this.world.generateVirtualId());
+        const player = this.entityManager.createPlayer({ ...playerFounded });
 
         connection.setPlayer(player);
 

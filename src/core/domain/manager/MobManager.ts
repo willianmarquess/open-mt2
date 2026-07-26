@@ -145,7 +145,19 @@ export default class MobManager {
         return this.mobs.get(id);
     }
 
-    getMob(id: number, positionX: number, positionY: number, direction: number = 0) {
+    getMob({
+        id,
+        positionX,
+        positionY,
+        virtualId,
+        direction = 0,
+    }: {
+        id: number;
+        positionX: number;
+        positionY: number;
+        direction?: number;
+        virtualId: number;
+    }) {
         const proto = this.mobs.get(id);
         if (!proto) return;
 
@@ -157,6 +169,7 @@ export default class MobManager {
                         positionX,
                         positionY,
                         proto,
+                        virtualId,
                     },
                     {
                         animationManager: this.animationManager,
@@ -175,10 +188,12 @@ export default class MobManager {
                         positionX,
                         positionY,
                         proto,
+                        virtualId,
                     },
                     {
                         animationManager: this.animationManager,
                         questManager: this.questManager,
+                        eventTimerManager: this.eventTimerManager,
                     },
                 );
             }
@@ -189,10 +204,12 @@ export default class MobManager {
                         positionX,
                         positionY,
                         proto,
+                        virtualId,
                     },
                     {
                         animationManager: this.animationManager,
                         questManager: this.questManager,
+                        eventTimerManager: this.eventTimerManager,
                     },
                 );
             }

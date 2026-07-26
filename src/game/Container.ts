@@ -1,4 +1,4 @@
-import PlayerFactory from '@/core/domain/factories/PlayerFactory';
+import { PlayerFactory } from '@/core/domain/factories/PlayerFactory';
 import AnimationManager from '@/core/domain/manager/AnimationManager';
 import DropManager from '@/core/domain/manager/DropManager';
 import ExperienceManager from '@/core/domain/manager/ExperienceManager';
@@ -40,6 +40,8 @@ import ShopService from '@/game/app/service/ShopService';
 import ShopManager from '@/core/domain/shop/ShopManager';
 import PrivateShopService from './app/service/PrivateShopService';
 import GlobalEventTimerManager from '@/core/domain/manager/GlobalEventTimeManager';
+import { VirtualIdManager } from '@/core/domain/manager/VirtualIdManager';
+import { EntityManager } from '@/core/domain/manager/EntityManager';
 
 const container = createContainer();
 
@@ -86,6 +88,8 @@ container.register({
     shopManager: asClass(ShopManager).singleton(),
     privateShopService: asClass(PrivateShopService).singleton(),
     eventTimerManager: asClass(GlobalEventTimerManager).singleton(),
+    virtualIdManager: asClass(VirtualIdManager).singleton(),
+    entityManager: asClass(EntityManager).singleton(),
 });
 
 export { container };
