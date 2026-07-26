@@ -32,6 +32,7 @@ describe('DropItemService', function () {
                 dropItem: sinon.spy(),
                 chat: sinon.spy(),
                 getName: sinon.stub().returns('TestPlayer'),
+            isItemLockedInPrivateShop: sinon.stub().returns(false),
                 addPoint: sinon.spy(),
             };
 
@@ -54,6 +55,7 @@ describe('DropItemService', function () {
                 dropItem: sinon.spy(),
                 chat: sinon.spy(),
                 getName: sinon.stub().returns('TestPlayer'),
+            isItemLockedInPrivateShop: sinon.stub().returns(false),
                 addPoint: sinon.spy(),
             };
 
@@ -82,6 +84,7 @@ describe('DropItemService', function () {
             };
 
             const playerMock = {
+                isItemLockedInPrivateShop: sinon.stub().returns(false),
                 getInventory: sinon.stub().returns({
                     getItem: sinon.stub().returns(itemMock),
                     removeItem: sinon.spy(),
@@ -113,6 +116,7 @@ describe('DropItemService', function () {
             };
 
             const playerMock = {
+                isItemLockedInPrivateShop: sinon.stub().returns(false),
                 getInventory: sinon.stub().returns({
                     getItem: sinon.stub().returns(itemMock),
                 }),
@@ -136,6 +140,7 @@ describe('DropItemService', function () {
 
         it('should do nothing if item is not found', async function () {
             const playerMock = {
+                isItemLockedInPrivateShop: sinon.stub().returns(false),
                 getInventory: sinon.stub().returns({
                     getItem: sinon.stub().returns(undefined),
                 }),
