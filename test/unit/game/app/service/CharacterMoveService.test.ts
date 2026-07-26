@@ -19,6 +19,7 @@ describe('CharacterMoveService', function () {
     describe('execute', function () {
         it('should move the player for MOVE movement type without granting experience', async function () {
             const playerMock = {
+                isMoveAllowed: sinon.stub().returns(true),
                 addPoint: sinon.spy(),
                 goto: sinon.spy(),
             };
@@ -50,6 +51,7 @@ describe('CharacterMoveService', function () {
 
         it('should call wait on the player for WAIT movement type', async function () {
             const playerMock = {
+                isMoveAllowed: sinon.stub().returns(true),
                 wait: sinon.spy(),
             };
 
@@ -78,6 +80,7 @@ describe('CharacterMoveService', function () {
 
         it('should call sync on the player for ATTACK or COMBO movement type', async function () {
             const playerMock = {
+                isMoveAllowed: sinon.stub().returns(true),
                 sync: sinon.spy(),
             };
 
