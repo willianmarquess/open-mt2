@@ -141,6 +141,8 @@ export default class Player extends Character {
     private lastTimeInBattle: number = 0;
     private lastAttackTime: number = 0;
     private lastAttackVictimVid: number = 0;
+    /** Last client-reported position accepted by the anti-teleport check. */
+    private lastReportedPosition: { x: number; y: number } | null = null;
 
     //quests
     private readonly quests: Map<number, AbstractQuest> = new Map();
@@ -570,14 +572,27 @@ export default class Player extends Character {
      * Returns true when the requested destination is acceptable.
      */
     isMoveAllowed(x: number, y: number): boolean {
-        const distance = MathUtil.calcDistance(this.getPositionX(), this.getPositionY(), x, y);
         const max = this.horse.isRiding() ? MAX_MOVE_DISTANCE_RIDING : MAX_MOVE_DISTANCE;
 
-        if (distance <= max) return true;
+        // Like the original, measure against the client's last accepted
+        // report — the server-side position is interpolated and lags behind a
+        // fast (mounted) client, which would trip the cap on honest moves.
+        // The server position is the fallback anchor (first move after login
+        // or teleport), so a crafted jump is still capped from a trusted point.
+        const anchors = [this.lastReportedPosition, { x: this.getPositionX(), y: this.getPositionY() }];
+        const allowed = anchors.some(
+            (anchor) => anchor && MathUtil.calcDistance(anchor.x, anchor.y, x, y) <= max,
+        );
+
+        if (allowed) {
+            this.lastReportedPosition = { x, y };
+            return true;
+        }
 
         // Snap the client back to the server-side position. SYNC_POSITION is
         // the only packet the client applies to its own character, so a
         // desynced client self-recovers instead of rubber-banding forever.
+        this.lastReportedPosition = null;
         this.connection?.send(
             new SyncPositionPacket({
                 virtualId: this.virtualId,
@@ -811,6 +826,9 @@ export default class Player extends Character {
 
         this.move(x, y);
         this.stop();
+
+        // The anti-teleport anchor is stale after a server-initiated warp.
+        this.lastReportedPosition = null;
 
         this.connection?.send(
             new TeleportPacket({
