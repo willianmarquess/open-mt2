@@ -13,14 +13,14 @@ export default class CharacterUpdateTargetService {
     }
 
     async execute(player: Player, targetVirtualId: number) {
-        console.log(`[CharacterUpdateTargetService]: targetVirtualId -> ${targetVirtualId}`);
+        const target = this.entityManager.getEntity(targetVirtualId);
 
-        const target = this.entityManager.getEntity<Character>(targetVirtualId);
-
-        //TODO: validate id the target item is in the same map (avoid hacking)
-
-        if (!target) {
-            this.logger.info(`[CharacterUpdateTargetService] Target not found with virtualId ${targetVirtualId}`);
+        // A client can send any VID in view, including dropped items (GameEntity
+        // but not Character). getEntity's generic is only a cast, and setTarget
+        // calls Character-only methods, so reject anything that isn't a Character
+        // (this is the anti-hacking check that was previously left unimplemented).
+        if (!(target instanceof Character)) {
+            this.logger.info(`[CharacterUpdateTargetService] Invalid target with virtualId ${targetVirtualId}`);
             return;
         }
 

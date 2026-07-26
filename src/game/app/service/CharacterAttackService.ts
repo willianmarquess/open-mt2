@@ -14,10 +14,16 @@ export default class CharacterAttackService {
     }
 
     async execute(player: Player, attackType: AttackTypeEnum, victimVirtualId: number) {
-        const victim = this.entityManager.getEntity<Player | Monster>(victimVirtualId);
+        const victim = this.entityManager.getEntity(victimVirtualId);
 
-        if (!victim) {
-            this.logger.info(`[CharacterAttackService] Victim not found with virtualId ${victimVirtualId}`);
+        // Only players and monsters can be attacked. A client can send any VID
+        // it has in view (including dropped items, which are GameEntity but not
+        // Character), and getEntity's generic is only a cast — so validate the
+        // real type before the damage pipeline calls methods like isDead() that
+        // only exist on attackable entities. Without this a crafted VID crashes
+        // the server with an unhandled TypeError.
+        if (!(victim instanceof Player) && !(victim instanceof Monster)) {
+            this.logger.info(`[CharacterAttackService] Invalid attack victim with virtualId ${victimVirtualId}`);
             return;
         }
 

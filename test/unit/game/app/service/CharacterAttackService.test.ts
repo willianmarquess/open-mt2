@@ -26,7 +26,7 @@ describe('CharacterAttackService', () => {
         });
     });
 
-    it('should log info when victim is not found', async () => {
+    it('should log info when victim is not an attackable entity', async () => {
         player.getPositionX.returns(100);
         player.getPositionY.returns(200);
         entityManager.getEntity.returns(null as any);
@@ -34,7 +34,7 @@ describe('CharacterAttackService', () => {
         await service.execute(player, AttackTypeEnum.NORMAL, 1);
 
         expect(logger.info.calledOnce).to.be.true;
-        expect(logger.info.calledWith('[CharacterAttackService] Victim not found with virtualId 1')).to.be.true;
+        expect(logger.info.calledWith('[CharacterAttackService] Invalid attack victim with virtualId 1')).to.be.true;
     });
 
     it('should execute battle service when victim is found', async () => {
