@@ -18,6 +18,7 @@ const createConnection = (player: unknown) =>
     ({
         getId: () => 'connection-id',
         getPlayer: () => player,
+        stopKeepalive: sinon.stub(),
     }) as any;
 
 describe('GameServer', () => {
