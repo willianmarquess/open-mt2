@@ -36,7 +36,10 @@ export default class ShopService {
                 shopItems.push({
                     vnum,
                     count,
-                    price: item.getShopPrice(),
+                    // Buy price is the proto gold value times the stack count
+                    // (original: shop.cpp uses item_table->dwGold * item.count);
+                    // shop_buy_price is only used when the player SELLS to the shop.
+                    price: item.getGold() * count,
                     item,
                     position: position ?? index,
                     size: item.getSize(),
