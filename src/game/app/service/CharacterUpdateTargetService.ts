@@ -18,7 +18,7 @@ export default class CharacterUpdateTargetService {
         // A client can send any VID in view, including dropped items (GameEntity
         // but not Character). getEntity's generic is only a cast, and setTarget
         // calls Character-only methods, so reject anything that isn't a Character
-        // (implements the "avoid hacking" TODO that was here).
+        // (this is the anti-hacking check that was previously left unimplemented).
         if (!(target instanceof Character)) {
             this.logger.info(`[CharacterUpdateTargetService] Invalid target with virtualId ${targetVirtualId}`);
             return;
