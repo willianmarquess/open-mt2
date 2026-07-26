@@ -10,15 +10,13 @@ import MobManager from './MobManager';
 import { VirtualIdManager } from './VirtualIdManager';
 import Logger from '@/core/infra/logger/Logger';
 
-type VirtualId = number;
-type Vnum = number;
 const SAVE_PLAYERS_INTERVAL = 120000;
 
 export class EntityManager {
-    private readonly entities = new Map<VirtualId, GameEntity>();
-    private readonly players = new Map<VirtualId, Player>();
-    private readonly mobs = new Map<VirtualId, Mob>();
-    private readonly vnumToVirtualIdMobMapper = new Map<Vnum, Array<VirtualId>>();
+    private readonly entities = new Map<number, GameEntity>();
+    private readonly players = new Map<number, Player>();
+    private readonly mobs = new Map<number, Mob>();
+    private readonly vnumToVirtualIdMobMapper = new Map<number, Array<number>>();
 
     private readonly playerFactory: PlayerFactory;
     private readonly mobManager: MobManager;
@@ -155,7 +153,7 @@ export class EntityManager {
         return droppedItem;
     }
 
-    getEntity<T extends GameEntity>(virtualId: VirtualId): T {
+    getEntity<T extends GameEntity>(virtualId: number): T {
         return this.entities.get(virtualId) as T;
     }
 

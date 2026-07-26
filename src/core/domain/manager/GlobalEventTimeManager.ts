@@ -30,8 +30,6 @@ export default class GlobalEventTimerManager {
     private readonly timers: Map<string, TimerEntry> = new Map();
     private readonly ownerTimers: Map<number, Set<string>> = new Map();
 
-    constructor() {}
-
     private getCompositeKey(ownerId: number, id: string): string {
         return `${ownerId}:${id}`;
     }

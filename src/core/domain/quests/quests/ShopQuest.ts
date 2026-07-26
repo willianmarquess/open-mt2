@@ -21,23 +21,20 @@ export class ShopQuest extends AbstractQuest {
     async onClick({ npc }: ClickExecutionContext) {
         const id = npc.getId();
 
-        switch (id) {
-            case NpcVnumEnum.SALESWOMAN: {
-                this.title('Welcome to my shop!');
-                this.text('Select one option: ');
-                const response = await this.select(['Goods', 'Potions']);
+        if (id === NpcVnumEnum.SALESWOMAN) {
+            this.title('Welcome to my shop!');
+            this.text('Select one option: ');
+            const response = await this.select(['Goods', 'Potions']);
 
-                switch (response) {
-                    case 0: {
-                        await npc.openShop(ShopIdEnum.GOODS);
-                        break;
-                    }
-                    case 1: {
-                        await npc.openShop(ShopIdEnum.POTIONS);
-                        break;
-                    }
+            switch (response) {
+                case 0: {
+                    await npc.openShop(ShopIdEnum.GOODS);
+                    break;
                 }
-                break;
+                case 1: {
+                    await npc.openShop(ShopIdEnum.POTIONS);
+                    break;
+                }
             }
         }
     }

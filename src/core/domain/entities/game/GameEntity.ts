@@ -143,5 +143,7 @@ export default abstract class GameEntity {
         return this.isMonster() || this.isNPC() || this.isStone();
     }
 
-    tick() {}
+    tick() {
+        // intentional no-op: subclasses override this hook with per-tick behavior
+    }
 }

@@ -16,7 +16,8 @@ export default class Queue<T = any> {
     dequeue(): T | null {
         if (this.isEmpty()) return null;
         const dequeued = this.front();
-        delete this.items[(this.frontPos %= this.maxSize)];
+        this.frontPos %= this.maxSize;
+        delete this.items[this.frontPos];
         this.frontPos++;
         this.length--;
         return dequeued;
@@ -32,7 +33,8 @@ export default class Queue<T = any> {
         if (this.isFull()) return;
         this.rearPos++;
         this.length++;
-        this.items[(this.rearPos %= this.maxSize)] = item;
+        this.rearPos %= this.maxSize;
+        this.items[this.rearPos] = item;
     }
 
     isFull() {

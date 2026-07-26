@@ -69,7 +69,7 @@ describe('Shop', () => {
 
         const placedItems = shop.getItems().filter((item): item is ShopItem => Boolean(item));
 
-        expect(placedItems.length).to.equal(3);
+        expect(placedItems).to.have.lengthOf(3);
         expect(placedItems.map((item) => item.position)).to.deep.equal([0, 1, 2]);
         expect(shop.getItem(0)?.item).to.equal(item1);
         expect(shop.getItem(1)?.item).to.equal(item2);

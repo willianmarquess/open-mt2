@@ -71,7 +71,7 @@ export default abstract class Packet {
     createValidator(ValidatorClass: new (packet: this) => PacketValidator<this>): PacketValidator<this> {
         const validatorInstance = new ValidatorClass(this);
         if (!(validatorInstance instanceof PacketValidator)) {
-            throw new Error('PacketValidator must be an instance of PacketValidator base class');
+            throw new TypeError('PacketValidator must be an instance of PacketValidator base class');
         }
 
         return validatorInstance;

@@ -56,9 +56,7 @@ export class MobPoints extends Points {
     }
 
     public calcPointsAndResetValues(): void {
-        this.calcDefense();
-        this.calcAttack();
-        this.calcHealth();
+        this.calcPoints();
     }
 
     private calcDefense() {

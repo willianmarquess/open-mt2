@@ -133,7 +133,7 @@ export default abstract class Character extends GameEntity {
         this.pos = pos;
     }
 
-    // eslint-disable-next-line
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
     die(_killer?: Character) {
         this.pos = PositionEnum.DEAD;
         this.removeTimers();
@@ -332,7 +332,9 @@ export default abstract class Character extends GameEntity {
         this.movementDuration = 0;
     }
 
-    protected idleStateTick() {}
+    protected idleStateTick() {
+        // intentional no-op: subclasses override this state hook when idle behavior is needed
+    }
 
     protected movingStateTick() {
         if (this.isDead()) return;

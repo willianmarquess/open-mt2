@@ -19,8 +19,9 @@ export default class CommandManager {
         //TODO: validate player flood chat, validate ban words
         if (message.startsWith('/help')) {
             for (const { command } of this.commands.values()) {
+                const example = command.getExample() ? `- Example: ${command.getExample()}` : '';
                 player.chat({
-                    message: `Command: ${command.getName()} - Description: ${command.getDescription()} ${command.getExample() ? `- Example: ${command.getExample()}` : ''} `,
+                    message: `Command: ${command.getName()} - Description: ${command.getDescription()} ${example} `,
                     messageType: ChatMessageTypeEnum.INFO,
                 });
             }

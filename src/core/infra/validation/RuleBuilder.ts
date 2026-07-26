@@ -24,7 +24,7 @@ export default class RuleBuilder<T> {
 
     setTargetName(name: string): void {
         if (typeof name !== 'string') {
-            throw new Error('targetName must be a string');
+            throw new TypeError('targetName must be a string');
         }
         this.targetName = name;
     }
@@ -39,7 +39,7 @@ export default class RuleBuilder<T> {
 
     setAbstractValidator(validator: FluentValidator): void {
         if (!(validator instanceof FluentValidator)) {
-            throw new Error('abstractValidator must be an instance of FluentValidator class');
+            throw new TypeError('abstractValidator must be an instance of FluentValidator class');
         }
         this.abstractValidator = validator;
     }
@@ -62,7 +62,7 @@ export default class RuleBuilder<T> {
 
     isOptionalIf(optionalFunction: () => boolean): this {
         if (typeof optionalFunction !== 'function') {
-            throw new Error('optionalFunction must be a function');
+            throw new TypeError('optionalFunction must be a function');
         }
         if (optionalFunction()) {
             this.isOptional();
@@ -115,7 +115,7 @@ export default class RuleBuilder<T> {
 
     isRequiredIf(requiredFunction: () => boolean): this {
         if (typeof requiredFunction !== 'function') {
-            throw new Error('requiredFunction must be a function');
+            throw new TypeError('requiredFunction must be a function');
         }
         if (requiredFunction()) {
             this.isRequired();
@@ -184,7 +184,7 @@ export default class RuleBuilder<T> {
     isInEnum(arrayWithAcceptableValues: any[] = []): this {
         if (this.shouldSkipValidation()) return this;
         if (!Array.isArray(arrayWithAcceptableValues)) {
-            throw new Error('arrayWithAcceptableValues must be an array');
+            throw new TypeError('arrayWithAcceptableValues must be an array');
         }
         if (!arrayWithAcceptableValues.includes(this.target)) {
             this.errors.push({
@@ -197,7 +197,7 @@ export default class RuleBuilder<T> {
     isMust(validationFunction: (value: any) => boolean, message: string): this {
         if (this.shouldSkipValidation()) return this;
         if (typeof validationFunction !== 'function') {
-            throw new Error('validationFunction must be a function');
+            throw new TypeError('validationFunction must be a function');
         }
         if (!validationFunction(this.target)) {
             this.errors.push({ error: message });

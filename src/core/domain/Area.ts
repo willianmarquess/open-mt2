@@ -24,7 +24,7 @@ export default class Area {
     private readonly width: number;
     private readonly height: number;
     private readonly aka?: string;
-    private readonly goto?: AtlasInfoGoto | undefined;
+    private readonly goto?: AtlasInfoGoto;
 
     private readonly entitiesToSpawn = new Queue<GameEntity>(SIZE_QUEUE);
     private readonly entitiesToDespawn = new Queue<GameEntity>(SIZE_QUEUE);
@@ -48,7 +48,7 @@ export default class Area {
             width: number;
             height: number;
             aka?: string;
-            goto?: AtlasInfoGoto | undefined;
+            goto?: AtlasInfoGoto;
         },
         {
             spawnManager,

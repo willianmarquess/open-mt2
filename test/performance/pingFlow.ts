@@ -200,7 +200,8 @@ class PingFlow {
     await pingFlow.basicFlow();
 
     const handleShutdown = async (signal?: string) => {
-        console.log(`\nShutting down${signal ? ` (${signal})` : ''}...`);
+        const signalSuffix = signal ? ` (${signal})` : '';
+        console.log(`\nShutting down${signalSuffix}...`);
         try {
             await pingFlow.shutdownAndPrintMetrics();
         } catch (err) {

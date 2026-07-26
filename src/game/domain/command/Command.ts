@@ -55,7 +55,7 @@ export default abstract class Command {
         const validatorInstance = new ValidatorClass(this);
 
         if (!(validatorInstance instanceof CommandValidator)) {
-            throw new Error('Validator must be an instance of CommandValidator base class');
+            throw new TypeError('Validator must be an instance of CommandValidator base class');
         }
 
         validatorInstance.build();

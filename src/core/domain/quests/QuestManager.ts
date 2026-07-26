@@ -38,7 +38,7 @@ export class QuestManager {
                 const fullPath = path.join(baseDir, file);
 
                 delete require.cache[require.resolve(fullPath)];
-                // eslint-disable-next-line
+                // eslint-disable-next-line @typescript-eslint/no-require-imports
                 const mod = require(fullPath);
 
                 const exports = Object.values(mod);
