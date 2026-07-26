@@ -39,7 +39,9 @@ export default class ShopPacketHandler extends PacketHandler<ShopPacket> {
                 break;
 
             case ShopSubHeaderCG.SELL:
-                await this.shopManager.sell(player, packet.getPos(), 1);
+                // No count in the plain SELL sub-header: sell the whole stack
+                // (0 is normalized to the full count, like the original server).
+                await this.shopManager.sell(player, packet.getPos(), 0);
                 break;
 
             case ShopSubHeaderCG.SELL2:
