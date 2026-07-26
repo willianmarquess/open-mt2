@@ -6,6 +6,7 @@ import { PointsEnum } from '@/core/enum/PointsEnum';
 import { WindowTypeEnum } from '@/core/enum/WindowTypeEnum';
 import PrivateShop, { PrivateShopItem } from '@/core/domain/shop/PrivateShop';
 import { MyShopItemEntry } from '@/core/interface/networking/packets/packet/in/myshop/MyShopPacket';
+import { PRIVATE_SHOP_MAX_ITEMS } from '@/core/domain/shop/PrivateShop';
 import ItemManager from '@/core/domain/manager/ItemManager';
 import SaveCharacterService from '@/game/domain/service/SaveCharacterService';
 
@@ -54,6 +55,15 @@ export default class PrivateShopService {
         const seenCellIndex = new Set<number>();
 
         for (const entry of itemEntries) {
+            // An out-of-range displayPos would grow the shop item array past the
+            // grid and overflow the fixed-size ShopStartPacket buffer later on.
+            if (entry.displayPos >= PRIVATE_SHOP_MAX_ITEMS) {
+                this.logger.debug(
+                    `[PrivateShopService] openPrivateShop: displayPos ${entry.displayPos} out of range, skipping`,
+                );
+                continue;
+            }
+
             if (seenDisplayPos.has(entry.displayPos)) {
                 this.logger.debug(
                     `[PrivateShopService] openPrivateShop: duplicate displayPos ${entry.displayPos}, skipping`,
@@ -292,7 +302,7 @@ export default class PrivateShopService {
         // Remove entry from shop and notify all guests that this slot is now empty
         shop.removeItemAtDisplaySlot(displaySlot);
         this.broadcastUpdateItem(shop, displaySlot);
-        this.openShopForOwner(owner);
+        await this.openShopForOwner(owner);
 
         guest.sendShopResult({ result: ShopSubHeaderGC.OK });
 
