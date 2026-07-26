@@ -20,7 +20,10 @@ const makeItem = (overrides: Partial<any> = {}) => ({
     ...overrides,
 });
 
-const makeInventory = (items: Map<number, any> = new Map()) => ({
+const makeBundle = () => makeItem({ getId: sinon.stub().returns(50200), getCount: sinon.stub().returns(1) });
+
+const makeInventory = (items: Map<number, any> = new Map([[99, makeBundle()]])) => ({
+    isFromEquipmentSlots: sinon.stub().returns(false),
     getItems: sinon.stub().returns(items),
     removeItem: sinon.stub(),
     addItemAt: sinon.stub(),
@@ -31,6 +34,8 @@ const makePlayer = (overrides: Partial<any> = {}): any => ({
     getName: sinon.stub().returns('TestPlayer'),
     isItemLockedInPrivateShop: sinon.stub().returns(false),
     getVirtualId: sinon.stub().returns(1),
+    getPositionX: sinon.stub().returns(0),
+    getPositionY: sinon.stub().returns(0),
     isRunningPrivateShop: sinon.stub().returns(false),
     getPrivateShop: sinon.stub().returns(null),
     setPrivateShop: sinon.stub(),

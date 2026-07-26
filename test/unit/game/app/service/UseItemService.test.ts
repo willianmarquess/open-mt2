@@ -18,7 +18,8 @@ describe('UseItemService', () => {
         mobManagerStub = { hasMob: sinon.stub().resolves() };
         service = new UseItemService({
             logger: loggerStub,
-            itemManager: itemManagerStub, mobManager: mobManagerStub,
+            itemManager: itemManagerStub,
+            mobManager: mobManagerStub,
         });
         playerStub = {
             getItem: sinon.stub(),

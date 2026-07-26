@@ -209,9 +209,6 @@ export default class UseItemService {
                 }
                 break;
 
-            case ItemUseSubTypeEnum.USE_SPECIAL:
-                return this.useSpecialItem(player, item);
-
             default:
                 this.logger.info(
                     `[UseItemService] unhandled item use - vnum: ${item.getId()}, type: ${item.getType()}, subType: ${item.getSubType()}, player: ${player.getName()}`,

@@ -127,6 +127,7 @@ export default class Player extends Character {
     private currentQuest: AbstractQuest | null = null;
 
     private currentShop: Shop | null = null;
+    private currentShopNpc: Mob | null = null;
 
     private privateShop: PrivateShop | null = null;
     private currentPrivateShopOwner: Player | null = null;
@@ -1687,6 +1688,16 @@ export default class Player extends Character {
 
     setCurrentShop(shop: Shop | null) {
         this.currentShop = shop;
+        if (!shop) this.currentShopNpc = null;
+    }
+
+    /** The NPC entity whose shop is open, used for distance checks on buy/sell. */
+    getCurrentShopNpc(): Mob | null {
+        return this.currentShopNpc;
+    }
+
+    setCurrentShopNpc(npc: Mob | null) {
+        this.currentShopNpc = npc;
     }
 
     getPrivateShop(): PrivateShop | null {
