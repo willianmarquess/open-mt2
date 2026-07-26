@@ -43,18 +43,17 @@ export default class MoveItemService {
             return;
         }
 
-        await this.split({ player, fromWindow, fromPosition, toWindow, toPosition, count, item });
+        await this.split({ player, fromWindow, toWindow, toPosition, count, item });
     }
 
     private async split({
         player,
         fromWindow,
-        fromPosition,
         toWindow,
         toPosition,
         count,
         item,
-    }: MoveItemServiceParams & { item: NonNullable<ReturnType<Player['getItem']>> }) {
+    }: Omit<MoveItemServiceParams, 'fromPosition'> & { item: NonNullable<ReturnType<Player['getItem']>> }) {
         if (fromWindow !== WindowTypeEnum.INVENTORY || toWindow !== WindowTypeEnum.INVENTORY) return;
         if (player.isItemLockedInPrivateShop(item)) return;
 
