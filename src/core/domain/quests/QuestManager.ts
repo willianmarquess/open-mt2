@@ -277,7 +277,12 @@ export class QuestManager {
             const current = quest.getCurrentState()?.name;
             if (!current) continue;
             if (states.has(current)) {
-                await quest.runState({
+                // Dispatch detached: the quest may suspend on a dialog answer, and
+                // awaiting it here would keep the click handler (and its corked
+                // socket) alive until the player replies, interleaving quest and
+                // shop packets. run() marks the quest busy synchronously so a
+                // second click is still rejected above.
+                quest.run({
                     eventType: QuestEventEnum.CLICK,
                     npc: new NpcQuest({ npc, shopManager: this.shopManager, player }),
                 });
