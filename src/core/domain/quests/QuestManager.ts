@@ -275,7 +275,7 @@ export class QuestManager {
 
         if (player.isQuestRunning()) {
             this.logger.info(
-                `[QUEST_MANAGER] Player ${player.getId()} logged in with running quest ${player.getCurrentQuest()?.getName()}`,
+                `[QUEST_MANAGER] Player ${player.getId()} clicked an NPC while quest ${player.getCurrentQuest()?.getName()} is running`,
             );
             return false;
         }
