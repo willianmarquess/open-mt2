@@ -20,7 +20,13 @@ describe('ShopService', () => {
     beforeEach(() => {
         loggerStub = sinon.createStubInstance(WinstonLoggerAdapter);
         shopManagerStub = { getShop: sinon.stub(), hasShop: sinon.stub() };
-        itemManagerStub = { getItem: sinon.stub(), save: sinon.stub().resolves(), delete: sinon.stub().resolves(), update: sinon.stub().resolves(), flush: sinon.stub().resolves() };
+        itemManagerStub = {
+            getItem: sinon.stub(),
+            save: sinon.stub().resolves(),
+            delete: sinon.stub().resolves(),
+            update: sinon.stub().resolves(),
+            flush: sinon.stub().resolves(),
+        };
 
         manager = new ShopManager({
             logger: loggerStub,
