@@ -63,6 +63,18 @@ export default class PrivateShop {
     }
 
     /**
+     * Whether this exact item instance is listed for sale. Listed items are
+     * locked: the owner must not move/use/drop/sell them while the shop is
+     * open, or a same-vnum swap could dupe the sold item.
+     */
+    hasItemListed(item: Item): boolean {
+        for (const entry of this.items.values()) {
+            if (entry.item === item) return true;
+        }
+        return false;
+    }
+
+    /**
      * Removes an item from the shop after it has been sold.
      * Returns true when the slot was occupied.
      */
