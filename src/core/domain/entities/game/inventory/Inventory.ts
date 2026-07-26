@@ -126,7 +126,7 @@ export default class Inventory {
 
         if (this.isFromEquipmentSlots(position)) {
             const unequippedItem = this.equipment.removeItem(position);
-            this.items.delete(item.getDbId()!);
+            this.deleteFromItemsMap(item);
             this.publish(
                 ItemUnequippedEvent.type,
                 new ItemUnequippedEvent({ item: unequippedItem!, slot: position - this.size() }),
@@ -137,7 +137,21 @@ export default class Inventory {
         const page = this.calcPage(position);
         const pagePosition = this.calcPagePosition(page, position);
         this.pages[page].removeItem(pagePosition, size);
-        this.items.delete(item.getDbId()!);
+        this.deleteFromItemsMap(item);
+    }
+
+    /**
+     * Removes the map entry for this exact item instance. Items bought from a
+     * shop are added to the map before their dbId is assigned (key undefined),
+     * so deleting by getDbId() would miss them and leave a ghost entry behind.
+     */
+    private deleteFromItemsMap(item: Item) {
+        for (const [key, mapped] of this.items) {
+            if (mapped === item) {
+                this.items.delete(key);
+                return;
+            }
+        }
     }
 
     haveAvailablePosition(position: number, size: number) {
