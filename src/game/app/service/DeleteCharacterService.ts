@@ -29,7 +29,11 @@ export default class DeleteCharacterService {
         this.accountRepository = accountRepository;
     }
 
-    async execute({ accountId, slot, privateCode }: DeleteCharacterServiceParams): Promise<Result<void, ErrorTypesEnum>> {
+    async execute({
+        accountId,
+        slot,
+        privateCode,
+    }: DeleteCharacterServiceParams): Promise<Result<void, ErrorTypesEnum>> {
         const deleteCode = await this.accountRepository.getDeleteCodeById(accountId);
 
         if (!deleteCode || deleteCode !== privateCode) {

@@ -10,7 +10,13 @@ export default class DeleteCharacterPacketHandler extends PacketHandler<DeleteCh
     private readonly deleteCharacterService: DeleteCharacterService;
     private readonly logger: Logger;
 
-    constructor({ deleteCharacterService, logger }: { deleteCharacterService: DeleteCharacterService; logger: Logger }) {
+    constructor({
+        deleteCharacterService,
+        logger,
+    }: {
+        deleteCharacterService: DeleteCharacterService;
+        logger: Logger;
+    }) {
         super();
         this.deleteCharacterService = deleteCharacterService;
         this.logger = logger;

@@ -38,6 +38,10 @@ describe('ShopService', () => {
         playerStub = {
             getId: sinon.stub().returns(1),
             getName: sinon.stub().returns('TestPlayer'),
+            getCurrentShopNpc: sinon.stub().returns(null),
+            setCurrentShopNpc: sinon.stub(),
+            getPositionX: sinon.stub().returns(0),
+            getPositionY: sinon.stub().returns(0),
             isItemLockedInPrivateShop: sinon.stub().returns(false),
             setCurrentShop: sinon.stub(),
             getCurrentShop: sinon.stub(),
@@ -47,7 +51,9 @@ describe('ShopService', () => {
             addItem: sinon.stub(),
             addItemStacking: sinon.stub(),
             getItem: sinon.stub(),
-            getInventory: sinon.stub(),
+            getInventory: sinon
+                .stub()
+                .returns({ isFromEquipmentSlots: sinon.stub().returns(false), removeItem: sinon.stub() }),
             sendItemRemoved: sinon.stub(),
             sendCurrentShop: sinon.stub(),
             sendShopClose: sinon.stub(),
@@ -56,6 +62,8 @@ describe('ShopService', () => {
 
         npcStub = sinon.createStubInstance(NPC);
         npcStub.getId.returns(9001);
+        npcStub.getPositionX.returns(0);
+        npcStub.getPositionY.returns(0);
         npcStub.getVirtualId.returns(1);
         npcStub.getEntityType.returns(EntityTypeEnum.NPC);
         npcStub.isNPC.returns(true);
@@ -231,7 +239,7 @@ describe('ShopService', () => {
 
         it('should calculate sell price as floor(shop_price * count / 5)', async () => {
             const shop = new Shop({ npcVnum: 9001, shopName: 'Arms', items: [] });
-            const inventoryStub = { removeItem: sinon.stub() };
+            const inventoryStub = { removeItem: sinon.stub(), isFromEquipmentSlots: sinon.stub().returns(false) };
             const mockItem = {
                 getAntiFlags: () => ({ is: () => false }),
                 getCount: () => 3,
@@ -250,7 +258,7 @@ describe('ShopService', () => {
 
         it('should remove item and send OK on successful sell', async () => {
             const shop = new Shop({ npcVnum: 9001, shopName: 'Arms', items: [] });
-            const inventoryStub = { removeItem: sinon.stub() };
+            const inventoryStub = { removeItem: sinon.stub(), isFromEquipmentSlots: sinon.stub().returns(false) };
             const mockItem = {
                 getAntiFlags: () => ({ is: () => false }),
                 getCount: () => 1,
@@ -271,7 +279,7 @@ describe('ShopService', () => {
 
         it('should cap sell count to item count', async () => {
             const shop = new Shop({ npcVnum: 9001, shopName: 'Arms', items: [] });
-            const inventoryStub = { removeItem: sinon.stub() };
+            const inventoryStub = { removeItem: sinon.stub(), isFromEquipmentSlots: sinon.stub().returns(false) };
             const mockItem = {
                 getAntiFlags: () => ({ is: () => false }),
                 getCount: () => 2, // only 2 available

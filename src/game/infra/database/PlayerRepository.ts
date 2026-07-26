@@ -202,10 +202,9 @@ export default class PlayerRepository implements IPlayerRepository {
     async getByAccountIdAndSlot(accountId: number, slot: number): Promise<PlayerState | null> {
         const [players] = await this.databaseManager
             .getConnection()
-            .query<PlayerRow[]>(`SELECT * FROM game.player WHERE accountId = ? and slot = ? AND deletedAt IS NULL;`, [
-                accountId,
-                slot,
-            ]);
+            .query<
+                PlayerRow[]
+            >(`SELECT * FROM game.player WHERE accountId = ? and slot = ? AND deletedAt IS NULL;`, [accountId, slot]);
 
         if (players.length === 0) {
             return null;
