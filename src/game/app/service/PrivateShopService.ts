@@ -49,11 +49,14 @@ export default class PrivateShopService {
             return;
         }
 
-        if (player.getCurrentShop()) {
-            this.logger.debug(
-                `[PrivateShopService] ${player.getName()} tried to open a shop while browsing an NPC shop`,
-            );
-            return;
+        // Leave any NPC shop or browsed private shop first instead of refusing:
+        // the client may close the shop window without sending SHOP_END (e.g.
+        // after buying the bundle), leaving stale browsing state behind.
+        player.setCurrentShop(null);
+        const browsedOwner = player.getCurrentPrivateShopOwner();
+        if (browsedOwner) {
+            browsedOwner.getPrivateShop()?.removeGuest(player);
+            player.setCurrentPrivateShopOwner(null);
         }
 
         // A shop needs a Bundle item — the original refuses to open without one.
