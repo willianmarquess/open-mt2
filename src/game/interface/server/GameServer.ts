@@ -50,9 +50,13 @@ export default class GameServer extends Server {
         const packet = createPacket({});
         const handler = createHandler(this.container);
         this.logger.debug(`[IN][PACKET] processing packet: ${handler.constructor.name}`);
+
+        const unpacked = this.unpackPacket(connection, packet, data);
+        if (!unpacked) return;
+
         connection.cork();
         await handler
-            .execute(connection, packet.unpack(data))
+            .execute(connection, unpacked)
             .catch((err) => this.logger.error(err))
             .finally(() => {
                 connection.uncork();

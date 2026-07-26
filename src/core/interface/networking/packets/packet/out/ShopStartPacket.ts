@@ -29,7 +29,9 @@ export default class ShopStartPacket extends PacketOut {
         this.bufferWriter.writeUint8(ShopSubHeaderGC.START); // subheader
         this.bufferWriter.writeUint32LE(this.ownerVid);
 
-        for (let i = 0; i < this.items.length; i++) {
+        // Never write more entries than the fixed-size buffer can hold, even if
+        // the items array somehow grew past the shop grid.
+        for (let i = 0; i < Math.min(this.items.length, SHOP_MAX_ITEMS); i++) {
             const shopItem = this.items[i];
 
             this.bufferWriter.writeUint32LE(shopItem?.vnum || 0);
