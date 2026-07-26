@@ -22,10 +22,13 @@ export default class CharacterUpdateTargetService {
             return;
         }
 
-        const target = area.getEntity(targetVirtualId) as Character;
+        const target = area.getEntity(targetVirtualId);
 
-        if (!target) {
-            this.logger.info(`[CharacterUpdateTargetService] Target not found with virtualId ${targetVirtualId}`);
+        // A client can send any VID in view, including dropped items (GameEntity
+        // but not Character). setTarget calls Character-only methods, so reject
+        // anything that isn't a Character.
+        if (!(target instanceof Character)) {
+            this.logger.info(`[CharacterUpdateTargetService] Invalid target with virtualId ${targetVirtualId}`);
             return;
         }
 

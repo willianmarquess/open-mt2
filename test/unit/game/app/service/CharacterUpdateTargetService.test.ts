@@ -1,4 +1,5 @@
 import Player from '@/core/domain/entities/game/player/Player';
+import Monster from '@/core/domain/entities/game/mob/Monster';
 import CharacterUpdateTargetService from '@/game/app/service/CharacterUpdateTargetService';
 import { expect } from 'chai';
 import sinon from 'sinon';
@@ -43,7 +44,7 @@ describe('CharacterUpdateTargetService', function () {
             );
         });
 
-        it('should log and return if target is not found', async function () {
+        it('should log and return if target is not a character', async function () {
             const playerMock = {
                 getPositionX: sinon.stub().returns(10),
                 getPositionY: sinon.stub().returns(20),
@@ -62,7 +63,7 @@ describe('CharacterUpdateTargetService', function () {
 
             expect(loggerMock.info.calledOnce).to.be.true;
             expect(loggerMock.info.firstCall.args[0]).to.equal(
-                '[CharacterUpdateTargetService] Target not found with virtualId 123',
+                '[CharacterUpdateTargetService] Invalid target with virtualId 123',
             );
         });
 
@@ -73,7 +74,7 @@ describe('CharacterUpdateTargetService', function () {
                 setTarget: sinon.spy(),
             };
 
-            const targetMock = {};
+            const targetMock = sinon.createStubInstance(Monster);
 
             const areaMock = {
                 getEntity: sinon.stub().returns(targetMock),

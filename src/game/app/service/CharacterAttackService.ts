@@ -23,10 +23,14 @@ export default class CharacterAttackService {
             return;
         }
 
-        const victim = area.getEntity(victimVirtualId) as Player | Monster;
+        const victim = area.getEntity(victimVirtualId);
 
-        if (!victim) {
-            this.logger.info(`[CharacterAttackService] Victim not found with virtualId ${victimVirtualId}`);
+        // Only players and monsters can be attacked. A client can send any VID
+        // it has in view (including dropped items, which are GameEntity but not
+        // Character), so validate the type before the damage pipeline touches
+        // methods like isDead() that only exist on attackable entities.
+        if (!(victim instanceof Player) && !(victim instanceof Monster)) {
+            this.logger.info(`[CharacterAttackService] Invalid attack victim with virtualId ${victimVirtualId}`);
             return;
         }
 
