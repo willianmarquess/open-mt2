@@ -25,6 +25,9 @@ import { ItemExtractSubTypeEnum } from '@/core/enum/ItemExtractSubTypeEnum';
 import { ItemToolSubTypeEnum } from '@/core/enum/ItemToolSubTypeEnum';
 import { WindowTypeEnum } from '@/core/enum/WindowTypeEnum';
 
+/** Maximum number of units a single stackable item slot can hold. */
+export const MAX_ITEM_STACK = 200;
+
 const parseFlags = (flags: string, enumType: any) => {
     const bitFlag = new BitFlag();
     flags
@@ -426,6 +429,9 @@ export default class Item {
     }
     setCount(value: number) {
         this.count = value;
+    }
+    isStackable() {
+        return this.flags.is(ItemFlagEnum.ITEM_STACKABLE);
     }
     getOwnerId() {
         return this.ownerId;
