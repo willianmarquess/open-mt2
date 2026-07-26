@@ -7,6 +7,7 @@ import {
     getHorseGrade,
     getHorseVnumByLevel,
 } from '@/core/domain/entities/game/horse/HorseStats';
+import MathUtil from '@/core/domain/util/MathUtil';
 import type NPC from '../../mob/NPC';
 import type Logger from '@/core/infra/logger/Logger';
 
@@ -369,8 +370,8 @@ export class PlayerHorse {
             const playerX = this.owner.getPositionX();
             const playerY = this.owner.getPositionY();
 
-            const offsetDistance = 100 + Math.random() * 100;
-            const angle = Math.random() * Math.PI * 2;
+            const offsetDistance = MathUtil.getRandomInt(100, 200);
+            const angle = MathUtil.degreeToRadian(MathUtil.getRandomInt(0, 359));
             const spawnX = Math.round(playerX + Math.cos(angle) * offsetDistance);
             const spawnY = Math.round(playerY + Math.sin(angle) * offsetDistance);
 
@@ -439,9 +440,7 @@ export class PlayerHorse {
                 return null;
             }
 
-            const approach =
-                HORSE_FOLLOW_MIN_APPROACH +
-                Math.floor(Math.random() * (HORSE_FOLLOW_MAX_APPROACH - HORSE_FOLLOW_MIN_APPROACH + 1));
+            const approach = MathUtil.getRandomInt(HORSE_FOLLOW_MIN_APPROACH, HORSE_FOLLOW_MAX_APPROACH);
             const scale = Math.max(0, (distance - approach) / distance);
             const targetX = Math.round(playerX - deltaX * scale);
             const targetY = Math.round(playerY - deltaY * scale);

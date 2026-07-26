@@ -1,4 +1,5 @@
 import { QuestEventEnum } from '@/core/enum/QuestEventEnum';
+import MathUtil from '@/core/domain/util/MathUtil';
 import { AbstractQuest } from '../AbstractQuest';
 import { Quest, Task } from '../decorators/QuestDecorator';
 
@@ -57,7 +58,7 @@ export class HorseGuardQuest extends AbstractQuest {
         chat: 'Information about Horses',
     })
     async onClick() {
-        const information = HORSE_INFORMATION[Math.floor(Math.random() * HORSE_INFORMATION.length)];
+        const information = HORSE_INFORMATION[MathUtil.getRandomInt(0, HORSE_INFORMATION.length - 1)];
 
         this.title('Stable Master:');
         for (const line of information) {
