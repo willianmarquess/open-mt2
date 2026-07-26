@@ -5,18 +5,34 @@ import { Socket } from 'net';
 import { Logger } from 'winston';
 import { GameConfig } from '@/game/infra/config/GameConfig';
 import { PacketMapValue } from '@/core/interface/networking/packets/Packets';
+import LogoutService from '@/game/app/service/LogoutService';
 
 export default class GameServer extends Server {
     private readonly world: World;
+    private readonly logoutService: LogoutService;
 
     constructor(container: {
         logger: Logger;
         config: GameConfig;
         packets: Map<number, PacketMapValue<any>>;
         world: World;
+        logoutService: LogoutService;
     }) {
         super(container);
         this.world = container.world;
+        this.logoutService = container.logoutService;
+    }
+
+    async onClose(connection: GameConnection) {
+        const player = connection.getPlayer();
+
+        if (player) {
+            await this.logoutService
+                .execute(player)
+                .catch((err) => this.logger.error(`[GameServer] Error despawning player on disconnect: ${err}`));
+        }
+
+        await super.onClose(connection);
     }
 
     async onData(connection: GameConnection, data: Buffer) {
@@ -34,9 +50,13 @@ export default class GameServer extends Server {
         const packet = createPacket({});
         const handler = createHandler(this.container);
         this.logger.debug(`[IN][PACKET] processing packet: ${handler.constructor.name}`);
+
+        const unpacked = this.unpackPacket(connection, packet, data);
+        if (!unpacked) return;
+
         connection.cork();
         await handler
-            .execute(connection, packet.unpack(data))
+            .execute(connection, unpacked)
             .catch((err) => this.logger.error(err))
             .finally(() => {
                 connection.uncork();

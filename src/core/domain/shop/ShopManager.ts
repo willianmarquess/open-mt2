@@ -135,13 +135,20 @@ export default class ShopManager {
             return;
         }
 
-        if (!player.addItem(item)) {
+        const added = player.addItemStacking(item);
+        if (!added) {
             player.sendShopResult({ result: ShopSubHeaderGC.INVENTORY_FULL });
             return;
         }
 
         player.addPoint(PointsEnum.GOLD, -price);
-        await this.itemManager.save(item);
+        for (const updated of added.updated) {
+            await this.itemManager.update(updated);
+        }
+        if (added.inserted) {
+            await this.itemManager.save(added.inserted);
+        }
+        await this.itemManager.flush(player.getId());
 
         player.sendShopResult({ result: ShopSubHeaderGC.OK });
 
@@ -169,13 +176,30 @@ export default class ShopManager {
             return;
         }
 
-        const sellCount = Math.min(count, item.getCount() ?? 1);
+        // Cannot sell items listed in the player's own open private shop
+        if (player.isItemLockedInPrivateShop(item)) {
+            player.sendShopResult({ result: ShopSubHeaderGC.INVALID_POS });
+            return;
+        }
+
+        // count 0 (or more than the stack) means "sell the whole stack",
+        // like the original server.
+        const stackCount = item.getCount() ?? 1;
+        const sellCount = count === 0 || count > stackCount ? stackCount : count;
         const sellPrice = Math.floor((item.getShopPrice() * sellCount) / 5);
 
-        // Remove item from inventory and notify client
-        player.getInventory().removeItem(pos, item.getSize());
-        player.sendItemRemoved({ window: WindowTypeEnum.INVENTORY, position: pos });
-        await this.itemManager.delete(item);
+        if (sellCount === stackCount) {
+            // Whole stack sold: remove the item entirely
+            player.getInventory().removeItem(pos, item.getSize());
+            player.sendItemRemoved({ window: WindowTypeEnum.INVENTORY, position: pos });
+            await this.itemManager.delete(item);
+        } else {
+            // Partial sale: split the stack instead of destroying it
+            item.setCount(stackCount - sellCount);
+            player.sendItemUpdate(item);
+            await this.itemManager.update(item);
+            await this.itemManager.flush(player.getId());
+        }
 
         player.addPoint(PointsEnum.GOLD, sellPrice);
 

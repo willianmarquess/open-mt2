@@ -5,7 +5,7 @@ COPY package*.json ./
 COPY tsconfig*.json ./
 COPY . .
 
-RUN npm ci
+RUN npm ci --ignore-scripts
 RUN npm run build
 RUN npm prune --production
 

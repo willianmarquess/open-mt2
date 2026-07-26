@@ -30,6 +30,7 @@ export default class DropItemService {
         const item = player.getInventory().getItem(position);
 
         if (!item) return;
+        if (player.isItemLockedInPrivateShop(item)) return;
 
         if (count === item.getCount()) {
             player.getInventory().removeItem(position, item.getSize());

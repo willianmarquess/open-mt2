@@ -29,6 +29,28 @@ export default abstract class Server {
     abstract createConnection(socket: Socket): Connection;
     abstract onData(connection: Connection, data: Buffer): Promise<void>;
 
+    /**
+     * Unpacks a packet, closing the connection instead of letting a malformed
+     * packet throw. A packet lying about its size makes unpack() read past the
+     * buffer and throw; if that rejection escaped the socket 'data' listener it
+     * would surface as an unhandledRejection and take the whole process down.
+     */
+    protected unpackPacket<T extends { unpack(data: Buffer): T; getName(): string }>(
+        connection: Connection,
+        packet: T,
+        data: Buffer,
+    ): T | null {
+        try {
+            return packet.unpack(data);
+        } catch (error) {
+            this.logger.error(
+                `[IN][PACKET] Malformed ${packet.getName()} packet from connection: ID: ${connection.getId()}, closing. ${error}`,
+            );
+            connection.close();
+            return null;
+        }
+    }
+
     onListener(socket: Socket) {
         socket.setNoDelay(true);
         const connection = this.createConnection(socket);
@@ -36,6 +58,7 @@ export default abstract class Server {
 
         this.logger.debug(`[IN][CONNECT SOCKET EVENT] New connection: ID: ${connection.getId()}`);
         connection.startHandShake();
+        connection.startKeepalive();
 
         socket.on('close', this.onClose.bind(this, connection));
         socket.on('data', this.onData.bind(this, connection));
@@ -50,6 +73,7 @@ export default abstract class Server {
 
     async onClose(connection: Connection) {
         this.logger.debug(`[IN][CLOSE SOCKET EVENT] Closing connection: ID: ${connection.getId()}`);
+        connection.stopKeepalive();
         this.connections.delete(connection.getId());
     }
 

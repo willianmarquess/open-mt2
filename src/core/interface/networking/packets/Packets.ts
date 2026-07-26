@@ -37,6 +37,10 @@ import Packet from './packet/Packet';
 import PacketHandler from './packet/PacketHandler';
 import InternalPingPacket from './packet/in/internalPing/InternalPingPacket';
 import InternalPingPacketHandler from './packet/in/internalPing/InternalPingPacketHandler';
+import PongPacket from './packet/in/pong/PongPacket';
+import PongPacketHandler from './packet/in/pong/PongPacketHandler';
+import DeleteCharacterPacket from './packet/in/deleteCharacter/DeleteCharacterPacket';
+import DeleteCharacterPacketHandler from './packet/in/deleteCharacter/DeleteCharacterPacketHandler';
 import OnClickPacket from './packet/in/onclick/OnClickPacket';
 import OnClickPacketHandler from './packet/in/onclick/OnClickPacketHandler';
 import QuestAnswerPacket from './packet/in/questAnswer/QuestAnswerPacket';
@@ -100,6 +104,13 @@ const packets: Map<number, PacketMapValue<any>> = new Map<number, PacketMapValue
         {
             createPacket: (params = {}) => new CreateCharacterPacket(params),
             createHandler: (params) => new CreateCharacterPacketHandler(params),
+        },
+    ],
+    [
+        PacketHeaderEnum.DELETE_CHARACTER,
+        {
+            createPacket: (params = {}) => new DeleteCharacterPacket(params),
+            createHandler: (params) => new DeleteCharacterPacketHandler(params),
         },
     ],
     [
@@ -184,6 +195,13 @@ const packets: Map<number, PacketMapValue<any>> = new Map<number, PacketMapValue
         {
             createPacket: (params = {}) => new InternalPingPacket(params),
             createHandler: (params) => new InternalPingPacketHandler(params),
+        },
+    ],
+    [
+        PacketHeaderEnum.PONG,
+        {
+            createPacket: () => new PongPacket(),
+            createHandler: () => new PongPacketHandler(),
         },
     ],
     [

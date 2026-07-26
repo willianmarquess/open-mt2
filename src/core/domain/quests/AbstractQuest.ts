@@ -8,6 +8,9 @@ import { PlayerQuest } from './facade/PlayerQuest';
 import ItemManager from '../manager/ItemManager';
 import MathUtil from '../util/MathUtil';
 
+// Sent by the client when the quest window is closed instead of picking an option.
+const CLOSE_WINDOW_ANSWER = 254;
+
 export abstract class AbstractQuest {
     private readonly id!: number;
     private name!: string;
@@ -21,6 +24,10 @@ export abstract class AbstractQuest {
     private values: Map<string, any> = new Map();
     private hasReward: boolean = false;
     private status: QuestStatusEnum = QuestStatusEnum.NONE;
+    // Synchronous busy flag. Status only becomes SELECT/PAUSE after the callback
+    // reaches select()/nextPage() (several awaits in), leaving a window where a
+    // second click could start a concurrent run. This flag closes that window.
+    private running: boolean = false;
     private questFlags: BitFlag = new BitFlag();
 
     private readonly player: Player;
@@ -53,6 +60,22 @@ export abstract class AbstractQuest {
     public addState(state: State) {
         this.states.set(state.name, state);
         return this;
+    }
+
+    /**
+     * Entry point for interactive events (click, chat) triggered from a packet
+     * handler. Runs the state machine detached from the handler: the busy flag is
+     * set synchronously (re-entrancy guard) and only cleared when the coroutine —
+     * including any suspended select()/nextPage() — fully settles. Because the
+     * caller does not await this, quest packets are sent after the handler has
+     * returned and uncorked the socket, so they never interleave with other
+     * handlers' output.
+     */
+    run(context: StateExecutionContextBase): void {
+        this.running = true;
+        void this.runState(context).finally(() => {
+            this.running = false;
+        });
     }
 
     async runState(context: StateExecutionContextBase) {
@@ -181,6 +204,22 @@ export abstract class AbstractQuest {
 
     public unpause() {
         this.nextPagePromise.resolve();
+    }
+
+    /**
+     * Release whatever the quest is currently waiting on (the player closed the
+     * quest window). A pending select resolves with the out-of-range close answer,
+     * so option checks in the quest script simply don't match and the quest ends.
+     */
+    public cancel() {
+        if (this.status === QuestStatusEnum.SELECT) {
+            this.currentChoicePromise.resolve(CLOSE_WINDOW_ANSWER);
+            return;
+        }
+
+        if (this.status === QuestStatusEnum.PAUSE) {
+            this.nextPagePromise.resolve();
+        }
     }
 
     protected async select(options: Array<string>, done: boolean = false) {
@@ -339,6 +378,6 @@ export abstract class AbstractQuest {
     }
 
     isRunning() {
-        return this.status !== QuestStatusEnum.NONE;
+        return this.running || this.status !== QuestStatusEnum.NONE;
     }
 }

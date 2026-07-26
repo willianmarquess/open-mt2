@@ -8,7 +8,7 @@ import PlayerApplies from './delegate/PlayerApplies';
 import { EntityStateEnum } from '@/core/enum/EntityStateEnum';
 import { ChatMessageTypeEnum } from '@/core/enum/ChatMessageTypeEnum';
 import { ItemAntiFlagEnum } from '@/core/enum/ItemAntiFlagEnum';
-import Item from '../item/Item';
+import Item, { MAX_ITEM_STACK } from '../item/Item';
 import DroppedItem from '../item/DroppedItem';
 import PlayerState from '../../state/player/PlayerState';
 import Character from '../Character';
@@ -80,7 +80,7 @@ import QuickSlotRemoveResponsePacket from '@/core/interface/networking/packets/p
 import QuickSlotSwapResponsePacket from '@/core/interface/networking/packets/packet/out/QuickSlotSwapResponsePacket';
 import MobManager from '@/core/domain/manager/MobManager';
 import { JobEnum } from '@/core/enum/JobEnum';
-import QuestTargetCreatePacket from '@/core/interface/networking/packets/packet/out/QuestTargetCreatePacket';
+// import QuestTargetCreatePacket from '@/core/interface/networking/packets/packet/out/QuestTargetCreatePacket';
 
 const REGEN_INTERVAL = 3000;
 const MAX_DISTANCE_FROM_TARGET = 3500;
@@ -1281,6 +1281,7 @@ export default class Player extends Character {
         const item = this.getItem(fromPosition);
 
         if (!item) return;
+        if (this.isItemLockedInPrivateShop(item)) return;
         if (fromWindow !== WindowTypeEnum.INVENTORY || toWindow !== WindowTypeEnum.INVENTORY) return;
         if (!this.getInventory().isValidPosition(toPosition)) return;
         if (!this.getInventory().haveAvailablePosition(toPosition, item.getSize())) return;
@@ -1316,6 +1317,71 @@ export default class Player extends Character {
         this.sendItemAdded({ window: WindowTypeEnum.INVENTORY, position, item });
 
         return true;
+    }
+
+    /**
+     * Adds a (possibly stackable) item to the inventory, merging it into
+     * existing stacks of the same proto first (up to MAX_ITEM_STACK per slot)
+     * and placing any leftover in a free slot. The client is notified for both
+     * the merged stacks and the newly placed item.
+     *
+     * Returns the items whose count changed (need a DB update) and the leftover
+     * item that landed in a free slot (needs a DB insert), or null if nothing
+     * fit — in which case the inventory is left untouched.
+     */
+    addItemStacking(item: Item): { updated: Array<Item>; inserted: Item | null } | null {
+        const merges: Array<{ item: Item; amount: number }> = [];
+
+        if (item.isStackable()) {
+            for (const existing of this.inventory.getItems().values()) {
+                if (item.getCount() <= 0) break;
+                if (existing === item) continue;
+                if (existing.getWindow() !== WindowTypeEnum.INVENTORY) continue;
+                if (existing.getId() !== item.getId() || !existing.isStackable()) continue;
+                // Only merge into items actually present in the grid — a stale
+                // map entry (ghost) would swallow the units into an empty slot.
+                if (this.inventory.getItem(existing.getPosition()) !== existing) continue;
+
+                const room = MAX_ITEM_STACK - existing.getCount();
+                if (room <= 0) continue;
+
+                const moved = Math.min(room, item.getCount());
+                existing.setCount(existing.getCount() + moved);
+                item.setCount(item.getCount() - moved);
+                merges.push({ item: existing, amount: moved });
+            }
+        }
+
+        let inserted: Item | null = null;
+        if (item.getCount() > 0) {
+            const position = this.getInventory().addItem(item);
+            if (position < 0) {
+                // Leftover doesn't fit: revert the merges so no units are lost.
+                for (const merge of merges) {
+                    merge.item.setCount(merge.item.getCount() - merge.amount);
+                }
+                this.chat({
+                    messageType: ChatMessageTypeEnum.INFO,
+                    message: 'Inventory is full',
+                });
+                return null;
+            }
+            inserted = item;
+        }
+
+        const updated = merges.map((merge) => merge.item);
+        for (const existing of updated) {
+            this.sendItemUpdate(existing);
+        }
+        if (inserted) {
+            this.sendItemAdded({
+                window: WindowTypeEnum.INVENTORY,
+                position: inserted.getPosition(),
+                item: inserted,
+            });
+        }
+
+        return { updated, inserted };
     }
 
     addItems(items: Array<Item>) {
@@ -1565,6 +1631,15 @@ export default class Player extends Character {
 
     isRunningPrivateShop(): boolean {
         return this.privateShop !== null;
+    }
+
+    /**
+     * Whether this exact item instance is listed in the player's open private
+     * shop. Listed items are locked against move/use/drop/sell so the owner
+     * can't swap them around while a guest buys the slot (duplication exploit).
+     */
+    isItemLockedInPrivateShop(item: Item): boolean {
+        return this.privateShop?.hasItemListed(item) ?? false;
     }
 
     /** Records the current timestamp as the moment the player's private shop was closed. */
@@ -2073,17 +2148,17 @@ export default class Player extends Character {
         return this.playerClass === JobEnum.SHAMAN_MALE || this.playerClass === JobEnum.SHAMAN_FEMALE;
     }
 
-    sendQuestTarget({
-        id,
-        targetName,
-        targetVirtualId,
-        type,
-    }: {
-        id: number;
-        targetName: string;
-        targetVirtualId: number;
-        type: number;
-    }) {
-        this.connection?.send(new QuestTargetCreatePacket({ id, targetName, targetVirtualId, type }));
-    }
+    // sendQuestTarget({
+    //     id,
+    //     targetName,
+    //     targetVirtualId,
+    //     type,
+    // }: {
+    //     id: number;
+    //     targetName: string;
+    //     targetVirtualId: number;
+    //     type: number;
+    // }) {
+    //     this.connection?.send(new QuestTargetCreatePacket({ id, targetName, targetVirtualId, type }));
+    // }
 }

@@ -1,6 +1,5 @@
 import Player from '@/core/domain/entities/game/player/Player';
 import { MovementTypeEnum } from '@/core/enum/MovementTypeEnum';
-import { PointsEnum } from '@/core/enum/PointsEnum';
 import Logger from '@/core/infra/logger/Logger';
 
 type CharacterMoveServiceParams = {
@@ -23,7 +22,6 @@ export default class CharacterMoveService {
     async execute({ player, movementType, positionX, positionY, arg, rotation, time }: CharacterMoveServiceParams) {
         switch (movementType) {
             case MovementTypeEnum.MOVE:
-                player.addPoint(PointsEnum.EXPERIENCE, 500);
                 player.goto({ positionX, positionY, arg, rotation, time, movementType });
                 break;
             case MovementTypeEnum.WAIT:

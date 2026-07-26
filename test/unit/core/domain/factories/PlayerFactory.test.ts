@@ -9,8 +9,6 @@ describe('PlayerFactory', () => {
     let animationManager: any;
     let playerFactory: PlayerFactory;
     let experienceManager: any;
-    let eventTimerManager: any;
-    let mobManager: any;
     const logger: Logger = {
         info: () => {},
         error: () => {},
@@ -18,6 +16,8 @@ describe('PlayerFactory', () => {
     };
     const saveCharacterService: any = {};
     let questManager: any = {};
+    const eventTimerManager: any = {};
+    const mobManager: any = {};
 
     beforeEach(() => {
         config = {
@@ -50,10 +50,8 @@ describe('PlayerFactory', () => {
         experienceManager = {
             getNeededExperience: () => 100,
         };
-        eventTimerManager = {};
         animationManager = {};
         questManager = {};
-        mobManager = {};
         playerFactory = new PlayerFactory({
             config,
             animationManager,

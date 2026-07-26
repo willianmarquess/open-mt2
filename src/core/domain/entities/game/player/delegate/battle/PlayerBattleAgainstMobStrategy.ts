@@ -202,13 +202,15 @@ export default class PlayerBattleAgainstMobStrategy extends PlayerBattleStrategy
 
         const basePlayerAttack = this.attacker.getAttack();
 
-        const attack = Math.floor(basePlayerAttack * attackRating);
+        // level must be ignored when multiplying by the attack rating (see CalcMeleeDamage)
+        const levelAttack = this.attacker.getPoint(PointsEnum.LEVEL) * 2;
+        let attack = Math.floor((basePlayerAttack - levelAttack) * attackRating) + levelAttack;
+        attack = this.calculateRaceAttackBonus(attack, victim);
 
         this.applyAttackEffect(victim);
 
         const defense = victim.getDefense();
-        let damage = Math.max(0, attack - defense);
-        damage += this.calculateBonusRaceDamage(victim);
+        const damage = Math.max(0, attack - defense);
 
         this.applyDamage(damage, DamageTypeEnum.NORMAL, victim);
     }
@@ -312,45 +314,46 @@ export default class PlayerBattleAgainstMobStrategy extends PlayerBattleStrategy
         }
     }
 
-    private calculateBonusRaceDamage(victim: Monster) {
-        let damage = 0;
-
+    private calculateRaceAttackBonus(attack: number, victim: Monster) {
         switch (true) {
             case victim.isRaceByFlag(MobRaceFlagEnum.ANIMAL):
-                damage += damage * (this.attacker.getPoint(PointsEnum.ATTBONUS_ANIMAL) / 100);
-                break;
-            case victim.isRaceByFlag(MobRaceFlagEnum.DEVIL):
-                damage += damage * (this.attacker.getPoint(PointsEnum.ATTBONUS_DEVIL) / 100);
-                break;
-            case victim.isRaceByFlag(MobRaceFlagEnum.DESERT):
-                damage += damage * (this.attacker.getPoint(PointsEnum.ATTBONUS_DESERT) / 100);
-                break;
-            case victim.isRaceByFlag(MobRaceFlagEnum.INSECT):
-                damage += damage * (this.attacker.getPoint(PointsEnum.ATTBONUS_INSECT) / 100);
-                break;
-            case victim.isRaceByFlag(MobRaceFlagEnum.FIRE):
-                damage += damage * (this.attacker.getPoint(PointsEnum.ATTBONUS_FIRE) / 100);
-                break;
-            case victim.isRaceByFlag(MobRaceFlagEnum.ICE):
-                damage += damage * (this.attacker.getPoint(PointsEnum.ATTBONUS_ICE) / 100);
-                break;
-            case victim.isRaceByFlag(MobRaceFlagEnum.MILGYO):
-                damage += damage * (this.attacker.getPoint(PointsEnum.ATTBONUS_MILGYO) / 100);
-                break;
-            case victim.isRaceByFlag(MobRaceFlagEnum.HUMAN):
-                damage += damage * (this.attacker.getPoint(PointsEnum.ATTBONUS_HUMAN) / 100);
-                break;
-            case victim.isRaceByFlag(MobRaceFlagEnum.TREE):
-                damage += damage * (this.attacker.getPoint(PointsEnum.ATTBONUS_TREE) / 100);
+                attack += attack * (this.attacker.getPoint(PointsEnum.ATTBONUS_ANIMAL) / 100);
                 break;
             case victim.isRaceByFlag(MobRaceFlagEnum.UNDEAD):
-                damage += damage * (this.attacker.getPoint(PointsEnum.ATTBONUS_UNDEAD) / 100);
+                attack += attack * (this.attacker.getPoint(PointsEnum.ATTBONUS_UNDEAD) / 100);
+                break;
+            case victim.isRaceByFlag(MobRaceFlagEnum.DEVIL):
+                attack += attack * (this.attacker.getPoint(PointsEnum.ATTBONUS_DEVIL) / 100);
+                break;
+            case victim.isRaceByFlag(MobRaceFlagEnum.HUMAN):
+                attack += attack * (this.attacker.getPoint(PointsEnum.ATTBONUS_HUMAN) / 100);
+                break;
+            case victim.isRaceByFlag(MobRaceFlagEnum.ORC):
+                attack += attack * (this.attacker.getPoint(PointsEnum.ATTBONUS_ORC) / 100);
+                break;
+            case victim.isRaceByFlag(MobRaceFlagEnum.MILGYO):
+                attack += attack * (this.attacker.getPoint(PointsEnum.ATTBONUS_MILGYO) / 100);
+                break;
+            case victim.isRaceByFlag(MobRaceFlagEnum.INSECT):
+                attack += attack * (this.attacker.getPoint(PointsEnum.ATTBONUS_INSECT) / 100);
+                break;
+            case victim.isRaceByFlag(MobRaceFlagEnum.FIRE):
+                attack += attack * (this.attacker.getPoint(PointsEnum.ATTBONUS_FIRE) / 100);
+                break;
+            case victim.isRaceByFlag(MobRaceFlagEnum.ICE):
+                attack += attack * (this.attacker.getPoint(PointsEnum.ATTBONUS_ICE) / 100);
+                break;
+            case victim.isRaceByFlag(MobRaceFlagEnum.DESERT):
+                attack += attack * (this.attacker.getPoint(PointsEnum.ATTBONUS_DESERT) / 100);
+                break;
+            case victim.isRaceByFlag(MobRaceFlagEnum.TREE):
+                attack += attack * (this.attacker.getPoint(PointsEnum.ATTBONUS_TREE) / 100);
                 break;
         }
 
-        damage += damage * (this.attacker.getPoint(PointsEnum.ATTBONUS_MONSTER) / 100);
+        attack += attack * (this.attacker.getPoint(PointsEnum.ATTBONUS_MONSTER) / 100);
 
-        return damage;
+        return Math.floor(attack);
     }
 
     protected applyFire(victim: Monster) {

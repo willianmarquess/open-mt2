@@ -248,13 +248,23 @@ export class QuestManager {
 
             quest.unselect(answer);
         } else {
-            const quest = player.getQuestByStatus(QuestStatusEnum.PAUSE);
-
-            if (!quest) {
-                this.logger.error(`[QUEST_MANAGER] No active quest paused, playerId: ${player.getId()}`);
+            // Values above 250 come from the [NEXT] button or from the player
+            // closing the quest window. Release whatever the quest is waiting on —
+            // otherwise a quest left in SELECT stays running forever and blocks
+            // every further NPC interaction for this player.
+            const pausedQuest = player.getQuestByStatus(QuestStatusEnum.PAUSE);
+            if (pausedQuest) {
+                pausedQuest.unpause();
                 return;
             }
-            quest.unpause();
+
+            const selectQuest = player.getQuestByStatus(QuestStatusEnum.SELECT);
+            if (selectQuest) {
+                selectQuest.cancel();
+                return;
+            }
+
+            this.logger.error(`[QUEST_MANAGER] No active quest paused or awaiting select, playerId: ${player.getId()}`);
         }
     }
 
@@ -265,7 +275,7 @@ export class QuestManager {
 
         if (player.isQuestRunning()) {
             this.logger.info(
-                `[QUEST_MANAGER] Player ${player.getId()} logged in with running quest ${player.getCurrentQuest()?.getName()}`,
+                `[QUEST_MANAGER] Player ${player.getId()} clicked an NPC while quest ${player.getCurrentQuest()?.getName()} is running`,
             );
             return false;
         }
@@ -277,7 +287,12 @@ export class QuestManager {
             const current = quest.getCurrentState()?.name;
             if (!current) continue;
             if (states.has(current)) {
-                await quest.runState({
+                // Dispatch detached: the quest may suspend on a dialog answer, and
+                // awaiting it here would keep the click handler (and its corked
+                // socket) alive until the player replies, interleaving quest and
+                // shop packets. run() marks the quest busy synchronously so a
+                // second click is still rejected above.
+                quest.run({
                     eventType: QuestEventEnum.CLICK,
                     npc: new NpcQuest({ npc, shopManager: this.shopManager, player }),
                 });

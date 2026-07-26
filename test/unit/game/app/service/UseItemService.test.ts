@@ -19,6 +19,7 @@ describe('UseItemService', () => {
         service = new UseItemService({ logger: loggerStub, itemManager: itemManagerStub, mobManager: mobManagerStub });
         playerStub = {
             getItem: sinon.stub(),
+            isItemLockedInPrivateShop: sinon.stub().returns(false),
             getInventory: sinon.stub(),
             sendItemRemoved: sinon.stub(),
             sendItemAdded: sinon.stub(),

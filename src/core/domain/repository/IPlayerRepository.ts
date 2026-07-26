@@ -7,4 +7,5 @@ export interface IPlayerRepository {
     getById(id: number): Promise<PlayerState | null>;
     getByAccountId(accountId: number): Promise<PlayerState[]>;
     getByAccountIdAndSlot(accountId: number, slot: number): Promise<PlayerState | null>;
+    softDelete(id: number): Promise<void>;
 }
