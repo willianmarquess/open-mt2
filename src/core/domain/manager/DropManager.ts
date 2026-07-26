@@ -210,8 +210,7 @@ export default class DropManager {
 
         const { delta, range } = this.calcDropPercent(player, monster);
 
-        drops.push(...this.getCommonDrops(player, monster, delta, range));
-        drops.push(...this.getDefaultMonsterDrop(monster));
+        drops.push(...this.getCommonDrops(player, monster, delta, range), ...this.getDefaultMonsterDrop(monster));
 
         const goldDrop = this.getGoldDrop(player, monster);
         if (goldDrop) {

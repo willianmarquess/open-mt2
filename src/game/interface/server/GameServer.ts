@@ -1,7 +1,7 @@
 import World from '@/core/domain/World';
 import Server from '../../../core/interface/server/Server';
 import GameConnection from '@/game/interface/networking/GameConnection';
-import { Socket } from 'net';
+import { Socket } from 'node:net';
 import { Logger } from 'winston';
 import { GameConfig } from '@/game/infra/config/GameConfig';
 import { PacketMapValue } from '@/core/interface/networking/packets/Packets';

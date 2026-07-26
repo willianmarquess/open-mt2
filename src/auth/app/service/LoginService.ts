@@ -1,4 +1,4 @@
-import { randomBytes } from 'crypto';
+import { randomBytes } from 'node:crypto';
 import CacheKeyGenerator from '../../../core/util/CacheKeyGenerator';
 import Logger from '@/core/infra/logger/Logger';
 import { ErrorTypesEnum } from '@/core/enum/ErrorTypesEnum';

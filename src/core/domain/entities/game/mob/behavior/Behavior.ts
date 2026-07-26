@@ -256,7 +256,7 @@ export default class Behavior {
         if (followSpeed >= 0.1) {
             const meetTime = distance / followSpeed;
 
-            if (meetTime * targetSpeed <= 1_00000) {
+            if (meetTime * targetSpeed <= 100_000) {
                 const { dx: yourMoveEstimateX, dy: yourMoveEstimateY } = MathUtil.getDeltaByDegree(
                     this.monster.getTarget().getRotation(),
                     meetTime * targetSpeed,

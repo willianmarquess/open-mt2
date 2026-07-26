@@ -82,16 +82,16 @@ async function clearData(db) {
     }
 }
 
-import path from 'path';
-import fsSync from 'fs';
-import fs from 'fs/promises';
+import path from 'node:path';
+import fsSync from 'node:fs';
+import fs from 'node:fs/promises';
 
 const DEFAULT_SPAWN_CONFIG_PATH = 'src/core/infra/config/data/spawn';
 
 const BATCH_SIZE = 100; // Number of players to move simultaneously per batch
 const DELAY_BETWEEN_BATCHES = 50; // Milliseconds between batches
 
-const allowedAreas = [
+const allowedAreas = new Set([
     'map_a2',
     'map_n_snowm_01',
     'metin2_map_a1',
@@ -105,7 +105,7 @@ const allowedAreas = [
     'metin2_map_n_flame_01',
     'metin2_map_spiderdungeon',
     'metin2_map_spiderdungeon_02',
-];
+]);
 
 class FakePlayerIdGenerator {
     private current = 0;
@@ -161,7 +161,7 @@ async function createFakePlayersSpread(): Promise<FakePlayerData[]> {
     const currentDir = process.cwd();
 
     for (const { mapName, posX, posY, aka } of atlasInfo) {
-        if (!allowedAreas.includes(mapName)) {
+        if (!allowedAreas.has(mapName)) {
             continue;
         }
 

@@ -6,7 +6,7 @@ export default class Grid<T> {
     constructor(width: number, height: number, defaultValue?: T) {
         this.width = width;
         this.height = height;
-        this.grid = Array.from({ length: width }, () => Array<T | undefined>(height).fill(defaultValue));
+        this.grid = Array.from({ length: width }, () => new Array<T | undefined>(height).fill(defaultValue));
     }
 
     getHeight() {

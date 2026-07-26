@@ -1,5 +1,5 @@
-import * as fs from 'fs';
-import * as path from 'path';
+import * as fs from 'node:fs';
+import * as path from 'node:path';
 import Logger from '@/core/infra/logger/Logger';
 import { AbstractQuest } from './AbstractQuest';
 import { getQuestMeta, QuestStatusEnum } from './decorators/QuestDecorator';
@@ -54,7 +54,7 @@ export class QuestManager {
 
                         this.questsClasses.set(id, ctor);
 
-                        if (meta && meta.states) {
+                        if (meta?.states) {
                             for (const [, metaState] of meta.states) {
                                 for (const t of metaState.tasks) {
                                     switch (t.when) {
@@ -174,7 +174,7 @@ export class QuestManager {
             (instance as any).id = meta?.id ?? id;
             (instance as any).name = meta?.name ?? id;
 
-            if (meta && meta.states) {
+            if (meta?.states) {
                 for (const [stateName, metaState] of meta.states) {
                     const tasks = metaState.tasks.map((t: any) => {
                         const handler = (instance as any)[t.handlerName];

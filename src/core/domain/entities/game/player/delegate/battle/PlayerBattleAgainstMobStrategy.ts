@@ -178,7 +178,7 @@ export default class PlayerBattleAgainstMobStrategy extends PlayerBattleStrategy
 
         const weapon = this.attacker.getWeapon();
 
-        if (weapon && weapon.getType() === ItemTypeEnum.ITEM_WEAPON) {
+        if (weapon?.getType() === ItemTypeEnum.ITEM_WEAPON) {
             switch (weapon.getSubType()) {
                 case ItemSubTypeEnum.WEAPON_SWORD:
                 case ItemSubTypeEnum.WEAPON_DAGGER:

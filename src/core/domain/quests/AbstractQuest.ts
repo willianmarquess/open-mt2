@@ -109,13 +109,11 @@ export abstract class AbstractQuest {
     }
 
     private getCurrentTasksByEvent(event: QuestEventEnum) {
-        return this.currentState?.tasks.filter((routine) => routine.when === event) || [];
+        return this.currentState?.tasks.filter((routine) => routine.when === event) ?? [];
     }
 
     public async setState(name: string) {
-        if (!this.currentState) {
-            this.currentState = this.states.get(name);
-        }
+        this.currentState ??= this.states.get(name);
 
         await this.runState({ eventType: QuestEventEnum.LEAVE_STATE });
         this.currentState = this.states.get(name);

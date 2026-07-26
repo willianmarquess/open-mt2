@@ -558,7 +558,7 @@ export default class Item {
         const wearFlagsBitFlag = parseFlags(proto.item_wear, ItemWearFlagEnum);
         const itemType: ItemTypeEnum = itemTypeMapper[proto.item_type] || ItemTypeEnum.ITEM_NONE;
         const itemSubTypeEnum = itemTypeSubTypeMapper[itemType];
-        const itemSubType = itemSubTypeEnum && itemSubTypeEnum[proto.sub_type] ? itemSubTypeEnum[proto.sub_type] : 0;
+        const itemSubType = itemSubTypeEnum?.[proto.sub_type] ?? 0;
 
         return new Item({
             id: Number(proto.vnum),

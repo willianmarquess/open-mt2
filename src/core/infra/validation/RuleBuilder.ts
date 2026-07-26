@@ -49,7 +49,10 @@ export default class RuleBuilder<T> {
     }
 
     private validateNumber(value: T): boolean {
-        return (typeof value === 'number' && !isNaN(value)) || (typeof value === 'string' && !isNaN(parseFloat(value)));
+        return (
+            (typeof value === 'number' && !Number.isNaN(value)) ||
+            (typeof value === 'string' && !Number.isNaN(Number.parseFloat(value)))
+        );
     }
 
     isOptional(): this {

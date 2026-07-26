@@ -228,7 +228,6 @@ export default class Monster extends Mob {
             this.die();
             this.reward();
             this.questManager.onKill(attacker, this);
-            return;
         }
     }
 

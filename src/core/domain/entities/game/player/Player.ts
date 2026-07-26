@@ -605,7 +605,6 @@ export default class Player extends Character {
             if (attacker instanceof Player) {
                 this.questManager.onKill(attacker, this);
             }
-            return;
         }
     }
 
