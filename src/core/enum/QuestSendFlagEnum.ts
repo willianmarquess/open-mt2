@@ -1,9 +1,9 @@
 export enum QuestFlagEnum {
-    ISBEGIN = 1 << 0,
-    TITLE = 1 << 1,
-    CLOCK_NAME = 1 << 2,
-    CLOCK_VALUE = 1 << 3,
-    COUNTER_NAME = 1 << 4,
-    COUNTER_VALUE = 1 << 5,
-    ICON_FILE = 1 << 6,
+    ISBEGIN = 0x1,
+    TITLE = 0x2,
+    CLOCK_NAME = 0x4,
+    CLOCK_VALUE = 0x8,
+    COUNTER_NAME = 0x10,
+    COUNTER_VALUE = 0x20,
+    ICON_FILE = 0x40,
 }
