@@ -8,6 +8,9 @@ import { PlayerQuest } from './facade/PlayerQuest';
 import ItemManager from '../manager/ItemManager';
 import MathUtil from '../util/MathUtil';
 
+// Sent by the client when the quest window is closed instead of picking an option.
+const CLOSE_WINDOW_ANSWER = 254;
+
 export abstract class AbstractQuest {
     private readonly id!: number;
     private name!: string;
@@ -201,6 +204,22 @@ export abstract class AbstractQuest {
 
     public unpause() {
         this.nextPagePromise.resolve();
+    }
+
+    /**
+     * Release whatever the quest is currently waiting on (the player closed the
+     * quest window). A pending select resolves with the out-of-range close answer,
+     * so option checks in the quest script simply don't match and the quest ends.
+     */
+    public cancel() {
+        if (this.status === QuestStatusEnum.SELECT) {
+            this.currentChoicePromise.resolve(CLOSE_WINDOW_ANSWER);
+            return;
+        }
+
+        if (this.status === QuestStatusEnum.PAUSE) {
+            this.nextPagePromise.resolve();
+        }
     }
 
     protected async select(options: Array<string>, done: boolean = false) {

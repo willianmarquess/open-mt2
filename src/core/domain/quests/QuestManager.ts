@@ -248,13 +248,23 @@ export class QuestManager {
 
             quest.unselect(answer);
         } else {
-            const quest = player.getQuestByStatus(QuestStatusEnum.PAUSE);
-
-            if (!quest) {
-                this.logger.error(`[QUEST_MANAGER] No active quest paused, playerId: ${player.getId()}`);
+            // Values above 250 come from the [NEXT] button or from the player
+            // closing the quest window. Release whatever the quest is waiting on —
+            // otherwise a quest left in SELECT stays running forever and blocks
+            // every further NPC interaction for this player.
+            const pausedQuest = player.getQuestByStatus(QuestStatusEnum.PAUSE);
+            if (pausedQuest) {
+                pausedQuest.unpause();
                 return;
             }
-            quest.unpause();
+
+            const selectQuest = player.getQuestByStatus(QuestStatusEnum.SELECT);
+            if (selectQuest) {
+                selectQuest.cancel();
+                return;
+            }
+
+            this.logger.error(`[QUEST_MANAGER] No active quest paused or awaiting select, playerId: ${player.getId()}`);
         }
     }
 
