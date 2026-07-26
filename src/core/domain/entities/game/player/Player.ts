@@ -1622,6 +1622,22 @@ export default class Player extends Character {
         }
     }
 
+    /**
+     * Re-sends every entity currently in view to our own client.
+     *
+     * The client wipes its whole scene whenever it receives a CharacterSpawn
+     * for its own VID (used to swap the player's own appearance — polymorph,
+     * mount, etc.). Any code that sends such a self-spawn MUST call this
+     * afterwards, or nearby entities that stay in range are never re-spawned
+     * (the AOI only re-announces on a nearby-set change) and vanish from the
+     * player's view until relog.
+     */
+    resendNearbyToSelf() {
+        for (const entity of this.nearbyEntities.values()) {
+            this.onNearbyEntityAdded(entity);
+        }
+    }
+
     showFlyEffect(type: FlyEnum, from: number, to: number) {
         this.connection?.send(
             new FlyPacket({
@@ -1934,7 +1950,10 @@ export default class Player extends Character {
                 rankPoints: 0,
             });
 
-        // Send CharacterSpawnPacket and CharacterInfoPacket to self first
+        // Send CharacterSpawnPacket and CharacterInfoPacket to self first.
+        // The self-spawn wipes the client scene, so nearby entities are
+        // re-announced below (resendNearbyToSelf) — otherwise onlookers who
+        // stay in range disappear from this player's view until relog.
         this.connection?.send(createSpawnPacket());
         this.connection?.send(createInfoPacket());
 
@@ -1965,6 +1984,9 @@ export default class Player extends Character {
                 manaCost: 0,
             });
         }
+
+        // Rebuild our own scene wiped by the self-spawn above
+        this.resendNearbyToSelf();
 
         for (const entity of this.nearbyEntities.values()) {
             if (entity instanceof Player) {
@@ -2386,12 +2408,7 @@ export default class Player extends Character {
             rotation: this.getRotation(),
         });
 
-        // Re-announce all nearby entities to our own client.
-        // The client clears the scene when it receives a CharacterSpawn for its own VID,
-        // so we need to re-send every entity that was already in view.
-        for (const entity of this.nearbyEntities.values()) {
-            this.onNearbyEntityAdded(entity);
-        }
+        this.resendNearbyToSelf();
 
         this.sendPoints();
 
