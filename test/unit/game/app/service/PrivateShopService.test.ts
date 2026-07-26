@@ -27,6 +27,7 @@ const makeInventory = (items: Map<number, any> = new Map()) => ({
 });
 
 const makePlayer = (overrides: Partial<any> = {}): any => ({
+    getId: sinon.stub().returns(1),
     getName: sinon.stub().returns('TestPlayer'),
     getVirtualId: sinon.stub().returns(1),
     isRunningPrivateShop: sinon.stub().returns(false),
@@ -68,6 +69,7 @@ describe('PrivateShopService', () => {
             save: sinon.stub().resolves(),
             delete: sinon.stub().resolves(),
             update: sinon.stub().resolves(),
+            flush: sinon.stub().resolves(),
         };
         const saveCharacterServiceStub = { execute: sinon.stub().resolves() } as any;
         service = new PrivateShopService({
@@ -244,7 +246,9 @@ describe('PrivateShopService', () => {
 
             expect(bundle.decreaseCount.calledWith(1)).to.be.true;
             expect(player.sendItemUpdate.calledOnceWith(bundle)).to.be.true;
-            expect(itemManagerStub.save.calledOnceWith(bundle)).to.be.true;
+            // update, not save: save() would INSERT a new row and duplicate the stack
+            expect(itemManagerStub.update.calledOnceWith(bundle)).to.be.true;
+            expect(itemManagerStub.save.called).to.be.false;
             expect(itemManagerStub.delete.called).to.be.false;
             expect(inventory.removeItem.called).to.be.false;
         });
