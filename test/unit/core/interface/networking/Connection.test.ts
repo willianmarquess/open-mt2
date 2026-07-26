@@ -38,12 +38,12 @@ describe('Connection', () => {
             connection.startKeepalive();
 
             clock.tick(KEEPALIVE_INTERVAL_MS);
-            expect(connection.sentPackets.length).to.be.equal(1);
+            expect(connection.sentPackets).to.have.lengthOf(1);
             expect(connection.sentPackets[0]).to.be.instanceOf(PingPacket);
 
             connection.onPongReceived();
             clock.tick(KEEPALIVE_INTERVAL_MS);
-            expect(connection.sentPackets.length).to.be.equal(2);
+            expect(connection.sentPackets).to.have.lengthOf(2);
             expect(socket.destroy.called).to.be.equal(false);
         });
 
@@ -51,11 +51,11 @@ describe('Connection', () => {
             connection.startKeepalive();
 
             clock.tick(KEEPALIVE_INTERVAL_MS);
-            expect(connection.sentPackets.length).to.be.equal(1);
+            expect(connection.sentPackets).to.have.lengthOf(1);
 
             clock.tick(KEEPALIVE_INTERVAL_MS);
             expect(socket.destroy.called).to.be.equal(true);
-            expect(connection.sentPackets.length).to.be.equal(1);
+            expect(connection.sentPackets).to.have.lengthOf(1);
         });
 
         it('should not ping anymore after stopKeepalive', () => {
@@ -63,7 +63,7 @@ describe('Connection', () => {
             connection.stopKeepalive();
 
             clock.tick(KEEPALIVE_INTERVAL_MS * 3);
-            expect(connection.sentPackets.length).to.be.equal(0);
+            expect(connection.sentPackets).to.have.lengthOf(0);
         });
 
         it('should not create a second timer if started twice', () => {
@@ -71,7 +71,7 @@ describe('Connection', () => {
             connection.startKeepalive();
 
             clock.tick(KEEPALIVE_INTERVAL_MS);
-            expect(connection.sentPackets.length).to.be.equal(1);
+            expect(connection.sentPackets).to.have.lengthOf(1);
         });
 
         it('should stop the keepalive when the connection is closed', () => {
@@ -79,7 +79,7 @@ describe('Connection', () => {
             connection.close();
 
             clock.tick(KEEPALIVE_INTERVAL_MS * 2);
-            expect(connection.sentPackets.length).to.be.equal(0);
+            expect(connection.sentPackets).to.have.lengthOf(0);
             expect(socket.destroy.called).to.be.equal(true);
         });
     });
