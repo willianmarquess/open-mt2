@@ -46,8 +46,13 @@ export default {
     AFFECT_ADD: 0x7e,
     SPECIAL_EFFECT: 0x72,
     ITEM_UPDATE: 0x19,
-    INTERNAL_PING: 254,
-    INTERNAL_PONG: 253,
+    // 240/239 are outside the client protocol range — used only by internal tooling
+    // (e.g. the performance ping flow). The 0xfc-0xff range belongs to the client:
+    // 0xfe is CG_PONG, the client's reply to the keepalive GC_PING (44).
+    INTERNAL_PING: 240,
+    INTERNAL_PONG: 239,
+    PING: 44,
+    PONG: 254,
     ON_CLICK: 0x1a,
     QUEST_SCRIPT: 0x2d,
     QUEST_ANSWER: 0x1d,

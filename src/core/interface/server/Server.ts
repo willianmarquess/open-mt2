@@ -36,6 +36,7 @@ export default abstract class Server {
 
         this.logger.debug(`[IN][CONNECT SOCKET EVENT] New connection: ID: ${connection.getId()}`);
         connection.startHandShake();
+        connection.startKeepalive();
 
         socket.on('close', this.onClose.bind(this, connection));
         socket.on('data', this.onData.bind(this, connection));
@@ -50,6 +51,7 @@ export default abstract class Server {
 
     async onClose(connection: Connection) {
         this.logger.debug(`[IN][CLOSE SOCKET EVENT] Closing connection: ID: ${connection.getId()}`);
+        connection.stopKeepalive();
         this.connections.delete(connection.getId());
     }
 
