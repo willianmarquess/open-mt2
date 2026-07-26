@@ -34,7 +34,7 @@ export class MobPoints extends Points {
             get: () => Number(this.mobProto.st),
         });
         this.points.set(PointsEnum.LEVEL, {
-            get: () => (this.levelOverride !== null ? this.levelOverride : Number(this.mobProto.level)),
+            get: () => this.levelOverride ?? Number(this.mobProto.level),
             set: (value: number) => {
                 this.levelOverride = value;
             },

@@ -45,13 +45,11 @@ export default class HorseNameCommandHandler extends CommandHandler<HorseNameCom
                 messageType: ChatMessageTypeEnum.INFO,
                 message: 'You cannot use this name! It must be between 2 and 12 characters.',
             });
-            return;
         } else if (ret === 1) {
             player.chat({
                 messageType: ChatMessageTypeEnum.INFO,
                 message: 'You cannot use this name! Your horse already has this name.',
             });
-            return;
         } else if (ret === 2) {
             // Remove 1 sugar item
             if (sugarItem.getCount() - 1 <= 0) {

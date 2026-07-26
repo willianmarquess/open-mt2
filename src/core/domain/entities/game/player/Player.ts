@@ -1656,27 +1656,7 @@ export default class Player extends Character {
             }
 
             if (otherEntity instanceof Player) {
-                this.otherEntityUpdated({
-                    vid: otherEntity.getVirtualId(),
-                    attackSpeed: otherEntity.getAttackSpeed(),
-                    moveSpeed: otherEntity.getMovementSpeed(),
-                    bodyId: otherEntity.getBody()?.getId() ?? 0,
-                    weaponId: otherEntity.getWeapon()?.getId() ?? 0,
-                    hairId: otherEntity.getHair()?.getId() ?? 0,
-                    affects: otherEntity.getAffectFlags(),
-                    mountVnum: otherEntity.getMountVnum(),
-                });
-
-                // If the other player has an active private shop, announce it to us
-                if (otherEntity.isRunningPrivateShop()) {
-                    const shop = otherEntity.getPrivateShop();
-                    if (shop) {
-                        this.sendShopSign({
-                            ownerVid: otherEntity.getVirtualId(),
-                            sign: shop.getSign(),
-                        });
-                    }
-                }
+                this.onNearbyPlayerAdded(otherEntity);
             }
         }
 
@@ -1689,6 +1669,30 @@ export default class Player extends Character {
                 positionY: otherEntity.getPositionY(),
                 id: otherEntity.getItem().getId(),
             });
+        }
+    }
+
+    private onNearbyPlayerAdded(otherPlayer: Player) {
+        this.otherEntityUpdated({
+            vid: otherPlayer.getVirtualId(),
+            attackSpeed: otherPlayer.getAttackSpeed(),
+            moveSpeed: otherPlayer.getMovementSpeed(),
+            bodyId: otherPlayer.getBody()?.getId() ?? 0,
+            weaponId: otherPlayer.getWeapon()?.getId() ?? 0,
+            hairId: otherPlayer.getHair()?.getId() ?? 0,
+            affects: otherPlayer.getAffectFlags(),
+            mountVnum: otherPlayer.getMountVnum(),
+        });
+
+        // If the other player has an active private shop, announce it to us
+        if (otherPlayer.isRunningPrivateShop()) {
+            const shop = otherPlayer.getPrivateShop();
+            if (shop) {
+                this.sendShopSign({
+                    ownerVid: otherPlayer.getVirtualId(),
+                    sign: shop.getSign(),
+                });
+            }
         }
     }
 

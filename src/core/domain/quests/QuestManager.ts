@@ -373,7 +373,8 @@ export class QuestManager {
                 chatOptions.map((option) => ({ ...option, npc })),
             );
             const labels = [...chatOptions.map((option) => option.label), 'Close'];
-            const src = `[QUESTION ${labels.map((label, index) => `${index + 1}; ${label}`).join('|')}]`;
+            const numberedLabels = labels.map((label, index) => `${index + 1}; ${label}`).join('|');
+            const src = `[QUESTION ${numberedLabels}]`;
             player.sendQuestScript(QuestSkinEnum.NORMAL, src);
             return true;
         }

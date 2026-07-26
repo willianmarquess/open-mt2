@@ -487,7 +487,7 @@ export class PlayerHorse {
             const playerY = this.owner.getPositionY();
             const deltaX = playerX - horse.getPositionX();
             const deltaY = playerY - horse.getPositionY();
-            const distance = Math.sqrt(deltaX * deltaX + deltaY * deltaY);
+            const distance = Math.hypot(deltaX, deltaY);
             if (distance <= HORSE_FOLLOW_DISTANCE) {
                 this.owner.logger.debug(`[PlayerHorse] follow idle: distance=${Math.round(distance)}`);
                 return null;
