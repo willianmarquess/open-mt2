@@ -3,7 +3,7 @@ import { AbstractQuest } from '../AbstractQuest';
 import {
     ButtonExecutionContext,
     ClickExecutionContext,
-    ConfitionFuncParams,
+    ConditionFuncParams,
     InfoExecutionContext,
     StateExecutionContext,
     Task,
@@ -11,6 +11,8 @@ import {
 } from '../decorators/QuestDecorator';
 import { PlayerQuest } from '../facade/PlayerQuest';
 import { AssasinSubJobEnum, ShamanSubJobEnum, SuraSubJobEnum, WarriorSubJobEnum } from '@/core/enum/SubJobEnum';
+import { JobEnum } from '@/core/enum/JobEnum';
+import { EmpireEnum } from '@/core/enum/EmpireEnum';
 
 enum SkillQuestState {
     START = 'START',
@@ -19,6 +21,81 @@ enum SkillQuestState {
 }
 
 const TARGET_NAME = 'skill_teacher';
+
+interface SkillTeacherConfig {
+    vnum: number;
+    job: JobEnum;
+    empire: EmpireEnum;
+    subjob: number; // WarriorSubJobEnum | AssasinSubJobEnum | SuraSubJobEnum | ShamanSubJobEnum
+}
+
+const SKILL_TEACHER_TARGETS: SkillTeacherConfig[] = [
+    // WARRIOR
+    { vnum: 20300, job: JobEnum.WARRIOR_MALE, empire: EmpireEnum.RED, subjob: WarriorSubJobEnum.BODY },
+    { vnum: 20301, job: JobEnum.WARRIOR_MALE, empire: EmpireEnum.RED, subjob: WarriorSubJobEnum.MENTAL },
+    { vnum: 20320, job: JobEnum.WARRIOR_MALE, empire: EmpireEnum.YELLOW, subjob: WarriorSubJobEnum.BODY },
+    { vnum: 20321, job: JobEnum.WARRIOR_MALE, empire: EmpireEnum.YELLOW, subjob: WarriorSubJobEnum.MENTAL },
+    { vnum: 20340, job: JobEnum.WARRIOR_MALE, empire: EmpireEnum.BLUE, subjob: WarriorSubJobEnum.BODY },
+    { vnum: 20341, job: JobEnum.WARRIOR_MALE, empire: EmpireEnum.BLUE, subjob: WarriorSubJobEnum.MENTAL },
+
+    // ASSASSIN
+    { vnum: 20302, job: JobEnum.ASSASSIN_MALE, empire: EmpireEnum.RED, subjob: AssasinSubJobEnum.DAGGER },
+    { vnum: 20303, job: JobEnum.ASSASSIN_MALE, empire: EmpireEnum.RED, subjob: AssasinSubJobEnum.ARCHER },
+    { vnum: 20322, job: JobEnum.ASSASSIN_MALE, empire: EmpireEnum.YELLOW, subjob: AssasinSubJobEnum.DAGGER },
+    { vnum: 20323, job: JobEnum.ASSASSIN_MALE, empire: EmpireEnum.YELLOW, subjob: AssasinSubJobEnum.ARCHER },
+    { vnum: 20342, job: JobEnum.ASSASSIN_MALE, empire: EmpireEnum.BLUE, subjob: AssasinSubJobEnum.DAGGER },
+    { vnum: 20343, job: JobEnum.ASSASSIN_MALE, empire: EmpireEnum.BLUE, subjob: AssasinSubJobEnum.ARCHER },
+
+    // SURA
+    { vnum: 20304, job: JobEnum.SURA_MALE, empire: EmpireEnum.RED, subjob: SuraSubJobEnum.SWORD },
+    { vnum: 20305, job: JobEnum.SURA_MALE, empire: EmpireEnum.RED, subjob: SuraSubJobEnum.MAGIC },
+    { vnum: 20324, job: JobEnum.SURA_MALE, empire: EmpireEnum.YELLOW, subjob: SuraSubJobEnum.SWORD },
+    { vnum: 20325, job: JobEnum.SURA_MALE, empire: EmpireEnum.YELLOW, subjob: SuraSubJobEnum.MAGIC },
+    { vnum: 20344, job: JobEnum.SURA_MALE, empire: EmpireEnum.BLUE, subjob: SuraSubJobEnum.SWORD },
+    { vnum: 20345, job: JobEnum.SURA_MALE, empire: EmpireEnum.BLUE, subjob: SuraSubJobEnum.MAGIC },
+
+    // SHAMAN
+    { vnum: 20306, job: JobEnum.SHAMAN_MALE, empire: EmpireEnum.RED, subjob: ShamanSubJobEnum.BUFFER },
+    { vnum: 20307, job: JobEnum.SHAMAN_MALE, empire: EmpireEnum.RED, subjob: ShamanSubJobEnum.HEALER },
+    { vnum: 20326, job: JobEnum.SHAMAN_MALE, empire: EmpireEnum.YELLOW, subjob: ShamanSubJobEnum.BUFFER },
+    { vnum: 20327, job: JobEnum.SHAMAN_MALE, empire: EmpireEnum.YELLOW, subjob: ShamanSubJobEnum.HEALER },
+    { vnum: 20346, job: JobEnum.SHAMAN_MALE, empire: EmpireEnum.BLUE, subjob: ShamanSubJobEnum.BUFFER },
+    { vnum: 20347, job: JobEnum.SHAMAN_MALE, empire: EmpireEnum.BLUE, subjob: ShamanSubJobEnum.HEALER },
+];
+
+const SKILL_TEACHER_BY_VNUM = new Map<number, SkillTeacherConfig>(
+    SKILL_TEACHER_TARGETS.map((config) => [config.vnum, config]),
+);
+
+function playerMatchesJob(player: PlayerQuest, job: JobEnum): boolean {
+    switch (job) {
+        case JobEnum.WARRIOR_MALE:
+        case JobEnum.WARRIOR_FEMALE:
+            return player.isWarrior();
+        case JobEnum.ASSASSIN_MALE:
+        case JobEnum.ASSASSIN_FEMALE:
+            return player.isAssassin();
+        case JobEnum.SURA_MALE:
+        case JobEnum.SURA_FEMALE:
+            return player.isSura();
+        case JobEnum.SHAMAN_MALE:
+        case JobEnum.SHAMAN_FEMALE:
+            return player.isShaman();
+    }
+}
+
+function playerMatchesEmpire(player: PlayerQuest, empire: EmpireEnum): boolean {
+    switch (empire) {
+        case EmpireEnum.RED:
+            return player.isFromRed();
+        case EmpireEnum.YELLOW:
+            return player.isFromYellow();
+        case EmpireEnum.BLUE:
+            return player.isFromBlue();
+    }
+
+    return false;
+}
 
 export class SkillQuest extends AbstractQuest {
     @Task({
@@ -97,319 +174,22 @@ export class SkillQuest extends AbstractQuest {
         return this.onLetterDescribeQuest({ player });
     }
 
-    /*
-     * WARRIOR
-     */
-
-    /*
-     * RED
-     */
     @Task({
         state: SkillQuestState.CONFIRM,
         when: QuestEventEnum.CLICK,
-        target: 20300,
-        with: ({ player, quest }: ConfitionFuncParams) =>
-            player.isWarrior() && player.isFromRed() && quest.getValue('skillGroup') == WarriorSubJobEnum.BODY,
+        target: [...SKILL_TEACHER_BY_VNUM.keys()],
+        with: ({ player, quest, npc }: ConditionFuncParams) => {
+            const config = SKILL_TEACHER_BY_VNUM.get(npc.getId());
+            if (!config) return false;
+
+            return (
+                playerMatchesJob(player, config.job) &&
+                playerMatchesEmpire(player, config.empire) &&
+                quest.getValue('skillGroup') == config.subjob
+            );
+        },
     })
-    public async confirmOnClickWarriorBodyRed({ player }: ClickExecutionContext): Promise<TaskResult> {
-        return this.askToConfirm({ player });
-    }
-
-    @Task({
-        state: SkillQuestState.CONFIRM,
-        when: QuestEventEnum.CLICK,
-        target: 20301,
-        with: ({ player, quest }: ConfitionFuncParams) =>
-            player.isWarrior() && player.isFromRed() && quest.getValue('skillGroup') == WarriorSubJobEnum.MENTAL,
-    })
-    public async confirmOnClickWarriorMentalRed({ player }: ClickExecutionContext): Promise<TaskResult> {
-        return this.askToConfirm({ player });
-    }
-
-    /*
-     * YELLOW
-     */
-    @Task({
-        state: SkillQuestState.CONFIRM,
-        when: QuestEventEnum.CLICK,
-        target: 20320,
-        with: ({ player, quest }: ConfitionFuncParams) =>
-            player.isWarrior() && player.isFromYellow() && quest.getValue('skillGroup') == WarriorSubJobEnum.BODY,
-    })
-    public async confirmOnClickWarriorBodyYellow({ player }: ClickExecutionContext): Promise<TaskResult> {
-        return this.askToConfirm({ player });
-    }
-
-    @Task({
-        state: SkillQuestState.CONFIRM,
-        when: QuestEventEnum.CLICK,
-        target: 20321,
-        with: ({ player, quest }: ConfitionFuncParams) =>
-            player.isWarrior() && player.isFromYellow() && quest.getValue('skillGroup') == WarriorSubJobEnum.MENTAL,
-    })
-    public async confirmOnClickWarriorMentalYellow({ player }: ClickExecutionContext): Promise<TaskResult> {
-        return this.askToConfirm({ player });
-    }
-
-    /*
-     * BLUE
-     */
-    @Task({
-        state: SkillQuestState.CONFIRM,
-        when: QuestEventEnum.CLICK,
-        target: 20340,
-        with: ({ player, quest }: ConfitionFuncParams) =>
-            player.isWarrior() && player.isFromBlue() && quest.getValue('skillGroup') == WarriorSubJobEnum.BODY,
-    })
-    public async confirmOnClickWarriorBodyBlue({ player }: ClickExecutionContext): Promise<TaskResult> {
-        return this.askToConfirm({ player });
-    }
-
-    @Task({
-        state: SkillQuestState.CONFIRM,
-        when: QuestEventEnum.CLICK,
-        target: 20341,
-        with: ({ player, quest }: ConfitionFuncParams) =>
-            player.isWarrior() && player.isFromBlue() && quest.getValue('skillGroup') == WarriorSubJobEnum.MENTAL,
-    })
-    public async confirmOnClickWarriorMentalBlue({ player }: ClickExecutionContext): Promise<TaskResult> {
-        return this.askToConfirm({ player });
-    }
-
-    /*
-     * ASSASIN
-     */
-
-    /*
-     * RED
-     */
-    @Task({
-        state: SkillQuestState.CONFIRM,
-        when: QuestEventEnum.CLICK,
-        target: 20302,
-        with: ({ player, quest }: ConfitionFuncParams) =>
-            player.isAssassin() && player.isFromRed() && quest.getValue('skillGroup') == AssasinSubJobEnum.DAGGER,
-    })
-    public async confirmOnClickAssasinDaggerRed({ player }: ClickExecutionContext): Promise<TaskResult> {
-        return this.askToConfirm({ player });
-    }
-
-    @Task({
-        state: SkillQuestState.CONFIRM,
-        when: QuestEventEnum.CLICK,
-        target: 20303,
-        with: ({ player, quest }: ConfitionFuncParams) =>
-            player.isAssassin() && player.isFromRed() && quest.getValue('skillGroup') == AssasinSubJobEnum.ARCHER,
-    })
-    public async confirmOnClickAssasinArcherRed({ player }: ClickExecutionContext): Promise<TaskResult> {
-        return this.askToConfirm({ player });
-    }
-
-    /*
-     * Yellow
-     */
-    @Task({
-        state: SkillQuestState.CONFIRM,
-        when: QuestEventEnum.CLICK,
-        target: 20322,
-        with: ({ player, quest }: ConfitionFuncParams) =>
-            player.isAssassin() && player.isFromYellow() && quest.getValue('skillGroup') == AssasinSubJobEnum.DAGGER,
-    })
-    public async confirmOnClickAssasinDaggerYellow({ player }: ClickExecutionContext): Promise<TaskResult> {
-        return this.askToConfirm({ player });
-    }
-
-    @Task({
-        state: SkillQuestState.CONFIRM,
-        when: QuestEventEnum.CLICK,
-        target: 20323,
-        with: ({ player, quest }: ConfitionFuncParams) =>
-            player.isAssassin() && player.isFromYellow() && quest.getValue('skillGroup') == AssasinSubJobEnum.ARCHER,
-    })
-    public async confirmOnClickAssasinArcherYellow({ player }: ClickExecutionContext): Promise<TaskResult> {
-        return this.askToConfirm({ player });
-    }
-
-    /*
-     * Blue
-     */
-    @Task({
-        state: SkillQuestState.CONFIRM,
-        when: QuestEventEnum.CLICK,
-        target: 20342,
-        with: ({ player, quest }: ConfitionFuncParams) =>
-            player.isAssassin() && player.isFromBlue() && quest.getValue('skillGroup') == AssasinSubJobEnum.DAGGER,
-    })
-    public async confirmOnClickAssasinDaggerBlue({ player }: ClickExecutionContext): Promise<TaskResult> {
-        return this.askToConfirm({ player });
-    }
-
-    @Task({
-        state: SkillQuestState.CONFIRM,
-        when: QuestEventEnum.CLICK,
-        target: 20343,
-        with: ({ player, quest }: ConfitionFuncParams) =>
-            player.isAssassin() && player.isFromBlue() && quest.getValue('skillGroup') == AssasinSubJobEnum.ARCHER,
-    })
-    public async confirmOnClickAssasinArcherBlue({ player }: ClickExecutionContext): Promise<TaskResult> {
-        return this.askToConfirm({ player });
-    }
-
-    /*
-     * SURA
-     */
-
-    /*
-     * RED
-     */
-    @Task({
-        state: SkillQuestState.CONFIRM,
-        when: QuestEventEnum.CLICK,
-        target: 20304,
-        with: ({ player, quest }: ConfitionFuncParams) =>
-            player.isSura() && player.isFromRed() && quest.getValue('skillGroup') == SuraSubJobEnum.SWORD,
-    })
-    public async confirmOnClickSuraSwordRed({ player }: ClickExecutionContext): Promise<TaskResult> {
-        return this.askToConfirm({ player });
-    }
-
-    @Task({
-        state: SkillQuestState.CONFIRM,
-        when: QuestEventEnum.CLICK,
-        target: 20305,
-        with: ({ player, quest }: ConfitionFuncParams) =>
-            player.isSura() && player.isFromRed() && quest.getValue('skillGroup') == SuraSubJobEnum.MAGIC,
-    })
-    public async confirmOnClickSuraMagicRed({ player }: ClickExecutionContext): Promise<TaskResult> {
-        return this.askToConfirm({ player });
-    }
-
-    /*
-     * YELLOW
-     */
-    @Task({
-        state: SkillQuestState.CONFIRM,
-        when: QuestEventEnum.CLICK,
-        target: 20324,
-        with: ({ player, quest }: ConfitionFuncParams) =>
-            player.isSura() && player.isFromYellow() && quest.getValue('skillGroup') == SuraSubJobEnum.SWORD,
-    })
-    public async confirmOnClickSuraSwordYellow({ player }: ClickExecutionContext): Promise<TaskResult> {
-        return this.askToConfirm({ player });
-    }
-
-    @Task({
-        state: SkillQuestState.CONFIRM,
-        when: QuestEventEnum.CLICK,
-        target: 20325,
-        with: ({ player, quest }: ConfitionFuncParams) =>
-            player.isSura() && player.isFromYellow() && quest.getValue('skillGroup') == SuraSubJobEnum.MAGIC,
-    })
-    public async confirmOnClickSuraMagicYellow({ player }: ClickExecutionContext): Promise<TaskResult> {
-        return this.askToConfirm({ player });
-    }
-
-    /*
-     * BLUE
-     */
-    @Task({
-        state: SkillQuestState.CONFIRM,
-        when: QuestEventEnum.CLICK,
-        target: 20344,
-        with: ({ player, quest }: ConfitionFuncParams) =>
-            player.isSura() && player.isFromBlue() && quest.getValue('skillGroup') == SuraSubJobEnum.SWORD,
-    })
-    public async confirmOnClickSuraSwordBlue({ player }: ClickExecutionContext): Promise<TaskResult> {
-        return this.askToConfirm({ player });
-    }
-
-    @Task({
-        state: SkillQuestState.CONFIRM,
-        when: QuestEventEnum.CLICK,
-        target: 20345,
-        with: ({ player, quest }: ConfitionFuncParams) =>
-            player.isSura() && player.isFromBlue() && quest.getValue('skillGroup') == SuraSubJobEnum.MAGIC,
-    })
-    public async confirmOnClickSuraMagicBlue({ player }: ClickExecutionContext): Promise<TaskResult> {
-        return this.askToConfirm({ player });
-    }
-
-    /*
-     * SHAMAN
-     */
-
-    /*
-     * RED
-     */
-    @Task({
-        state: SkillQuestState.CONFIRM,
-        when: QuestEventEnum.CLICK,
-        target: 20306,
-        with: ({ player, quest }: ConfitionFuncParams) =>
-            player.isShaman() && player.isFromRed() && quest.getValue('skillGroup') == ShamanSubJobEnum.BUFFER,
-    })
-    public async confirmOnClickShamanBufferRed({ player }: ClickExecutionContext): Promise<TaskResult> {
-        return this.askToConfirm({ player });
-    }
-
-    @Task({
-        state: SkillQuestState.CONFIRM,
-        when: QuestEventEnum.CLICK,
-        target: 20307,
-        with: ({ player, quest }: ConfitionFuncParams) =>
-            player.isShaman() && player.isFromRed() && quest.getValue('skillGroup') == ShamanSubJobEnum.HEALER,
-    })
-    public async confirmOnClickShamanHealerRed({ player }: ClickExecutionContext): Promise<TaskResult> {
-        return this.askToConfirm({ player });
-    }
-
-    /*
-     * YELLOW
-     */
-    @Task({
-        state: SkillQuestState.CONFIRM,
-        when: QuestEventEnum.CLICK,
-        target: 20326,
-        with: ({ player, quest }: ConfitionFuncParams) =>
-            player.isShaman() && player.isFromYellow() && quest.getValue('skillGroup') == ShamanSubJobEnum.BUFFER,
-    })
-    public async confirmOnClickShamanBufferYellow({ player }: ClickExecutionContext): Promise<TaskResult> {
-        return this.askToConfirm({ player });
-    }
-
-    @Task({
-        state: SkillQuestState.CONFIRM,
-        when: QuestEventEnum.CLICK,
-        target: 20327,
-        with: ({ player, quest }: ConfitionFuncParams) =>
-            player.isShaman() && player.isFromYellow() && quest.getValue('skillGroup') == ShamanSubJobEnum.HEALER,
-    })
-    public async confirmOnClickShamanHealerYellow({ player }: ClickExecutionContext): Promise<TaskResult> {
-        return this.askToConfirm({ player });
-    }
-
-    /*
-     * BLUE
-     */
-    @Task({
-        state: SkillQuestState.CONFIRM,
-        when: QuestEventEnum.CLICK,
-        target: 20346,
-        with: ({ player, quest }: ConfitionFuncParams) =>
-            player.isShaman() && player.isFromBlue() && quest.getValue('skillGroup') == ShamanSubJobEnum.BUFFER,
-    })
-    public async confirmOnClickShamanBufferBlue({ player }: ClickExecutionContext): Promise<TaskResult> {
-        return this.askToConfirm({ player });
-    }
-
-    @Task({
-        state: SkillQuestState.CONFIRM,
-        when: QuestEventEnum.CLICK,
-        target: 20347,
-        with: ({ player, quest }: ConfitionFuncParams) =>
-            player.isShaman() && player.isFromBlue() && quest.getValue('skillGroup') == ShamanSubJobEnum.HEALER,
-    })
-    public async confirmOnClickShamanHealerBlue({ player }: ClickExecutionContext): Promise<TaskResult> {
+    public async confirmOnClickSkillTeacher({ player }: ClickExecutionContext): Promise<TaskResult> {
         return this.askToConfirm({ player });
     }
 

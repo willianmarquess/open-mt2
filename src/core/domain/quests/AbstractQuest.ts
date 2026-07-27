@@ -89,7 +89,7 @@ export abstract class AbstractQuest {
             for (const routine of tasks) {
                 try {
                     const withFunc = routine.with
-                        ? routine.with({ player: this.playerQuest, quest: this, ...context })
+                        ? routine.with({ player: this.playerQuest, quest: this, ...context } as any)
                         : true;
                     let callbackResult: TaskResult | undefined;
 

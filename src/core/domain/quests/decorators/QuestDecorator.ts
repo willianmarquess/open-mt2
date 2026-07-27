@@ -56,8 +56,8 @@ export type StateExecutionContextBase =
     | Omit<InfoExecutionContext, 'player'>
     | Omit<ButtonExecutionContext, 'player'>;
 
-export type ConfitionFuncParams = StateExecutionContext & { quest: AbstractQuest };
-export type ConditionFunc = (args: ConfitionFuncParams) => boolean | Promise<boolean>;
+export type ConditionFuncParams = StateExecutionContext & { quest: AbstractQuest; npc: NpcQuest };
+export type ConditionFunc = (args: ConditionFuncParams) => boolean | Promise<boolean>;
 
 export type TaskResult = void | { nextState: string };
 export type TaskCallback = (args: StateExecutionContext) => Promise<TaskResult> | TaskResult;
