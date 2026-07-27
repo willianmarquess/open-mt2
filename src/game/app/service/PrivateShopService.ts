@@ -8,9 +8,16 @@ import PrivateShop, { PrivateShopItem, PRIVATE_SHOP_MAX_ITEMS } from '@/core/dom
 import { MyShopItemEntry } from '@/core/interface/networking/packets/packet/in/myshop/MyShopPacket';
 import ItemManager from '@/core/domain/manager/ItemManager';
 import SaveCharacterService from '@/game/domain/service/SaveCharacterService';
+import MathUtil from '@/core/domain/util/MathUtil';
 
 /** Maximum gold price a seller can set per item. */
 const MAX_ITEM_PRICE = 2_000_000_000;
+
+/** Vnum of the Bundle item required to open a private shop. */
+const BUNDLE_VNUM = 50200;
+
+/** Maximum distance (map units) between guest and owner for shop interactions. */
+const SHOP_MAX_DISTANCE = 2000;
 
 export default class PrivateShopService {
     private readonly itemManager: ItemManager;
@@ -42,10 +49,19 @@ export default class PrivateShopService {
             return;
         }
 
-        if (player.getCurrentShop()) {
-            this.logger.debug(
-                `[PrivateShopService] ${player.getName()} tried to open a shop while browsing an NPC shop`,
-            );
+        // Leave any NPC shop or browsed private shop first instead of refusing:
+        // the client may close the shop window without sending SHOP_END (e.g.
+        // after buying the bundle), leaving stale browsing state behind.
+        player.setCurrentShop(null);
+        const browsedOwner = player.getCurrentPrivateShopOwner();
+        if (browsedOwner) {
+            browsedOwner.getPrivateShop()?.removeGuest(player);
+            player.setCurrentPrivateShopOwner(null);
+        }
+
+        // A shop needs a Bundle item — the original refuses to open without one.
+        if (!this.findBundle(player)) {
+            this.logger.debug(`[PrivateShopService] ${player.getName()} tried to open a shop without a Bundle`);
             return;
         }
 
@@ -105,6 +121,14 @@ export default class PrivateShopService {
 
         if (seenCellIndex.has(entry.cellIndex)) {
             this.logger.debug(`[PrivateShopService] openPrivateShop: duplicate cellIndex ${entry.cellIndex}, skipping`);
+            return null;
+        }
+
+        // Equipped items cannot be listed (original rejects IsEquipped)
+        if (player.getInventory().isFromEquipmentSlots(entry.cellIndex)) {
+            this.logger.debug(
+                `[PrivateShopService] openPrivateShop: slot ${entry.cellIndex} is an equipment slot, skipping`,
+            );
             return null;
         }
 
@@ -269,6 +293,19 @@ export default class PrivateShopService {
             return;
         }
 
+        // The original refuses transactions beyond 2000 units from the owner
+        if (
+            MathUtil.calcDistance(
+                guest.getPositionX(),
+                guest.getPositionY(),
+                owner.getPositionX(),
+                owner.getPositionY(),
+            ) > SHOP_MAX_DISTANCE
+        ) {
+            guest.sendShopResult({ result: ShopSubHeaderGC.INVALID_POS });
+            return;
+        }
+
         const entry = shop.getItemAtDisplaySlot(displaySlot);
         if (!entry) {
             guest.sendShopResult({ result: ShopSubHeaderGC.INVALID_POS });
@@ -278,6 +315,15 @@ export default class PrivateShopService {
         const price = entry.price;
         if (guest.getPoint(PointsEnum.GOLD) < price) {
             guest.sendShopResult({ result: ShopSubHeaderGC.NOT_ENOUGH_MONEY });
+            return;
+        }
+
+        // Refuse the sale when the owner's gold would overflow the cap — the
+        // gold clamp would silently destroy the excess while the buyer pays
+        // full price (the original refuses at GOLD_MAX the same way).
+        if (owner.getPoint(PointsEnum.GOLD) + price > MathUtil.MAX_UINT) {
+            guest.sendShopResult({ result: ShopSubHeaderGC.INVALID_POS });
+            this.logger.debug(`[PrivateShopService] sale refused: owner ${owner.getName()} gold would exceed the cap`);
             return;
         }
 
@@ -364,11 +410,12 @@ export default class PrivateShopService {
     }
 
     /** Consumes one Bundle (vnum 50200) from the player's inventory. Decrements the stack; deletes if last. */
+    private findBundle(player: Player) {
+        return Array.from(player.getInventory().getItems().values()).find((item) => item?.getId() === BUNDLE_VNUM);
+    }
+
     private async consumeBundle(player: Player) {
-        const BUNDLE_VNUM = 50200;
-        const bundle = Array.from(player.getInventory().getItems().values()).find(
-            (item) => item?.getId() === BUNDLE_VNUM,
-        );
+        const bundle = this.findBundle(player);
 
         if (!bundle) return;
 

@@ -1,4 +1,5 @@
 import PacketHeaderEnum from '@/core/enum/PacketHeaderEnum';
+import { QuestFlagEnum } from '@/core/enum/QuestSendFlagEnum';
 import PacketOut from '@/core/interface/networking/packets/packet/out/PacketOut';
 
 type QuestInfoPacketParams = {
@@ -14,7 +15,19 @@ type QuestInfoPacketParams = {
 };
 
 const BASIC_SIZE = 6;
-const FULL_FIZE = BASIC_SIZE + 99;
+const FULL_SIZE = BASIC_SIZE + 99;
+
+// Field sizes mirror the client's RecvQuestInfoPacket buffers exactly:
+// char szTitle[30+1], char szClockName[16+1], int, char szCounterName[16+1],
+// int, char szIconFileName[24+1]. The client consumes each field only when the
+// matching flag bit is set, so what gets flagged and what gets written must
+// always agree or the stream desynchronizes.
+const IS_BEGIN_SIZE = 1;
+const TITLE_SIZE = 31;
+const CLOCK_NAME_SIZE = 17;
+const COUNTER_NAME_SIZE = 17;
+const ICON_FILE_SIZE = 25;
+const INT_SIZE = 4;
 
 export default class QuestInfoPacket extends PacketOut {
     private readonly id: number;
@@ -41,7 +54,7 @@ export default class QuestInfoPacket extends PacketOut {
         super({
             header: PacketHeaderEnum.QUEST_INFO,
             name: 'QuestInfoPacket',
-            size: FULL_FIZE,
+            size: FULL_SIZE,
         });
 
         this.id = id;
@@ -55,45 +68,69 @@ export default class QuestInfoPacket extends PacketOut {
         this.iconFile = iconFile;
     }
 
+    // ISBEGIN is semantic (begin/end vs update), so it is honored from the
+    // caller's flags; every other bit is derived from field presence so the
+    // flag byte can never disagree with the payload.
+    private getFieldsToSend() {
+        const fields = [
+            {
+                present: (this.flags & QuestFlagEnum.ISBEGIN) !== 0,
+                bit: QuestFlagEnum.ISBEGIN,
+                size: IS_BEGIN_SIZE,
+                write: () => this.bufferWriter.writeUint8(this.wasStated ? 1 : 0),
+            },
+            {
+                present: Boolean(this.title),
+                bit: QuestFlagEnum.TITLE,
+                size: TITLE_SIZE,
+                write: () => this.bufferWriter.writeString(this.title, TITLE_SIZE),
+            },
+            {
+                present: Boolean(this.clockName),
+                bit: QuestFlagEnum.CLOCK_NAME,
+                size: CLOCK_NAME_SIZE,
+                write: () => this.bufferWriter.writeString(this.clockName!, CLOCK_NAME_SIZE),
+            },
+            {
+                present: this.clockValue !== undefined,
+                bit: QuestFlagEnum.CLOCK_VALUE,
+                size: INT_SIZE,
+                write: () => this.bufferWriter.writeUint32LE(this.clockValue!),
+            },
+            {
+                present: Boolean(this.counterName),
+                bit: QuestFlagEnum.COUNTER_NAME,
+                size: COUNTER_NAME_SIZE,
+                write: () => this.bufferWriter.writeString(this.counterName!, COUNTER_NAME_SIZE),
+            },
+            {
+                present: this.counterValue !== undefined,
+                bit: QuestFlagEnum.COUNTER_VALUE,
+                size: INT_SIZE,
+                write: () => this.bufferWriter.writeUint32LE(this.counterValue!),
+            },
+            {
+                present: Boolean(this.iconFile),
+                bit: QuestFlagEnum.ICON_FILE,
+                size: ICON_FILE_SIZE,
+                write: () => this.bufferWriter.writeString(this.iconFile!, ICON_FILE_SIZE),
+            },
+        ];
+
+        return fields.filter((field) => field.present);
+    }
+
     pack() {
-        this.bufferWriter.writeUint16LE(this.size);
+        const fields = this.getFieldsToSend();
+        const totalSize = fields.reduce((size, field) => size + field.size, BASIC_SIZE);
+        const flags = fields.reduce((bits, field) => bits | field.bit, 0);
+
+        this.bufferWriter.writeUint16LE(totalSize);
         this.bufferWriter.writeUint16LE(this.id);
-        this.bufferWriter.writeUint8(this.flags);
-        let totalSize = BASIC_SIZE;
+        this.bufferWriter.writeUint8(flags);
 
-        if (this.wasStated === 0 || this.wasStated === 1) {
-            this.bufferWriter.writeUint8(this.wasStated);
-            totalSize += 1;
-        }
-
-        if (this.title) {
-            this.bufferWriter.writeString(this.title, 32);
-            totalSize += 32;
-        }
-
-        if (this.clockName) {
-            this.bufferWriter.writeString(this.clockName, 17);
-            totalSize += 17;
-        }
-
-        if (this.clockValue) {
-            this.bufferWriter.writeUint32LE(this.clockValue);
-            totalSize += 4;
-        }
-
-        if (this.counterName) {
-            this.bufferWriter.writeString(this.counterName, 17);
-            totalSize += 17;
-        }
-
-        if (this.counterValue) {
-            this.bufferWriter.writeUint32LE(this.counterValue);
-            totalSize += 4;
-        }
-
-        if (this.iconFile) {
-            this.bufferWriter.writeString(this.iconFile, 25);
-            totalSize += 25;
+        for (const field of fields) {
+            field.write();
         }
 
         return this.bufferWriter.getBuffer(totalSize);

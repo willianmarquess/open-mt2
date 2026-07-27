@@ -24,6 +24,7 @@ import CharacterUpdatePacket from '@/core/interface/networking/packets/packet/ou
 import CharacterPointsPacket from '@/core/interface/networking/packets/packet/out/CharacterPointsPacket';
 import CharacterDetailsPacket from '@/core/interface/networking/packets/packet/out/CharacterDetailsPacket';
 import CharacterDiedPacket from '@/core/interface/networking/packets/packet/out/CharacterDiedPacket';
+import SyncPositionPacket from '@/core/interface/networking/packets/packet/out/SyncPositionPacket';
 import TeleportPacket from '@/core/interface/networking/packets/packet/out/TeleportPacket';
 import Ip from '@/core/util/Ip';
 import CharacterPointChangePacket from '@/core/interface/networking/packets/packet/out/CharacterPointChangePacket';
@@ -89,6 +90,20 @@ const REGEN_INTERVAL = 3000;
 const MAX_DISTANCE_FROM_TARGET = 3500;
 const MAX_TIME_IDLE_IN_FIGHTING = 5_000;
 
+// Anti speed-hack: minimum time between two hits on the same victim, derived
+// from the attacker's attack speed. The reference is intentionally generous so
+// legitimate players (even with high attack speed) never trip it — it only
+// rejects packet floods, where hits arrive milliseconds apart. Mirrors the
+// original server's IS_SPEED_HACK check (which also builds in a large bonus so
+// normal play is never flagged).
+const ATTACK_SPEED_REFERENCE_MS = 15_000;
+const MIN_ATTACK_INTERVAL_MS = 80;
+
+// Anti-teleport: max distance (map units, 100/m) a single move packet may cover.
+// The original rejects longer jumps and resyncs the client; a legitimate
+// client never sends a longer segment. Kept generous here.
+const MAX_MOVE_DISTANCE = 2500;
+
 export default class Player extends Character {
     private readonly accountId: number;
     private readonly playerClass: number;
@@ -117,12 +132,17 @@ export default class Player extends Character {
 
     //pos
     private lastTimeInBattle: number = 0;
+    private lastAttackTime: number = 0;
+    private lastAttackVictimVid: number = 0;
+    /** Last client-reported position accepted by the anti-teleport check. */
+    private lastReportedPosition: { x: number; y: number } | null = null;
 
     //quests
     private readonly quests: Map<number, AbstractQuest> = new Map();
     private currentQuest: AbstractQuest | null = null;
 
     private currentShop: Shop | null = null;
+    private currentShopNpc: Mob | null = null;
     private privateShop: PrivateShop | null = null;
     private currentPrivateShopOwner: Player | null = null;
 
@@ -467,9 +487,66 @@ export default class Player extends Character {
             this.setPos(PositionEnum.STANDING);
             return;
         }
+
+        // Reject hits that arrive faster than the attack speed allows (packet
+        // flood / attack-speed hack). Only throttles repeated hits on the same
+        // victim, matching the original's per-target attack log.
+        const now = performance.now();
+        if (
+            victim.getVirtualId() === this.lastAttackVictimVid &&
+            now - this.lastAttackTime < this.getAttackCooldown()
+        ) {
+            return;
+        }
+        this.lastAttackVictimVid = victim.getVirtualId();
+        this.lastAttackTime = now;
+
         this.setPos(PositionEnum.FIGHTING);
-        this.lastTimeInBattle = performance.now();
+        this.lastTimeInBattle = now;
         this.battle.attack(attackType, victim);
+    }
+
+    /** Minimum milliseconds between two hits on the same victim. */
+    private getAttackCooldown() {
+        const attackSpeed = Math.max(1, this.getAttackSpeed());
+        return Math.max(MIN_ATTACK_INTERVAL_MS, Math.floor(ATTACK_SPEED_REFERENCE_MS / attackSpeed));
+    }
+
+    /**
+     * Rejects move packets that jump farther than a single step allows
+     * (teleport hack). A legitimate client segments long walks, so a request
+     * beyond the cap is either a hack or a desync — in both cases we snap the
+     * client back to the server's authoritative position and drop the move.
+     * Returns true when the requested destination is acceptable.
+     */
+    isMoveAllowed(x: number, y: number): boolean {
+        // Like the original, measure against the client's last accepted
+        // report — the server-side position is interpolated and lags behind a
+        // fast client, which would trip the cap on honest moves. The server
+        // position is the fallback anchor (first move after login or a
+        // teleport), so a crafted jump is still capped from a trusted point.
+        const anchors = [this.lastReportedPosition, { x: this.getPositionX(), y: this.getPositionY() }];
+        const allowed = anchors.some(
+            (anchor) => anchor && MathUtil.calcDistance(anchor.x, anchor.y, x, y) <= MAX_MOVE_DISTANCE,
+        );
+
+        if (allowed) {
+            this.lastReportedPosition = { x, y };
+            return true;
+        }
+
+        // Snap the client back to the server-side position. SYNC_POSITION is
+        // the only packet the client applies to its own character, so a
+        // desynced client self-recovers instead of rubber-banding forever.
+        this.lastReportedPosition = null;
+        this.connection?.send(
+            new SyncPositionPacket({
+                virtualId: this.virtualId,
+                positionX: this.getPositionX(),
+                positionY: this.getPositionY(),
+            }),
+        );
+        return false;
     }
 
     sendDetails() {
@@ -695,6 +772,9 @@ export default class Player extends Character {
 
         this.move(x, y);
         this.stop();
+
+        // The anti-teleport anchor is stale after a server-initiated warp.
+        this.lastReportedPosition = null;
 
         this.connection?.send(
             new TeleportPacket({
@@ -1622,6 +1702,16 @@ export default class Player extends Character {
 
     setCurrentShop(shop: Shop | null) {
         this.currentShop = shop;
+        if (!shop) this.currentShopNpc = null;
+    }
+
+    /** The NPC entity whose shop is open, used for distance checks on buy/sell. */
+    getCurrentShopNpc(): Mob | null {
+        return this.currentShopNpc;
+    }
+
+    setCurrentShopNpc(npc: Mob | null) {
+        this.currentShopNpc = npc;
     }
 
     getPrivateShop(): PrivateShop | null {
