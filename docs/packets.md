@@ -1,5 +1,28 @@
 # Packet Documentation
 
+### AffectAddPacket
+
+**Type:** Out
+
+**Header:** 0x7E
+
+**Size:** 22 bytes
+
+**Description:** Used to send an effect.
+
+**Fields:**
+
+| Name        | Type       | Size (bytes)   | Description               |
+|-------------|------------|----------------|---------------------------|
+| header | `byte` | 1 | Packet header |
+| type | `int` | 4 | Apply type number. See in AffectTypeEnum |
+| apply | `byte` | 1 | Describe which point is affected by this affect. See in PointEnum |
+| flag | `int` | 4 | The bit flag of applies. See in AffectBitsTypeEnum |
+| duration | `int` | 4 | The duration in seconds of an affect |
+| manaCost | `int` | 4 | The mana cost of an affect |
+
+---
+
 ### ChannelPacket
 
 **Type:** Out
@@ -124,19 +147,20 @@
 
 **Header:** 0x11
 
-**Size:** 22 bytes
+**Size:** 17 bytes
 
-**Description:** Is used to send and update of a point (attribute) to the client (used to notify all nearby players of an update of a character). See all points in PointsEnum.
+**Description:** Is used to send an update of a single point (attribute) of a character to the client. The client plays the level-up effect when it receives a POINT_LEVEL change for any vid. See all points in PointsEnum.
 
 **Fields:**
 
 | Name        | Type       | Size (bytes)   | Description               |
 |-------------|------------|----------------|---------------------------|
 | header | `byte` | 1 | Packet header. |
+| padding | `byte[3]` | 3 | The client declares the header as a 4-byte int, so 3 padding bytes follow the header byte. |
 | vid | `int` | 4 | Character identification in game. |
 | type | `byte` | 1 | Number which indicates the point type (See in PointsEnum). |
-| amount | `long` | 8 | Number which indicates the quantity of that point (default is 0). |
-| value | `long` | 8 | Number which indicates the value of that point. |
+| amount | `int` | 4 | Signed quantity delta of that point (default is 0). |
+| value | `int` | 4 | Signed new value of that point. |
 
 ---
 
@@ -217,6 +241,88 @@
 | virtualId | `number` | 4 | virtualId of the affected entity |
 | damageFlags | `byte` | 1 | indicates the flags of damage like: critical, pierced etc //TODO |
 | damage | `number` | 4 | the damage number |
+
+---
+
+### FlyPacket
+
+**Type:** Out
+
+**Header:** 0x46
+
+**Size:** 10 bytes
+
+**Description:** Used to send fly particle from entity to another.
+
+**Fields:**
+
+| Name        | Type       | Size (bytes)   | Description               |
+|-------------|------------|----------------|---------------------------|
+| header | `byte` | 1 | Packet header |
+| type | `byte` | 4 | type of fly. See in FlyEnum. |
+| fromVirtualId | `number` | 4 | wich entity the fly starts |
+| toVirtualId | `number` | 4 | wich entity the fly ends |
+
+---
+
+### InternalPongPacket
+
+**Type:** Out
+
+**Header:** 253
+
+**Size:** 5 bytes
+
+**Description:** Used to internal pong.
+
+**Fields:**
+
+| Name        | Type       | Size (bytes)   | Description               |
+|-------------|------------|----------------|---------------------------|
+| header | `byte` | 1 | Packet header |
+| time | `int` | 4 | The time sent by client |
+
+---
+
+### SpecialEffectPacket
+
+**Type:** Out
+
+**Header:** 0x72
+
+**Size:** 6 bytes
+
+**Description:** Used to send an special effect.
+
+**Fields:**
+
+| Name        | Type       | Size (bytes)   | Description               |
+|-------------|------------|----------------|---------------------------|
+| header | `byte` | 1 | Packet header |
+| type | `byte` | 1 | Describe the special effect. See in SpecialEffectTypeEnum |
+| virtual | `int` | 4 | Virtual id of the player to be effected |
+
+---
+
+### SyncPositionPacket
+
+**Type:** Out
+
+**Header:** 0x05
+
+**Size:** 15 bytes
+
+**Description:** Forces the client to snap an entity (including the player's own
+
+**Fields:**
+
+| Name        | Type       | Size (bytes)   | Description               |
+|-------------|------------|----------------|---------------------------|
+| header | `byte` | 1 | Packet header |
+| size | `number` | 2 | Total packet size in bytes |
+| virtualId | `number` | 4 | virtualId of the entity to snap |
+| positionX | `number` | 4 | Server-side X position |
+| positionY | `number` | 4 | Server-side Y position |
 
 ---
 
