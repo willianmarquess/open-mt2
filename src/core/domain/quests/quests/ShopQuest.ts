@@ -39,6 +39,8 @@ export class ShopQuest extends AbstractQuest {
                 }
                 break;
             }
+            default:
+                return;
         }
     }
 }

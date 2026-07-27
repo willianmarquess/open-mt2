@@ -7,7 +7,6 @@ import { expect } from 'chai';
 describe('PlayerFactory', () => {
     let config: any;
     let animationManager: any;
-    let playerFactory: PlayerFactory;
     let experienceManager: any;
     const logger: Logger = {
         info: () => {},
@@ -52,16 +51,6 @@ describe('PlayerFactory', () => {
         };
         animationManager = {};
         questManager = {};
-        playerFactory = new PlayerFactory({
-            config,
-            animationManager,
-            experienceManager,
-            logger,
-            saveCharacterService,
-            questManager,
-            eventTimerManager,
-            mobManager,
-        });
     });
 
     it('should create a player with default values', () => {
@@ -94,7 +83,16 @@ describe('PlayerFactory', () => {
             availableStatusPoints: 0,
         };
 
-        const player = playerFactory.create(params);
+        const player = PlayerFactory.create(params, {
+            config,
+            animationManager,
+            experienceManager,
+            logger,
+            saveCharacterService,
+            questManager,
+            eventTimerManager,
+            mobManager,
+        });
 
         expect(player).to.be.an.instanceof(Player);
 
@@ -143,7 +141,16 @@ describe('PlayerFactory', () => {
             availableStatusPoints: 0,
         };
 
-        const player = playerFactory.create(params);
+        const player = PlayerFactory.create(params, {
+            config,
+            animationManager,
+            experienceManager,
+            logger,
+            saveCharacterService,
+            questManager,
+            eventTimerManager,
+            mobManager,
+        });
 
         expect(player).to.be.an.instanceof(Player);
     });

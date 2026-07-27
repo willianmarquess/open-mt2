@@ -46,78 +46,61 @@ export type PlayerFactoryParams = {
 };
 
 export class PlayerFactory {
-    private readonly config: GameConfig;
-    private readonly animationManager: AnimationManager;
-    private readonly experienceManager: ExperienceManager;
-    private readonly logger: Logger;
-    private readonly saveCharacterService: SaveCharacterService;
-    private readonly questManager: QuestManager;
-    private readonly eventTimerManager: GlobalEventTimerManager;
-    private readonly mobManager: MobManager;
-
-    constructor({
-        config,
-        animationManager,
-        experienceManager,
-        logger,
-        saveCharacterService,
-        questManager,
-        eventTimerManager,
-        mobManager,
-    }: {
-        config: GameConfig;
-        animationManager: AnimationManager;
-        experienceManager: ExperienceManager;
-        logger: Logger;
-        saveCharacterService: SaveCharacterService;
-        questManager: QuestManager;
-        eventTimerManager: GlobalEventTimerManager;
-        mobManager: MobManager;
-    }) {
-        this.config = config;
-        this.animationManager = animationManager;
-        this.experienceManager = experienceManager;
-        this.logger = logger;
-        this.saveCharacterService = saveCharacterService;
-        this.questManager = questManager;
-        this.eventTimerManager = eventTimerManager;
-        this.mobManager = mobManager;
-    }
-
-    create({
-        playerClass,
-        accountId,
-        appearance,
-        slot,
-        virtualId,
-        id,
-        empire,
-        skillGroup,
-        playTime,
-        level,
-        experience,
-        gold,
-        st,
-        ht,
-        dx,
-        iq,
-        positionX,
-        positionY,
-        health,
-        mana,
-        stamina,
-        bodyPart,
-        hairPart,
-        name,
-        givenStatusPoints,
-        availableStatusPoints,
-        quickSlot,
-        horseLevel,
-        horseHealth,
-        horseStamina,
-        horseName,
-        horseRiding,
-    }: PlayerFactoryParams): Player {
+    static create(
+        {
+            playerClass,
+            accountId,
+            appearance,
+            slot,
+            virtualId,
+            id,
+            empire,
+            skillGroup,
+            playTime,
+            level,
+            experience,
+            gold,
+            st,
+            ht,
+            dx,
+            iq,
+            positionX,
+            positionY,
+            health,
+            mana,
+            stamina,
+            bodyPart,
+            hairPart,
+            name,
+            givenStatusPoints,
+            availableStatusPoints,
+            quickSlot,
+            horseLevel,
+            horseHealth,
+            horseStamina,
+            horseName,
+            horseRiding,
+        }: PlayerFactoryParams,
+        {
+            animationManager,
+            config,
+            experienceManager,
+            logger,
+            saveCharacterService,
+            questManager,
+            eventTimerManager,
+            mobManager,
+        }: {
+            animationManager: AnimationManager;
+            experienceManager: ExperienceManager;
+            config: GameConfig;
+            logger: Logger;
+            saveCharacterService: SaveCharacterService;
+            questManager: QuestManager;
+            eventTimerManager: GlobalEventTimerManager;
+            mobManager: MobManager;
+        },
+    ): Player {
         const className = JobUtil.getClassNameFromClassId(playerClass);
         const empireName = EmpireUtil.getEmpireName(empire);
 
@@ -129,27 +112,27 @@ export class PlayerFactory {
                 playerClass,
                 appearance: appearance || 0, //verify this
                 slot,
-                positionX: positionX || Number(this.config.empire[empireName]?.startPosX),
-                positionY: positionY || Number(this.config.empire[empireName]?.startPosY),
-                st: st || this.config.jobs[className].common.st,
-                ht: ht || this.config.jobs[className].common.ht,
-                dx: dx || this.config.jobs[className].common.dx,
-                iq: iq || this.config.jobs[className].common.iq,
-                health: health || this.config.jobs[className].common.initialHp,
-                mana: mana || this.config.jobs[className].common.initialMp,
-                stamina: stamina || this.config.jobs[className].common.initialStamina,
-                hpPerLvl: this.config.jobs[className].common.hpPerLvl,
-                hpPerHtPoint: this.config.jobs[className].common.hpPerHtPoint,
-                mpPerLvl: this.config.jobs[className].common.mpPerLvl,
-                mpPerIqPoint: this.config.jobs[className].common.mpPerIqPoint,
-                baseAttackSpeed: this.config.jobs[className].common.initialAttackSpeed,
-                baseMovementSpeed: this.config.jobs[className].common.initialMovementSpeed,
-                baseHealth: this.config.jobs[className].common.initialHp,
-                baseMana: this.config.jobs[className].common.initialMp,
-                defensePerHtPoint: this.config.jobs[className].common.defensePerHtPoint,
-                attackPerDxPoint: this.config.jobs[className].common.attackPerDXPoint,
-                attackPerIqPoint: this.config.jobs[className].common.attackPerIQPoint,
-                attackPerStPoint: this.config.jobs[className].common.attackPerStPoint,
+                positionX: positionX || Number(config.empire[empireName]?.startPosX),
+                positionY: positionY || Number(config.empire[empireName]?.startPosY),
+                st: st || config.jobs[className].common.st,
+                ht: ht || config.jobs[className].common.ht,
+                dx: dx || config.jobs[className].common.dx,
+                iq: iq || config.jobs[className].common.iq,
+                health: health || config.jobs[className].common.initialHp,
+                mana: mana || config.jobs[className].common.initialMp,
+                stamina: stamina || config.jobs[className].common.initialStamina,
+                hpPerLvl: config.jobs[className].common.hpPerLvl,
+                hpPerHtPoint: config.jobs[className].common.hpPerHtPoint,
+                mpPerLvl: config.jobs[className].common.mpPerLvl,
+                mpPerIqPoint: config.jobs[className].common.mpPerIqPoint,
+                baseAttackSpeed: config.jobs[className].common.initialAttackSpeed,
+                baseMovementSpeed: config.jobs[className].common.initialMovementSpeed,
+                baseHealth: config.jobs[className].common.initialHp,
+                baseMana: config.jobs[className].common.initialMp,
+                defensePerHtPoint: config.jobs[className].common.defensePerHtPoint,
+                attackPerDxPoint: config.jobs[className].common.attackPerDXPoint,
+                attackPerIqPoint: config.jobs[className].common.attackPerIQPoint,
+                attackPerStPoint: config.jobs[className].common.attackPerStPoint,
                 virtualId: virtualId || 0,
                 bodyPart: bodyPart || 0,
                 hairPart: hairPart || 0,
@@ -169,14 +152,14 @@ export class PlayerFactory {
                 horseRiding: horseRiding || 0,
             },
             {
-                animationManager: this.animationManager,
-                config: this.config,
-                experienceManager: this.experienceManager,
-                logger: this.logger,
-                saveCharacterService: this.saveCharacterService,
-                questManager: this.questManager,
-                eventTimerManager: this.eventTimerManager,
-                mobManager: this.mobManager,
+                animationManager,
+                config,
+                experienceManager,
+                logger,
+                saveCharacterService,
+                questManager,
+                eventTimerManager,
+                mobManager,
             },
         );
     }

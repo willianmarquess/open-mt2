@@ -32,22 +32,25 @@ const config: any = {
     },
 };
 
-const createFactory = (mobManager?: any) =>
-    new PlayerFactory({
-        config,
-        animationManager: { getAnimation: () => undefined } as any,
-        experienceManager: { getNeededExperience: () => 1000 } as any,
-        logger,
-        saveCharacterService: { execute: async () => {} } as any,
-        questManager: { getQuestsByEvent: () => [], onKill: () => {} } as any,
-        eventTimerManager: {
-            addTimer: () => {},
-            removeTimer: () => {},
-            isTimerActive: () => false,
-            clearTimersByOwner: () => {},
-        } as any,
-        mobManager: mobManager ?? ({ getMobProto: () => undefined } as any),
-    });
+const createFactoryDeps = (mobManager?: any) => ({
+    config,
+    animationManager: { getAnimation: () => undefined } as any,
+    experienceManager: { getNeededExperience: () => 1000 } as any,
+    logger,
+    saveCharacterService: { execute: async () => {} } as any,
+    questManager: { getQuestsByEvent: () => [], onKill: () => {} } as any,
+    eventTimerManager: {
+        addTimer: () => {},
+        removeTimer: () => {},
+        isTimerActive: () => false,
+        clearTimersByOwner: () => {},
+    } as any,
+    mobManager: mobManager ?? ({ getMobProto: () => undefined } as any),
+});
+
+const createFactory = (mobManager?: any) => ({
+    create: (params: any) => PlayerFactory.create(params, createFactoryDeps(mobManager)),
+});
 
 const createConnection = () => {
     const sentPackets: any[] = [];
@@ -63,7 +66,7 @@ const createConnection = () => {
 };
 
 const createPlayer = (
-    factory: PlayerFactory,
+    factory: ReturnType<typeof createFactory>,
     virtualId: number,
     name: string,
     horse?: boolean,

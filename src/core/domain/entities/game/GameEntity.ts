@@ -48,6 +48,10 @@ export default abstract class GameEntity {
         this.area = area;
     }
 
+    getArea() {
+        return this.area;
+    }
+
     getVirtualId() {
         return this.virtualId;
     }

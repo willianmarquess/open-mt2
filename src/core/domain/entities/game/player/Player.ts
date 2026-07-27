@@ -85,7 +85,10 @@ import QuickSlotRemoveResponsePacket from '@/core/interface/networking/packets/p
 import QuickSlotSwapResponsePacket from '@/core/interface/networking/packets/packet/out/QuickSlotSwapResponsePacket';
 import MobManager from '@/core/domain/manager/MobManager';
 import { JobEnum } from '@/core/enum/JobEnum';
-// import QuestTargetCreatePacket from '@/core/interface/networking/packets/packet/out/QuestTargetCreatePacket';
+import QuestTargetCreatePacket from '@/core/interface/networking/packets/packet/out/QuestTargetCreatePacket';
+import { AssasinSubJobEnum, ShamanSubJobEnum, SuraSubJobEnum, WarriorSubJobEnum } from '@/core/enum/SubJobEnum';
+import SetSkillGroupPacket from '@/core/interface/networking/packets/packet/out/SetSkillGroupPacket';
+import QuestTargetRemovePacket from '@/core/interface/networking/packets/packet/out/QuestTargetRemovePacket';
 
 const REGEN_INTERVAL = 3000;
 const MAX_DISTANCE_FROM_TARGET = 3500;
@@ -580,9 +583,7 @@ export default class Player extends Character {
         // The server position is the fallback anchor (first move after login
         // or teleport), so a crafted jump is still capped from a trusted point.
         const anchors = [this.lastReportedPosition, { x: this.getPositionX(), y: this.getPositionY() }];
-        const allowed = anchors.some(
-            (anchor) => anchor && MathUtil.calcDistance(anchor.x, anchor.y, x, y) <= max,
-        );
+        const allowed = anchors.some((anchor) => anchor && MathUtil.calcDistance(anchor.x, anchor.y, x, y) <= max);
 
         if (allowed) {
             this.lastReportedPosition = { x, y };
@@ -2574,17 +2575,34 @@ export default class Player extends Character {
         return this.playerClass === JobEnum.SHAMAN_MALE || this.playerClass === JobEnum.SHAMAN_FEMALE;
     }
 
-    // sendQuestTarget({
-    //     id,
-    //     targetName,
-    //     targetVirtualId,
-    //     type,
-    // }: {
-    //     id: number;
-    //     targetName: string;
-    //     targetVirtualId: number;
-    //     type: number;
-    // }) {
-    //     this.connection?.send(new QuestTargetCreatePacket({ id, targetName, targetVirtualId, type }));
-    // }
+    sendQuestTarget({
+        id,
+        targetName,
+        targetVirtualId,
+        type,
+    }: {
+        id: number;
+        targetName: string;
+        targetVirtualId: number;
+        type: number;
+    }) {
+        this.connection?.send(new QuestTargetCreatePacket({ id, targetName, targetVirtualId, type }));
+    }
+
+    sendQuestTargetRemove({ id }: { id: number }) {
+        this.connection?.send(
+            new QuestTargetRemovePacket({
+                id,
+            }),
+        );
+    }
+
+    setSkillGroup(subJob: WarriorSubJobEnum | SuraSubJobEnum | AssasinSubJobEnum | ShamanSubJobEnum) {
+        this.skillGroup = subJob;
+        this.connection?.send(
+            new SetSkillGroupPacket({
+                skillGroup: this.skillGroup,
+            }),
+        );
+    }
 }

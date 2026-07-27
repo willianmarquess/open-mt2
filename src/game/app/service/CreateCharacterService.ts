@@ -1,11 +1,11 @@
 import Result from '@/core/domain/util/Result';
 import Player from '@/core/domain/entities/game/player/Player';
-import { PlayerFactory } from '@/core/domain/factories/PlayerFactory';
 import { ErrorTypesEnum } from '@/core/enum/ErrorTypesEnum';
 import CacheProvider from '@/core/infra/cache/CacheProvider';
 import Logger from '@/core/infra/logger/Logger';
 import CacheKeyGenerator from '@/core/util/CacheKeyGenerator';
 import { IPlayerRepository } from '@/core/domain/repository/IPlayerRepository';
+import { EntityManager } from '@/core/domain/manager/EntityManager';
 
 const MAX_PLAYERS_PER_ACCOUNT = 4;
 
@@ -21,23 +21,23 @@ export default class CreateCharacterService {
     private readonly logger: Logger;
     private readonly cacheProvider: CacheProvider;
     private readonly playerRepository: IPlayerRepository;
-    private readonly playerFactory: PlayerFactory;
+    private readonly entityManager: EntityManager;
 
     constructor({
         logger,
         cacheProvider,
         playerRepository,
-        playerFactory,
+        entityManager,
     }: {
         logger: Logger;
         cacheProvider: CacheProvider;
         playerRepository: IPlayerRepository;
-        playerFactory: PlayerFactory;
+        entityManager: EntityManager;
     }) {
         this.logger = logger;
         this.cacheProvider = cacheProvider;
         this.playerRepository = playerRepository;
-        this.playerFactory = playerFactory;
+        this.entityManager = entityManager;
     }
 
     async execute({
@@ -71,7 +71,7 @@ export default class CreateCharacterService {
 
         const empireId = await this.cacheProvider.get<number>(key);
 
-        const player = this.playerFactory.create({
+        const player = this.entityManager.createPlayer({
             playerClass,
             empire: empireId,
             name: playerName,

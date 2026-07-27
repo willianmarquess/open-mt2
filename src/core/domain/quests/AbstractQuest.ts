@@ -8,6 +8,9 @@ import { PlayerQuest } from './facade/PlayerQuest';
 import ItemManager from '../manager/ItemManager';
 import MathUtil from '../util/MathUtil';
 import { WindowTypeEnum } from '@/core/enum/WindowTypeEnum';
+import { QuestTargetManager } from './QuestTargetManager';
+import { WarriorSubJobEnum, AssasinSubJobEnum, ShamanSubJobEnum, SuraSubJobEnum } from '@/core/enum/SubJobEnum';
+import { QuestUtil } from './QuestUtil';
 
 // Sent by the client when the quest window is closed instead of picking an option.
 const CLOSE_WINDOW_ANSWER = 254;
@@ -34,9 +37,19 @@ export abstract class AbstractQuest {
     protected readonly player: Player;
     protected readonly playerQuest: PlayerQuest;
     protected readonly itemManager: ItemManager;
+    private readonly questTargetManager: QuestTargetManager;
 
-    constructor({ player, itemManager }: { player: Player; itemManager: ItemManager }) {
+    constructor({
+        player,
+        itemManager,
+        questTargetManager,
+    }: {
+        player: Player;
+        itemManager: ItemManager;
+        questTargetManager: QuestTargetManager;
+    }) {
         this.player = player;
+        this.questTargetManager = questTargetManager;
         this.playerQuest = new PlayerQuest({ player });
         this.itemManager = itemManager;
     }
@@ -94,7 +107,7 @@ export abstract class AbstractQuest {
         this.values.set(name, value);
     }
 
-    protected getValue<T>(name: string): T {
+    public getValue<T>(name: string): T {
         return this.values.get(name) as T;
     }
 
@@ -130,7 +143,9 @@ export abstract class AbstractQuest {
             );
             for (const routine of tasks) {
                 try {
-                    const withFunc = routine.with ? routine.with({ player: this.playerQuest, ...context }) : true;
+                    const withFunc = routine.with
+                        ? routine.with({ player: this.playerQuest, quest: this, ...context } as any)
+                        : true;
                     let callbackResult: TaskResult | undefined;
 
                     try {
@@ -431,5 +446,24 @@ export abstract class AbstractQuest {
 
     isRunning() {
         return this.running || this.status !== QuestStatusEnum.NONE;
+    }
+
+    protected getNpcSkillTeacher(
+        subJob: WarriorSubJobEnum | AssasinSubJobEnum | SuraSubJobEnum | ShamanSubJobEnum,
+    ): number | null {
+        return QuestUtil.getNpcSkillTeacher(this.player.getPlayerClass(), subJob, this.player.getEmpire());
+    }
+
+    protected sendTarget({ virtualId, vnum, name }: { virtualId?: number; vnum?: number; name: string }) {
+        if (vnum) {
+            return this.questTargetManager.sendTargetByVnum({ player: this.player, vnum, name });
+        }
+        if (virtualId) {
+            return this.questTargetManager.sendTargetByVirtualId({ player: this.player, virtualId, name });
+        }
+    }
+
+    protected removeTarget({ name }: { name: string }) {
+        return this.questTargetManager.removeTarget({ player: this.player, targetName: name });
     }
 }

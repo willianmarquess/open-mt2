@@ -1,4 +1,3 @@
-import { PlayerFactory } from '@/core/domain/factories/PlayerFactory';
 import AnimationManager from '@/core/domain/manager/AnimationManager';
 import DropManager from '@/core/domain/manager/DropManager';
 import ExperienceManager from '@/core/domain/manager/ExperienceManager';
@@ -44,6 +43,7 @@ import PrivateShopService from './app/service/PrivateShopService';
 import GlobalEventTimerManager from '@/core/domain/manager/GlobalEventTimeManager';
 import { VirtualIdManager } from '@/core/domain/manager/VirtualIdManager';
 import { EntityManager } from '@/core/domain/manager/EntityManager';
+import { QuestTargetManager } from '@/core/domain/quests/QuestTargetManager';
 
 const container = createContainer();
 
@@ -65,7 +65,6 @@ container.register({
     loadCharactersService: asClass(LoadCharactersService).singleton(),
     selectEmpireService: asClass(SelectEmpireService).singleton(),
     selectCharacterService: asClass(SelectCharacterService).singleton(),
-    playerFactory: asClass(PlayerFactory).singleton(),
     enterGameService: asClass(EnterGameService).singleton(),
     characterMoveService: asClass(CharacterMoveService).singleton(),
     animationManager: asClass(AnimationManager).singleton(),
@@ -94,6 +93,7 @@ container.register({
     eventTimerManager: asClass(GlobalEventTimerManager).singleton(),
     virtualIdManager: asClass(VirtualIdManager).singleton(),
     entityManager: asClass(EntityManager).singleton(),
+    questTargetManager: asClass(QuestTargetManager).singleton(),
 });
 
 export { container };
