@@ -1,6 +1,8 @@
 import { PointsEnum } from '@/core/enum/PointsEnum';
 import Player from '../../entities/game/player/Player';
 import { ChatMessageTypeEnum } from '@/core/enum/ChatMessageTypeEnum';
+import { AssasinSubJobEnum, ShamanSubJobEnum, SuraSubJobEnum, WarriorSubJobEnum } from '@/core/enum/SubJobEnum';
+import { EmpireEnum } from '@/core/enum/EmpireEnum';
 
 export class PlayerQuest {
     private readonly player: Player;
@@ -54,5 +56,25 @@ export class PlayerQuest {
 
     isShaman(): boolean {
         return this.player.isShaman();
+    }
+
+    isFromRed(): boolean {
+        return this.player.getEmpire() === EmpireEnum.RED;
+    }
+
+    isFromBlue(): boolean {
+        return this.player.getEmpire() === EmpireEnum.BLUE;
+    }
+
+    isFromYellow(): boolean {
+        return this.player.getEmpire() === EmpireEnum.YELLOW;
+    }
+
+    setSkillGroup(subJob: WarriorSubJobEnum | SuraSubJobEnum | AssasinSubJobEnum | ShamanSubJobEnum) {
+        return this.player.setSkillGroup(subJob);
+    }
+
+    hasSkillGroup(): boolean {
+        return this.player.getSkillGroup() !== 0;
     }
 }

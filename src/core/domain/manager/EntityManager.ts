@@ -9,6 +9,10 @@ import GlobalEventTimerManager from './GlobalEventTimeManager';
 import MobManager from './MobManager';
 import { VirtualIdManager } from './VirtualIdManager';
 import Logger from '@/core/infra/logger/Logger';
+import { GameConfig } from '@/game/infra/config/GameConfig';
+import { QuestManager } from '../quests/QuestManager';
+import AnimationManager from './AnimationManager';
+import ExperienceManager from './ExperienceManager';
 
 const SAVE_PLAYERS_INTERVAL = 120000;
 
@@ -18,34 +22,46 @@ export class EntityManager {
     private readonly mobs = new Map<number, Mob>();
     private readonly vnumToVirtualIdMobMapper = new Map<number, Array<number>>();
 
-    private readonly playerFactory: PlayerFactory;
     private readonly mobManager: MobManager;
     private readonly virtualIdManager: VirtualIdManager;
     private readonly eventTimerManager: GlobalEventTimerManager;
     private readonly logger: Logger;
     private readonly saveCharacterService: SaveCharacterService;
+    private readonly animationManager: AnimationManager;
+    private readonly experienceManager: ExperienceManager;
+    private readonly config: GameConfig;
+    private readonly questManager: QuestManager;
 
     constructor({
-        playerFactory,
         virtualIdManager,
         eventTimerManager,
         mobManager,
         logger,
         saveCharacterService,
+        animationManager,
+        config,
+        experienceManager,
+        questManager,
     }: {
-        playerFactory: PlayerFactory;
         virtualIdManager: VirtualIdManager;
         eventTimerManager: GlobalEventTimerManager;
         mobManager: MobManager;
         saveCharacterService: SaveCharacterService;
         logger: Logger;
+        animationManager: AnimationManager;
+        experienceManager: ExperienceManager;
+        config: GameConfig;
+        questManager: QuestManager;
     }) {
-        this.playerFactory = playerFactory;
         this.virtualIdManager = virtualIdManager;
         this.eventTimerManager = eventTimerManager;
         this.mobManager = mobManager;
         this.saveCharacterService = saveCharacterService;
         this.logger = logger;
+        this.animationManager = animationManager;
+        this.experienceManager = experienceManager;
+        this.config = config;
+        this.questManager = questManager;
     }
 
     init() {
@@ -74,7 +90,7 @@ export class EntityManager {
             this.mobs.set(entity.getVirtualId(), entity);
             const mobsVirtualId = this.vnumToVirtualIdMobMapper.get(entity.getId());
             mobsVirtualId?.push(entity.getVirtualId());
-            this.vnumToVirtualIdMobMapper.set(entity.getId(), mobsVirtualId || []);
+            this.vnumToVirtualIdMobMapper.set(entity.getId(), mobsVirtualId || [entity.getVirtualId()]);
         }
 
         this.entities.set(entity.getVirtualId(), entity);
@@ -124,7 +140,22 @@ export class EntityManager {
         quickSlot?: Map<number, { type: number; position: number }>;
     }): Player {
         const virtualId = this.virtualIdManager.acquire();
-        const player = this.playerFactory.create({ ...info, virtualId });
+        const player = PlayerFactory.create(
+            {
+                ...info,
+                virtualId,
+            },
+            {
+                config: this.config,
+                animationManager: this.animationManager,
+                eventTimerManager: this.eventTimerManager,
+                experienceManager: this.experienceManager,
+                logger: this.logger,
+                mobManager: this.mobManager,
+                questManager: this.questManager,
+                saveCharacterService: this.saveCharacterService,
+            },
+        );
         return player;
     }
 
@@ -155,6 +186,10 @@ export class EntityManager {
 
     getEntity<T extends GameEntity>(virtualId: number): T {
         return this.entities.get(virtualId) as T;
+    }
+
+    getEntityByVnum(vnum: number): Array<number> {
+        return this.vnumToVirtualIdMobMapper.get(vnum) ?? [];
     }
 
     tick() {

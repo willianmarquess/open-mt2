@@ -7,7 +7,7 @@ describe('CreateCharacterService', function () {
     let loggerMock;
     let cacheProviderMock;
     let playerRepositoryMock;
-    let playerFactoryMock;
+    let entityManagerMock;
     let createCharacterService: CreateCharacterService;
 
     beforeEach(function () {
@@ -26,15 +26,15 @@ describe('CreateCharacterService', function () {
             create: sinon.stub(),
         };
 
-        playerFactoryMock = {
-            create: sinon.stub(),
+        entityManagerMock = {
+            createPlayer: sinon.stub(),
         };
 
         createCharacterService = new CreateCharacterService({
             logger: loggerMock,
             cacheProvider: cacheProviderMock,
             playerRepository: playerRepositoryMock,
-            playerFactory: playerFactoryMock,
+            entityManager: entityManagerMock,
         });
     });
 
@@ -101,7 +101,7 @@ describe('CreateCharacterService', function () {
                 setId: sinon.spy(),
             };
 
-            playerFactoryMock.create.returns(playerMock);
+            entityManagerMock.createPlayer.returns(playerMock);
             playerRepositoryMock.create.resolves(100);
 
             const result = await createCharacterService.execute({
@@ -112,7 +112,7 @@ describe('CreateCharacterService', function () {
                 accountId: 10,
             });
 
-            expect(playerFactoryMock.create.calledOnce).to.be.true;
+            expect(entityManagerMock.createPlayer.calledOnce).to.be.true;
             expect(playerRepositoryMock.create.calledOnce).to.be.true;
             expect(playerMock.setId.calledOnce).to.be.true;
             expect(result.hasError()).to.be.false;

@@ -4,6 +4,7 @@ import { QuestUtil } from '../QuestUtil';
 import { PlayerQuest } from '../facade/PlayerQuest';
 import { VictimQuest } from '../facade/VictimQuest';
 import { NpcQuest } from '../facade/NpcQuest';
+import { AbstractQuest } from '../AbstractQuest';
 
 const QUEST_META = Symbol('quest');
 
@@ -55,7 +56,8 @@ export type StateExecutionContextBase =
     | Omit<InfoExecutionContext, 'player'>
     | Omit<ButtonExecutionContext, 'player'>;
 
-export type ConditionFunc = (args: StateExecutionContext) => boolean | Promise<boolean>;
+export type ConditionFuncParams = StateExecutionContext & { quest: AbstractQuest; npc: NpcQuest };
+export type ConditionFunc = (args: ConditionFuncParams) => boolean | Promise<boolean>;
 
 export type TaskResult = void | { nextState: string };
 export type TaskCallback = (args: StateExecutionContext) => Promise<TaskResult> | TaskResult;
@@ -130,7 +132,7 @@ export type State = {
 
 export type MetaTask = {
     readonly when: QuestEventEnum;
-    target?: number;
+    target?: number | number[];
     readonly with?: ConditionFunc;
     readonly handlerName: string;
 };

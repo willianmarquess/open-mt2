@@ -14,13 +14,23 @@ import ShopManager from '@/core/domain/shop/ShopManager';
 export class QuestManager {
     private readonly logger: Logger;
     private readonly shopManager: ShopManager;
+    private readonly containerInstance: any;
     private readonly questsClasses: Map<number, typeof AbstractQuest> = new Map();
     private readonly questsClickEvents: Map<number, Map<number, Set<string>>> = new Map();
     private readonly eventQuestMap: Map<QuestEventEnum, Map<number, Set<string>>> = new Map();
 
-    constructor({ logger, shopManager }: { logger: Logger; shopManager: ShopManager }) {
+    constructor({
+        logger,
+        shopManager,
+        containerInstance,
+    }: {
+        logger: Logger;
+        shopManager: ShopManager;
+        containerInstance: any;
+    }) {
         this.logger = logger;
         this.shopManager = shopManager;
+        this.containerInstance = containerInstance;
     }
 
     load() {
@@ -98,7 +108,7 @@ export class QuestManager {
 
     private registerTask(questId: number, stateName: string, task: { when: QuestEventEnum; target?: unknown }) {
         if (task.when === QuestEventEnum.CLICK) {
-            this.registerClickTask(questId, stateName, task.target as number | undefined);
+            this.registerClickTask(questId, stateName, task.target as number | number[] | undefined);
             return;
         }
 
@@ -107,25 +117,27 @@ export class QuestManager {
         }
     }
 
-    private registerClickTask(questId: number, stateName: string, target: number | undefined) {
+    private registerClickTask(questId: number, stateName: string, target: number | number[] | undefined) {
         if (target === undefined) {
             this.addQuestToEvent(QuestEventEnum.CLICK, questId, stateName);
             return;
         }
 
-        let stateMap = this.questsClickEvents.get(target);
-        if (!stateMap) {
-            stateMap = new Map<number, Set<string>>();
-            this.questsClickEvents.set(target, stateMap);
-        }
+        for (const targetId of [target].flat()) {
+            let stateMap = this.questsClickEvents.get(targetId);
+            if (!stateMap) {
+                stateMap = new Map<number, Set<string>>();
+                this.questsClickEvents.set(targetId, stateMap);
+            }
 
-        let set = stateMap.get(questId);
-        if (!set) {
-            set = new Set<string>();
-            stateMap.set(questId, set);
-        }
+            let set = stateMap.get(questId);
+            if (!set) {
+                set = new Set<string>();
+                stateMap.set(questId, set);
+            }
 
-        set.add(stateName);
+            set.add(stateName);
+        }
     }
 
     private addQuestToEvent(event: QuestEventEnum, questId: number, stateName: string) {
@@ -163,7 +175,11 @@ export class QuestManager {
             const ctor: any = questClass;
             const meta = getQuestMeta(ctor);
 
-            const instance: AbstractQuest = new (questClass as any)({ player });
+            const instance: AbstractQuest = new (questClass as any)({
+                player,
+                entityManager: this.containerInstance.cradle.entityManager,
+                questTargetManager: this.containerInstance.cradle.questTargetManager,
+            });
             (instance as any).id = meta?.id ?? id;
             (instance as any).name = meta?.name ?? id;
 
@@ -273,8 +289,9 @@ export class QuestManager {
             return false;
         }
 
-        const questMap = this.questsClickEvents.get(npc.getId()) ?? this.getQuestsForEvent(QuestEventEnum.CLICK);
-        for (const [questId, states] of questMap) {
+        const questsMap = this.questsClickEvents.get(npc.getId()) ?? this.getQuestsForEvent(QuestEventEnum.CLICK);
+        let hasExecuted: boolean = false;
+        for (const [questId, states] of questsMap) {
             const quest = player.getQuest(questId);
             if (!quest) continue;
             const current = quest.getCurrentState()?.name;
@@ -289,11 +306,11 @@ export class QuestManager {
                     eventType: QuestEventEnum.CLICK,
                     npc: new NpcQuest({ npc, shopManager: this.shopManager, player }),
                 });
-                return true;
+                hasExecuted = true;
             }
         }
 
-        return false;
+        return hasExecuted;
     }
 
     async onButton(player: Player, questId: number) {
