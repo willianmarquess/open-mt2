@@ -1,4 +1,5 @@
 import { EntityStateEnum } from '@/core/enum/EntityStateEnum';
+import GameEntity from '@/core/domain/entities/game/GameEntity';
 import MathUtil from '../../../../util/MathUtil';
 import Monster from '@/core/domain/entities/game/mob/Monster';
 import Player from '../../player/Player';
@@ -355,8 +356,8 @@ export default class Behavior {
         return false;
     }
 
-    private isAttackableVictim(entity: unknown): entity is Player {
-        if (!(entity instanceof Player)) return false;
+    private isAttackableVictim(entity: GameEntity): entity is Player {
+        if (!entity.isPlayer()) return false;
         if (entity.isDead()) return false;
         if (
             entity.isAffectByFlag(AffectBitsTypeEnum.INVISIBILITY) ||
