@@ -1,17 +1,12 @@
+import { QuestTargetTypeEnum } from '@/core/enum/QuestTargetTypeEnum';
 import { Mob } from '../entities/game/mob/Mob';
 import Player from '../entities/game/player/Player';
 import { EntityManager } from '../manager/EntityManager';
 
-let id = 1;
-
-enum TargetType {
-    POS = 1 << 0,
-    VID = 1 << 1,
-}
-
-export class QuestTargetManager {
+export class QuestTarget {
     private readonly entityManager: EntityManager;
     private readonly targets: Map<string, number> = new Map();
+    private nextTargetId: number = 0;
 
     constructor({ entityManager }: { entityManager: EntityManager }) {
         this.entityManager = entityManager;
@@ -36,7 +31,7 @@ export class QuestTargetManager {
 
         if (!target) return;
 
-        const targetId = id++;
+        const targetId = this.nextTargetId++;
 
         this.targets.set(name, targetId);
 
@@ -44,7 +39,7 @@ export class QuestTargetManager {
             id: targetId,
             targetName: name,
             targetVirtualId: target.getVirtualId(),
-            type: TargetType.VID,
+            type: QuestTargetTypeEnum.VIRTUAL_ID,
         });
     }
 
@@ -53,15 +48,15 @@ export class QuestTargetManager {
 
         if (!target) return;
 
-        const targetId = id++;
+        const targetId = this.nextTargetId++;
 
         this.targets.set(name, targetId);
 
         player.sendQuestTarget({
-            id: ++id,
+            id: targetId,
             targetName: name,
             targetVirtualId: target.getVirtualId(),
-            type: TargetType.VID,
+            type: QuestTargetTypeEnum.VIRTUAL_ID,
         });
     }
 }

@@ -7,7 +7,7 @@ import { QuestFlagEnum } from '@/core/enum/QuestSendFlagEnum';
 import { PlayerQuest } from './facade/PlayerQuest';
 import ItemManager from '../manager/ItemManager';
 import MathUtil from '../util/MathUtil';
-import { QuestTargetManager } from './QuestTargetManager';
+import { QuestTarget } from './QuestTarget';
 import { WarriorSubJobEnum, AssasinSubJobEnum, ShamanSubJobEnum, SuraSubJobEnum } from '@/core/enum/SubJobEnum';
 import { EntityManager } from '../manager/EntityManager';
 import { QuestUtil } from './QuestUtil';
@@ -37,12 +37,12 @@ export abstract class AbstractQuest {
     private readonly player: Player;
     private readonly playerQuest: PlayerQuest;
     private readonly itemManager!: ItemManager;
-    private readonly targetManager: QuestTargetManager;
+    private readonly questTarget: QuestTarget;
 
     constructor({ player, entityManager }: { player: Player; entityManager: EntityManager }) {
         this.player = player;
         this.playerQuest = new PlayerQuest({ player });
-        this.targetManager = new QuestTargetManager({ entityManager });
+        this.questTarget = new QuestTarget({ entityManager });
     }
 
     protected nextState(stateName: string): TaskResult {
@@ -397,14 +397,14 @@ export abstract class AbstractQuest {
 
     protected sendTarget({ virtualId, vnum, name }: { virtualId?: number; vnum?: number; name: string }) {
         if (vnum) {
-            return this.targetManager.sendTargetByVnum({ player: this.player, vnum, name });
+            return this.questTarget.sendTargetByVnum({ player: this.player, vnum, name });
         }
         if (virtualId) {
-            return this.targetManager.sendTargetByVirtualId({ player: this.player, virtualId, name });
+            return this.questTarget.sendTargetByVirtualId({ player: this.player, virtualId, name });
         }
     }
 
     protected removeTarget({ name }: { name: string }) {
-        return this.targetManager.removeTarget({ player: this.player, targetName: name });
+        return this.questTarget.removeTarget({ player: this.player, targetName: name });
     }
 }
