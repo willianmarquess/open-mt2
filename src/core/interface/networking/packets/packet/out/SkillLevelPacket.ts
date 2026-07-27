@@ -2,9 +2,11 @@ import PacketHeaderEnum from '@/core/enum/PacketHeaderEnum';
 import PacketOut from '@/core/interface/networking/packets/packet/out/PacketOut';
 
 const SKILL_MAX_NUM = 255;
-// The client protocol uses the 32-bit TPlayerSkill layout: BYTE, BYTE,
-// 2-byte alignment padding, and a 4-byte time_t.
-const PLAYER_SKILL_SIZE = 8;
+// TPlayerSkill lives inside the client's #pragma pack(1) region: BYTE
+// bMasterType, BYTE bLevel, 32-bit time_t — 6 bytes, no alignment padding.
+// (An oversized packet goes unnoticed because the client silently skips
+// zero bytes between packets, but every level lands at a wrong offset.)
+const PLAYER_SKILL_SIZE = 6;
 
 export const SKILL_HORSE = 130;
 
@@ -28,9 +30,6 @@ export default class SkillLevelPacket extends PacketOut {
         for (let skill = 0; skill < SKILL_MAX_NUM; skill += 1) {
             this.bufferWriter.writeUint8(0);
             this.bufferWriter.writeUint8(this.levels[skill]);
-            for (let padding = 0; padding < 2; padding += 1) {
-                this.bufferWriter.writeUint8(0);
-            }
             this.bufferWriter.writeUint32LE(0);
         }
 
