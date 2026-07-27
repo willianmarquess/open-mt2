@@ -36,12 +36,10 @@ export interface IHorseOwner {
     getName(): string;
     /** Get player's area for spawning entities. */
     getArea(): any; // Area type
-    /** Set a point value (e.g., MOUNT, HORSE_SKILL). */
-    setPoint(point: PointsEnum, value: number): void;
     /** Recalculate player combat points after mounting or dismounting. */
     recalculatePoints(): void;
-    /** Send the complete client skill array. */
-    sendSkillLevel(): void;
+    /** Send the complete points packet (includes POINT_HORSE_SKILL) plus the skill array. */
+    sendPoints(): void;
     /** Save character stats. */
     save(): void;
 }
@@ -96,7 +94,6 @@ export class PlayerHorse {
         this.horseName = name || '';
         this.pendingRemount = riding;
 
-        this.owner.setPoint(PointsEnum.HORSE_SKILL, this.level);
         this.owner.recalculatePoints();
     }
 
@@ -191,8 +188,9 @@ export class PlayerHorse {
 
     setLevel(level: number): void {
         this.level = Math.max(0, Math.min(level, HORSE_MAX_LEVEL));
-        this.owner.setPoint(PointsEnum.HORSE_SKILL, this.level);
-        this.owner.sendSkillLevel();
+        // Refresh the whole points packet: the client reads the riding skill
+        // level from POINT_HORSE_SKILL, not from the skill-level packet alone.
+        this.owner.sendPoints();
         if (this.level > 0) {
             const stat = HORSE_STATS[this.level];
             this.health = stat.maxHealth;
@@ -228,11 +226,11 @@ export class PlayerHorse {
         this.riding = true;
         this.mountVnum = getHorseVnumByLevel(this.level);
 
-        // Set MOUNT and HORSE_SKILL points for client to display riding animation
-        this.owner.setPoint(PointsEnum.MOUNT, this.mountVnum);
-        this.owner.setPoint(PointsEnum.HORSE_SKILL, this.level);
-
         this.owner.broadcastMountChange();
+        // Riding swaps the effective ST/DX/HT/IQ for the horse's stats, so the
+        // client needs a fresh points packet (which also carries POINT_MOUNT).
+        this.owner.recalculatePoints();
+        this.owner.sendPoints();
         this.startStaminaConsume();
         this.sendHorseState();
         return true;
@@ -246,8 +244,9 @@ export class PlayerHorse {
         this.riding = true;
         this.temporaryRiding = true;
         this.mountVnum = mountVnum;
-        this.owner.setPoint(PointsEnum.MOUNT, mountVnum);
         this.owner.broadcastMountChange();
+        this.owner.recalculatePoints();
+        this.owner.sendPoints();
         this.owner.addEventTimer({
             id: TEMPORARY_HORSE_RIDE,
             eventFunction: () => this.stopTemporaryRiding(),
@@ -267,11 +266,9 @@ export class PlayerHorse {
         this.riding = false;
         this.mountVnum = 0;
 
-        // Clear MOUNT and HORSE_SKILL points
-        this.owner.setPoint(PointsEnum.MOUNT, 0);
-        this.owner.setPoint(PointsEnum.HORSE_SKILL, 0);
-
         this.owner.broadcastMountChange();
+        this.owner.recalculatePoints();
+        this.owner.sendPoints();
         this.startStaminaRegen();
         this.sendHorseState();
 
@@ -288,8 +285,9 @@ export class PlayerHorse {
         this.riding = false;
         this.temporaryRiding = false;
         this.mountVnum = 0;
-        this.owner.setPoint(PointsEnum.MOUNT, 0);
         this.owner.broadcastMountChange();
+        this.owner.recalculatePoints();
+        this.owner.sendPoints();
         return true;
     }
 

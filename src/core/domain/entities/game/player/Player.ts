@@ -319,10 +319,9 @@ export default class Player extends Character {
             getTargetPosition: () => this.getTargetPosition(),
             getName: () => this.name,
             getArea: () => this.area,
-            setPoint: (point, value) => this.setPoint(point, value),
             save: () => this.save(),
             recalculatePoints: () => this.points.calcPoints(),
-            sendSkillLevel: () => this.sendSkillLevel(),
+            sendPoints: () => this.sendPoints(),
         });
         this.inventory = new Inventory({ config: this.config, ownerId: this.id });
         this.inventory.subscribe(InventoryEventsEnum.ITEM_EQUIPPED, this.onItemEquipped.bind(this));

@@ -849,6 +849,15 @@ export class PlayerPoints extends Points {
                 this.player.setPolymorph(value);
             },
         });
+        // Both are owned by PlayerHorse, so they read through instead of holding
+        // their own copy. HORSE_SKILL is the owned horse level and stays set
+        // while dismounted; MOUNT is only non-zero while actually riding.
+        this.points.set(PointsEnum.MOUNT, {
+            get: () => this.player.getMountVnum(),
+        });
+        this.points.set(PointsEnum.HORSE_SKILL, {
+            get: () => this.player.getHorseLevel(),
+        });
     }
 
     private addCommonPoint(value: number, pointName: string) {
