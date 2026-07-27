@@ -1,4 +1,3 @@
-import { PlayerFactory } from '@/core/domain/factories/PlayerFactory';
 import AnimationManager from '@/core/domain/manager/AnimationManager';
 import DropManager from '@/core/domain/manager/DropManager';
 import ExperienceManager from '@/core/domain/manager/ExperienceManager';
@@ -65,7 +64,6 @@ container.register({
     loadCharactersService: asClass(LoadCharactersService).singleton(),
     selectEmpireService: asClass(SelectEmpireService).singleton(),
     selectCharacterService: asClass(SelectCharacterService).singleton(),
-    playerFactory: asClass(PlayerFactory).singleton(),
     enterGameService: asClass(EnterGameService).singleton(),
     characterMoveService: asClass(CharacterMoveService).singleton(),
     animationManager: asClass(AnimationManager).singleton(),

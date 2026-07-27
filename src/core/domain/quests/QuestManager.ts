@@ -14,13 +14,23 @@ import ShopManager from '@/core/domain/shop/ShopManager';
 export class QuestManager {
     private readonly logger: Logger;
     private readonly shopManager: ShopManager;
+    private readonly containerInstance: any;
     private readonly questsClasses: Map<number, typeof AbstractQuest> = new Map();
     private readonly questsClickEvents: Map<number, Map<number, Set<string>>> = new Map();
     private readonly eventQuestMap: Map<QuestEventEnum, Map<number, Set<string>>> = new Map();
 
-    constructor({ logger, shopManager }: { logger: Logger; shopManager: ShopManager }) {
+    constructor({
+        logger,
+        shopManager,
+        containerInstance,
+    }: {
+        logger: Logger;
+        shopManager: ShopManager;
+        containerInstance: any;
+    }) {
         this.logger = logger;
         this.shopManager = shopManager;
+        this.containerInstance = containerInstance;
     }
 
     load() {
@@ -60,21 +70,25 @@ export class QuestManager {
                                     switch (t.when) {
                                         case QuestEventEnum.CLICK:
                                             {
-                                                const target = t.target as number | undefined;
+                                                const target = t.target as number | number[] | undefined;
                                                 if (target !== undefined) {
-                                                    let stateMap = this.questsClickEvents.get(target);
-                                                    if (!stateMap) {
-                                                        stateMap = new Map<number, Set<string>>();
-                                                        this.questsClickEvents.set(target, stateMap);
-                                                    }
+                                                    const targets = [target].flat();
 
-                                                    let set = stateMap.get(id);
-                                                    if (!set) {
-                                                        set = new Set<string>();
-                                                        stateMap.set(id, set);
-                                                    }
+                                                    for (const targetId of targets) {
+                                                        let stateMap = this.questsClickEvents.get(targetId);
+                                                        if (!stateMap) {
+                                                            stateMap = new Map<number, Set<string>>();
+                                                            this.questsClickEvents.set(targetId, stateMap);
+                                                        }
 
-                                                    set.add(metaState.name);
+                                                        let set = stateMap.get(id);
+                                                        if (!set) {
+                                                            set = new Set<string>();
+                                                            stateMap.set(id, set);
+                                                        }
+
+                                                        set.add(metaState.name);
+                                                    }
                                                 } else {
                                                     this.addQuestToEvent(QuestEventEnum.CLICK, id, metaState.name);
                                                 }
@@ -170,7 +184,10 @@ export class QuestManager {
             const ctor: any = questClass;
             const meta = getQuestMeta(ctor);
 
-            const instance: AbstractQuest = new (questClass as any)({ player });
+            const instance: AbstractQuest = new (questClass as any)({
+                player,
+                entityManager: this.containerInstance.cradle.entityManager,
+            });
             (instance as any).id = meta?.id ?? id;
             (instance as any).name = meta?.name ?? id;
 
@@ -280,8 +297,9 @@ export class QuestManager {
             return false;
         }
 
-        const questMap = this.questsClickEvents.get(npc.getId()) ?? this.getQuestsForEvent(QuestEventEnum.CLICK);
-        for (const [questId, states] of questMap) {
+        const questsMap = this.questsClickEvents.get(npc.getId()) ?? this.getQuestsForEvent(QuestEventEnum.CLICK);
+        let hasExecuted: boolean = false;
+        for (const [questId, states] of questsMap) {
             const quest = player.getQuest(questId);
             if (!quest) continue;
             const current = quest.getCurrentState()?.name;
@@ -296,11 +314,11 @@ export class QuestManager {
                     eventType: QuestEventEnum.CLICK,
                     npc: new NpcQuest({ npc, shopManager: this.shopManager, player }),
                 });
-                return true;
+                hasExecuted = true;
             }
         }
 
-        return false;
+        return hasExecuted;
     }
 
     async onButton(player: Player, questId: number) {

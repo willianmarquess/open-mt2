@@ -17,7 +17,7 @@ enum ShopIdEnum {
 
 @Quest('ShopQuest', ShopQuestState.START)
 export class ShopQuest extends AbstractQuest {
-    @Task({ state: ShopQuestState.START, when: QuestEventEnum.CLICK })
+    @Task({ state: ShopQuestState.START, when: QuestEventEnum.CLICK, target: [ShopIdEnum.GOODS, ShopIdEnum.POTIONS] })
     async onClick({ npc }: ClickExecutionContext) {
         const id = npc.getId();
 
@@ -39,6 +39,8 @@ export class ShopQuest extends AbstractQuest {
                 }
                 break;
             }
+            default:
+                return;
         }
     }
 }
