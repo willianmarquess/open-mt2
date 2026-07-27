@@ -1,9 +1,9 @@
 export enum MobImmuneFlagEnum {
-    STUN = 0b1,
-    SLOW = 0b10,
-    FALL = 0b100,
-    CURSE = 0b1000,
-    POISON = 0b1_0000,
-    TERROR = 0b10_0000,
-    REFLECT = 0b100_0000,
+    STUN = 1 << 0,
+    SLOW = 1 << 1,
+    FALL = 1 << 2,
+    CURSE = 1 << 3,
+    POISON = 1 << 4,
+    TERROR = 1 << 5,
+    REFLECT = 1 << 6,
 }

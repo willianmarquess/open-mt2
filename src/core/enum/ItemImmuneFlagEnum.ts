@@ -1,10 +1,10 @@
 export enum ItemImmuneFlagEnum {
-    PARA = 0b1,
-    CURSE = 0b10,
-    STUN = 0b100,
-    SLEEP = 0b1000,
-    SLOW = 0b1_0000,
-    POISON = 0b10_0000,
-    TERROR = 0b100_0000,
-    DEFAULT = 0b1000_0000,
+    PARA = 1 << 0,
+    CURSE = 1 << 1,
+    STUN = 1 << 2,
+    SLEEP = 1 << 3,
+    SLOW = 1 << 4,
+    POISON = 1 << 5,
+    TERROR = 1 << 6,
+    DEFAULT = 1 << 7,
 }
