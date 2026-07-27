@@ -24,8 +24,11 @@ export interface IHorseOwner {
     removeEventTimer(id: string): void;
     /** Broadcast updated mountId to self + nearby players. */
     broadcastMountChange(): void;
-    /** Announce an entity's death to every player that can see it. */
-    broadcastEntityDeath(entity: NPC): void;
+    /**
+     * Flag an alive NPC as this player's horse corpse: others render it lying
+     * dead, the owner keeps it alive client-side (clickable, stun marker).
+     */
+    showHorseCorpse(entity: NPC): void;
     /** Get player's current position X. */
     getPositionX(): number;
     /** Get player's current position Y. */
@@ -358,11 +361,11 @@ export class PlayerHorse {
 
         // Turn the spawned horse into a corpse: stop following, play the death
         // animation for everyone nearby and leave the body on the ground for a
-        // while before it despawns.
+        // while before it despawns. The entity stays alive server-side so the
+        // owner can still click it to open the revive menu (issue #42).
         if (this.spawnedHorse) {
             this.spawnedHorse.clearMovementNodes();
-            this.spawnedHorse.die();
-            this.owner.broadcastEntityDeath(this.spawnedHorse);
+            this.owner.showHorseCorpse(this.spawnedHorse);
             this.startDeadDespawnTimer();
         }
 
@@ -428,8 +431,9 @@ export class PlayerHorse {
             if (this.health <= 0) {
                 // A dead horse is summoned lying on the ground and despawns on
                 // its own after a while (original: HorseSummon + POS_DEAD).
-                horseEntity.die();
-                this.owner.broadcastEntityDeath(horseEntity);
+                // Kept alive server-side so the owner can click it (issue #42);
+                // viewers get the dead pose via the corpse flag on spawn.
+                this.owner.showHorseCorpse(horseEntity);
                 this.startDeadDespawnTimer();
             } else {
                 this.startHorseFollow();

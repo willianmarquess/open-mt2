@@ -94,6 +94,7 @@ const createPlayer = (
 
 const createFakeHorse = (virtualId: number) => {
     let dead = false;
+    let corpseOwnerVid: number | null = null;
     const nearby = new Map<number, any>();
     return {
         name: '',
@@ -102,6 +103,10 @@ const createFakeHorse = (virtualId: number) => {
             dead = true;
         },
         isDead: () => dead,
+        setCorpseOwnerVirtualId: (vid: number | null) => {
+            corpseOwnerVid = vid;
+        },
+        getCorpseOwnerVirtualId: () => corpseOwnerVid,
         getVirtualId: () => virtualId,
         clearMovementNodes: () => {},
         continueMovementNodes: () => {},
@@ -203,18 +208,24 @@ describe('PlayerHorse', () => {
     });
 
     describe('dead horse', () => {
-        it('should summon a dead horse as a corpse instead of a living entity', () => {
+        it('should summon a dead horse as an alive, corpse-flagged entity (clickable for the owner)', () => {
             const horse = createFakeHorse(999);
             const factory = createFactory();
             const owner = createPlayer(factory, 1, 'Owner', true, 0);
             const area = createFakeArea(horse);
-            owner.setConnection(createConnection().connection);
+            const ownerConn = createConnection();
+            owner.setConnection(ownerConn.connection);
             owner.setArea(area as any);
 
             expect(owner.summonHorse()).to.be.equal(true);
 
             expect(area.spawned).to.include(horse);
-            expect(horse.isDead()).to.be.equal(true);
+            // Alive server-side (picking filters dead actors client-side),
+            // flagged so other viewers render it as a corpse.
+            expect(horse.isDead()).to.be.equal(false);
+            expect(horse.getCorpseOwnerVirtualId()).to.be.equal(1);
+            // The owner sees a stun marker on it instead of the dead pose.
+            expect(ownerConn.sentPackets.map((p) => p.name)).to.include('StunPacket');
         });
 
         it('should summon a living horse alive', () => {
@@ -237,7 +248,8 @@ describe('PlayerHorse', () => {
             const owner = createPlayer(factory, 1, 'Owner', true, 100);
             const watcher = createPlayer(factory, 2, 'Watcher');
             const area = createFakeArea(horse);
-            owner.setConnection(createConnection().connection);
+            const ownerConn = createConnection();
+            owner.setConnection(ownerConn.connection);
             const watcherConn = createConnection();
             watcher.setConnection(watcherConn.connection);
             owner.setArea(area as any);
@@ -247,11 +259,16 @@ describe('PlayerHorse', () => {
 
             owner.setHorseHealth(0);
 
-            expect(horse.isDead()).to.be.equal(true);
+            // Alive server-side but corpse-flagged: watchers get the death
+            // packet (lying pose), the owner gets a stun marker and keeps the
+            // entity clickable.
+            expect(horse.isDead()).to.be.equal(false);
+            expect(horse.getCorpseOwnerVirtualId()).to.be.equal(1);
             // The corpse stays in the area (no immediate despawn)
             expect(area.despawned).to.not.include(horse);
-            const names = watcherConn.sentPackets.map((p) => p.name);
-            expect(names).to.include('CharacterDiedPacket');
+            expect(watcherConn.sentPackets.map((p) => p.name)).to.include('CharacterDiedPacket');
+            expect(ownerConn.sentPackets.map((p) => p.name)).to.include('StunPacket');
+            expect(ownerConn.sentPackets.map((p) => p.name)).to.not.include('CharacterDiedPacket');
         });
 
         it('should despawn the corpse and auto-mount on revive', () => {
@@ -263,7 +280,7 @@ describe('PlayerHorse', () => {
             owner.setArea(area as any);
 
             expect(owner.summonHorse()).to.be.equal(true);
-            expect(corpse.isDead()).to.be.equal(true);
+            expect(corpse.getCorpseOwnerVirtualId()).to.be.equal(1);
 
             expect(owner.reviveHorse()).to.be.equal(true);
 

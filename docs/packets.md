@@ -1,5 +1,28 @@
 # Packet Documentation
 
+### AffectAddPacket
+
+**Type:** Out
+
+**Header:** 0x7E
+
+**Size:** 22 bytes
+
+**Description:** Used to send an effect.
+
+**Fields:**
+
+| Name        | Type       | Size (bytes)   | Description               |
+|-------------|------------|----------------|---------------------------|
+| header | `byte` | 1 | Packet header |
+| type | `int` | 4 | Apply type number. See in AffectTypeEnum |
+| apply | `byte` | 1 | Describe which point is affected by this affect. See in PointEnum |
+| flag | `int` | 4 | The bit flag of applies. See in AffectBitsTypeEnum |
+| duration | `int` | 4 | The duration in seconds of an affect |
+| manaCost | `int` | 4 | The mana cost of an affect |
+
+---
+
 ### ChannelPacket
 
 **Type:** Out
@@ -217,6 +240,107 @@
 | virtualId | `number` | 4 | virtualId of the affected entity |
 | damageFlags | `byte` | 1 | indicates the flags of damage like: critical, pierced etc //TODO |
 | damage | `number` | 4 | the damage number |
+
+---
+
+### FlyPacket
+
+**Type:** Out
+
+**Header:** 0x46
+
+**Size:** 10 bytes
+
+**Description:** Used to send fly particle from entity to another.
+
+**Fields:**
+
+| Name        | Type       | Size (bytes)   | Description               |
+|-------------|------------|----------------|---------------------------|
+| header | `byte` | 1 | Packet header |
+| type | `byte` | 4 | type of fly. See in FlyEnum. |
+| fromVirtualId | `number` | 4 | wich entity the fly starts |
+| toVirtualId | `number` | 4 | wich entity the fly ends |
+
+---
+
+### InternalPongPacket
+
+**Type:** Out
+
+**Header:** 253
+
+**Size:** 5 bytes
+
+**Description:** Used to internal pong.
+
+**Fields:**
+
+| Name        | Type       | Size (bytes)   | Description               |
+|-------------|------------|----------------|---------------------------|
+| header | `byte` | 1 | Packet header |
+| time | `int` | 4 | The time sent by client |
+
+---
+
+### SpecialEffectPacket
+
+**Type:** Out
+
+**Header:** 0x72
+
+**Size:** 6 bytes
+
+**Description:** Used to send an special effect.
+
+**Fields:**
+
+| Name        | Type       | Size (bytes)   | Description               |
+|-------------|------------|----------------|---------------------------|
+| header | `byte` | 1 | Packet header |
+| type | `byte` | 1 | Describe the special effect. See in SpecialEffectTypeEnum |
+| virtual | `int` | 4 | Virtual id of the player to be effected |
+
+---
+
+### StunPacket
+
+**Type:** Out
+
+**Header:** 0x0d
+
+**Size:** 5 bytes
+
+**Description:** Marks a character as stunned. For a non-main vid the client stops the actor and attaches the stun effect without playing any motion and without marking it dead, so the actor stays clickable.
+
+**Fields:**
+
+| Name        | Type       | Size (bytes)   | Description               |
+|-------------|------------|----------------|---------------------------|
+| header | `byte` | 1 | Packet header. |
+| vid | `int` | 4 | Character identification in game. |
+
+---
+
+### SyncPositionPacket
+
+**Type:** Out
+
+**Header:** 0x05
+
+**Size:** 15 bytes
+
+**Description:** Forces the client to snap an entity (including the player's own
+
+**Fields:**
+
+| Name        | Type       | Size (bytes)   | Description               |
+|-------------|------------|----------------|---------------------------|
+| header | `byte` | 1 | Packet header |
+| size | `number` | 2 | Total packet size in bytes |
+| virtualId | `number` | 4 | virtualId of the entity to snap |
+| positionX | `number` | 4 | Server-side X position |
+| positionY | `number` | 4 | Server-side Y position |
 
 ---
 
