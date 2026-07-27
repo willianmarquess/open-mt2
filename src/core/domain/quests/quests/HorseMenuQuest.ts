@@ -66,7 +66,6 @@ export class HorseMenuQuest extends AbstractQuest {
 
                     if (this.countItem(herb) > 0 && playerInstance.reviveHorse()) {
                         await this.removeItem(herb, 1);
-                        playerInstance.startRiding();
                     }
                     break;
                 case DeadMenuOption.SEND_AWAY:

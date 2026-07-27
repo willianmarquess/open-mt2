@@ -254,12 +254,11 @@ describe('PlayerHorse', () => {
             expect(names).to.include('CharacterDiedPacket');
         });
 
-        it('should replace the corpse with a living horse on revive', () => {
+        it('should despawn the corpse and auto-mount on revive', () => {
             const corpse = createFakeHorse(999);
-            const revived = createFakeHorse(1000);
             const factory = createFactory();
             const owner = createPlayer(factory, 1, 'Owner', true, 0);
-            const area = createFakeArea(corpse, revived);
+            const area = createFakeArea(corpse);
             owner.setConnection(createConnection().connection);
             owner.setArea(area as any);
 
@@ -269,8 +268,7 @@ describe('PlayerHorse', () => {
             expect(owner.reviveHorse()).to.be.equal(true);
 
             expect(area.despawned).to.include(corpse);
-            expect(area.spawned).to.include(revived);
-            expect(revived.isDead()).to.be.equal(false);
+            expect(owner.isHorseRiding()).to.be.equal(true);
             expect(owner.getHorseHealth()).to.be.greaterThan(0);
         });
 

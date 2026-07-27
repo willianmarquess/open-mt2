@@ -306,19 +306,17 @@ export class PlayerHorse {
         return true;
     }
 
-    /** Revive a dead horse. Returns true on success. */
+    /** Revive a dead horse and mount it. Returns true on success. */
     revive(): boolean {
         if (this.level <= 0 || this.health > 0) return false;
         const stat = HORSE_STATS[this.level];
         this.health = stat.maxHealth;
         this.stamina = stat.maxStamina;
 
-        // Replace the corpse with a living horse entity (original: ReviveHorse
-        // does HorseSummon(false) followed by HorseSummon(true)).
-        if (this.spawnedHorse) {
-            this.despawnHorseEntity();
-            this.spawnHorseEntity();
-        }
+        // Auto-mount after revive (issue #41), so every revive path behaves
+        // the same. startRiding also despawns the corpse entity, replacing
+        // the original's HorseSummon(false)/HorseSummon(true) toggle.
+        this.startRiding();
 
         this.sendHorseState();
         this.owner.save();
