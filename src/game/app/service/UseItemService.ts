@@ -178,6 +178,13 @@ export default class UseItemService {
                     return this.useHorseSummonBook(player);
                 }
                 break;
+            case ItemTypeEnum.ITEM_SPECIAL:
+                // Horse feed/revive herbs are ITEM_SPECIAL/SPECIAL_MAP in the
+                // item proto, not ITEM_USE/USE_SPECIAL.
+                if (ALL_HORSE_ITEM_VNUMS.has(item.getId())) {
+                    return this.useHorseItem(player, item);
+                }
+                break;
             case ItemTypeEnum.ITEM_POLYMORPH:
                 return this.usePolymorphBall(player, item);
             default:
