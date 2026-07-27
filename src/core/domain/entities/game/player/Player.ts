@@ -384,6 +384,31 @@ export default class Player extends Character {
 
     levelUp() {
         this.questManager.onLevelUp(this);
+        this.broadcastLevelUp();
+    }
+
+    /**
+     * The client plays the level-up visual effect when it receives a
+     * POINT_LEVEL point-change for a vid (original: PointChange POINT_LEVEL
+     * packets go to the character and everyone around).
+     */
+    private broadcastLevelUp() {
+        const level = this.getLevel();
+
+        this.connection?.send(
+            new CharacterPointChangePacket({
+                vid: this.virtualId,
+                type: PointsEnum.LEVEL,
+                amount: 0,
+                value: level,
+            }),
+        );
+
+        for (const entity of this.nearbyEntities.values()) {
+            if (entity instanceof Player) {
+                entity.otherEntityLevelUp({ virtualId: this.virtualId, level });
+            }
+        }
     }
 
     async onSpawn(): Promise<void> {

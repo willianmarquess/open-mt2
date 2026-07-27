@@ -147,19 +147,20 @@
 
 **Header:** 0x11
 
-**Size:** 22 bytes
+**Size:** 17 bytes
 
-**Description:** Is used to send and update of a point (attribute) to the client (used to notify all nearby players of an update of a character). See all points in PointsEnum.
+**Description:** Is used to send an update of a single point (attribute) of a character to the client. The client plays the level-up effect when it receives a POINT_LEVEL change for any vid. See all points in PointsEnum.
 
 **Fields:**
 
 | Name        | Type       | Size (bytes)   | Description               |
 |-------------|------------|----------------|---------------------------|
 | header | `byte` | 1 | Packet header. |
+| padding | `byte[3]` | 3 | The client declares the header as a 4-byte int, so 3 padding bytes follow the header byte. |
 | vid | `int` | 4 | Character identification in game. |
 | type | `byte` | 1 | Number which indicates the point type (See in PointsEnum). |
-| amount | `long` | 8 | Number which indicates the quantity of that point (default is 0). |
-| value | `long` | 8 | Number which indicates the value of that point. |
+| amount | `int` | 4 | Signed quantity delta of that point (default is 0). |
+| value | `int` | 4 | Signed new value of that point. |
 
 ---
 

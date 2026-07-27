@@ -37,6 +37,12 @@ export default class BufferWriter {
         return this;
     }
 
+    writeInt32LE(value: number): this {
+        this.buffer.writeInt32LE(value, this.lastPos);
+        this.lastPos += 4;
+        return this;
+    }
+
     writeUint64LE(value: number | bigint): this {
         this.buffer.writeBigUInt64LE(BigInt(value), this.lastPos);
         this.lastPos += 8;

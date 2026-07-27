@@ -1008,6 +1008,9 @@ export class PlayerPoints extends Points {
         this.iq = this.config.jobs[className].common.iq;
 
         this.calcPointsAndResetValues();
+        // Original behaviour: PointChange(POINT_LEVEL) fires the quest hook and
+        // the level-up effect no matter how the level changed (/lvl included).
+        this.player.levelUp();
     }
 
     private calcAttack() {
