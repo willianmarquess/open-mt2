@@ -394,6 +394,12 @@ export class PlayerHorse {
             this.mountVnum = 0;
             this.owner.removeEventTimer(TEMPORARY_HORSE_RIDE);
             this.owner.broadcastMountChange();
+            // Forced dismount swaps the effective stats back to the player's.
+            this.owner.recalculatePoints();
+            this.owner.sendPoints();
+            // The horse died under the rider: leave its corpse on the ground
+            // (clickable for the owner, issue #42) instead of vanishing.
+            this.spawnHorseEntity();
         }
     }
 
