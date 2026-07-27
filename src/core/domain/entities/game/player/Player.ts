@@ -24,6 +24,7 @@ import CharacterUpdatePacket from '@/core/interface/networking/packets/packet/ou
 import CharacterPointsPacket from '@/core/interface/networking/packets/packet/out/CharacterPointsPacket';
 import CharacterDetailsPacket from '@/core/interface/networking/packets/packet/out/CharacterDetailsPacket';
 import CharacterDiedPacket from '@/core/interface/networking/packets/packet/out/CharacterDiedPacket';
+import SyncPositionPacket from '@/core/interface/networking/packets/packet/out/SyncPositionPacket';
 import TeleportPacket from '@/core/interface/networking/packets/packet/out/TeleportPacket';
 import Ip from '@/core/util/Ip';
 import CharacterPointChangePacket from '@/core/interface/networking/packets/packet/out/CharacterPointChangePacket';
@@ -80,7 +81,10 @@ import QuickSlotRemoveResponsePacket from '@/core/interface/networking/packets/p
 import QuickSlotSwapResponsePacket from '@/core/interface/networking/packets/packet/out/QuickSlotSwapResponsePacket';
 import MobManager from '@/core/domain/manager/MobManager';
 import { JobEnum } from '@/core/enum/JobEnum';
-// import QuestTargetCreatePacket from '@/core/interface/networking/packets/packet/out/QuestTargetCreatePacket';
+import QuestTargetCreatePacket from '@/core/interface/networking/packets/packet/out/QuestTargetCreatePacket';
+import { AssasinSubJobEnum, ShamanSubJobEnum, SuraSubJobEnum, WarriorSubJobEnum } from '@/core/enum/SubJobEnum';
+import SetSkillGroupPacket from '@/core/interface/networking/packets/packet/out/SetSkillGroupPacket';
+import QuestTargetRemovePacket from '@/core/interface/networking/packets/packet/out/QuestTargetRemovePacket';
 
 const REGEN_INTERVAL = 3000;
 const MAX_DISTANCE_FROM_TARGET = 3500;
@@ -94,6 +98,11 @@ const MAX_TIME_IDLE_IN_FIGHTING = 5_000;
 // normal play is never flagged).
 const ATTACK_SPEED_REFERENCE_MS = 15_000;
 const MIN_ATTACK_INTERVAL_MS = 80;
+
+// Anti-teleport: max distance (map units, 100/m) a single move packet may cover.
+// The original rejects longer jumps and resyncs the client; a legitimate
+// client never sends a longer segment. Kept generous here.
+const MAX_MOVE_DISTANCE = 2500;
 
 export default class Player extends Character {
     private readonly accountId: number;
@@ -125,6 +134,8 @@ export default class Player extends Character {
     private lastTimeInBattle: number = 0;
     private lastAttackTime: number = 0;
     private lastAttackVictimVid: number = 0;
+    /** Last client-reported position accepted by the anti-teleport check. */
+    private lastReportedPosition: { x: number; y: number } | null = null;
 
     //quests
     private readonly quests: Map<number, AbstractQuest> = new Map();
@@ -501,6 +512,43 @@ export default class Player extends Character {
         return Math.max(MIN_ATTACK_INTERVAL_MS, Math.floor(ATTACK_SPEED_REFERENCE_MS / attackSpeed));
     }
 
+    /**
+     * Rejects move packets that jump farther than a single step allows
+     * (teleport hack). A legitimate client segments long walks, so a request
+     * beyond the cap is either a hack or a desync — in both cases we snap the
+     * client back to the server's authoritative position and drop the move.
+     * Returns true when the requested destination is acceptable.
+     */
+    isMoveAllowed(x: number, y: number): boolean {
+        // Like the original, measure against the client's last accepted
+        // report — the server-side position is interpolated and lags behind a
+        // fast client, which would trip the cap on honest moves. The server
+        // position is the fallback anchor (first move after login or a
+        // teleport), so a crafted jump is still capped from a trusted point.
+        const anchors = [this.lastReportedPosition, { x: this.getPositionX(), y: this.getPositionY() }];
+        const allowed = anchors.some(
+            (anchor) => anchor && MathUtil.calcDistance(anchor.x, anchor.y, x, y) <= MAX_MOVE_DISTANCE,
+        );
+
+        if (allowed) {
+            this.lastReportedPosition = { x, y };
+            return true;
+        }
+
+        // Snap the client back to the server-side position. SYNC_POSITION is
+        // the only packet the client applies to its own character, so a
+        // desynced client self-recovers instead of rubber-banding forever.
+        this.lastReportedPosition = null;
+        this.connection?.send(
+            new SyncPositionPacket({
+                virtualId: this.virtualId,
+                positionX: this.getPositionX(),
+                positionY: this.getPositionY(),
+            }),
+        );
+        return false;
+    }
+
     sendDetails() {
         this.connection?.send(
             new CharacterDetailsPacket({
@@ -724,6 +772,9 @@ export default class Player extends Character {
 
         this.move(x, y);
         this.stop();
+
+        // The anti-teleport anchor is stale after a server-initiated warp.
+        this.lastReportedPosition = null;
 
         this.connection?.send(
             new TeleportPacket({
@@ -1756,10 +1807,6 @@ export default class Player extends Character {
         );
     }
 
-    getArea() {
-        return this.area;
-    }
-
     /**
      * Quickslot area
      */
@@ -2190,17 +2237,34 @@ export default class Player extends Character {
         return this.playerClass === JobEnum.SHAMAN_MALE || this.playerClass === JobEnum.SHAMAN_FEMALE;
     }
 
-    // sendQuestTarget({
-    //     id,
-    //     targetName,
-    //     targetVirtualId,
-    //     type,
-    // }: {
-    //     id: number;
-    //     targetName: string;
-    //     targetVirtualId: number;
-    //     type: number;
-    // }) {
-    //     this.connection?.send(new QuestTargetCreatePacket({ id, targetName, targetVirtualId, type }));
-    // }
+    sendQuestTarget({
+        id,
+        targetName,
+        targetVirtualId,
+        type,
+    }: {
+        id: number;
+        targetName: string;
+        targetVirtualId: number;
+        type: number;
+    }) {
+        this.connection?.send(new QuestTargetCreatePacket({ id, targetName, targetVirtualId, type }));
+    }
+
+    sendQuestTargetRemove({ id }: { id: number }) {
+        this.connection?.send(
+            new QuestTargetRemovePacket({
+                id,
+            }),
+        );
+    }
+
+    setSkillGroup(subJob: WarriorSubJobEnum | SuraSubJobEnum | AssasinSubJobEnum | ShamanSubJobEnum) {
+        this.skillGroup = subJob;
+        this.connection?.send(
+            new SetSkillGroupPacket({
+                skillGroup: this.skillGroup,
+            }),
+        );
+    }
 }
