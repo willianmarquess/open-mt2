@@ -6,14 +6,15 @@ import PacketOut from '@/core/interface/networking/packets/packet/out/PacketOut'
  * @type Out
  * @name CharacterPointChangePacket
  * @header 0x11
- * @size 22
- * @description Is used to send and update of a point (attribute) to the client (used to notify all nearby players of an update of a character). See all points in PointsEnum.
+ * @size 17
+ * @description Is used to send an update of a single point (attribute) of a character to the client. The client plays the level-up effect when it receives a POINT_LEVEL change for any vid. See all points in PointsEnum.
  * @fields
  *   - {byte} header 1 Packet header.
+ *   - {byte[3]} padding 3 The client declares the header as a 4-byte int, so 3 padding bytes follow the header byte.
  *   - {int} vid 4 Character identification in game.
  *   - {byte} type 1 Number which indicates the point type (See in PointsEnum).
- *   - {long} amount 8 Number which indicates the quantity of that point (default is 0).
- *   - {long} value 8 Number which indicates the value of that point.
+ *   - {int} amount 4 Signed quantity delta of that point (default is 0).
+ *   - {int} value 4 Signed new value of that point.
  */
 
 export default class CharacterPointChangePacket extends PacketOut {
@@ -26,7 +27,7 @@ export default class CharacterPointChangePacket extends PacketOut {
         super({
             header: PacketHeaderEnum.CHARACTER_POINT_CHANGE,
             name: 'CharacterPointChangePacket',
-            size: 22,
+            size: 17,
         });
         this.vid = vid;
         this.type = type;
@@ -35,10 +36,15 @@ export default class CharacterPointChangePacket extends PacketOut {
     }
 
     pack() {
+        // The client struct starts with `int header` inside its pack(1) region,
+        // so the header byte is followed by 3 padding bytes before the payload.
+        this.bufferWriter.writeUint8(0);
+        this.bufferWriter.writeUint8(0);
+        this.bufferWriter.writeUint8(0);
         this.bufferWriter.writeUint32LE(this.vid);
         this.bufferWriter.writeUint8(this.type);
-        this.bufferWriter.writeUint64LE(this.amount);
-        this.bufferWriter.writeUint64LE(this.value);
+        this.bufferWriter.writeInt32LE(this.amount);
+        this.bufferWriter.writeInt32LE(this.value);
         return this.bufferWriter.getBuffer();
     }
 }
