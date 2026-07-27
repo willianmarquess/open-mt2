@@ -80,11 +80,13 @@ export default class Inventory {
         const page = this.calcPage(position);
         const pagePosition = this.calcPagePosition(page, position);
         if (this.pages[page].addItemAt(item, pagePosition)) {
-            item.setPosition(pagePosition);
+            // Keep the absolute position on the item: pagePosition is relative
+            // to its page, and storing it would fold every page-2+ item back
+            // onto page 1 (visible after a relog, when the inventory is
+            // rebuilt from the database through this method).
+            item.setPosition(position);
             item.setOwnerId(this.ownerId);
-            item.setWindow(
-                this.isEquipmentPosition(pagePosition) ? WindowTypeEnum.EQUIPMENT : WindowTypeEnum.INVENTORY,
-            );
+            item.setWindow(this.isEquipmentPosition(position) ? WindowTypeEnum.EQUIPMENT : WindowTypeEnum.INVENTORY);
             this.items.set(item.getDbId()!, item);
         }
     }
