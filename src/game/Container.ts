@@ -43,6 +43,7 @@ import PrivateShopService from './app/service/PrivateShopService';
 import GlobalEventTimerManager from '@/core/domain/manager/GlobalEventTimeManager';
 import { VirtualIdManager } from '@/core/domain/manager/VirtualIdManager';
 import { EntityManager } from '@/core/domain/manager/EntityManager';
+import { QuestTargetManager } from '@/core/domain/quests/QuestTargetManager';
 
 const container = createContainer();
 
@@ -92,6 +93,7 @@ container.register({
     eventTimerManager: asClass(GlobalEventTimerManager).singleton(),
     virtualIdManager: asClass(VirtualIdManager).singleton(),
     entityManager: asClass(EntityManager).singleton(),
+    questTargetManager: asClass(QuestTargetManager).singleton(),
 });
 
 export { container };

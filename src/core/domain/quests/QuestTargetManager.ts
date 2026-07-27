@@ -3,7 +3,7 @@ import { Mob } from '../entities/game/mob/Mob';
 import Player from '../entities/game/player/Player';
 import { EntityManager } from '../manager/EntityManager';
 
-export class QuestTarget {
+export class QuestTargetManager {
     private readonly entityManager: EntityManager;
     private readonly targets: Map<string, number> = new Map();
     private nextTargetId: number = 0;
@@ -31,7 +31,7 @@ export class QuestTarget {
 
         if (!target) return;
 
-        const targetId = this.nextTargetId++;
+        const targetId = ++this.nextTargetId;
 
         this.targets.set(name, targetId);
 
@@ -48,7 +48,7 @@ export class QuestTarget {
 
         if (!target) return;
 
-        const targetId = this.nextTargetId++;
+        const targetId = ++this.nextTargetId;
 
         this.targets.set(name, targetId);
 

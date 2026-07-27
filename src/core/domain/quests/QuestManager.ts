@@ -187,6 +187,7 @@ export class QuestManager {
             const instance: AbstractQuest = new (questClass as any)({
                 player,
                 entityManager: this.containerInstance.cradle.entityManager,
+                questTargetManager: this.containerInstance.cradle.questTargetManager,
             });
             (instance as any).id = meta?.id ?? id;
             (instance as any).name = meta?.name ?? id;

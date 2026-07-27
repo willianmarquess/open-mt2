@@ -418,11 +418,12 @@ export class SkillQuest extends AbstractQuest {
         this.text('Do you want to confirm? Are you sure?');
         const option = await this.select(['Yes', 'No']);
 
-        this.removeTarget({ name: TARGET_NAME });
-
         if (option === 0) {
+            this.removeTarget({ name: TARGET_NAME });
             this.text('Thank you and congrats!!');
             player.setSkillGroup(this.getValue('skillGroup'));
+            //TODO: give some rewards
+            return this.nextState(SkillQuestState.START);
         }
     }
 }

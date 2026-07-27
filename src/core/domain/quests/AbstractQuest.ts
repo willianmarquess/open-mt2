@@ -7,9 +7,8 @@ import { QuestFlagEnum } from '@/core/enum/QuestSendFlagEnum';
 import { PlayerQuest } from './facade/PlayerQuest';
 import ItemManager from '../manager/ItemManager';
 import MathUtil from '../util/MathUtil';
-import { QuestTarget } from './QuestTarget';
+import { QuestTargetManager } from './QuestTargetManager';
 import { WarriorSubJobEnum, AssasinSubJobEnum, ShamanSubJobEnum, SuraSubJobEnum } from '@/core/enum/SubJobEnum';
-import { EntityManager } from '../manager/EntityManager';
 import { QuestUtil } from './QuestUtil';
 
 // Sent by the client when the quest window is closed instead of picking an option.
@@ -37,12 +36,12 @@ export abstract class AbstractQuest {
     private readonly player: Player;
     private readonly playerQuest: PlayerQuest;
     private readonly itemManager!: ItemManager;
-    private readonly questTarget: QuestTarget;
+    private readonly questTargetManager: QuestTargetManager;
 
-    constructor({ player, entityManager }: { player: Player; entityManager: EntityManager }) {
+    constructor({ player, questTargetManager }: { player: Player; questTargetManager: QuestTargetManager }) {
         this.player = player;
+        this.questTargetManager = questTargetManager;
         this.playerQuest = new PlayerQuest({ player });
-        this.questTarget = new QuestTarget({ entityManager });
     }
 
     protected nextState(stateName: string): TaskResult {
@@ -397,14 +396,14 @@ export abstract class AbstractQuest {
 
     protected sendTarget({ virtualId, vnum, name }: { virtualId?: number; vnum?: number; name: string }) {
         if (vnum) {
-            return this.questTarget.sendTargetByVnum({ player: this.player, vnum, name });
+            return this.questTargetManager.sendTargetByVnum({ player: this.player, vnum, name });
         }
         if (virtualId) {
-            return this.questTarget.sendTargetByVirtualId({ player: this.player, virtualId, name });
+            return this.questTargetManager.sendTargetByVirtualId({ player: this.player, virtualId, name });
         }
     }
 
     protected removeTarget({ name }: { name: string }) {
-        return this.questTarget.removeTarget({ player: this.player, targetName: name });
+        return this.questTargetManager.removeTarget({ player: this.player, targetName: name });
     }
 }
