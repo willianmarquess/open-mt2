@@ -225,27 +225,27 @@ export default class Area {
             if (!entity) continue;
             entity.onSpawn();
             this.aoi.insert(entity);
-
-            const entities = this.aoi.queryAround(
-                entity,
-                CHAR_VIEW_SIZE,
-                entity.getEntityType() !== EntityTypeEnum.PLAYER ? EntityTypeEnum.PLAYER : undefined,
-            );
-
-            for (const otherEntity of entities.values()) {
-                if (otherEntity.getVirtualId() === entity.getVirtualId()) continue;
-
-                if (entity instanceof GameEntity) {
-                    entity.addNearbyEntity(otherEntity);
-                }
-
-                if (otherEntity instanceof Character) {
-                    otherEntity.addNearbyEntity(entity);
-                }
-            }
-
+            this.linkNearbyEntities(entity);
             this.entityManager.addEntity(entity);
             entity.setArea(this);
+        }
+    }
+
+    private linkNearbyEntities(entity: GameEntity) {
+        const entities = this.aoi.queryAround(
+            entity,
+            CHAR_VIEW_SIZE,
+            entity.getEntityType() !== EntityTypeEnum.PLAYER ? EntityTypeEnum.PLAYER : undefined,
+        );
+
+        for (const otherEntity of entities.values()) {
+            if (otherEntity.getVirtualId() === entity.getVirtualId()) continue;
+
+            entity.addNearbyEntity(otherEntity);
+
+            if (otherEntity instanceof Character) {
+                otherEntity.addNearbyEntity(entity);
+            }
         }
     }
 
