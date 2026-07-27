@@ -1,8 +1,8 @@
 export enum DamageFlagEnum {
-    NORMAL = 0x1,
-    POISON = 0x2,
-    DODGE = 0x4,
-    BLOCK = 0x8,
-    PENETRATE = 0x10,
-    CRITICAL = 0x20,
+    NORMAL = 0b1,
+    POISON = 0b10,
+    DODGE = 0b100,
+    BLOCK = 0b1000,
+    PENETRATE = 0b1_0000,
+    CRITICAL = 0b10_0000,
 }
