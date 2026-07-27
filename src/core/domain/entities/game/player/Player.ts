@@ -315,6 +315,7 @@ export default class Player extends Character {
             removeEventTimer: (id) => this.removeEventTimer(id),
             broadcastMountChange: () => this.broadcastMountChange(),
             showHorseCorpse: (entity) => this.showHorseCorpse(entity),
+            isRunningPrivateShop: () => this.isRunningPrivateShop(),
             getPositionX: () => this.positionX,
             getPositionY: () => this.positionY,
             getTargetPosition: () => this.getTargetPosition(),

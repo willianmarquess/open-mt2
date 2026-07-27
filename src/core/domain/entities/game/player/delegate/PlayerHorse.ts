@@ -24,6 +24,8 @@ export interface IHorseOwner {
     removeEventTimer(id: string): void;
     /** Broadcast updated mountId to self + nearby players. */
     broadcastMountChange(): void;
+    /** Whether the player currently has a private shop open. */
+    isRunningPrivateShop(): boolean;
     /**
      * Flag an alive NPC as this player's horse corpse: others render it lying
      * dead, the owner keeps it alive client-side (clickable, stun marker).
@@ -210,6 +212,16 @@ export class PlayerHorse {
     startRiding(): boolean {
         if (this.riding) return false;
 
+        // Original behaviour: mounting is refused while the private shop is
+        // open (otherwise the rider carries the shop stand around).
+        if (this.owner.isRunningPrivateShop()) {
+            this.owner.chat({
+                messageType: ChatMessageTypeEnum.INFO,
+                message: 'You cannot ride while your shop is open.',
+            });
+            return false;
+        }
+
         if (this.level <= 0) {
             this.owner.chat({ messageType: ChatMessageTypeEnum.INFO, message: 'You do not own a horse.' });
             return false;
@@ -242,6 +254,13 @@ export class PlayerHorse {
     /** Mount a rental horse without changing the player's owned horse state. */
     startTemporaryRiding(mountVnum: number, durationMs: number): boolean {
         if (this.riding || durationMs <= 0) return false;
+        if (this.owner.isRunningPrivateShop()) {
+            this.owner.chat({
+                messageType: ChatMessageTypeEnum.INFO,
+                message: 'You cannot ride while your shop is open.',
+            });
+            return false;
+        }
 
         this.despawnHorseEntity();
         this.riding = true;
