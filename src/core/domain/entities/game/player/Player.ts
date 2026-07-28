@@ -1374,6 +1374,31 @@ export default class Player extends Character {
         );
     }
 
+    /**
+     * Why this player cannot equip the item right now, or undefined when the
+     * item is not equipment at all (no wear flags) or nothing is blocking it.
+     * Mirrors the original's CanEquipNow chat feedback (char_item.cpp), which
+     * answers the level limit; class/gender are covered too so a refusal is
+     * never silent (issue #57).
+     */
+    getEquipFailureReason(item: Item): string | undefined {
+        if (item.getWearFlags().getFlag() < 1) return undefined;
+
+        if (this.getLevel() < item.getLevelLimit()) {
+            return `Your level is too low to equip this item. Required level: ${item.getLevelLimit()}.`;
+        }
+
+        if (item.getAntiFlags().is(this.antiFlagClass)) {
+            return 'Your class cannot use this item.';
+        }
+
+        if (item.getAntiFlags().is(this.antiFlagGender)) {
+            return 'This item cannot be equipped by your gender.';
+        }
+
+        return undefined;
+    }
+
     moveItem({
         fromWindow,
         fromPosition,
@@ -1394,7 +1419,11 @@ export default class Player extends Character {
         if (!this.getInventory().haveAvailablePosition(toPosition, item.getSize())) return;
 
         if (this.getInventory().isEquipmentPosition(toPosition)) {
-            if (!this.isWearable(item)) return;
+            if (!this.isWearable(item)) {
+                const reason = this.getEquipFailureReason(item);
+                if (reason) this.chat({ messageType: ChatMessageTypeEnum.INFO, message: reason });
+                return;
+            }
             if (!this.getInventory().isValidSlot(item, toPosition)) return;
         }
 
