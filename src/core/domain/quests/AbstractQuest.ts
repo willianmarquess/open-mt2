@@ -34,6 +34,11 @@ export abstract class AbstractQuest {
     // reaches select()/nextPage() (several awaits in), leaving a window where a
     // second click could start a concurrent run. This flag closes that window.
     private running: boolean = false;
+    // Player interacted with an open quest window during the current run
+    // (answered a select, turned a page, closed the window). Mirrors the
+    // original engine's m_bShouldSendDone: only then is a bare trailing
+    // [DONE] sent, so the client releases that window.
+    private shouldSendDone: boolean = false;
     private readonly questFlags: BitFlag = new BitFlag();
 
     private readonly player: Player;
@@ -105,7 +110,8 @@ export abstract class AbstractQuest {
                     } catch (err) {
                         console.error('[QUEST] condition error', err);
                     } finally {
-                        this.done();
+                        this.rearmLetter(context.eventType, callbackResult);
+                        this.autoDone();
                         this.endRunning(callbackResult);
                     }
                 } catch (err) {
@@ -117,6 +123,47 @@ export abstract class AbstractQuest {
 
     private getCurrentTasksByEvent(event: QuestEventEnum) {
         return this.currentState?.tasks.filter((routine) => routine.when === event) ?? [];
+    }
+
+    /**
+     * Trailing [DONE] policy, mirroring the original engine (SendScript in
+     * questmanager.cpp): send it when there is accumulated text to show, or
+     * when the player interacted with an open quest window during this run
+     * (answer, next page, close) and the client needs a bare [DONE] to release
+     * it. In any other case send nothing — a bare [DONE] ends the client-side
+     * quest script, which is what used to take quest letters down (issue #58).
+     */
+    private autoDone() {
+        const playerInteracted = this.shouldSendDone;
+        this.shouldSendDone = false;
+
+        if (this.src.length < 1 && !playerInteracted) return;
+
+        this.done();
+    }
+
+    /**
+     * The client destroys a letter the moment it is clicked (the click and the
+     * BUTTON packet are one action), so a BUTTON run that leaves the quest in
+     * the same state must re-send the [QUESTBUTTON] or the letter is gone for
+     * good (issue #58). Matches the resend_letter idiom of the original quest
+     * scripts: the button rides in the same script as the reply text. When the
+     * run changes state, endRunning dispatches the new state's LETTER event
+     * and that letter replaces this one.
+     */
+    private rearmLetter(eventType: QuestEventEnum, result?: TaskResult) {
+        if (eventType !== QuestEventEnum.BUTTON) return;
+        if (result && result.nextState && result.nextState !== this.currentState?.name) return;
+
+        const letterTitle = this.currentState?.letterTitle;
+        if (!letterTitle || !this.currentState?.wasStarted) return;
+
+        if (this.src.length > 0) {
+            this.src = this.button(letterTitle) + this.src;
+            return;
+        }
+
+        this.letter(letterTitle);
     }
 
     public async setState(name: string) {
@@ -170,6 +217,7 @@ export abstract class AbstractQuest {
 
     protected letter(title: string) {
         const src = this.button(title);
+        if (this.currentState) this.currentState.letterTitle = title;
         this.skin = QuestSkinEnum.NO_WINDOW;
         this.setStart();
         this.setTitle(this.currentState?.title || this.name);
@@ -180,6 +228,7 @@ export abstract class AbstractQuest {
     protected clearLetter() {
         if (!this.currentState) return;
         this.currentState.wasStarted = false;
+        this.currentState.letterTitle = undefined;
         this.questFlags.set(QuestFlagEnum.ISBEGIN);
     }
 
@@ -207,10 +256,12 @@ export abstract class AbstractQuest {
     }
 
     public unselect(answer: number) {
+        this.shouldSendDone = true;
         this.currentChoicePromise.resolve(answer);
     }
 
     public unpause() {
+        this.shouldSendDone = true;
         this.nextPagePromise.resolve();
     }
 
@@ -221,11 +272,13 @@ export abstract class AbstractQuest {
      */
     public cancel() {
         if (this.status === QuestStatusEnum.SELECT) {
+            this.shouldSendDone = true;
             this.currentChoicePromise.resolve(CLOSE_WINDOW_ANSWER);
             return;
         }
 
         if (this.status === QuestStatusEnum.PAUSE) {
+            this.shouldSendDone = true;
             this.nextPagePromise.resolve();
         }
     }
@@ -336,6 +389,7 @@ export abstract class AbstractQuest {
         this.questFlags.reset();
         if (!this.currentState) return;
         this.currentState.wasStarted = false;
+        this.currentState.letterTitle = undefined;
         this.currentState.title = undefined;
         this.currentState.clockName = undefined;
         this.currentState.clockValue = undefined;
