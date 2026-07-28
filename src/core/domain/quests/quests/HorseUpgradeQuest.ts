@@ -57,7 +57,7 @@ export class HorseUpgradeQuest extends AbstractQuest {
         state: HorseUpgradeQuestState.START,
         when: QuestEventEnum.CHAT,
         target: STABLE_MASTER_VNUM,
-        chat: 'Upgrade your horse',
+        chat: 'I want to upgrade my horse.',
         with: ({ player }) => player.getHorseLevel() in UPGRADES,
     })
     async onUpgradeChat() {
@@ -84,7 +84,7 @@ export class HorseUpgradeQuest extends AbstractQuest {
         }
 
         const minutes = TEST_DURATION_MS / 60_000;
-        this.text('Then prove you are worthy of a stronger mount.');
+        this.text('Then prove that you are worthy of a stronger mount.');
         this.text(`Defeat ${config.kills} monsters within ${minutes} minutes.`);
         this.text('Return to me when it is done.');
 
@@ -123,7 +123,7 @@ export class HorseUpgradeQuest extends AbstractQuest {
         state: HorseUpgradeQuestState.TEST,
         when: QuestEventEnum.CHAT,
         target: STABLE_MASTER_VNUM,
-        chat: 'Report the upgrade test',
+        chat: 'How is my test going?',
     })
     async onTestChat() {
         this.title('Stable Boy:');
@@ -139,7 +139,7 @@ export class HorseUpgradeQuest extends AbstractQuest {
         const remaining = Math.max(0, config.kills - this.getKillCount());
         const minutesLeft = Math.max(0, Math.ceil((this.getDeadline() - Date.now()) / 60_000));
         this.text('The test is not over yet.');
-        this.text(`${remaining} monsters left, ${minutesLeft} min remaining.`);
+        this.text(`${remaining} monsters left, ${minutesLeft} minutes remaining.`);
     }
 
     @Task({ state: HorseUpgradeQuestState.TEST, when: QuestEventEnum.LETTER })
@@ -171,8 +171,8 @@ export class HorseUpgradeQuest extends AbstractQuest {
 
         const remaining = Math.max(0, config.kills - this.getKillCount());
         const minutesLeft = Math.max(0, Math.ceil((this.getDeadline() - Date.now()) / 60_000));
-        this.text(`Defeat monsters to prove your worth.`);
-        this.text(`${remaining} of ${config.kills} left, ${minutesLeft} min remaining.`);
+        this.text('Defeat monsters to prove your worth.');
+        this.text(`${remaining} of ${config.kills} left, ${minutesLeft} minutes remaining.`);
     }
 
     @Task({ state: HorseUpgradeQuestState.TEST, when: QuestEventEnum.KILL })
@@ -210,15 +210,15 @@ export class HorseUpgradeQuest extends AbstractQuest {
 
     private describeReport() {
         this.title('Horse Upgrade');
-        this.text('Test passed!');
-        this.text('Report back to the Stable Boy.');
+        this.text('You passed the test!');
+        this.text('Go back to the Stable Boy to upgrade your horse.');
     }
 
     @Task({
         state: HorseUpgradeQuestState.REPORT,
         when: QuestEventEnum.CHAT,
         target: STABLE_MASTER_VNUM,
-        chat: 'Report the upgrade test',
+        chat: 'I passed your test.',
     })
     async onReportChat() {
         this.title('Stable Boy:');

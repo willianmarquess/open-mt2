@@ -42,7 +42,7 @@ export class HorseTrainingQuest extends AbstractQuest {
         state: HorseTrainingQuestState.START,
         when: QuestEventEnum.CHAT,
         target: STABLE_MASTER_VNUM,
-        chat: 'Train your horse',
+        chat: 'I want to train my horse.',
         with: ({ player }) => {
             const level = player.getHorseLevel();
             return level > 0 && level < 30 && level % 10 !== 0;
@@ -83,6 +83,22 @@ export class HorseTrainingQuest extends AbstractQuest {
 
         this.addValue('killCount', 0);
         return this.nextState(HorseTrainingQuestState.TRAINING);
+    }
+
+    /** Lets the player check progress with the Stable Boy, not only the letter. */
+    @Task({
+        state: HorseTrainingQuestState.TRAINING,
+        when: QuestEventEnum.CHAT,
+        target: STABLE_MASTER_VNUM,
+        chat: 'How is my training going?',
+    })
+    async onTrainingProgressChat() {
+        this.title('Stable Boy:');
+
+        const kills = this.getRequiredKills();
+        const remaining = Math.max(0, kills - this.getKillCount());
+        this.text('The training is not over yet.');
+        this.text(`${remaining} of ${kills} monsters left.`);
     }
 
     @Task({ state: HorseTrainingQuestState.TRAINING, when: QuestEventEnum.LETTER })
@@ -145,15 +161,15 @@ export class HorseTrainingQuest extends AbstractQuest {
 
     private describeReport() {
         this.title('Horse Training');
-        this.text('Training complete!');
-        this.text('Report back to the Stable Boy.');
+        this.text('The training is complete!');
+        this.text('Go back to the Stable Boy for the results.');
     }
 
     @Task({
         state: HorseTrainingQuestState.REPORT,
         when: QuestEventEnum.CHAT,
         target: STABLE_MASTER_VNUM,
-        chat: 'Report your training',
+        chat: 'My horse finished its training.',
     })
     async onReportChat() {
         this.title('Stable Boy:');
@@ -178,7 +194,7 @@ export class HorseTrainingQuest extends AbstractQuest {
 
         if (this.player.getHorseLevel() % 10 === 0) {
             this.text('It cannot grow further by training alone.');
-            this.text('ask me about an upgrade when you are ready.');
+            this.text('Ask me about an upgrade when you are ready.');
         }
 
         return this.nextState(HorseTrainingQuestState.START);
