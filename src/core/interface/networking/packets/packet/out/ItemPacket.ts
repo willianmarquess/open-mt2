@@ -11,15 +11,15 @@ class ItemBonus {
 }
 
 export default class ItemPacket extends PacketOut {
-    private window: number;
-    private position: number;
-    private id: number;
-    private count: number;
-    private flags: number;
-    private antiFlags: number;
-    private highlight: number;
-    private sockets = new Array<number>(3).fill(0);
-    private bonuses = new Array<ItemBonus>(
+    private readonly window: number;
+    private readonly position: number;
+    private readonly id: number;
+    private readonly count: number;
+    private readonly flags: number;
+    private readonly antiFlags: number;
+    private readonly highlight: number;
+    private readonly sockets = new Array<number>(3).fill(0);
+    private readonly bonuses = new Array<ItemBonus>(
         new ItemBonus({}),
         new ItemBonus({}),
         new ItemBonus({}),

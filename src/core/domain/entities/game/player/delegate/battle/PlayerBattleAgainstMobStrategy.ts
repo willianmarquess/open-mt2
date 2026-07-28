@@ -41,15 +41,11 @@ export default class PlayerBattleAgainstMobStrategy extends PlayerBattleStrategy
     }
 
     execute(attackType: AttackTypeEnum, victim: Monster) {
-        switch (attackType) {
-            case AttackTypeEnum.NORMAL:
-                //we need to verify the battle type before to do this
-                this.meleeAttack(victim);
-                break;
-
-            default:
-                this.logger.info(`[PlayerBattle] Attack ${attackType} not implemented yet.`);
-                break;
+        if (attackType === AttackTypeEnum.NORMAL) {
+            //we need to verify the battle type before to do this
+            this.meleeAttack(victim);
+        } else {
+            this.logger.info(`[PlayerBattle] Attack ${attackType} not implemented yet.`);
         }
     }
 
@@ -178,7 +174,7 @@ export default class PlayerBattleAgainstMobStrategy extends PlayerBattleStrategy
 
         const weapon = this.attacker.getWeapon();
 
-        if (weapon && weapon.getType() === ItemTypeEnum.ITEM_WEAPON) {
+        if (weapon?.getType() === ItemTypeEnum.ITEM_WEAPON) {
             switch (weapon.getSubType()) {
                 case ItemSubTypeEnum.WEAPON_SWORD:
                 case ItemSubTypeEnum.WEAPON_DAGGER:

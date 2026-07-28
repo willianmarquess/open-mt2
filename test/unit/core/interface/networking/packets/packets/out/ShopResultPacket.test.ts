@@ -29,7 +29,7 @@ describe('ShopEndPacket', () => {
 
     it('should pack to 4 bytes', () => {
         const buffer = packet.pack();
-        expect(buffer.length).to.equal(4);
+        expect(buffer).to.have.lengthOf(4);
     });
 });
 
@@ -77,6 +77,6 @@ describe('ShopResultPacket', () => {
     it('should pack to 4 bytes', () => {
         const packet = new ShopResultPacket({ result: ShopSubHeaderGC.OK });
         const buffer = packet.pack();
-        expect(buffer.length).to.equal(4);
+        expect(buffer).to.have.lengthOf(4);
     });
 });

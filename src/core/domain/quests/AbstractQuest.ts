@@ -16,22 +16,25 @@ const CLOSE_WINDOW_ANSWER = 254;
 
 export abstract class AbstractQuest {
     private readonly id!: number;
-    private name!: string;
+    private readonly name!: string;
     private readonly states: Map<string, State> = new Map();
     private src: string = '';
     private skin: QuestSkinEnum = QuestSkinEnum.NORMAL;
-    private currentChoicePromise: { promise: Promise<any>; resolve: (value?: number) => void | Promise<void> } =
+    private readonly currentChoicePromise: {
+        promise: Promise<any>;
+        resolve: (value?: number) => void | Promise<void>;
+    } = {} as any;
+    private readonly nextPagePromise: { promise: Promise<any>; resolve: (value?: number) => void | Promise<void> } =
         {} as any;
-    private nextPagePromise: { promise: Promise<any>; resolve: (value?: number) => void | Promise<void> } = {} as any;
     private currentState: State | undefined;
-    private values: Map<string, any> = new Map();
+    private readonly values: Map<string, any> = new Map();
     private hasReward: boolean = false;
     private status: QuestStatusEnum = QuestStatusEnum.NONE;
     // Synchronous busy flag. Status only becomes SELECT/PAUSE after the callback
     // reaches select()/nextPage() (several awaits in), leaving a window where a
     // second click could start a concurrent run. This flag closes that window.
     private running: boolean = false;
-    private questFlags: BitFlag = new BitFlag();
+    private readonly questFlags: BitFlag = new BitFlag();
 
     private readonly player: Player;
     private readonly playerQuest: PlayerQuest;
@@ -113,13 +116,11 @@ export abstract class AbstractQuest {
     }
 
     private getCurrentTasksByEvent(event: QuestEventEnum) {
-        return this.currentState?.tasks.filter((routine) => routine.when === event) || [];
+        return this.currentState?.tasks.filter((routine) => routine.when === event) ?? [];
     }
 
     public async setState(name: string) {
-        if (!this.currentState) {
-            this.currentState = this.states.get(name);
-        }
+        this.currentState ??= this.states.get(name);
 
         await this.runState({ eventType: QuestEventEnum.LEAVE_STATE });
         this.currentState = this.states.get(name);

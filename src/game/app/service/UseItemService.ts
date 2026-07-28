@@ -12,8 +12,8 @@ import { WindowTypeEnum } from '@/core/enum/WindowTypeEnum';
 import Logger from '@/core/infra/logger/Logger';
 
 export default class UseItemService {
-    private logger: Logger;
-    private itemManager: ItemManager;
+    private readonly logger: Logger;
+    private readonly itemManager: ItemManager;
     private readonly mobManager: MobManager;
 
     constructor({

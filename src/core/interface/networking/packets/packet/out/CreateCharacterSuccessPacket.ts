@@ -42,8 +42,8 @@ const defaultCharacterInfo: CharacterParams = {
 };
 
 export default class CreateCharacterSuccessPacket extends PacketOut {
-    private slot: number;
-    private character: CharacterParams;
+    private readonly slot: number;
+    private readonly character: CharacterParams;
 
     constructor({ slot, character = defaultCharacterInfo }: { slot: number; character?: CharacterParams }) {
         super({

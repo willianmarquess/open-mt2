@@ -1,7 +1,7 @@
 import RuleBuilder from '@/core/infra/validation/RuleBuilder';
 
 export default class FluentValidator {
-    private rules: Array<RuleBuilder<any>>;
+    private readonly rules: Array<RuleBuilder<any>>;
 
     constructor() {
         this.rules = [];

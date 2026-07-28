@@ -11,7 +11,7 @@ async function loadScript() {
     const scriptWithSeedValues = bruteScript.replaceAll(SEED_ADMIN_HASH_PLACEHOLDER, seedAdminHash);
     const cleanedScript = scriptWithSeedValues.replace(/(\r\n|\n|\r)/gm, '');
     const scriptSplittedByCommand = cleanedScript.split(';');
-    const validCommandScriptArray = scriptSplittedByCommand.filter((s) => s);
+    const validCommandScriptArray = scriptSplittedByCommand.filter(Boolean);
     return validCommandScriptArray;
 }
 

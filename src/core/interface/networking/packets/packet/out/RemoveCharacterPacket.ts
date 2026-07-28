@@ -2,7 +2,7 @@ import PacketHeaderEnum from '@/core/enum/PacketHeaderEnum';
 import PacketOut from '@/core/interface/networking/packets/packet/out/PacketOut';
 
 export default class RemoveCharacterPacket extends PacketOut {
-    private vid: number;
+    private readonly vid: number;
 
     constructor({ vid }: { vid: number }) {
         super({

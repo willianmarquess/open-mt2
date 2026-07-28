@@ -1,4 +1,4 @@
-import { randomBytes, randomUUID } from 'crypto';
+import { randomBytes, randomUUID } from 'node:crypto';
 import { Socket } from 'node:net';
 import ConnectionStatePacket from './packets/packet/out/ConnectionStatePacket';
 import { ConnectionStateEnum } from '../../enum/ConnectionStateEnum';

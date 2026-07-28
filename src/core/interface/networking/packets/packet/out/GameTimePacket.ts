@@ -2,7 +2,7 @@ import PacketHeaderEnum from '@/core/enum/PacketHeaderEnum';
 import PacketOut from '@/core/interface/networking/packets/packet/out/PacketOut';
 
 export default class GameTimePacket extends PacketOut {
-    private time: number;
+    private readonly time: number;
 
     constructor({ time }: { time: number }) {
         super({

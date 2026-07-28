@@ -2,10 +2,10 @@ import PacketHeaderEnum from '@/core/enum/PacketHeaderEnum';
 import PacketOut from '@/core/interface/networking/packets/packet/out/PacketOut';
 
 export default class TeleportPacket extends PacketOut {
-    private positionX: number;
-    private positionY: number;
-    private address: number;
-    private port: number;
+    private readonly positionX: number;
+    private readonly positionY: number;
+    private readonly address: number;
+    private readonly port: number;
 
     constructor({
         positionX,

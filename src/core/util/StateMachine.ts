@@ -10,7 +10,7 @@ export interface State {
 //TODO: add state durantion/delay based on tick per second
 
 export class StateMachine {
-    private states: Map<EntityStateEnum, State> = new Map();
+    private readonly states: Map<EntityStateEnum, State> = new Map();
     private currentState: State | null = null;
 
     addState(state: State) {

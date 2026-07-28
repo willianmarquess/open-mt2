@@ -1,7 +1,7 @@
 import { ConnectionStateEnum } from '../../../core/enum/ConnectionStateEnum';
 import Connection from '../../../core/interface/networking/Connection';
 import Player from '@/core/domain/entities/game/player/Player';
-import { Socket } from 'net';
+import { Socket } from 'node:net';
 import Logger from '@/core/infra/logger/Logger';
 
 // const hexString = (buffer) =>

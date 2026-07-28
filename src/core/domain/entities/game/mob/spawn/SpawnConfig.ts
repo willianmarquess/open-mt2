@@ -85,7 +85,7 @@ export default class SpawnConfig {
     }
 
     getRespawnTimeInMs() {
-        const match = this.respawnTime?.match(/^(\d+)([smh])$/);
+        const match = /^(\d+)([smh])$/.exec(this.respawnTime ?? '');
 
         if (!match) return DEFAULT_RESPAWN_TIME_IN_MS;
 
@@ -93,11 +93,11 @@ export default class SpawnConfig {
 
         switch (type) {
             case 's':
-                return parseInt(value) * SECOND_IN_MS;
+                return Number.parseInt(value) * SECOND_IN_MS;
             case 'm':
-                return parseInt(value) * MINUTE_IN_MS;
+                return Number.parseInt(value) * MINUTE_IN_MS;
             case 'h':
-                return parseInt(value) * HOUR_IN_MS;
+                return Number.parseInt(value) * HOUR_IN_MS;
             default:
                 return DEFAULT_RESPAWN_TIME_IN_MS;
         }

@@ -2,7 +2,7 @@ import PacketHeaderEnum from '@/core/enum/PacketHeaderEnum';
 import PacketOut from '@/core/interface/networking/packets/packet/out/PacketOut';
 
 export default class ItemDroppedHidePacket extends PacketOut {
-    private virtualId: number;
+    private readonly virtualId: number;
 
     constructor({ virtualId }: { virtualId: number }) {
         super({

@@ -108,10 +108,10 @@ export default class Player extends Character {
     private readonly accountId: number;
     private readonly playerClass: number;
     private skillGroup: number;
-    private bodyPart: number;
-    private hairPart: number;
-    private slot: number;
-    private appearance: number;
+    private readonly bodyPart: number;
+    private readonly hairPart: number;
+    private readonly slot: number;
+    private readonly appearance: number;
     private lastPlayTime: number = performance.now();
     private blockMode: number = BlockFlagEnum.NONE;
 
@@ -678,7 +678,6 @@ export default class Player extends Character {
             if (attacker instanceof Player) {
                 this.questManager.onKill(attacker, this);
             }
-            return;
         }
     }
 
@@ -1438,27 +1437,7 @@ export default class Player extends Character {
      * fit — in which case the inventory is left untouched.
      */
     addItemStacking(item: Item): { updated: Array<Item>; inserted: Item | null } | null {
-        const merges: Array<{ item: Item; amount: number }> = [];
-
-        if (item.isStackable()) {
-            for (const existing of this.inventory.getItems().values()) {
-                if (item.getCount() <= 0) break;
-                if (existing === item) continue;
-                if (existing.getWindow() !== WindowTypeEnum.INVENTORY) continue;
-                if (existing.getId() !== item.getId() || !existing.isStackable()) continue;
-                // Only merge into items actually present in the grid — a stale
-                // map entry (ghost) would swallow the units into an empty slot.
-                if (this.inventory.getItem(existing.getPosition()) !== existing) continue;
-
-                const room = MAX_ITEM_STACK - existing.getCount();
-                if (room <= 0) continue;
-
-                const moved = Math.min(room, item.getCount());
-                existing.setCount(existing.getCount() + moved);
-                item.setCount(item.getCount() - moved);
-                merges.push({ item: existing, amount: moved });
-            }
-        }
+        const merges = item.isStackable() ? this.mergeIntoExistingStacks(item) : [];
 
         let inserted: Item | null = null;
         if (item.getCount() > 0) {
@@ -1490,6 +1469,34 @@ export default class Player extends Character {
         }
 
         return { updated, inserted };
+    }
+
+    private mergeIntoExistingStacks(item: Item): Array<{ item: Item; amount: number }> {
+        const merges: Array<{ item: Item; amount: number }> = [];
+
+        for (const existing of this.inventory.getItems().values()) {
+            if (item.getCount() <= 0) break;
+            if (!this.canMergeInto(existing, item)) continue;
+
+            const room = MAX_ITEM_STACK - existing.getCount();
+            if (room <= 0) continue;
+
+            const moved = Math.min(room, item.getCount());
+            existing.setCount(existing.getCount() + moved);
+            item.setCount(item.getCount() - moved);
+            merges.push({ item: existing, amount: moved });
+        }
+
+        return merges;
+    }
+
+    private canMergeInto(existing: Item, item: Item): boolean {
+        if (existing === item) return false;
+        if (existing.getWindow() !== WindowTypeEnum.INVENTORY) return false;
+        if (existing.getId() !== item.getId() || !existing.isStackable()) return false;
+        // Only merge into items actually present in the grid — a stale
+        // map entry (ghost) would swallow the units into an empty slot.
+        return this.inventory.getItem(existing.getPosition()) === existing;
     }
 
     addItems(items: Array<Item>) {

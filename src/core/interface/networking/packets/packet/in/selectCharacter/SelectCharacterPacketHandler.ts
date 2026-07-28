@@ -46,7 +46,6 @@ export default class SelectCharacterPacketHandler extends PacketHandler<SelectCh
 
         if (result.hasError()) {
             connection.close();
-            return;
         }
     }
 }

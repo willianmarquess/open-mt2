@@ -4,8 +4,8 @@ import PacketOut from '@/core/interface/networking/packets/packet/out/PacketOut'
 const PLAYER_NAME_MAX_LENGTH = 25;
 
 export default class SetItemOwnershipPacket extends PacketOut {
-    private virtualId: number;
-    private ownerName: string;
+    private readonly virtualId: number;
+    private readonly ownerName: string;
 
     constructor({ ownerName, virtualId }: { ownerName: string; virtualId: number }) {
         super({

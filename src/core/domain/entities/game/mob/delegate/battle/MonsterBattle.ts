@@ -24,29 +24,26 @@ export default class MonsterBattle {
     }
 
     execute(attackType: AttackTypeEnum, victim: Player): void {
-        switch (attackType) {
-            case AttackTypeEnum.NORMAL:
-                switch (this.attacker.getBattleType()) {
-                    case BattleTypeEnum.MELEE:
-                    case BattleTypeEnum.POWER:
-                    case BattleTypeEnum.TANKER:
-                    case BattleTypeEnum.SUPER_POWER:
-                    case BattleTypeEnum.SUPER_TANKER:
-                        this.meleeAttack(victim);
-                        break;
+        if (attackType !== AttackTypeEnum.NORMAL) {
+            this.logger.info(`[MonsterBattle] Attack ${attackType} not implemented yet.`);
+            return;
+        }
 
-                    case BattleTypeEnum.RANGE:
-                        //TODO
-                        break;
-
-                    case BattleTypeEnum.MAGIC:
-                        //TODO
-                        break;
-                }
+        switch (this.attacker.getBattleType()) {
+            case BattleTypeEnum.MELEE:
+            case BattleTypeEnum.POWER:
+            case BattleTypeEnum.TANKER:
+            case BattleTypeEnum.SUPER_POWER:
+            case BattleTypeEnum.SUPER_TANKER:
+                this.meleeAttack(victim);
                 break;
 
-            default:
-                this.logger.info(`[MonsterBattle] Attack ${attackType} not implemented yet.`);
+            case BattleTypeEnum.RANGE:
+                //TODO
+                break;
+
+            case BattleTypeEnum.MAGIC:
+                //TODO
                 break;
         }
     }

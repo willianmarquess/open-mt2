@@ -6,8 +6,8 @@ import { ChatMessageTypeEnum } from '@/core/enum/ChatMessageTypeEnum';
 import CommandManager from '@/game/app/command/CommandManager';
 
 export default class ChatInPacketHandler extends PacketHandler<ChatInPacket> {
-    private logger: Logger;
-    private commandManager: CommandManager;
+    private readonly logger: Logger;
+    private readonly commandManager: CommandManager;
 
     constructor({ logger, commandManager }: { logger: Logger; commandManager: CommandManager }) {
         super();

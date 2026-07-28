@@ -18,12 +18,12 @@ import PacketOut from '@/core/interface/networking/packets/packet/out/PacketOut'
  */
 
 export default class AffectAddPacket extends PacketOut {
-    private type: number;
-    private apply: number;
-    private value: number;
-    private flag: number;
-    private duration: number;
-    private manaCost: number;
+    private readonly type: number;
+    private readonly apply: number;
+    private readonly value: number;
+    private readonly flag: number;
+    private readonly duration: number;
+    private readonly manaCost: number;
 
     constructor({
         type,

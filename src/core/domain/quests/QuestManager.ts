@@ -1,5 +1,5 @@
-import * as fs from 'fs';
-import * as path from 'path';
+import * as fs from 'node:fs';
+import * as path from 'node:path';
 import Logger from '@/core/infra/logger/Logger';
 import { AbstractQuest } from './AbstractQuest';
 import { getQuestMeta, QuestStatusEnum } from './decorators/QuestDecorator';
@@ -45,108 +45,99 @@ export class QuestManager {
 
         for (const file of files) {
             try {
-                const fullPath = path.join(baseDir, file);
-
-                delete require.cache[require.resolve(fullPath)];
-                // eslint-disable-next-line
-                const mod = require(fullPath);
-
-                const exports = Object.values(mod);
-                for (const exp of exports) {
-                    if (this.isQuestClass(exp)) {
-                        const ctor: any = exp;
-                        const meta = getQuestMeta(ctor);
-                        const id = meta!.id;
-
-                        if (this.questsClasses.has(id)) {
-                            throw new Error(`[QuestManager] Quest class name should be unique, duplicated key: ${id}`);
-                        }
-
-                        this.questsClasses.set(id, ctor);
-
-                        if (meta && meta.states) {
-                            for (const [, metaState] of meta.states) {
-                                for (const t of metaState.tasks) {
-                                    switch (t.when) {
-                                        case QuestEventEnum.CLICK:
-                                            {
-                                                const target = t.target as number | number[] | undefined;
-                                                if (target !== undefined) {
-                                                    const targets = [target].flat();
-
-                                                    for (const targetId of targets) {
-                                                        let stateMap = this.questsClickEvents.get(targetId);
-                                                        if (!stateMap) {
-                                                            stateMap = new Map<number, Set<string>>();
-                                                            this.questsClickEvents.set(targetId, stateMap);
-                                                        }
-
-                                                        let set = stateMap.get(id);
-                                                        if (!set) {
-                                                            set = new Set<string>();
-                                                            stateMap.set(id, set);
-                                                        }
-
-                                                        set.add(metaState.name);
-                                                    }
-                                                } else {
-                                                    this.addQuestToEvent(QuestEventEnum.CLICK, id, metaState.name);
-                                                }
-                                            }
-                                            break;
-                                        case QuestEventEnum.LOGIN:
-                                            this.addQuestToEvent(QuestEventEnum.LOGIN, id, metaState.name);
-                                            break;
-                                        case QuestEventEnum.LOGOUT:
-                                            this.addQuestToEvent(QuestEventEnum.LOGOUT, id, metaState.name);
-                                            break;
-                                        case QuestEventEnum.LEVELUP:
-                                            this.addQuestToEvent(QuestEventEnum.LEVELUP, id, metaState.name);
-                                            break;
-                                        case QuestEventEnum.BUTTON:
-                                            this.addQuestToEvent(QuestEventEnum.BUTTON, id, metaState.name);
-                                            break;
-                                        case QuestEventEnum.INFO:
-                                            this.addQuestToEvent(QuestEventEnum.INFO, id, metaState.name);
-                                            break;
-                                        case QuestEventEnum.CHAT:
-                                            this.addQuestToEvent(QuestEventEnum.CHAT, id, metaState.name);
-                                            break;
-                                        case QuestEventEnum.ATTR_IN:
-                                            this.addQuestToEvent(QuestEventEnum.ATTR_IN, id, metaState.name);
-                                            break;
-                                        case QuestEventEnum.ATTR_OUT:
-                                            this.addQuestToEvent(QuestEventEnum.ATTR_OUT, id, metaState.name);
-                                            break;
-                                        case QuestEventEnum.ITEM_USE:
-                                            this.addQuestToEvent(QuestEventEnum.ITEM_USE, id, metaState.name);
-                                            break;
-                                        case QuestEventEnum.SERVER_TIMER:
-                                            this.addQuestToEvent(QuestEventEnum.SERVER_TIMER, id, metaState.name);
-                                            break;
-                                        case QuestEventEnum.ENTER_STATE:
-                                            this.addQuestToEvent(QuestEventEnum.ENTER_STATE, id, metaState.name);
-                                            break;
-                                        case QuestEventEnum.LEAVE_STATE:
-                                            this.addQuestToEvent(QuestEventEnum.LEAVE_STATE, id, metaState.name);
-                                            break;
-                                        case QuestEventEnum.KILL:
-                                            this.addQuestToEvent(QuestEventEnum.KILL, id, metaState.name);
-                                            break;
-                                    }
-                                }
-                            }
-                        }
-
-                        this.logger.info(`[QUEST_MANAGER] Loaded quest ${file} as id=${id}`);
-                    }
-                }
+                this.loadQuestFile(baseDir, file);
             } catch (err) {
                 this.logger.error(`[QUEST_MANAGER] Failed to load quest file ${file}: ${(err as Error).message}`);
             }
         }
 
         this.logger.info(`[QUEST_MANAGER] Loaded ${this.questsClasses.size} quests`);
+    }
+
+    private loadQuestFile(baseDir: string, file: string) {
+        const fullPath = path.join(baseDir, file);
+
+        delete require.cache[require.resolve(fullPath)];
+        // eslint-disable-next-line @typescript-eslint/no-require-imports
+        const mod = require(fullPath);
+
+        for (const exp of Object.values(mod)) {
+            if (this.isQuestClass(exp)) {
+                this.registerQuestClass(exp, file);
+            }
+        }
+    }
+
+    private registerQuestClass(exp: unknown, file: string) {
+        const ctor: any = exp;
+        const meta = getQuestMeta(ctor);
+        const id = meta!.id;
+
+        if (this.questsClasses.has(id)) {
+            throw new Error(`[QuestManager] Quest class name should be unique, duplicated key: ${id}`);
+        }
+
+        this.questsClasses.set(id, ctor);
+
+        if (meta?.states) {
+            for (const [, metaState] of meta.states) {
+                for (const t of metaState.tasks) {
+                    this.registerTask(id, metaState.name, t);
+                }
+            }
+        }
+
+        this.logger.info(`[QUEST_MANAGER] Loaded quest ${file} as id=${id}`);
+    }
+
+    private static readonly SIMPLE_TASK_EVENTS: ReadonlySet<QuestEventEnum> = new Set([
+        QuestEventEnum.LOGIN,
+        QuestEventEnum.LOGOUT,
+        QuestEventEnum.LEVELUP,
+        QuestEventEnum.BUTTON,
+        QuestEventEnum.INFO,
+        QuestEventEnum.CHAT,
+        QuestEventEnum.ATTR_IN,
+        QuestEventEnum.ATTR_OUT,
+        QuestEventEnum.ITEM_USE,
+        QuestEventEnum.SERVER_TIMER,
+        QuestEventEnum.ENTER_STATE,
+        QuestEventEnum.LEAVE_STATE,
+        QuestEventEnum.KILL,
+    ]);
+
+    private registerTask(questId: number, stateName: string, task: { when: QuestEventEnum; target?: unknown }) {
+        if (task.when === QuestEventEnum.CLICK) {
+            this.registerClickTask(questId, stateName, task.target as number | number[] | undefined);
+            return;
+        }
+
+        if (QuestManager.SIMPLE_TASK_EVENTS.has(task.when)) {
+            this.addQuestToEvent(task.when, questId, stateName);
+        }
+    }
+
+    private registerClickTask(questId: number, stateName: string, target: number | number[] | undefined) {
+        if (target === undefined) {
+            this.addQuestToEvent(QuestEventEnum.CLICK, questId, stateName);
+            return;
+        }
+
+        for (const targetId of [target].flat()) {
+            let stateMap = this.questsClickEvents.get(targetId);
+            if (!stateMap) {
+                stateMap = new Map<number, Set<string>>();
+                this.questsClickEvents.set(targetId, stateMap);
+            }
+
+            let set = stateMap.get(questId);
+            if (!set) {
+                set = new Set<string>();
+                stateMap.set(questId, set);
+            }
+
+            set.add(stateName);
+        }
     }
 
     private addQuestToEvent(event: QuestEventEnum, questId: number, stateName: string) {
@@ -192,7 +183,7 @@ export class QuestManager {
             (instance as any).id = meta?.id ?? id;
             (instance as any).name = meta?.name ?? id;
 
-            if (meta && meta.states) {
+            if (meta?.states) {
                 for (const [stateName, metaState] of meta.states) {
                     const tasks = metaState.tasks.map((t: any) => {
                         const handler = (instance as any)[t.handlerName];

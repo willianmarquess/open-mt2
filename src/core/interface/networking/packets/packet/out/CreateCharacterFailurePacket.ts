@@ -2,7 +2,7 @@ import PacketHeaderEnum from '@/core/enum/PacketHeaderEnum';
 import PacketOut from '@/core/interface/networking/packets/packet/out/PacketOut';
 
 export default class CreateCharacterFailurePacket extends PacketOut {
-    private reason: number;
+    private readonly reason: number;
 
     constructor({ reason }: { reason: number }) {
         super({

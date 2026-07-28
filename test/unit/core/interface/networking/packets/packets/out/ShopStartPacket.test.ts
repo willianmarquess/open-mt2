@@ -22,7 +22,7 @@ describe('ShopStartPacket', () => {
 
     it('should pack packet with correct size (1728 bytes)', () => {
         const buffer = packet.pack();
-        expect(buffer.length).to.equal(1728);
+        expect(buffer).to.have.lengthOf(1728);
     });
 
     it('should pack header correctly', () => {
@@ -95,7 +95,7 @@ describe('ShopStartPacket', () => {
 
     it('should pack all 40 items slots', () => {
         const buffer = packet.pack();
-        expect(buffer.length).to.equal(1728);
+        expect(buffer).to.have.lengthOf(1728);
 
         // Verify we have exactly 40 slots
         // Total size = header(1) + size(2) + subheader(1) + ownerVid(4) + 40*43 = 1728
@@ -132,7 +132,7 @@ describe('ShopStartPacket', () => {
         const emptyPacket = new ShopStartPacket({ ownerVid: 99999, items: [] });
         const buffer = emptyPacket.pack();
 
-        expect(buffer.length).to.equal(1728);
+        expect(buffer).to.have.lengthOf(1728);
         // All items should be zero
         const headerSize = 1 + 2 + 1 + 4;
         const firstItemVnum = buffer.readUInt32LE(headerSize);

@@ -43,5 +43,7 @@ describe('CharacterAttackService', () => {
         entityManager.getEntity.returns(victim);
 
         await service.execute(player, AttackTypeEnum.NORMAL, 2);
+
+        expect(player.attack.calledOnceWith(AttackTypeEnum.NORMAL, victim)).to.be.true;
     });
 });
