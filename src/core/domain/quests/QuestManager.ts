@@ -3,6 +3,8 @@ import * as path from 'node:path';
 import Logger from '@/core/infra/logger/Logger';
 import { AbstractQuest } from './AbstractQuest';
 import { getQuestMeta, MetaTask, QuestStatusEnum } from './decorators/QuestDecorator';
+
+type TaskTarget = number | number[] | undefined;
 import { QuestEventEnum } from '@/core/enum/QuestEventEnum';
 import { QuestSkinEnum } from '@/core/enum/QuestSkinEnum';
 import Player from '../entities/game/player/Player';
@@ -63,7 +65,7 @@ export class QuestManager {
 
         for (const file of files) {
             try {
-this.loadQuestFile(baseDir, file);
+                this.loadQuestFile(baseDir, file);
             } catch (err) {
                 this.logger.error(`[QUEST_MANAGER] Failed to load quest file ${file}: ${(err as Error).message}`);
             }
@@ -125,7 +127,7 @@ this.loadQuestFile(baseDir, file);
 
     private registerTask(questId: number, stateName: string, task: MetaTask) {
         if (task.when === QuestEventEnum.CLICK) {
-            this.registerClickTask(questId, stateName, task.target as number | number[] | undefined);
+            this.registerClickTask(questId, stateName, task.target as TaskTarget);
             return;
         }
 
@@ -145,7 +147,7 @@ this.loadQuestFile(baseDir, file);
      * plain chat-event subscription.
      */
     private registerChatTask(questId: number, stateName: string, task: MetaTask) {
-        const target = task.target as number | number[] | undefined;
+        const target = task.target as TaskTarget;
 
         if (target !== undefined && task.chat) {
             for (const targetId of [target].flat()) {
@@ -165,7 +167,7 @@ this.loadQuestFile(baseDir, file);
         this.addQuestToEvent(QuestEventEnum.CHAT, questId, stateName);
     }
 
-    private registerClickTask(questId: number, stateName: string, target: number | number[] | undefined) {
+    private registerClickTask(questId: number, stateName: string, target: TaskTarget) {
         if (target === undefined) {
             this.addQuestToEvent(QuestEventEnum.CLICK, questId, stateName);
             return;
