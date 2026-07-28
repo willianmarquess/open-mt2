@@ -177,7 +177,7 @@ export class HorseTrainingQuest extends AbstractQuest {
         this.text(`It is now level ${this.player.getHorseLevel()}.`);
 
         if (this.player.getHorseLevel() % 10 === 0) {
-            this.text('It cannot grow further by training alone —');
+            this.text('It cannot grow further by training alone.');
             this.text('ask me about an upgrade when you are ready.');
         }
 

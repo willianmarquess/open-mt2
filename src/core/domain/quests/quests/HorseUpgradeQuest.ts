@@ -127,7 +127,7 @@ export class HorseUpgradeQuest extends AbstractQuest {
 
         if (!config || this.isExpired()) {
             this.player.removeEventTimer(TEST_TIMER_ID);
-            this.text('Time ran out — the test has failed.');
+            this.text('Time ran out. The test has failed.');
             this.text('Rest, and ask me again when you are ready.');
             return this.nextState(HorseUpgradeQuestState.START);
         }
@@ -235,8 +235,8 @@ export class HorseUpgradeQuest extends AbstractQuest {
         this.player.setHorseLevel(config.nextLevel);
 
         this.text('You proved yourself worthy!');
-        this.text(`Your horse advanced to level ${config.nextLevel} —`);
-        this.text('summon it and see how it grew.');
+        this.text(`Your horse advanced to level ${config.nextLevel}.`);
+        this.text('Summon it and see how it grew.');
 
         return this.nextState(HorseUpgradeQuestState.START);
     }
