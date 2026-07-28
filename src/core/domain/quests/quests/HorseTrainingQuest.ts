@@ -70,8 +70,15 @@ export class HorseTrainingQuest extends AbstractQuest {
         }
 
         const kills = this.getRequiredKills();
-        this.text('Attacking from horseback is much harder than just riding.');
-        this.text(`Defeat ${kills} monsters without leaving your horse.`);
+        if (this.player.getHorseGrade() === 1) {
+            // A beginner horse cannot fight (the client refuses attacks on a
+            // grade-1 mount), so its training is watching the owner fight.
+            this.text('Your horse is too young to fight from its back.');
+            this.text(`Defeat ${kills} monsters while it watches and learns.`);
+        } else {
+            this.text('Attacking from horseback is much harder than just riding.');
+            this.text(`Defeat ${kills} monsters without leaving your horse.`);
+        }
         this.text('Come back when you are done.');
 
         this.addValue('killCount', 0);
@@ -97,15 +104,21 @@ export class HorseTrainingQuest extends AbstractQuest {
         const kills = this.getRequiredKills();
         const remaining = Math.max(0, kills - this.getKillCount());
         this.title('Horse Training');
-        this.text(`Defeat monsters while riding your horse.`);
+        if (this.player.getHorseGrade() === 1) {
+            this.text(`Defeat monsters while your horse watches.`);
+        } else {
+            this.text(`Defeat monsters while riding your horse.`);
+        }
         this.text(`${remaining} of ${kills} left.`);
     }
 
     @Task({ state: HorseTrainingQuestState.TRAINING, when: QuestEventEnum.KILL })
     async trainingOnKill({ player }: KillExecutionContext) {
-        // Only kills made from horseback count; dismounting just pauses
-        // progress (original: dismounting failed the whole mission).
-        if (!player.getPlayerInstance().isHorseRiding()) return;
+        // Grades 2-3: only kills made from horseback count; dismounting just
+        // pauses progress (original: dismounting failed the whole mission).
+        // Grade 1: the client refuses attacks on a beginner mount, so kills
+        // count on foot.
+        if (this.player.getHorseGrade() >= 2 && !this.player.isHorseRiding()) return;
 
         const killCount = this.getKillCount() + 1;
         this.addValue('killCount', killCount);
