@@ -1,6 +1,6 @@
 import { QuestEventEnum } from '@/core/enum/QuestEventEnum';
 import { AbstractQuest } from '../AbstractQuest';
-import { KillExecutionContext, Quest, Task } from '../decorators/QuestDecorator';
+import { Quest, Task } from '../decorators/QuestDecorator';
 
 enum HorseTrainingQuestState {
     START = 'START',
@@ -113,7 +113,7 @@ export class HorseTrainingQuest extends AbstractQuest {
     }
 
     @Task({ state: HorseTrainingQuestState.TRAINING, when: QuestEventEnum.KILL })
-    async trainingOnKill({ player }: KillExecutionContext) {
+    async trainingOnKill() {
         // Grades 2-3: only kills made from horseback count; dismounting just
         // pauses progress (original: dismounting failed the whole mission).
         // Grade 1: the client refuses attacks on a beginner mount, so kills
