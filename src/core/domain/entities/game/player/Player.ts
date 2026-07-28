@@ -2021,8 +2021,8 @@ export default class Player extends Character {
         return this.horse.startTemporaryRiding(mountVnum, durationMs);
     }
 
-    stopRiding(): boolean {
-        return this.horse.stopRiding();
+    stopRiding(forced: boolean = false): boolean {
+        return this.horse.stopRiding(forced);
     }
 
     toggleRiding() {

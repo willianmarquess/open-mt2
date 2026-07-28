@@ -199,11 +199,30 @@ describe('PlayerHorse', () => {
             rider.startRiding();
             watcherConn.sentPackets.length = 0;
 
-            expect(rider.stopRiding()).to.be.equal(true);
+            // Forced: a voluntary dismount right after mounting is refused by
+            // the mount cooldown (covered by its own test below).
+            expect(rider.stopRiding(true)).to.be.equal(true);
             expect(rider.isHorseRiding()).to.be.equal(false);
 
             const names = watcherConn.sentPackets.map((p) => p.name);
             expect(names).to.include('CharacterSpawnPacket');
+        });
+
+        it('should rate limit mount changes but allow forced dismounts', () => {
+            const factory = createFactory();
+            const rider = createPlayer(factory, 1, 'Rider', true);
+            rider.setConnection(createConnection().connection);
+
+            expect(rider.startRiding()).to.be.equal(true);
+
+            // Toggling again within the cooldown is refused, so the client is
+            // never asked to spawn a horse while it still fades the last one.
+            expect(rider.stopRiding()).to.be.equal(false);
+            expect(rider.isHorseRiding()).to.be.equal(true);
+
+            // Dismounts the player did not ask for still go through.
+            expect(rider.stopRiding(true)).to.be.equal(true);
+            expect(rider.isHorseRiding()).to.be.equal(false);
         });
     });
 
@@ -319,8 +338,9 @@ describe('PlayerHorse', () => {
             owner.restoreHorseRiding();
             expect(owner.isHorseRiding()).to.be.equal(true);
 
-            // Restoring twice must not re-trigger anything
-            owner.stopRiding();
+            // Restoring twice must not re-trigger anything (forced dismount:
+            // the mount cooldown would refuse a voluntary one this quickly)
+            owner.stopRiding(true);
             owner.restoreHorseRiding();
             expect(owner.isHorseRiding()).to.be.equal(false);
         });

@@ -53,7 +53,7 @@ export default class PrivateShopService {
         // server must dismount too — otherwise riding stays true and nearby
         // players keep seeing a rider carrying the shop stand around.
         if (player.isHorseRiding()) {
-            player.stopRiding();
+            player.stopRiding(true);
         }
 
         // Leave any NPC shop or browsed private shop first instead of refusing:

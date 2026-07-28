@@ -64,6 +64,12 @@ const HORSE_DEAD_DESPAWN_MS = 60 * 1_000;
 const TEMPORARY_HORSE_RIDE = 'TEMPORARY_HORSE_RIDE';
 const HORSE_STAMINA_REGEN = 'HORSE_STAMINA_REGEN';
 const HORSE_STAMINA_CONSUME = 'HORSE_STAMINA_CONSUME';
+// Mounting and dismounting swap the horse entity for the rider model, and the
+// client fades removed actors out over ~0.7s instead of deleting them at once
+// (InstanceBaseEffect UpdateDeleting). Toggling faster than that stacks fading
+// ghosts next to the new horse, so mount changes are rate limited like the
+// original server does (issue #46).
+const HORSE_MOUNT_COOLDOWN_MS = 1_000;
 
 export class PlayerHorse {
     private level: number = 0;
@@ -73,6 +79,7 @@ export class PlayerHorse {
     private temporaryRiding: boolean = false;
     private mountVnum: number = 0;
     private spawnedHorse: NPC | null = null; // Spawned horse entity when not riding
+    private lastMountChangeAt: number = 0;
     private horseName: string = '';
     /** Player was riding at logout; restored once on enter-game (original: EnterHorse). */
     private pendingRemount: boolean = false;
@@ -208,9 +215,24 @@ export class PlayerHorse {
         this.owner.save();
     }
 
+    /**
+     * Whether enough time passed since the last mount change. Refuses (with a
+     * chat message) while the client is still fading the previous horse out.
+     */
+    private canChangeMount(): boolean {
+        if (Date.now() - this.lastMountChangeAt >= HORSE_MOUNT_COOLDOWN_MS) return true;
+
+        this.owner.chat({
+            messageType: ChatMessageTypeEnum.INFO,
+            message: 'Your horse needs a moment.',
+        });
+        return false;
+    }
+
     /** Begin riding. Returns true if state changed. */
     startRiding(): boolean {
         if (this.riding) return false;
+        if (!this.canChangeMount()) return false;
 
         // Original behaviour: mounting is refused while the private shop is
         // open (otherwise the rider carries the shop stand around).
@@ -239,6 +261,7 @@ export class PlayerHorse {
         this.despawnHorseEntity();
 
         this.riding = true;
+        this.lastMountChangeAt = Date.now();
         this.mountVnum = getHorseVnumByLevel(this.level);
 
         this.owner.broadcastMountChange();
@@ -254,6 +277,7 @@ export class PlayerHorse {
     /** Mount a rental horse without changing the player's owned horse state. */
     startTemporaryRiding(mountVnum: number, durationMs: number): boolean {
         if (this.riding || durationMs <= 0) return false;
+        if (!this.canChangeMount()) return false;
         if (this.owner.isRunningPrivateShop()) {
             this.owner.chat({
                 messageType: ChatMessageTypeEnum.INFO,
@@ -265,6 +289,7 @@ export class PlayerHorse {
         this.despawnHorseEntity();
         this.riding = true;
         this.temporaryRiding = true;
+        this.lastMountChangeAt = Date.now();
         this.mountVnum = mountVnum;
         this.owner.broadcastMountChange();
         this.owner.recalculatePoints();
@@ -277,15 +302,22 @@ export class PlayerHorse {
         return true;
     }
 
-    /** Stop riding. Returns true if state changed. */
-    stopRiding(): boolean {
+    /**
+     * Stop riding. Returns true if state changed.
+     * `forced` skips the mount cooldown for dismounts the player did not ask
+     * for (horse death, opening a shop, rental expiry).
+     */
+    stopRiding(forced: boolean = false): boolean {
         if (!this.riding) return false;
 
         if (this.temporaryRiding) {
             return this.stopTemporaryRiding();
         }
 
+        if (!forced && !this.canChangeMount()) return false;
+
         this.riding = false;
+        this.lastMountChangeAt = Date.now();
         this.mountVnum = 0;
 
         this.owner.broadcastMountChange();
@@ -583,7 +615,7 @@ export class PlayerHorse {
             eventFunction: () => {
                 if (!this.riding || this.health <= 0) return;
                 this.stamina = Math.max(0, this.stamina - 1);
-                if (this.stamina <= 0) this.stopRiding();
+                if (this.stamina <= 0) this.stopRiding(true);
                 this.sendHorseState();
                 this.owner.save();
             },
