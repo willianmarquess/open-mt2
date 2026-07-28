@@ -1,3 +1,4 @@
+import { ChatMessageTypeEnum } from '@/core/enum/ChatMessageTypeEnum';
 import { QuestEventEnum } from '@/core/enum/QuestEventEnum';
 import { AbstractQuest } from '../AbstractQuest';
 import { Quest, Task } from '../decorators/QuestDecorator';
@@ -10,6 +11,7 @@ enum HorseUpgradeQuestState {
 
 const STABLE_MASTER_VNUM = 20349;
 const TEST_DURATION_MS = 10 * 60 * 1_000;
+const TEST_TIMER_ID = 'HORSE_UPGRADE_TEST_TIMER';
 
 type UpgradeConfig = {
     minPlayerLevel: number;
@@ -88,7 +90,52 @@ export class HorseUpgradeQuest extends AbstractQuest {
 
         this.addValue('killCount', 0);
         this.addValue('deadline', Date.now() + TEST_DURATION_MS);
+
+        // Announce the failure the moment time runs out instead of leaving
+        // the player to discover it in the quest letter.
+        this.player.removeEventTimer(TEST_TIMER_ID);
+        this.player.addEventTimer({
+            id: TEST_TIMER_ID,
+            eventFunction: () => {
+                if (this.isExpired()) {
+                    this.player.chat({
+                        messageType: ChatMessageTypeEnum.INFO,
+                        message: '[Horse Upgrade] Time is up! Talk to the Stable Boy to try again.',
+                    });
+                }
+            },
+            options: { interval: TEST_DURATION_MS, duration: TEST_DURATION_MS },
+        });
+
         return this.nextState(HorseUpgradeQuestState.TEST);
+    }
+
+    /**
+     * The Stable Boy stays responsive during the test: shows progress, and
+     * after the deadline this is the way back to START (without it an expired
+     * test with no further kills would soft-lock the quest).
+     */
+    @Task({
+        state: HorseUpgradeQuestState.TEST,
+        when: QuestEventEnum.CHAT,
+        target: STABLE_MASTER_VNUM,
+        chat: 'Report the upgrade test',
+    })
+    async onTestChat() {
+        this.title('Stable Boy:');
+        const config = this.getConfig();
+
+        if (!config || this.isExpired()) {
+            this.player.removeEventTimer(TEST_TIMER_ID);
+            this.text('Time ran out — the test has failed.');
+            this.text('Rest, and ask me again when you are ready.');
+            return this.nextState(HorseUpgradeQuestState.START);
+        }
+
+        const remaining = Math.max(0, config.kills - this.getKillCount());
+        const minutesLeft = Math.max(0, Math.ceil((this.getDeadline() - Date.now()) / 60_000));
+        this.text('The test is not over yet.');
+        this.text(`${remaining} monsters left, ${minutesLeft} min remaining.`);
     }
 
     @Task({ state: HorseUpgradeQuestState.TEST, when: QuestEventEnum.LETTER })
@@ -137,6 +184,7 @@ export class HorseUpgradeQuest extends AbstractQuest {
         this.addValue('killCount', killCount);
 
         if (killCount >= config.kills) {
+            this.player.removeEventTimer(TEST_TIMER_ID);
             return this.nextState(HorseUpgradeQuestState.REPORT);
         }
     }
