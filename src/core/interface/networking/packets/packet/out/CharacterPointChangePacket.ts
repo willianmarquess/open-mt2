@@ -18,10 +18,10 @@ import PacketOut from '@/core/interface/networking/packets/packet/out/PacketOut'
  */
 
 export default class CharacterPointChangePacket extends PacketOut {
-    private vid: number;
-    private type: number;
-    private amount: number;
-    private value: number;
+    private readonly vid: number;
+    private readonly type: number;
+    private readonly amount: number;
+    private readonly value: number;
 
     constructor({ vid, type, amount, value }: { vid: number; type: number; amount: number; value: number }) {
         super({

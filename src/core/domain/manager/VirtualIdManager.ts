@@ -1,7 +1,7 @@
 export class VirtualIdManager {
     private nextId: number = 1;
     private releasedIds: number[] = [];
-    private acquiredIds: Set<number> = new Set();
+    private readonly acquiredIds: Set<number> = new Set();
 
     acquire(): number {
         let id: number;

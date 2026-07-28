@@ -15,8 +15,8 @@ import PacketOut from '@/core/interface/networking/packets/packet/out/PacketOut'
  */
 
 export default class SpecialEffectPacket extends PacketOut {
-    private type: number;
-    private virtualId: number;
+    private readonly type: number;
+    private readonly virtualId: number;
 
     constructor({ type, virtualId }: { type: number; virtualId: number }) {
         super({

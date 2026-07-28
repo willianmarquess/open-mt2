@@ -14,7 +14,7 @@ import PacketOut from '@/core/interface/networking/packets/packet/out/PacketOut'
  */
 
 export default class ChannelPacket extends PacketOut {
-    private channel: number;
+    private readonly channel: number;
 
     constructor({ channel }: { channel: number }) {
         super({

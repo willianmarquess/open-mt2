@@ -10,12 +10,17 @@ This document explains how quests are implemented on the server and how to creat
 
 ### Examples
 
-- Example quests: [src/core/domain/quests/quests/WelcomeQuest.ts](src/core/domain/quests/quests/WelcomeQuest.ts) and [src/core/domain/quests/quests/HuntQuest.ts](src/core/domain/quests/quests/HuntQuest.ts).
+- Example quests: [src/core/domain/quests/quests/WelcomeQuest.ts](src/core/domain/quests/quests/WelcomeQuest.ts) and [src/core/domain/quests/quests/HuntQuest.ts](src/core/domain/quests/quests/HuntQuest.ts). For `CLICK`-driven NPC interaction see [ShopQuest.ts](src/core/domain/quests/quests/ShopQuest.ts), and for a state-machine-heavy example see [SkillQuest.ts](src/core/domain/quests/quests/SkillQuest.ts).
 
 ### Decorators and signatures (usage)
 
 - `@Quest(questName: string, initialStateName: string)` — marks a class as a quest and sets the initial state name.
-- `@Task({ state: string, when: QuestEventEnum, with?: (ctx) => boolean | Promise<boolean> })` — marks a method to run when the given event happens while the quest is in the specified state. Optional `with` is a condition that can short-circuit execution.
+- `@Task({ state: string, when: QuestEventEnum, target?: number | number[], with?: (ctx) => boolean | Promise<boolean> })` — marks a method to run when the given event happens while the quest is in the specified state. Optional `with` is a condition that can short-circuit execution.
+- `target` applies to `CLICK` and `KILL` tasks: the mob/NPC vnum (or a list of vnums) the event must match. Example from `ShopQuest`:
+
+```ts
+@Task({ state: ShopQuestState.START, when: QuestEventEnum.CLICK, target: [ShopIdEnum.GOODS, ShopIdEnum.POTIONS] })
+```
 
 Typical method signature for task handlers:
 
@@ -25,12 +30,18 @@ public async startOnLogin({ player }: LoginExecutionContext) { ... }
 public async huntOnKill({ victim }: KillExecutionContext) { ... }
 ```
 
-### Execution contexts
+### Events and execution contexts
 
-- `LoginExecutionContext` — available when the trigger is player login (gives access to `player`).
-- `KillExecutionContext` — contains `victim` (the killed monster) and `player` where appropriate.
-- `EnterExecutionContext` — used when entering a state.
-- These contexts are passed to the task callback by the quest runner.
+Available events (`QuestEventEnum`): `LOGIN`, `LOGOUT`, `CLICK`, `KILL`, `LEVELUP`, `ENTER_STATE`, `LEAVE_STATE`, `LETTER`, `INFO`, `BUTTON`.
+
+Each event has a matching context type passed to the task callback:
+
+- `LoginExecutionContext` / `LogoutExecutionContext` — trigger is player login/logout (gives access to `player`).
+- `ClickExecutionContext` — the player clicked an NPC matching `target`; contains `npc` (an `NpcQuest` facade with `getId()`, `getVirtualId()`, `getLevel()`, `openShop()`).
+- `KillExecutionContext` — contains `victim` (the killed monster).
+- `LevelUpExecutionContext` — the player leveled up.
+- `EnterExecutionContext` / `LeaveExecutionContext` — used when entering/leaving a state.
+- `LetterExecutionContext`, `InfoExecutionContext`, `ButtonExecutionContext` — quest-letter UI interactions (see `HuntQuest` for usage).
 
 ### Quest lifecycle
 

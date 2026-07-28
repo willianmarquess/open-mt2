@@ -1,6 +1,6 @@
-import fs from 'fs/promises';
-import fsSync from 'fs';
-import path from 'path';
+import fs from 'node:fs/promises';
+import fsSync from 'node:fs';
+import path from 'node:path';
 import SpawnConfig from '../entities/game/mob/spawn/SpawnConfig';
 import { Mob } from '../entities/game/mob/Mob';
 import MonsterGroup from '../entities/game/mob/MonsterGroup';
@@ -198,10 +198,10 @@ export default class SpawnManager {
         const currentDir = process.cwd();
 
         const spawns: Record<string, Array<SpawnConfig>> = {
-            regen: Array<SpawnConfig>(),
-            npc: Array<SpawnConfig>(),
-            boss: Array<SpawnConfig>(),
-            stone: Array<SpawnConfig>(),
+            regen: new Array<SpawnConfig>(),
+            npc: new Array<SpawnConfig>(),
+            boss: new Array<SpawnConfig>(),
+            stone: new Array<SpawnConfig>(),
         };
 
         for (const file of spawnFiles) {

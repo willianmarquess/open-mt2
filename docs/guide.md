@@ -23,7 +23,7 @@ ps: If you changed the ports in the .env, put the relative values ​​here
 
 - Install dependencies
 ```bash
-npm run install
+npm install
 ```
 - Setup .env file (you can use .env.example as example)
 - Execute this command on terminal:
@@ -42,6 +42,7 @@ npm run dev:auth
 ```bash
 npm run dev:game
 ```
+ps: `npm run dev:auth:debug` / `npm run dev:game:debug` run the same servers with `LOG_LEVEL=debug` — useful when investigating, since many rejection paths only log at debug level.
 - Open mt2 client and use these values for login and password:
 ```bash
 login: admin

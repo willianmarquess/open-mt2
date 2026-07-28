@@ -19,7 +19,7 @@ describe('PrivilegeCommandValidator', () => {
         commandValidator.build();
         const result = commandValidator.getErrors();
 
-        expect(result.length).to.be.equal(0);
+        expect(result).to.have.lengthOf(0);
     });
 
     it("should fail if 'kind' is missing", () => {
@@ -28,7 +28,7 @@ describe('PrivilegeCommandValidator', () => {
         commandValidator.build();
         const result = commandValidator.getErrors();
 
-        expect(result.length).to.be.equal(1);
+        expect(result).to.have.lengthOf(1);
         expect(result).to.be.deep.equal([
             {
                 name: 'kind',
@@ -48,7 +48,7 @@ describe('PrivilegeCommandValidator', () => {
         commandValidator.build();
         const result = commandValidator.getErrors();
 
-        expect(result.length).to.be.equal(1);
+        expect(result).to.have.lengthOf(1);
         expect(result).to.be.deep.equal([
             {
                 name: 'kind',
@@ -64,7 +64,7 @@ describe('PrivilegeCommandValidator', () => {
         commandValidator.build();
         const result = commandValidator.getErrors();
 
-        expect(result.length).to.be.equal(1);
+        expect(result).to.have.lengthOf(1);
         expect(result).to.be.deep.equal([
             {
                 name: 'playerName, empireName, guildName',
@@ -83,7 +83,7 @@ describe('PrivilegeCommandValidator', () => {
         commandValidator.build();
         const result = commandValidator.getErrors();
 
-        expect(result.length).to.be.equal(1);
+        expect(result).to.have.lengthOf(1);
         expect(result).to.be.deep.equal([
             {
                 name: 'type',
@@ -103,7 +103,7 @@ describe('PrivilegeCommandValidator', () => {
         commandValidator.build();
         const result = commandValidator.getErrors();
 
-        expect(result.length).to.be.equal(1);
+        expect(result).to.have.lengthOf(1);
         expect(result).to.be.deep.equal([
             {
                 name: 'type',
@@ -119,7 +119,7 @@ describe('PrivilegeCommandValidator', () => {
         commandValidator.build();
         const result = commandValidator.getErrors();
 
-        expect(result.length).to.be.equal(1);
+        expect(result).to.have.lengthOf(1);
         expect(result).to.be.deep.equal([
             {
                 name: 'value',
@@ -139,7 +139,7 @@ describe('PrivilegeCommandValidator', () => {
         commandValidator.build();
         const result = commandValidator.getErrors();
 
-        expect(result.length).to.be.equal(1);
+        expect(result).to.have.lengthOf(1);
         expect(result).to.be.deep.equal([
             {
                 name: 'value',
@@ -155,7 +155,7 @@ describe('PrivilegeCommandValidator', () => {
         commandValidator.build();
         const result = commandValidator.getErrors();
 
-        expect(result.length).to.be.equal(1);
+        expect(result).to.have.lengthOf(1);
         expect(result).to.be.deep.equal([
             {
                 name: 'timeInSeconds',
@@ -175,7 +175,7 @@ describe('PrivilegeCommandValidator', () => {
         commandValidator.build();
         const result = commandValidator.getErrors();
 
-        expect(result.length).to.be.equal(1);
+        expect(result).to.have.lengthOf(1);
         expect(result).to.be.deep.equal([
             {
                 name: 'timeInSeconds',

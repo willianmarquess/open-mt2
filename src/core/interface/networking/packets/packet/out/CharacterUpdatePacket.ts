@@ -2,16 +2,16 @@ import PacketHeaderEnum from '@/core/enum/PacketHeaderEnum';
 import PacketOut from '@/core/interface/networking/packets/packet/out/PacketOut';
 
 export default class CharacterUpdatePacket extends PacketOut {
-    private vid: number;
-    private parts: Array<number> = new Array(4).fill(0);
-    private moveSpeed: number = 0;
-    private attackSpeed: number = 0;
-    private state: number = 0;
-    private affects: Array<number> = new Array(2).fill(0);
-    private guildId: number = 0;
-    private rankPoints: number = 0;
-    private pkMode: number = 0;
-    private mountVnum: number = 0;
+    private readonly vid: number;
+    private readonly parts: Array<number> = new Array(4).fill(0);
+    private readonly moveSpeed: number = 0;
+    private readonly attackSpeed: number = 0;
+    private readonly state: number = 0;
+    private readonly affects: Array<number> = new Array(2).fill(0);
+    private readonly guildId: number = 0;
+    private readonly rankPoints: number = 0;
+    private readonly pkMode: number = 0;
+    private readonly mountVnum: number = 0;
 
     constructor({
         vid,

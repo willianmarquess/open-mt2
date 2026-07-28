@@ -67,8 +67,8 @@ export type CommandMapValue<T extends Command> = {
     createHandler: (params: any) => CommandHandler<T>;
 };
 
-export default () =>
-    new Map<string, CommandMapValue<any>>([
+export default function createCommands() {
+    return new Map<string, CommandMapValue<any>>([
         [
             StatCommand.getName(),
             {
@@ -259,3 +259,4 @@ export default () =>
             },
         ],
     ]);
+}

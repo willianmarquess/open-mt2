@@ -3,7 +3,7 @@ import Item from '@/core/domain/entities/game/item/Item';
 import InventoryEventsEnum from '@/core/domain/entities/game/inventory/events/InventoryEventsEnum';
 
 export default class ItemUnequippedEvent {
-    static type = InventoryEventsEnum.ITEM_UNEQUIPPED;
+    static readonly type = InventoryEventsEnum.ITEM_UNEQUIPPED;
     static getType() {
         return this.type;
     }

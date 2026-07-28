@@ -2,8 +2,8 @@ import PacketHeaderEnum from '@/core/enum/PacketHeaderEnum';
 import PacketOut from '@/core/interface/networking/packets/packet/out/PacketOut';
 
 export default class LoginSuccessPacket extends PacketOut {
-    private key: number;
-    private result: number;
+    private readonly key: number;
+    private readonly result: number;
 
     constructor({ key, result }: { key: number; result: number }) {
         super({

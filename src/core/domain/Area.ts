@@ -24,7 +24,7 @@ export default class Area {
     private readonly width: number;
     private readonly height: number;
     private readonly aka?: string;
-    private readonly goto?: AtlasInfoGoto | undefined;
+    private readonly goto?: AtlasInfoGoto;
 
     private readonly entitiesToSpawn = new Queue<GameEntity>(SIZE_QUEUE);
     private readonly entitiesToDespawn = new Queue<GameEntity>(SIZE_QUEUE);
@@ -48,7 +48,7 @@ export default class Area {
             width: number;
             height: number;
             aka?: string;
-            goto?: AtlasInfoGoto | undefined;
+            goto?: AtlasInfoGoto;
         },
         {
             spawnManager,
@@ -228,33 +228,40 @@ export default class Area {
     }
 
     tick() {
+        this.processSpawnQueue();
+        this.processDespawnQueue();
+    }
+
+    private processSpawnQueue() {
         for (const entity of this.entitiesToSpawn.dequeueIterator()) {
             if (!entity) continue;
             entity.onSpawn();
             this.aoi.insert(entity);
-
-            const entities = this.aoi.queryAround(
-                entity,
-                CHAR_VIEW_SIZE,
-                entity.getEntityType() !== EntityTypeEnum.PLAYER ? EntityTypeEnum.PLAYER : undefined,
-            );
-
-            for (const otherEntity of entities.values()) {
-                if (otherEntity.getVirtualId() === entity.getVirtualId()) continue;
-
-                if (entity instanceof GameEntity) {
-                    entity.addNearbyEntity(otherEntity);
-                }
-
-                if (otherEntity instanceof Character) {
-                    otherEntity.addNearbyEntity(entity);
-                }
-            }
-
+            this.linkNearbyEntities(entity);
             this.entityManager.addEntity(entity);
             entity.setArea(this);
         }
+    }
 
+    private linkNearbyEntities(entity: GameEntity) {
+        const entities = this.aoi.queryAround(
+            entity,
+            CHAR_VIEW_SIZE,
+            entity.getEntityType() !== EntityTypeEnum.PLAYER ? EntityTypeEnum.PLAYER : undefined,
+        );
+
+        for (const otherEntity of entities.values()) {
+            if (otherEntity.getVirtualId() === entity.getVirtualId()) continue;
+
+            entity.addNearbyEntity(otherEntity);
+
+            if (otherEntity instanceof Character) {
+                otherEntity.addNearbyEntity(entity);
+            }
+        }
+    }
+
+    private processDespawnQueue() {
         for (const entity of this.entitiesToDespawn.dequeueIterator()) {
             if (!entity) continue;
             const entities = this.aoi.queryAround(entity, CHAR_VIEW_SIZE, EntityTypeEnum.PLAYER) as Map<number, Player>;

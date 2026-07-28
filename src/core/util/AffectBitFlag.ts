@@ -3,7 +3,7 @@ import BitFlag from './BitFlag';
 const AFF_BITS_MAX = 64;
 
 export default class AffectBitFlag {
-    private flags: [BitFlag, BitFlag];
+    private readonly flags: [BitFlag, BitFlag];
 
     constructor(v1 = 0, v2 = 0) {
         this.flags = [new BitFlag(v1), new BitFlag(v2)];

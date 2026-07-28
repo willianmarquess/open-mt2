@@ -30,7 +30,7 @@ export class PrivilegeManager {
         }
 
         const timeToExpirationInMilliSeconds = timeToExpirationInSeconds * 1000;
-        const dataExpiracao = new Date(new Date().getTime() + timeToExpirationInMilliSeconds);
+        const dataExpiracao = new Date(Date.now() + timeToExpirationInMilliSeconds);
 
         const privilege: Privilege<EmpireEnum> = {
             type,
@@ -60,7 +60,7 @@ export class PrivilegeManager {
         }
 
         const timeToExpirationInMilliSeconds = timeToExpirationInSeconds * 1000;
-        const dataExpiracao = new Date(new Date().getTime() + timeToExpirationInMilliSeconds);
+        const dataExpiracao = new Date(Date.now() + timeToExpirationInMilliSeconds);
 
         const privilege: Privilege<Player> = {
             type,

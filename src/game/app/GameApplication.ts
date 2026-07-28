@@ -51,11 +51,7 @@ export default class GameApplication extends Application {
         this.logger.info('[APP] Init game application');
         this.itemManager.load();
         this.dropManager.load();
-        await Promise.all([
-            await this.databaseManager.init(),
-            await this.cacheProvider.init(),
-            await this.animationManager.load(),
-        ]);
+        await Promise.all([this.databaseManager.init(), this.cacheProvider.init(), this.animationManager.load()]);
         this.mobManager.load();
         this.questManager.load();
         this.shopService.load();

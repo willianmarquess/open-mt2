@@ -27,7 +27,7 @@ describe('PacketBidirectional', function () {
     it('should initialize bufferWriter with correct header and size', function () {
         expect(packetBidirectional.bufferWriter).to.be.instanceOf(BufferWriter);
         expect(packetBidirectional.bufferWriter.buffer[0]).to.equal(0x01);
-        expect(packetBidirectional.bufferWriter.buffer.length).to.equal(20);
+        expect(packetBidirectional.bufferWriter.buffer).to.have.lengthOf(20);
     });
 
     it('should initialize bufferReader correctly', function () {

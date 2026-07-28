@@ -15,8 +15,8 @@ import PacketOut from '@/core/interface/networking/packets/packet/out/PacketOut'
  */
 
 export default class TargetUpdatedPacket extends PacketOut {
-    private virtualId: number;
-    private healthPercentage: number;
+    private readonly virtualId: number;
+    private readonly healthPercentage: number;
 
     constructor({ virtualId, healthPercentage }: { virtualId: number; healthPercentage: number }) {
         super({

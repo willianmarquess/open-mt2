@@ -10,11 +10,11 @@ type ServerStatusPacketParams = {
 };
 
 export default class ServerStatusPacket extends PacketOut {
-    private status: Array<{
+    private readonly status: Array<{
         port: number;
         status: number;
     }>;
-    private isSuccess: number;
+    private readonly isSuccess: number;
 
     constructor({
         status = [

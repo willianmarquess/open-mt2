@@ -2,17 +2,17 @@ import PacketHeaderEnum from '@/core/enum/PacketHeaderEnum';
 import PacketOut from '@/core/interface/networking/packets/packet/out/PacketOut';
 
 export default class CharacterSpawnPacket extends PacketOut {
-    private vid: number;
-    private rotation: number = 0;
-    private positionX: number;
-    private positionY: number;
-    private positionZ: number;
-    private entityType: number;
-    private playerClass: number;
-    private movementSpeed: number;
-    private attackSpeed: number;
-    private state: number = 0;
-    private affects: Array<number> = new Array(2).fill(0);
+    private readonly vid: number;
+    private readonly rotation: number = 0;
+    private readonly positionX: number;
+    private readonly positionY: number;
+    private readonly positionZ: number;
+    private readonly entityType: number;
+    private readonly playerClass: number;
+    private readonly movementSpeed: number;
+    private readonly attackSpeed: number;
+    private readonly state: number = 0;
+    private readonly affects: Array<number> = new Array(2).fill(0);
 
     constructor({
         vid,

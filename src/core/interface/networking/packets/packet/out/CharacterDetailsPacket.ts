@@ -21,14 +21,14 @@ import PacketOut from '@/core/interface/networking/packets/packet/out/PacketOut'
  */
 
 export default class CharacterDetailsPacket extends PacketOut {
-    private vid: number;
-    private playerClass: number;
-    private playerName: string;
-    private positionX: number;
-    private positionY: number;
-    private positionZ: number;
-    private empireId: number;
-    private skillGroup: number;
+    private readonly vid: number;
+    private readonly playerClass: number;
+    private readonly playerName: string;
+    private readonly positionX: number;
+    private readonly positionY: number;
+    private readonly positionZ: number;
+    private readonly empireId: number;
+    private readonly skillGroup: number;
 
     constructor({
         vid,

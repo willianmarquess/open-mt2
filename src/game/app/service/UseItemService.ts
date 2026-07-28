@@ -52,8 +52,8 @@ const ALL_HORSE_ITEM_VNUMS = new Set([
 ]);
 
 export default class UseItemService {
-    private logger: Logger;
-    private itemManager: ItemManager;
+    private readonly logger: Logger;
+    private readonly itemManager: ItemManager;
     private readonly mobManager: MobManager;
 
     constructor({

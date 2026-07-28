@@ -6,8 +6,8 @@ type CommandArgs = {
 };
 
 export default abstract class Command {
-    private args: Array<string>;
-    private validator?: CommandValidator;
+    private readonly args: Array<string>;
+    private readonly validator?: CommandValidator;
 
     constructor({ args = [], validator }: CommandArgs = {}) {
         this.args = args;
@@ -55,7 +55,7 @@ export default abstract class Command {
         const validatorInstance = new ValidatorClass(this);
 
         if (!(validatorInstance instanceof CommandValidator)) {
-            throw new Error('Validator must be an instance of CommandValidator base class');
+            throw new TypeError('Validator must be an instance of CommandValidator base class');
         }
 
         validatorInstance.build();

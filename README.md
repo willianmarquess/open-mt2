@@ -1,8 +1,8 @@
 # Open Metin2 - Server Emulator
 
-![GitHub repo size](https://img.shields.io/github/repo-size/willianmarquess/mt2-server-javascript?style=for-the-badge)
-![GitHub language count](https://img.shields.io/github/languages/count/willianmarquess/mt2-server-javascript?style=for-the-badge)
-![GitHub forks](https://img.shields.io/github/forks/willianmarquess/mt2-server-javascript?style=for-the-badge)
+![GitHub repo size](https://img.shields.io/github/repo-size/willianmarquess/open-mt2?style=for-the-badge)
+![GitHub language count](https://img.shields.io/github/languages/count/willianmarquess/open-mt2?style=for-the-badge)
+![GitHub forks](https://img.shields.io/github/forks/willianmarquess/open-mt2?style=for-the-badge)
 
 ![CI Pipeline](https://github.com/willianmarquess/open-mt2/actions/workflows/flow.yml/badge.svg)
 [![Quality Gate Status](https://sonarcloud.io/api/project_badges/measure?project=willianmarquess_open-mt2&metric=alert_status)](https://sonarcloud.io/summary/new_code?id=willianmarquess_open-mt2)
@@ -27,8 +27,8 @@ Metin2 are copyrighted by [Webzen](http://webzen.com/ "Webzen").
 | Server Status |      |       | ✅    |
 | Login |      |       | ✅    |
 | Logout    |      |       | ✅    |
-| Return to Select    | X    |       |      |
-| Delete Character    | X    |       |      |
+| Return to Select    |      |       | ✅    |
+| Delete Character    |      |       | ✅    |
 | Protocol Encryption   | X    |       |      |
 | Create character  |      |       | ✅    |
 | Enter Game    |      |       | ✅   |
@@ -64,7 +64,8 @@ Metin2 are copyrighted by [Webzen](http://webzen.com/ "Webzen").
 | Drop System   |      | X     |      |
 | Affect System   |      | X     |      |
 | Quest System   |      |  X    |      |
-| Skills System   | X    |       |      |
+| Skills System   |      | X     |      |
+| Private Shop System   |      |       | ✅    |
 | Chat System   | X    |       |      |
 | Level System   |      |       | ✅    |
 | Graceful shutdown   |      |       | ✅    |
@@ -108,8 +109,8 @@ In this implementation we are using custom commands, described bellow:
     - Description: create an item passing vnum and you can pass the quantity.
     - Example: /item <vnum> <quantity>
 - **/list**
-    - Description: list resources <areas, players>.
-    - Example: /list <areas, players>
+    - Description: list resources <areas, players, privileges>.
+    - Example: /list <areas, players, privileges>
 - **/lvl**
     - Description: set level to other player or to yourself.
     - Example: /lvl <number> <targetName>
@@ -129,15 +130,33 @@ In this implementation we are using custom commands, described bellow:
     - Description: transform your character into a mob appearance by vnum. Pass 0 to revert to original appearance.
     - Example: /polymorph <vnum>
     - Usage: /polymorph 101 (transforms into mob with vnum 101)
+- **/close_shop**
+    - Description: close the player private shop.
+    - Example: /close_shop
+- **/logout**
+    - Description: logout the account.
+    - Example: /logout
+- **/quit**
+    - Description: quit the client.
+    - Example: /quit
+- **/restart_here**
+    - Description: restart at the same coordinates (after death).
+    - Example: /restart_here
+- **/restart_town**
+    - Description: restart at the town (after death).
+    - Example: /restart_town
+- **/phase_select**
+    - Description: back to the character select screen.
+    - Example: /phase_select
 
 
 ## Auth Flow
 The image bellow show how the client interacts with auth server.
-![](https://github.com/willianmarquess/mt2-server-javascript/blob/master/docs/images/mt2-auth-server.drawio.png)
+![](https://github.com/willianmarquess/open-mt2/blob/master/docs/images/mt2-auth-server.drawio.png)
 
 ## Game Flow (work in progress)
 The image bellow show how the client interacts with game server.
-![](https://github.com/willianmarquess/mt2-server-javascript/blob/master/docs/images/mt2-game-server.drawio.png)
+![](https://github.com/willianmarquess/open-mt2/blob/master/docs/images/mt2-game-server.drawio.png)
 
 ## License
 

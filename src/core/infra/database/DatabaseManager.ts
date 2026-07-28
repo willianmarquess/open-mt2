@@ -6,8 +6,8 @@ import { Config } from '@/core/infra/config/Config';
 
 export default class DatabaseManager {
     private connection!: Pool;
-    private logger: Logger;
-    private config: Config;
+    private readonly logger: Logger;
+    private readonly config: Config;
 
     constructor({ config, logger }: { config: Config; logger: Logger }) {
         this.logger = logger;

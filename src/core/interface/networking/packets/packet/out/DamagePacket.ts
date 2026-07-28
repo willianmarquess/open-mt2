@@ -16,9 +16,9 @@ import PacketOut from '@/core/interface/networking/packets/packet/out/PacketOut'
  */
 
 export default class DamagePacket extends PacketOut {
-    private virtualId: number;
-    private damageFlags: number;
-    private damage: number;
+    private readonly virtualId: number;
+    private readonly damageFlags: number;
+    private readonly damage: number;
 
     constructor({ virtualId, damageFlags, damage }: { virtualId: number; damageFlags: number; damage: number }) {
         super({

@@ -1,8 +1,8 @@
 import crypto from 'node:crypto';
 
 export default class MathUtil {
-    private static max_uint = 1e9;
-    private static max_tiny = 255;
+    private static readonly max_uint = 1e9;
+    private static readonly max_tiny = 255;
 
     static get MAX_UINT() {
         return this.max_uint;
@@ -16,7 +16,7 @@ export default class MathUtil {
         const a = x1 - x2;
         const b = y1 - y2;
 
-        return Math.sqrt(a * a + b * b);
+        return Math.hypot(a, b);
     }
 
     static calcRotationFromDirection(direction: number) {
@@ -24,12 +24,13 @@ export default class MathUtil {
     }
 
     static toUnsignedNumber(value: number | string) {
-        const isValidNumber = !isNaN(parseFloat(String(value))) && isFinite(Number(value)) && Number(value) > 0;
+        const isValidNumber =
+            !Number.isNaN(Number.parseFloat(String(value))) && Number.isFinite(Number(value)) && Number(value) > 0;
         return isValidNumber ? Number(value) : 0;
     }
 
     static toNumber(value: string | number) {
-        const isValidNumber = !isNaN(parseFloat(String(value))) && isFinite(Number(value));
+        const isValidNumber = !Number.isNaN(Number.parseFloat(String(value))) && Number.isFinite(Number(value));
         return isValidNumber ? Number(value) : 0;
     }
 
@@ -42,7 +43,7 @@ export default class MathUtil {
     }
 
     static calcRotationFromXY(x: number, y: number) {
-        const vectorLength = Math.sqrt(x * x + y * y);
+        const vectorLength = Math.hypot(x, y);
 
         const normalizedX = x / vectorLength;
         const normalizedY = y / vectorLength;
@@ -74,8 +75,7 @@ export default class MathUtil {
     }
 
     static minMax(min: number, value: number, max: number) {
-        const temp = min > value ? min : value;
-        return max < temp ? max : temp;
+        return Math.min(max, Math.max(min, value));
     }
 
     static degreeToRadian(degree: number): number {
@@ -94,8 +94,8 @@ export default class MathUtil {
         return radian * (180 / Math.PI);
     }
 
-    static getDegreeFromPosition(x: number, y: number) {
-        const angleRad = Math.atan2(x, y);
+    static getDegreeFromPosition(dx: number, dy: number) {
+        const angleRad = Math.atan2(dx, dy);
         let angleDeg = this.radianToDegree(angleRad);
         if (angleDeg < 0) angleDeg += 360;
         return angleDeg;
@@ -114,6 +114,6 @@ export default class MathUtil {
     }
 
     static distanceSQRT(dx: number, dy: number) {
-        return Math.sqrt(dx * dx + dy * dy);
+        return Math.hypot(dx, dy);
     }
 }

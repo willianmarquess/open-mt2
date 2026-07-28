@@ -2,7 +2,7 @@ import PacketHeaderEnum from '@/core/enum/PacketHeaderEnum';
 import PacketOut from './PacketOut';
 
 export default class QuickSlotRemoveResponsePacket extends PacketOut {
-    private slot: number;
+    private readonly slot: number;
 
     constructor({ slot }: { slot: number }) {
         super({

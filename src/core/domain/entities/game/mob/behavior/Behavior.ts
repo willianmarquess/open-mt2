@@ -1,4 +1,5 @@
 import { EntityStateEnum } from '@/core/enum/EntityStateEnum';
+import GameEntity from '@/core/domain/entities/game/GameEntity';
 import MathUtil from '../../../../util/MathUtil';
 import Monster from '@/core/domain/entities/game/mob/Monster';
 import Player from '../../player/Player';
@@ -256,7 +257,7 @@ export default class Behavior {
         if (followSpeed >= 0.1) {
             const meetTime = distance / followSpeed;
 
-            if (meetTime * targetSpeed <= 1_00000) {
+            if (meetTime * targetSpeed <= 100_000) {
                 const { dx: yourMoveEstimateX, dy: yourMoveEstimateY } = MathUtil.getDeltaByDegree(
                     this.monster.getTarget().getRotation(),
                     meetTime * targetSpeed,
@@ -342,23 +343,7 @@ export default class Behavior {
 
     private findNextVictim(): boolean {
         for (const entity of this.monster.getNearbyEntities().values()) {
-            if (!(entity instanceof Player)) return false;
-            if (entity.isDead()) return false;
-            if (
-                entity.isAffectByFlag(AffectBitsTypeEnum.INVISIBILITY) ||
-                entity.isAffectByFlag(AffectBitsTypeEnum.STEALTH) ||
-                entity.isAffectByFlag(AffectBitsTypeEnum.REVIVE_INVISIBLE)
-            )
-                return false;
-            if (
-                entity.isAffectByFlag(AffectBitsTypeEnum.TERROR) &&
-                !this.monster.isImmuneByFlag(MobImmuneFlagEnum.TERROR) &&
-                entity.getLevel() >= this.monster.getLevel()
-            )
-                return false;
-            if (!this.monster.canAttackShinsu() && entity.isFromShinsu()) return false;
-            if (!this.monster.canAttackChunjo() && entity.isFromChunjo()) return false;
-            if (!this.monster.canAttackJinno() && entity.isFromJinno()) return false;
+            if (!this.isAttackableVictim(entity)) return false;
 
             const distance = this.getDistance(entity.getPositionX(), entity.getPositionY());
 
@@ -369,5 +354,25 @@ export default class Behavior {
         }
 
         return false;
+    }
+
+    private isAttackableVictim(entity: GameEntity): entity is Player {
+        if (!entity.isPlayer()) return false;
+        if (entity.isDead()) return false;
+        if (
+            entity.isAffectByFlag(AffectBitsTypeEnum.INVISIBILITY) ||
+            entity.isAffectByFlag(AffectBitsTypeEnum.STEALTH) ||
+            entity.isAffectByFlag(AffectBitsTypeEnum.REVIVE_INVISIBLE)
+        )
+            return false;
+        if (
+            entity.isAffectByFlag(AffectBitsTypeEnum.TERROR) &&
+            !this.monster.isImmuneByFlag(MobImmuneFlagEnum.TERROR) &&
+            entity.getLevel() >= this.monster.getLevel()
+        )
+            return false;
+        if (!this.monster.canAttackShinsu() && entity.isFromShinsu()) return false;
+        if (!this.monster.canAttackChunjo() && entity.isFromChunjo()) return false;
+        return this.monster.canAttackJinno() || !entity.isFromJinno();
     }
 }

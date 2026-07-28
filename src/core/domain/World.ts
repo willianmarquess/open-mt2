@@ -15,7 +15,7 @@ const AREA_UNIT = 25600;
 
 function calculateTickDelay(delta: number = 0) {
     const delay = 1000 / TICKS_PER_SECONDS - delta;
-    return delay > 0 ? delay : 0;
+    return Math.max(delay, 0);
 }
 
 const getAbsolutePosition = (pos: number) => (pos > AREA_UNIT ? Math.floor(pos / AREA_UNIT) : 0);
@@ -247,6 +247,5 @@ export default class World {
         }
 
         setTimeout(this.tick.bind(this), calculateTickDelay(delta));
-        return Promise.resolve();
     }
 }

@@ -2,8 +2,8 @@ import PacketHeaderEnum from '@/core/enum/PacketHeaderEnum';
 import PacketOut from './PacketOut';
 
 export default class QuickSlotSwapResponsePacket extends PacketOut {
-    private slotA: number;
-    private slotB: number;
+    private readonly slotA: number;
+    private readonly slotB: number;
 
     constructor({ slotA, slotB }: { slotA: number; slotB: number }) {
         super({

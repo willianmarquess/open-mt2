@@ -19,14 +19,14 @@ class Rectangle {
 }
 
 export default class QuadTree {
-    private x: number;
-    private y: number;
-    private width: number;
-    private height: number;
-    private capacity: number;
-    private bounds: Rectangle;
+    private readonly x: number;
+    private readonly y: number;
+    private readonly width: number;
+    private readonly height: number;
+    private readonly capacity: number;
+    private readonly bounds: Rectangle;
     private subdivided: boolean;
-    private entities: Map<number, GameEntity>;
+    private readonly entities: Map<number, GameEntity>;
     private _nw: QuadTree | null;
     private _ne: QuadTree | null;
     private _sw: QuadTree | null;

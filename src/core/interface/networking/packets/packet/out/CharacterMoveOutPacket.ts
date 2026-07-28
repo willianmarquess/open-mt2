@@ -22,14 +22,14 @@ import PacketOut from '@/core/interface/networking/packets/packet/out/PacketOut'
  */
 
 export default class CharacterMoveOutPacket extends PacketOut {
-    private vid: number;
-    private movementType: number;
-    private arg: number;
-    private rotation: number;
-    private positionX: number;
-    private positionY: number;
-    private time: number;
-    private duration: number;
+    private readonly vid: number;
+    private readonly movementType: number;
+    private readonly arg: number;
+    private readonly rotation: number;
+    private readonly positionX: number;
+    private readonly positionY: number;
+    private readonly time: number;
+    private readonly duration: number;
 
     constructor({
         vid,

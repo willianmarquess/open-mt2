@@ -26,7 +26,7 @@ describe('PacketOut', function () {
     it('should initialize bufferWriter with correct header and size', function () {
         expect(packetOut.getBufferWriter()).to.be.instanceOf(BufferWriter);
         expect(packetOut.getBufferWriter().getBuffer()[0]).to.equal(0x01);
-        expect(packetOut.getBufferWriter().getBuffer().length).to.equal(20);
+        expect(packetOut.getBufferWriter().getBuffer()).to.have.lengthOf(20);
     });
 
     it('should throw error when pack method is not overwritten', function () {

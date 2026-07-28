@@ -14,8 +14,8 @@ export type addTimerParam = {
 };
 
 export default class EventTimerManager {
-    private timers: Map<string, NodeJS.Timeout> = new Map();
-    private endTimes: Map<string, number> = new Map();
+    private readonly timers: Map<string, NodeJS.Timeout> = new Map();
+    private readonly endTimes: Map<string, number> = new Map();
 
     addTimer(params: addTimerParam): void {
         const { id, options, eventFunction, onEndEventFunction } = params;

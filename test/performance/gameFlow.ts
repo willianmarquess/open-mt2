@@ -160,8 +160,8 @@ const createCharacterMovePacket = (rotation, positionX, positionY) => {
 };
 
 export default class GameFlow {
-    #user;
-    #token;
+    readonly #user;
+    readonly #token;
     #client;
     #player;
 

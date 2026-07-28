@@ -5,8 +5,8 @@ import ItemMovePacket from './ItemMovePacket';
 import GameConnection from '@/game/interface/networking/GameConnection';
 
 export default class ItemMovePacketHandler extends PacketHandler<ItemMovePacket> {
-    private logger: Logger;
-    private moveItemService: MoveItemService;
+    private readonly logger: Logger;
+    private readonly moveItemService: MoveItemService;
 
     constructor({ logger, moveItemService }: { logger: Logger; moveItemService: MoveItemService }) {
         super();

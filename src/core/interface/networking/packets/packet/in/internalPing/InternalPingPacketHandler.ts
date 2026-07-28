@@ -5,7 +5,7 @@ import InternalPingPacket from './InternalPingPacket';
 import InternalPongPacket from '../../out/InternalPongPacket';
 
 export default class InternalPingPacketHandler extends PacketHandler<InternalPingPacket> {
-    private logger: Logger;
+    private readonly logger: Logger;
 
     constructor({ logger }: { logger: Logger }) {
         super();
