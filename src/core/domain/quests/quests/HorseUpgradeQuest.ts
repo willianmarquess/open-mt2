@@ -91,18 +91,22 @@ export class HorseUpgradeQuest extends AbstractQuest {
         this.addValue('killCount', 0);
         this.addValue('deadline', Date.now() + TEST_DURATION_MS);
 
-        // Announce the failure the moment time runs out instead of leaving
-        // the player to discover it in the quest letter.
+        // Announce the failure the moment time runs out and reset the quest,
+        // so the player is told right away and the report option does not
+        // linger in the Stable Boy's menu forever.
         this.player.removeEventTimer(TEST_TIMER_ID);
         this.player.addEventTimer({
             id: TEST_TIMER_ID,
             eventFunction: () => {
-                if (this.isExpired()) {
-                    this.player.chat({
-                        messageType: ChatMessageTypeEnum.INFO,
-                        message: '[Horse Upgrade] Time is up! Talk to the Stable Boy to try again.',
-                    });
-                }
+                if (!this.isExpired()) return;
+                this.player.chat({
+                    messageType: ChatMessageTypeEnum.INFO,
+                    message: '[Horse Upgrade] Time is up! The test failed, ask the Stable Boy to try again.',
+                });
+                // Drop the quest letter right away instead of leaving a stale
+                // icon on screen until the player opens the quest window.
+                this.clearLetter();
+                void this.setState(HorseUpgradeQuestState.START);
             },
             options: { interval: TEST_DURATION_MS, duration: TEST_DURATION_MS },
         });
@@ -111,9 +115,9 @@ export class HorseUpgradeQuest extends AbstractQuest {
     }
 
     /**
-     * The Stable Boy stays responsive during the test: shows progress, and
-     * after the deadline this is the way back to START (without it an expired
-     * test with no further kills would soft-lock the quest).
+     * The Stable Boy stays responsive while the test runs (shows progress) and
+     * is also the manual way out if the expiry timer could not reset the quest
+     * (e.g. the player was offline when it fired).
      */
     @Task({
         state: HorseUpgradeQuestState.TEST,
