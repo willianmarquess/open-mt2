@@ -17,6 +17,8 @@ import { QuestManager } from '../../quests/QuestManager';
 import { EntityTypeEnum } from '@/core/enum/EntityTypeEnum';
 import GlobalEventTimerManager from '../../manager/GlobalEventTimeManager';
 
+const SPEED_REFERENCE_DISTANCE = 10_000;
+
 export default abstract class Character extends GameEntity {
     protected id: number;
     protected classId: number = 0;
@@ -250,6 +252,25 @@ export default abstract class Character extends GameEntity {
 
     getMovementSpeed() {
         return this.getPoint(PointsEnum.MOVE_SPEED);
+    }
+
+    /** Null when the class has no run animation, the case gotoInternal() also gives no duration. */
+    getMoveDistancePerMs(): number | null {
+        const animation = this.animationManager.getAnimation(
+            String(this.classId),
+            AnimationTypeEnum.RUN,
+            AnimationSubTypeEnum.GENERAL,
+        );
+
+        if (!animation) return null;
+
+        const duration = AnimationUtil.calcAnimationDuration(
+            animation,
+            this.getPoint(PointsEnum.MOVE_SPEED),
+            SPEED_REFERENCE_DISTANCE,
+        );
+
+        return duration > 0 ? SPEED_REFERENCE_DISTANCE / duration : null;
     }
 
     getAttackSpeed() {
