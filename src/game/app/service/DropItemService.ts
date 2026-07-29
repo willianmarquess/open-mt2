@@ -32,6 +32,8 @@ export default class DropItemService {
         if (!item) return;
         if (player.isItemLockedInPrivateShop(item)) return;
 
+        if (!Number.isInteger(count) || count <= 0 || count > item.getCount()) return;
+
         if (count === item.getCount()) {
             player.getInventory().removeItem(position, item.getSize());
             player.sendItemRemoved({
