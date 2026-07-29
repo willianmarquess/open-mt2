@@ -1,4 +1,5 @@
 import { AttackTypeEnum } from '@/core/enum/AttackTypeEnum';
+import { BattleTypeEnum } from '@/core/enum/BattleTypeEnum';
 import Logger from '@/core/infra/logger/Logger';
 import { ItemTypeEnum } from '@/core/enum/ItemTypeEnum';
 import { ItemSubTypeEnum } from '@/core/enum/ItemSubTypeEnum';
@@ -30,7 +31,8 @@ const weaponResistanceMapper: { [key in ItemWeaponSubTypeEnum]: MobResistEnum } 
     [ItemWeaponSubTypeEnum.WEAPON_ARROW]: MobResistEnum.BOW,
 };
 
-const MAX_DISTANCE = 500; //TODO: this should be calculated by player weapon, hackers can use this fixed value to attack with 500 of range for daggers, sword, bell, fan etc
+const MAX_DISTANCE = 300;
+const MOB_ATTACK_RANGE_TOLERANCE = 1.15;
 
 export default class PlayerBattleAgainstMobStrategy extends PlayerBattleStrategy<Monster> {
     private readonly logger: Logger;
@@ -167,7 +169,12 @@ export default class PlayerBattleAgainstMobStrategy extends PlayerBattleStrategy
             victim.getPositionY(),
         );
 
-        if (distance > MAX_DISTANCE) {
+        const maxDistance =
+            victim.getBattleType() === BattleTypeEnum.MELEE
+                ? Math.max(MAX_DISTANCE, victim.getAttackRange() * MOB_ATTACK_RANGE_TOLERANCE)
+                : MAX_DISTANCE;
+
+        if (distance > maxDistance) {
             this.logger.info(`[PlayerBattle] Very far from the victim.`);
             return;
         }
