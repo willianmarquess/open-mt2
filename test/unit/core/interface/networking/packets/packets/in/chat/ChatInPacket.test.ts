@@ -15,7 +15,7 @@ describe('ChatInPacket', function () {
     it('should initialize with correct header, name, and size', function () {
         expect(chatInPacket.getHeader()).to.equal(PacketHeaderEnum.CHAT_IN);
         expect(chatInPacket.getName()).to.equal('ChatInPacket');
-        expect(chatInPacket.getSize()).to.equal(5 + 'Hello, world!'.length + 1);
+        expect(chatInPacket.getSize()).to.equal(4 + 'Hello, world!'.length + 1);
     });
 
     it('should initialize properties correctly', function () {

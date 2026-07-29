@@ -19,6 +19,11 @@ export default class EmpirePacket extends PacketBidirectional {
         return this.empireId;
     }
 
+    // The declared size (3) sizes the outgoing buffer; the client sends 2 bytes.
+    getFrameLength(): number | null {
+        return 2;
+    }
+
     pack() {
         this.bufferWriter.writeUint8(this.empireId).writeUint8(0);
         return this.bufferWriter.getBuffer();

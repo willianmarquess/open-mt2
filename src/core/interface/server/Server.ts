@@ -5,9 +5,18 @@ import { PacketMapValue } from '@/core/interface/networking/packets/Packets';
 import { GameConfig } from '@/game/infra/config/GameConfig';
 import { ConnectionStateEnum } from '@/core/enum/ConnectionStateEnum';
 
+const MAX_PACKET_LENGTH = 1024;
+const MAX_RECEIVE_BUFFER = 16_384;
+
+type FrameState = {
+    buffer: Buffer;
+    draining: boolean;
+};
+
 export default abstract class Server {
     protected server!: SocketServer;
     protected readonly connections = new Map<string, Connection>();
+    private readonly frameStates = new Map<string, FrameState>();
     protected readonly logger: Logger;
     protected readonly config: GameConfig;
     protected readonly container: any;
@@ -61,8 +70,80 @@ export default abstract class Server {
         connection.startKeepalive();
 
         socket.on('close', this.onClose.bind(this, connection));
-        socket.on('data', this.onData.bind(this, connection));
+        socket.on('data', (chunk: Buffer) => {
+            this.handleData(connection, chunk).catch((err) => this.logger.error(err));
+        });
         socket.on('error', this.onError.bind(this, connection));
+    }
+
+    /**
+     * TCP has no message boundaries: a read can carry several packets, or part
+     * of one. The drain is serialized per connection so packets stay in
+     * arrival order even while a handler is still awaiting.
+     */
+    private async handleData(connection: Connection, chunk: Buffer) {
+        const connectionId = connection.getId();
+        const state = this.frameStates.get(connectionId) ?? { buffer: Buffer.alloc(0), draining: false };
+        this.frameStates.set(connectionId, state);
+        state.buffer = state.buffer.byteLength > 0 ? Buffer.concat([state.buffer, chunk]) : chunk;
+
+        if (state.buffer.byteLength > MAX_RECEIVE_BUFFER) {
+            this.logger.error(
+                `[IN][PACKET] Receive buffer overflow (${state.buffer.byteLength} bytes) from connection: ID: ${connectionId}, closing`,
+            );
+            this.frameStates.delete(connectionId);
+            connection.close();
+            return;
+        }
+
+        if (state.draining) return;
+
+        state.draining = true;
+        try {
+            while (state.buffer.byteLength > 0) {
+                const frame = this.extractFrame(connection, state);
+                if (!frame) break;
+                await this.onData(connection, frame);
+            }
+        } finally {
+            state.draining = false;
+        }
+    }
+
+    /**
+     * Cuts the next complete packet off the front of the buffer, or returns
+     * null while it holds only a partial one. An unknown header means framing
+     * is lost, so the buffered bytes are discarded.
+     */
+    private extractFrame(connection: Connection, state: FrameState): Buffer | null {
+        const header = state.buffer[0];
+        const packetBuilder = this.packets.get(header);
+
+        if (!packetBuilder) {
+            this.logger.info(
+                `[IN][PACKET] Unknown header packet: ${header}, discarding ${state.buffer.byteLength} buffered byte(s)`,
+            );
+            state.buffer = Buffer.alloc(0);
+            return null;
+        }
+
+        const frameLength = packetBuilder.createPacket({}).getFrameLength(state.buffer);
+        if (frameLength === null) return null;
+
+        if (frameLength < 1 || frameLength > MAX_PACKET_LENGTH) {
+            this.logger.error(
+                `[IN][PACKET] Invalid packet length ${frameLength} for header ${header} from connection: ID: ${connection.getId()}, closing`,
+            );
+            this.frameStates.delete(connection.getId());
+            connection.close();
+            return null;
+        }
+
+        if (state.buffer.byteLength < frameLength) return null;
+
+        const frame = state.buffer.subarray(0, frameLength);
+        state.buffer = state.buffer.subarray(frameLength);
+        return frame;
     }
 
     async onError(connection: Connection, err: Error) {
@@ -75,6 +156,7 @@ export default abstract class Server {
         this.logger.debug(`[IN][CLOSE SOCKET EVENT] Closing connection: ID: ${connection.getId()}`);
         connection.stopKeepalive();
         this.connections.delete(connection.getId());
+        this.frameStates.delete(connection.getId());
     }
 
     start(): Promise<void> {
