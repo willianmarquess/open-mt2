@@ -34,10 +34,6 @@ export abstract class AbstractQuest {
     // reaches select()/nextPage() (several awaits in), leaving a window where a
     // second click could start a concurrent run. This flag closes that window.
     private running: boolean = false;
-    // Player interacted with an open quest window during the current run
-    // (answered a select, turned a page, closed the window). Mirrors the
-    // original engine's m_bShouldSendDone: only then is a bare trailing
-    // [DONE] sent, so the client releases that window.
     private shouldSendDone: boolean = false;
     private readonly questFlags: BitFlag = new BitFlag();
 
@@ -125,14 +121,6 @@ export abstract class AbstractQuest {
         return this.currentState?.tasks.filter((routine) => routine.when === event) ?? [];
     }
 
-    /**
-     * Trailing [DONE] policy, mirroring the original engine (SendScript in
-     * questmanager.cpp): send it when there is accumulated text to show, or
-     * when the player interacted with an open quest window during this run
-     * (answer, next page, close) and the client needs a bare [DONE] to release
-     * it. In any other case send nothing — a bare [DONE] ends the client-side
-     * quest script, which is what used to take quest letters down (issue #58).
-     */
     private autoDone() {
         const playerInteracted = this.shouldSendDone;
         this.shouldSendDone = false;
@@ -142,15 +130,6 @@ export abstract class AbstractQuest {
         this.done();
     }
 
-    /**
-     * The client destroys a letter the moment it is clicked (the click and the
-     * BUTTON packet are one action), so a BUTTON run that leaves the quest in
-     * the same state must re-send the [QUESTBUTTON] or the letter is gone for
-     * good (issue #58). Matches the resend_letter idiom of the original quest
-     * scripts: the button rides in the same script as the reply text. When the
-     * run changes state, endRunning dispatches the new state's LETTER event
-     * and that letter replaces this one.
-     */
     private rearmLetter(eventType: QuestEventEnum, result?: TaskResult) {
         if (eventType !== QuestEventEnum.BUTTON) return;
         if (result && result.nextState && result.nextState !== this.currentState?.name) return;

@@ -110,14 +110,11 @@ describe('AbstractQuest', () => {
                 return (this as any).nextState('DONE_STATE');
             }
 
-            public async countingTask() {
-                // Counts a kill; produces no script output.
-            }
+            public async countingTask() {}
 
             public async abortableSelectTask() {
                 (this as any).text('Pick one');
                 await (this as any).select(['A', 'B']);
-                // No trailing text: mirrors quests that open a shop or bail out.
             }
         }
 
