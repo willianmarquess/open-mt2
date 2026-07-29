@@ -10,7 +10,7 @@ export default class ItemUsePacket extends PacketIn {
         super({
             header: PacketHeaderEnum.ITEM_USE,
             name: 'ItemUsePacket',
-            size: 5,
+            size: 4,
             validator: ItemUsePacketValidator,
         });
         this.window = window;

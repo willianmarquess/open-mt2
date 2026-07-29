@@ -12,7 +12,7 @@ describe('EnterGamePacket', function () {
     it('should initialize with correct header, name, and size', function () {
         expect(enterGamePacket.getHeader()).to.equal(PacketHeaderEnum.ENTER_GAME);
         expect(enterGamePacket.getName()).to.equal('EnterGamePacket');
-        expect(enterGamePacket.getSize()).to.equal(0);
+        expect(enterGamePacket.getSize()).to.equal(1);
     });
 
     it('should unpack correctly', function () {

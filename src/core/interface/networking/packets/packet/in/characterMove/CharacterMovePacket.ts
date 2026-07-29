@@ -28,7 +28,7 @@ export default class CharacterMovePacket extends PacketIn {
         super({
             header: PacketHeaderEnum.CHARACTER_MOVE,
             name: 'CharacterMovePacket',
-            size: 17,
+            size: 16,
             validator: CharacterMovePacketValidator,
         });
         this.movementType = movementType;

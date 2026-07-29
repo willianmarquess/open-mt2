@@ -3,8 +3,8 @@ import PacketIn from '../PacketIn';
 import ShopPacketValidator from './ShopPacketValidator';
 import { ShopSubHeaderCG } from '@/core/enum/ShopSubHeaderEnum';
 
-// CG_SHOP is variable-length; maximum is END(2), BUY(3), SELL(3), SELL2(4).
-// We allocate for the largest (4 bytes including header).
+// CG_SHOP is variable-length; the subheader decides the size:
+// END(2), BUY(4), SELL(3), SELL2(4). We allocate for the largest.
 export default class ShopPacket extends PacketIn {
     private shopSubHeader: ShopSubHeaderCG = ShopSubHeaderCG.END;
     private pos: number = 0;
@@ -29,6 +29,20 @@ export default class ShopPacket extends PacketIn {
 
     getCount(): number {
         return this.count;
+    }
+
+    getFrameLength(buffer: Buffer): number | null {
+        if (buffer.byteLength < 2) return null;
+
+        switch (buffer[1] as ShopSubHeaderCG) {
+            case ShopSubHeaderCG.BUY:
+            case ShopSubHeaderCG.SELL2:
+                return 4;
+            case ShopSubHeaderCG.SELL:
+                return 3;
+            default:
+                return 2;
+        }
     }
 
     unpack(buffer: Buffer): this {

@@ -45,6 +45,12 @@ export default abstract class Packet {
         return this.size;
     }
 
+    /** On-wire bytes at the start of the buffer, or null when more are needed to tell. */
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    getFrameLength(buffer: Buffer): number | null {
+        return this.size;
+    }
+
     haveSubHeader() {
         return !!this.subHeader && this.subHeader > 0;
     }

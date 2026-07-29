@@ -6,7 +6,7 @@ export default class EnterGamePacket extends PacketIn {
         super({
             header: PacketHeaderEnum.ENTER_GAME,
             name: 'EnterGamePacket',
-            size: 0,
+            size: 1,
         });
     }
 
