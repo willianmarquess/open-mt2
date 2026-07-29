@@ -57,9 +57,7 @@ describe('Security — item pickup validation (issue #66)', function () {
         thief.pickup(virtualId);
         await thief.settle(600);
 
-        expect(harness.findDroppedItem()?.getVirtualId(), 'item still on the ground after a far pickup').to.equal(
-            virtualId,
-        );
+        expect(harness.findEntity(virtualId), 'item still on the ground after a far pickup').to.not.equal(undefined);
         expect(await thief.dbItems(THIEF, POTION), 'attacker received nothing').to.deep.equal([]);
 
         // Positive control: the same packet from the owner standing on it works,
@@ -67,7 +65,7 @@ describe('Security — item pickup validation (issue #66)', function () {
         owner.pickup(virtualId);
         await owner.settle(600);
 
-        expect(harness.findDroppedItem(), 'owner nearby picked it up').to.equal(undefined);
+        expect(harness.findEntity(virtualId), 'owner nearby picked it up').to.equal(undefined);
     });
 
     // The gold half of #66 is covered by the PickupItemService unit tests: gold

@@ -111,6 +111,11 @@ export default class AttackHarness {
         return this.entities().find((entity) => entity?.getName?.() === name);
     }
 
+    /** The live entity behind a virtual id, or undefined once it despawned. */
+    findEntity(virtualId: number) {
+        return this.entityManager.getEntity(virtualId);
+    }
+
     /**
      * True while the game server still accepts TCP connections — probed the same
      * way an external observer sees it, rather than by reaching into internals.

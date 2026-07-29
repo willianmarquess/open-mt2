@@ -4,6 +4,8 @@ import { ChatMessageTypeEnum } from '@/core/enum/ChatMessageTypeEnum';
 import { PointsEnum } from '@/core/enum/PointsEnum';
 import Logger from '@/core/infra/logger/Logger';
 
+const GOLD_PROTO_ID = 1;
+
 type DropItemServiceParams = {
     window: number;
     position: number;
@@ -66,13 +68,17 @@ export default class DropItemService {
             return;
         }
 
-        player.addPoint(PointsEnum.GOLD, -amount);
+        const gold = this.itemManager.getItem(GOLD_PROTO_ID, amountValidated);
+
+        if (!gold) {
+            this.logger.error(`[PLAYER] Missing the gold item proto ${GOLD_PROTO_ID}`);
+            return;
+        }
+
+        player.addPoint(PointsEnum.GOLD, -amountValidated);
         player.dropItem({
-            count: amount,
-            item: {
-                id: 1,
-                count: amount,
-            } as any,
+            count: amountValidated,
+            item: gold,
         });
     }
 }
