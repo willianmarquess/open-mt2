@@ -5,6 +5,9 @@ import { ChatMessageTypeEnum } from '@/core/enum/ChatMessageTypeEnum';
 import { IItemRepository } from '@/core/domain/repository/IItemRepository';
 import { PointsEnum } from '@/core/enum/PointsEnum';
 import { EntityManager } from '@/core/domain/manager/EntityManager';
+import MathUtil from '@/core/domain/util/MathUtil';
+
+const MAX_PICKUP_DISTANCE = 300;
 
 export default class PickupItemService {
     private readonly world: World;
@@ -29,20 +32,20 @@ export default class PickupItemService {
         const droppedItem = this.entityManager.getEntity<DroppedItem>(virtualId);
 
         if (!droppedItem) return;
+        if (droppedItem.getArea() !== player.getArea()) return;
 
-        //TODO: validate id the dropped item is in the same map, and validate distance (avoid hacking)
+        const distance = MathUtil.calcDistance(
+            player.getPositionX(),
+            player.getPositionY(),
+            droppedItem.getPositionX(),
+            droppedItem.getPositionY(),
+        );
+
+        if (distance > MAX_PICKUP_DISTANCE) return;
 
         const item = droppedItem.getItem();
         const count = droppedItem.getCount();
         const ownerName = droppedItem.getOwnerName();
-
-        const isGold = item.getId() === 1;
-
-        if (isGold) {
-            player.addPoint(PointsEnum.GOLD, Number(count));
-            this.world.despawn(droppedItem);
-            return;
-        }
 
         const canPickup = ownerName === player.getName() || !ownerName;
 
@@ -51,6 +54,14 @@ export default class PickupItemService {
                 messageType: ChatMessageTypeEnum.INFO,
                 message: '[SYSTEM] This item is not yours',
             });
+            return;
+        }
+
+        const isGold = item.getId() === 1;
+
+        if (isGold) {
+            player.addPoint(PointsEnum.GOLD, Number(count));
+            this.world.despawn(droppedItem);
             return;
         }
 

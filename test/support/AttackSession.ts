@@ -5,6 +5,8 @@ import BufferWriter from '@/core/interface/networking/buffer/BufferWriter';
 import BufferReader from '@/core/interface/networking/buffer/BufferReader';
 import PacketHeaderEnum from '@/core/enum/PacketHeaderEnum';
 import CacheKeyGenerator from '@/core/util/CacheKeyGenerator';
+import Monster from '@/core/domain/entities/game/mob/Monster';
+import DroppedItem from '@/core/domain/entities/game/item/DroppedItem';
 
 /**
  * A "malicious client" test harness: it speaks the raw game protocol against a
@@ -21,6 +23,14 @@ import CacheKeyGenerator from '@/core/util/CacheKeyGenerator';
  * Requires MySQL + Redis (docker) and a free game port (stop `dev:game` first).
  */
 export default class AttackHarness {
+    /**
+     * The game container is a module-level singleton, so its database pool and
+     * cache client can only be opened once per process. The server is therefore
+     * booted on the first start() and shared by every spec file; shutdown()
+     * closes it once, from the root hook in setup.integration.ts.
+     */
+    private static shared: AttackHarness | null = null;
+
     private app!: GameApplication;
     private readonly rejections: unknown[] = [];
     private readonly onRejection = (reason: unknown) => this.rejections.push(reason);
@@ -40,26 +50,70 @@ export default class AttackHarness {
     }
 
     async start() {
+        if (AttackHarness.shared) return AttackHarness.shared;
+
         // Capture unhandled rejections instead of letting Node's default handler
         // crash the runner. This is the whole point of owning the server here.
         process.on('unhandledRejection', this.onRejection);
         this.app = new GameApplication(container.cradle as any);
         await this.app.start();
+        AttackHarness.shared = this;
         return this;
     }
 
+    /** Drops the accounts this spec seeded; the server stays up for the next one. */
     async stop() {
         for (const username of this.seededAccounts) {
             await this.db.getConnection().query('DELETE FROM auth.account WHERE username = ?', [username]);
             await this.db.getConnection().query('DELETE FROM game.player WHERE name = ?', [username]);
         }
-        await this.app.close();
-        process.off('unhandledRejection', this.onRejection);
+        this.seededAccounts.length = 0;
+        this.rejections.length = 0;
+    }
+
+    static async shutdown() {
+        const harness = AttackHarness.shared;
+        if (!harness) return;
+
+        await harness.app.close();
+        process.off('unhandledRejection', harness.onRejection);
+        AttackHarness.shared = null;
     }
 
     /** Unhandled rejections seen since start (e.g. the RangeError from issue #69). */
     capturedRejections() {
         return this.rejections;
+    }
+
+    private get entityManager() {
+        return container.resolve<any>('entityManager');
+    }
+
+    /**
+     * Every live entity in the world. Tests use this to learn virtual ids the
+     * attacker is not supposed to know — which is exactly the attacker's own
+     * position, since virtual ids are sequential and trivially guessable.
+     */
+    private entities(): Array<any> {
+        return [...this.entityManager.entities.values()];
+    }
+
+    findMonster(): Monster | undefined {
+        return this.entities().find((entity) => entity instanceof Monster);
+    }
+
+    /** The most recently spawned ground item, so earlier specs cannot shadow it. */
+    findDroppedItem(): DroppedItem | undefined {
+        return this.entities().findLast((entity) => entity instanceof DroppedItem);
+    }
+
+    findPlayer(name: string) {
+        return this.entities().find((entity) => entity?.getName?.() === name);
+    }
+
+    /** The live entity behind a virtual id, or undefined once it despawned. */
+    findEntity(virtualId: number) {
+        return this.entityManager.getEntity(virtualId);
     }
 
     /**
@@ -197,6 +251,18 @@ export class AttackSession {
     drop(window: number, position: number, gold: number, count: number) {
         const w = new BufferWriter(PacketHeaderEnum.ITEM_DROP, 9);
         this.send(w.writeUint8(window).writeUint16LE(position).writeUint32LE(gold).writeUint8(count).getBuffer());
+    }
+
+    /** Fire a raw item-pickup packet for an arbitrary virtual id. */
+    pickup(virtualId: number) {
+        const w = new BufferWriter(PacketHeaderEnum.ITEM_PICKUP, 5);
+        this.send(w.writeUint32LE(virtualId).getBuffer());
+    }
+
+    /** Fire a raw attack packet at an arbitrary virtual id. */
+    attack(virtualId: number, attackType = 0) {
+        const w = new BufferWriter(PacketHeaderEnum.ATTACK, 8);
+        this.send(w.writeUint8(attackType).writeUint32LE(virtualId).writeUint8(0).writeUint8(0).getBuffer());
     }
 
     send(buffer: Buffer) {

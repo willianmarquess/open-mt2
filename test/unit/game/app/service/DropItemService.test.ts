@@ -17,6 +17,10 @@ describe('DropItemService', function () {
 
         itemManagerMock = {
             delete: sinon.stub().resolves(),
+            getItem: sinon.stub().callsFake((id: number, count: number) => ({
+                getId: () => id,
+                getCount: () => count,
+            })),
         };
 
         dropItemService = new DropItemService({
@@ -47,6 +51,30 @@ describe('DropItemService', function () {
             expect(playerMock.addPoint.calledOnceWith(PointsEnum.GOLD, -50)).to.be.true;
             expect(playerMock.dropItem.calledOnce).to.be.true;
             expect(playerMock.chat.notCalled).to.be.true;
+        });
+
+        it('should drop gold as a real item, so the ground entity can be rendered', async function () {
+            const playerMock = {
+                getPoint: sinon.stub().returns(100),
+                dropItem: sinon.spy(),
+                chat: sinon.spy(),
+                getName: sinon.stub().returns('TestPlayer'),
+                isItemLockedInPrivateShop: sinon.stub().returns(false),
+                addPoint: sinon.spy(),
+            };
+
+            await dropItemService.execute({
+                window: 1,
+                position: 0,
+                gold: 50,
+                count: 0,
+                player: playerMock as unknown as Player,
+            });
+
+            const { item, count } = playerMock.dropItem.firstCall.args[0];
+            expect(item.getId(), 'the gold proto').to.equal(1);
+            expect(item.getCount(), 'built for the dropped amount').to.equal(50);
+            expect(count).to.equal(50);
         });
 
         it('should not drop more gold than the player has', async function () {

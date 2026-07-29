@@ -104,6 +104,18 @@ const MIN_ATTACK_INTERVAL_MS = 80;
 // client never sends a longer segment. Kept generous here.
 const MAX_MOVE_DISTANCE = 2500;
 
+// Chat flood limit. The original scores banned words per IP instead of capping
+// the rate, which needs a banword list we do not have, so this is a plain
+// rolling window: wide enough that nobody types through it, narrow enough to
+// stop the spam modules the public hacks ship, which send dozens per second.
+const CHAT_WINDOW_MS = 5_000;
+const CHAT_MAX_PER_WINDOW = 10;
+
+// Shout rules from the original (input_main.cpp): a minimum level, then a
+// 15 second cooldown that silently drops the message.
+const SHOUT_MIN_LEVEL = 15;
+const SHOUT_COOLDOWN_MS = 15_000;
+
 export default class Player extends Character {
     private readonly accountId: number;
     private readonly playerClass: number;
@@ -136,6 +148,10 @@ export default class Player extends Character {
     private lastAttackVictimVid: number = 0;
     /** Last client-reported position accepted by the anti-teleport check. */
     private lastReportedPosition: { x: number; y: number } | null = null;
+
+    //chat
+    private chatTimes: Array<number> = [];
+    private lastShoutTime: number = 0;
 
     //quests
     private readonly quests: Map<number, AbstractQuest> = new Map();
@@ -535,6 +551,39 @@ export default class Player extends Character {
     private getAttackCooldown() {
         const attackSpeed = Math.max(1, this.getAttackSpeed());
         return Math.max(MIN_ATTACK_INTERVAL_MS, Math.floor(ATTACK_SPEED_REFERENCE_MS / attackSpeed));
+    }
+
+    /**
+     * Rate limits every incoming chat packet, commands included. Counts this
+     * message when it is allowed, so a client that keeps sending stays blocked
+     * for as long as it floods rather than being let through every other window.
+     */
+    isChatAllowed(): boolean {
+        const now = performance.now();
+        this.chatTimes = this.chatTimes.filter((time) => now - time < CHAT_WINDOW_MS);
+
+        if (this.chatTimes.length >= CHAT_MAX_PER_WINDOW) return false;
+
+        this.chatTimes.push(now);
+        return true;
+    }
+
+    hasShoutLevel(): boolean {
+        return this.getPoint(PointsEnum.LEVEL) >= SHOUT_MIN_LEVEL;
+    }
+
+    getShoutMinLevel(): number {
+        return SHOUT_MIN_LEVEL;
+    }
+
+    /** True when the shout cooldown elapsed; starts a new one when it does. */
+    isShoutAllowed(): boolean {
+        const now = performance.now();
+
+        if (now - this.lastShoutTime < SHOUT_COOLDOWN_MS) return false;
+
+        this.lastShoutTime = now;
+        return true;
     }
 
     /**
