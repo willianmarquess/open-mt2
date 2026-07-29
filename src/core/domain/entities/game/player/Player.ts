@@ -104,6 +104,11 @@ const MIN_ATTACK_INTERVAL_MS = 80;
 // client never sends a longer segment. Kept generous here.
 const MAX_MOVE_DISTANCE = 2500;
 
+// The cap above has no time component: many small hops sent fast pass it.
+// Tolerance absorbs latency and the packet bunching that follows a lag spike.
+const MOVE_WINDOW_MS = 1_000;
+const MOVE_DISTANCE_TOLERANCE = 2;
+
 // Chat flood limit. The original scores banned words per IP instead of capping
 // the rate, which needs a banword list we do not have, so this is a plain
 // rolling window: wide enough that nobody types through it, narrow enough to
@@ -148,6 +153,7 @@ export default class Player extends Character {
     private lastAttackVictimVid: number = 0;
     /** Last client-reported position accepted by the anti-teleport check. */
     private lastReportedPosition: { x: number; y: number } | null = null;
+    private recentMoves: Array<{ time: number; distance: number }> = [];
 
     //chat
     private chatTimes: Array<number> = [];
@@ -586,11 +592,28 @@ export default class Player extends Character {
         return true;
     }
 
+    private isMoveRateAllowed(distance: number, now: number): boolean {
+        const distancePerMs = this.getMoveDistancePerMs();
+
+        if (distancePerMs === null) return true;
+
+        this.recentMoves = this.recentMoves.filter((move) => now - move.time < MOVE_WINDOW_MS);
+
+        const accumulated = this.recentMoves.reduce((total, move) => total + move.distance, 0);
+        const budget = distancePerMs * MOVE_WINDOW_MS * MOVE_DISTANCE_TOLERANCE;
+
+        if (accumulated + distance > budget) return false;
+
+        this.recentMoves.push({ time: now, distance });
+        return true;
+    }
+
     /**
-     * Rejects move packets that jump farther than a single step allows
-     * (teleport hack). A legitimate client segments long walks, so a request
-     * beyond the cap is either a hack or a desync — in both cases we snap the
-     * client back to the server's authoritative position and drop the move.
+     * Rejects move packets that jump farther than a single step allows, or
+     * that arrive faster than the character can walk (teleport hack). A
+     * legitimate client segments long walks, so a request beyond either bound
+     * is either a hack or a desync — in both cases we snap the client back to
+     * the server's authoritative position and drop the move.
      * Returns true when the requested destination is acceptable.
      */
     isMoveAllowed(x: number, y: number): boolean {
@@ -599,12 +622,16 @@ export default class Player extends Character {
         // fast client, which would trip the cap on honest moves. The server
         // position is the fallback anchor (first move after login or a
         // teleport), so a crafted jump is still capped from a trusted point.
-        const anchors = [this.lastReportedPosition, { x: this.getPositionX(), y: this.getPositionY() }];
-        const allowed = anchors.some(
+        const serverPosition = { x: this.getPositionX(), y: this.getPositionY() };
+        const anchors = [this.lastReportedPosition, serverPosition];
+        const withinCap = anchors.some(
             (anchor) => anchor && MathUtil.calcDistance(anchor.x, anchor.y, x, y) <= MAX_MOVE_DISTANCE,
         );
 
-        if (allowed) {
+        const anchor = this.lastReportedPosition ?? serverPosition;
+        const distance = MathUtil.calcDistance(anchor.x, anchor.y, x, y);
+
+        if (withinCap && this.isMoveRateAllowed(distance, performance.now())) {
             this.lastReportedPosition = { x, y };
             return true;
         }
@@ -848,6 +875,7 @@ export default class Player extends Character {
 
         // The anti-teleport anchor is stale after a server-initiated warp.
         this.lastReportedPosition = null;
+        this.recentMoves = [];
 
         this.connection?.send(
             new TeleportPacket({

@@ -265,6 +265,21 @@ export class AttackSession {
         this.send(w.writeUint8(attackType).writeUint32LE(virtualId).writeUint8(0).writeUint8(0).getBuffer());
     }
 
+    /** Fire a raw character-move packet (the client reports where it now is). */
+    move(x: number, y: number, movementType = 1, time = 0) {
+        const w = new BufferWriter(PacketHeaderEnum.CHARACTER_MOVE, 16);
+        this.send(
+            w
+                .writeUint8(movementType)
+                .writeUint8(0)
+                .writeUint8(0)
+                .writeUint32LE(x)
+                .writeUint32LE(y)
+                .writeUint32LE(time)
+                .getBuffer(),
+        );
+    }
+
     send(buffer: Buffer) {
         this.client.write(buffer);
     }
