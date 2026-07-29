@@ -3,6 +3,8 @@ import BlockModeCommand from './command/blockMode/BlockModeCommand';
 import BlockModeCommandHandler from './command/blockMode/BlockModeCommandHandler';
 import CloseShopCommand from './command/closeShop/CloseShopCommand';
 import CloseShopCommandHandler from './command/closeShop/CloseShopCommandHandler';
+import DebugCommand from './command/debug/DebugCommand';
+import DebugCommandHandler from './command/debug/DebugCommandHandler';
 import ExperienceCommand from './command/exp/ExperienceCommand';
 import ExperienceCommandHandler from './command/exp/ExperienceCommandHandler';
 import GoldCommand from './command/gold/GoldCommand';
@@ -61,6 +63,13 @@ export default function createCommands() {
             {
                 command: LogoutCommand,
                 createHandler: (params) => new LogoutCommandHandler(params),
+            },
+        ],
+        [
+            DebugCommand.getName(),
+            {
+                command: DebugCommand,
+                createHandler: (params) => new DebugCommandHandler(params),
             },
         ],
         [
