@@ -22,18 +22,13 @@ export default class CreateCharacterPacket extends PacketIn {
         super({
             header: PacketHeaderEnum.CREATE_CHARACTER,
             name: 'CreateCharacterPacket',
-            size: 30,
+            size: 34,
             validator: CreateCharacterPacketValidator,
         });
         this.slot = slot;
         this.playerName = playerName;
         this.playerClass = playerClass;
         this.appearance = appearance;
-    }
-
-    // Newer builds append stat bytes after appearance, so claim the whole read.
-    getFrameLength(buffer: Buffer): number | null {
-        return buffer.byteLength >= this.size ? buffer.byteLength : null;
     }
 
     getSlot() {

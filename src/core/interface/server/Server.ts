@@ -76,11 +76,7 @@ export default abstract class Server {
         socket.on('error', this.onError.bind(this, connection));
     }
 
-    /**
-     * TCP has no message boundaries: a read can carry several packets, or part
-     * of one. The drain is serialized per connection so packets stay in
-     * arrival order even while a handler is still awaiting.
-     */
+    /** Serialized per connection so packets stay in arrival order across awaits. */
     private async handleData(connection: Connection, chunk: Buffer) {
         const connectionId = connection.getId();
         const state = this.frameStates.get(connectionId) ?? { buffer: Buffer.alloc(0), draining: false };
@@ -110,11 +106,7 @@ export default abstract class Server {
         }
     }
 
-    /**
-     * Cuts the next complete packet off the front of the buffer, or returns
-     * null while it holds only a partial one. An unknown header means framing
-     * is lost, so the buffered bytes are discarded.
-     */
+    /** Next complete packet, or null while the buffer holds only a partial one. */
     private extractFrame(connection: Connection, state: FrameState): Buffer | null {
         const header = state.buffer[0];
         const packetBuilder = this.packets.get(header);

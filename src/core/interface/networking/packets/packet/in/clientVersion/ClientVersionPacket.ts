@@ -15,11 +15,6 @@ export default class ClientVersionPacket extends PacketIn {
         this.timeStamp = timeStamp;
     }
 
-    // The struct size varies by client build, so claim the whole read.
-    getFrameLength(buffer: Buffer): number | null {
-        return buffer.byteLength >= this.size ? buffer.byteLength : null;
-    }
-
     getClientName() {
         return this.clientName;
     }

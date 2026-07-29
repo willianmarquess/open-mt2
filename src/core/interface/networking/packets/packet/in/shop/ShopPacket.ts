@@ -3,8 +3,13 @@ import PacketIn from '../PacketIn';
 import ShopPacketValidator from './ShopPacketValidator';
 import { ShopSubHeaderCG } from '@/core/enum/ShopSubHeaderEnum';
 
-// CG_SHOP is variable-length; the subheader decides the size:
-// END(2), BUY(4), SELL(3), SELL2(4). We allocate for the largest.
+const SHOP_BODY_SIZE_DEFAULT = 2;
+const SHOP_BODY_SIZE: Partial<Record<ShopSubHeaderCG, number>> = {
+    [ShopSubHeaderCG.BUY]: 4,
+    [ShopSubHeaderCG.SELL]: 3,
+    [ShopSubHeaderCG.SELL2]: 4,
+};
+
 export default class ShopPacket extends PacketIn {
     private shopSubHeader: ShopSubHeaderCG = ShopSubHeaderCG.END;
     private pos: number = 0;
@@ -34,15 +39,9 @@ export default class ShopPacket extends PacketIn {
     getFrameLength(buffer: Buffer): number | null {
         if (buffer.byteLength < 2) return null;
 
-        switch (buffer[1] as ShopSubHeaderCG) {
-            case ShopSubHeaderCG.BUY:
-            case ShopSubHeaderCG.SELL2:
-                return 4;
-            case ShopSubHeaderCG.SELL:
-                return 3;
-            default:
-                return 2;
-        }
+        const body = SHOP_BODY_SIZE[buffer[1] as ShopSubHeaderCG] ?? SHOP_BODY_SIZE_DEFAULT;
+
+        return body + this.getSequenceLength();
     }
 
     unpack(buffer: Buffer): this {

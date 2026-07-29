@@ -226,16 +226,16 @@ export class AttackSession {
             .writeUint32LE(0)
             .writeUint32LE(0)
             .writeUint32LE(0);
-        this.send(auth.getBuffer());
+        this.sendSequenced(auth.getBuffer());
 
         await this.next(3); // empire
         await this.next(331); // player list
         const select = new BufferWriter(PacketHeaderEnum.SELECT_CHARACTER, 2);
-        this.send(select.writeUint8(0).getBuffer());
+        this.sendSequenced(select.writeUint8(0).getBuffer());
 
         await this.next(2); // LOADING state
         await this.next(46); // character detail
-        this.send(new BufferWriter(PacketHeaderEnum.ENTER_GAME, 1).getBuffer());
+        this.sendSequenced(new BufferWriter(PacketHeaderEnum.ENTER_GAME, 1).getBuffer());
         await this.settle(600);
         this.flush();
     }
@@ -244,25 +244,33 @@ export class AttackSession {
     command(message: string) {
         const size = 1 + 2 + 1 + message.length + 1;
         const w = new BufferWriter(PacketHeaderEnum.CHAT_IN, size);
-        this.send(w.writeUint16LE(size).writeUint8(0).writeString(message, message.length + 1).getBuffer());
+        this.sendSequenced(
+            w
+                .writeUint16LE(size)
+                .writeUint8(0)
+                .writeString(message, message.length + 1)
+                .getBuffer(),
+        );
     }
 
     /** Fire a raw item-drop packet (window u8, position u16, gold u32, count u8). */
     drop(window: number, position: number, gold: number, count: number) {
         const w = new BufferWriter(PacketHeaderEnum.ITEM_DROP, 9);
-        this.send(w.writeUint8(window).writeUint16LE(position).writeUint32LE(gold).writeUint8(count).getBuffer());
+        this.sendSequenced(
+            w.writeUint8(window).writeUint16LE(position).writeUint32LE(gold).writeUint8(count).getBuffer(),
+        );
     }
 
     /** Fire a raw item-pickup packet for an arbitrary virtual id. */
     pickup(virtualId: number) {
         const w = new BufferWriter(PacketHeaderEnum.ITEM_PICKUP, 5);
-        this.send(w.writeUint32LE(virtualId).getBuffer());
+        this.sendSequenced(w.writeUint32LE(virtualId).getBuffer());
     }
 
     /** Fire a raw attack packet at an arbitrary virtual id. */
     attack(virtualId: number, attackType = 0) {
         const w = new BufferWriter(PacketHeaderEnum.ATTACK, 8);
-        this.send(w.writeUint8(attackType).writeUint32LE(virtualId).writeUint8(0).writeUint8(0).getBuffer());
+        this.sendSequenced(w.writeUint8(attackType).writeUint32LE(virtualId).writeUint8(0).writeUint8(0).getBuffer());
     }
 
     /** Fire a raw character-move packet (the client reports where it now is). */
@@ -284,6 +292,14 @@ export class AttackSession {
         this.client.write(buffer);
     }
 
+    /**
+     * Send a packet the way the real client does: with a trailing sequence byte.
+     * The server only needs to skip it, so the value is irrelevant here.
+     */
+    sendSequenced(buffer: Buffer) {
+        this.send(Buffer.concat([buffer, Buffer.of(0)]));
+    }
+
     /** Wait for the server to finish processing what we just sent. */
     settle(ms = 300) {
         return new Promise((r) => setTimeout(r, ms));
@@ -299,13 +315,11 @@ export class AttackSession {
 
     /** The persisted stacks of a given proto for this session's character. */
     async dbItems(username: string, protoId: number) {
-        const [rows] = await this.db
-            .getConnection()
-            .query(
-                `SELECT i.count, i.window, i.position FROM game.item i
+        const [rows] = await this.db.getConnection().query(
+            `SELECT i.count, i.window, i.position FROM game.item i
                  JOIN game.player p ON p.id = i.ownerId WHERE p.name = ? AND i.protoId = ?`,
-                [username, protoId],
-            );
+            [username, protoId],
+        );
         return rows as Array<{ count: number; window: number; position: number }>;
     }
 
