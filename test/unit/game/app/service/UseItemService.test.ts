@@ -184,7 +184,6 @@ describe('UseItemService', () => {
                 message: 'Your level is too low to equip this item. Required level: 105.',
             }),
         ).to.be.true;
-        // Refusal ends the flow: nothing is routed to the non-wearable handlers.
         expect(mockItem.getType.notCalled).to.be.true;
         expect(playerStub.getInventory.notCalled).to.be.true;
     });

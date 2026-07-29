@@ -1374,13 +1374,6 @@ export default class Player extends Character {
         );
     }
 
-    /**
-     * Why this player cannot equip the item right now, or undefined when the
-     * item is not equipment at all (no wear flags) or nothing is blocking it.
-     * Mirrors the original's CanEquipNow chat feedback (char_item.cpp), which
-     * answers the level limit; class/gender are covered too so a refusal is
-     * never silent (issue #57).
-     */
     getEquipFailureReason(item: Item): string | undefined {
         if (item.getWearFlags().getFlag() < 1) return undefined;
 

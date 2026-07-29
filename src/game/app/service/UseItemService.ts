@@ -41,9 +41,6 @@ export default class UseItemService {
         if (player.isWearable(item)) {
             await this.useWearableItem(player, item, position, window);
         } else {
-            // Equipment the player cannot wear yet must say why instead of
-            // falling through to the non-wearable routing, which has no case
-            // for weapons/armor and used to refuse silently (issue #57).
             const equipFailureReason = player.getEquipFailureReason(item);
             if (equipFailureReason) {
                 player.chat({

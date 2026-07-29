@@ -579,9 +579,6 @@ export default class Item {
             immuneFlags: immuneFlagsBitFlag,
             wearFlags: wearFlagsBitFlag,
             limits: [
-                // items.json uses both bare ("LEVEL") and prefixed ("LIMIT_NONE")
-                // names; splitting on the prefix turned every bare "LEVEL" into
-                // NONE, so no item enforced its level limit.
                 new ItemLimit({
                     type: itemLimitMapper[proto.limit_type0.replace('LIMIT_', '')] || ItemLimitTypeEnum.NONE,
                     value: Number(proto.limit_value0),
