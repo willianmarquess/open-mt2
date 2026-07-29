@@ -10,8 +10,15 @@ import ShopPacket from '@/core/interface/networking/packets/packet/in/shop/ShopP
 import MyShopPacket from '@/core/interface/networking/packets/packet/in/myshop/MyShopPacket';
 import EmpirePacket from '@/core/interface/networking/packets/packet/bidirectional/empire/EmpirePacket';
 import { ShopSubHeaderCG } from '@/core/enum/ShopSubHeaderEnum';
+import AuthServer from '@/auth/interface/server/AuthServer';
 
-const logger: any = { info: () => {}, error: () => {}, debug: () => {} };
+type LogLine = { level: string; message: string };
+const logged: Array<LogLine> = [];
+const logger: any = {
+    info: (message: string) => logged.push({ level: 'info', message }),
+    error: (message: string) => logged.push({ level: 'error', message }),
+    debug: (message: string) => logged.push({ level: 'debug', message }),
+};
 
 class TestConnection extends Connection {
     onHandshakeSuccess(): void {}
@@ -37,6 +44,7 @@ class FrameRecorder extends Server {
 const createFakeSocket = () => {
     const socket: any = new EventEmitter();
     socket.setNoDelay = () => {};
+    socket.write = () => true;
     socket.destroy = sinon.spy();
     return socket;
 };
@@ -72,6 +80,7 @@ describe('Server packet framing', () => {
     let socket: any;
 
     beforeEach(() => {
+        logged.length = 0;
         server = new FrameRecorder({ logger, config: {} as any, packets: makePackets() });
         socket = createFakeSocket();
         server.onListener(socket);
@@ -114,6 +123,9 @@ describe('Server packet framing', () => {
         socket.emit('data', attackPacket());
         await settle();
         expect(server.frames).to.have.lengthOf(2);
+
+        const unknown = logged.filter((line) => line.message.includes('Unknown header'));
+        expect(unknown.map((line) => line.level)).to.deep.equal(['info']);
     });
 
     it('should close the connection when a packet claims an absurd length', async () => {
@@ -178,6 +190,31 @@ describe('Server packet framing', () => {
 
         expect(server.frames).to.have.lengthOf(1);
         expect(server.frames[0]).to.have.lengthOf(66);
+    });
+});
+
+describe('Unknown header log level', () => {
+    // Auth sees headers it does not implement as part of normal client traffic,
+    // so it kept them at debug before the framing loop moved into Server.
+    it('should stay at debug on the auth server', async () => {
+        logged.length = 0;
+        const server = new AuthServer({
+            logger,
+            config: {} as any,
+            packets: makePackets(),
+            containerInstance: { createScope: () => {} },
+        } as any);
+        const socket = createFakeSocket();
+        server.onListener(socket);
+
+        socket.emit('data', Buffer.from([0xee, 0x01, 0x02]));
+        await settle();
+
+        const unknown = logged.filter((line) => line.message.includes('Unknown header'));
+        expect(unknown).to.have.lengthOf(1);
+        expect(unknown[0].level).to.be.equal('debug');
+
+        socket.emit('close');
     });
 });
 

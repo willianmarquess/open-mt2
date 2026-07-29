@@ -22,6 +22,8 @@ export default abstract class Server {
     protected readonly container: any;
     protected readonly packets: Map<number, PacketMapValue<any>>;
     protected isShuttingDown = false;
+    /** Headers a server does not implement are routine on auth, notable in game. */
+    protected readonly unknownHeaderLogLevel: 'info' | 'debug' = 'info';
 
     constructor(container: { logger: Logger; config: GameConfig; packets: Map<number, PacketMapValue<any>> }) {
         this.logger = container.logger;
@@ -112,7 +114,7 @@ export default abstract class Server {
         const packetBuilder = this.packets.get(header);
 
         if (!packetBuilder) {
-            this.logger.info(
+            this.logger[this.unknownHeaderLogLevel](
                 `[IN][PACKET] Unknown header packet: ${header}, discarding ${state.buffer.byteLength} buffered byte(s)`,
             );
             state.buffer = Buffer.alloc(0);
