@@ -122,6 +122,7 @@ export type State = {
     readonly name: string;
     readonly tasks: ReadonlyArray<QuestTask>;
     wasStarted?: boolean;
+    letterTitle?: string;
     title?: string;
     clockName?: string;
     clockValue?: number;
