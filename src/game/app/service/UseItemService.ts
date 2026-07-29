@@ -41,6 +41,15 @@ export default class UseItemService {
         if (player.isWearable(item)) {
             await this.useWearableItem(player, item, position, window);
         } else {
+            const equipFailureReason = player.getEquipFailureReason(item);
+            if (equipFailureReason) {
+                player.chat({
+                    messageType: ChatMessageTypeEnum.INFO,
+                    message: equipFailureReason,
+                });
+                return;
+            }
+
             await this.useNonWearableItem(player, item);
         }
     }
