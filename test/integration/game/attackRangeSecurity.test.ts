@@ -56,6 +56,11 @@ describe('Security — melee attack range (issue #68)', function () {
             y: monster!.getPositionY(),
         });
 
+        // The damage line is debug output now, so it has to be switched on or
+        // both assertions below would be vacuously false.
+        sniper.command('/debug');
+        await sniper.settle(400);
+
         sniper.flush();
         sniper.attack(virtualId);
         await sniper.settle(600);
@@ -69,6 +74,9 @@ describe('Security — melee attack range (issue #68)', function () {
             x: monster!.getPositionX(),
             y: monster!.getPositionY(),
         });
+
+        brawler.command('/debug');
+        await brawler.settle(400);
 
         brawler.flush();
         brawler.attack(virtualId);
