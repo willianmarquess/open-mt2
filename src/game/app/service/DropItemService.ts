@@ -42,18 +42,30 @@ export default class DropItemService {
                 window,
                 position,
             });
-        } else {
-            item.setCount(item.getCount() - count);
 
-            player.sendItemAdded({
-                window,
-                position,
-                item,
-            });
+            player.dropItem({ count, item });
+            await this.itemManager.delete(item);
+            return;
         }
 
-        player.dropItem({ count, item });
-        await this.itemManager.delete(item);
+        const droppedPart = this.itemManager.getItem(item.getId(), count);
+
+        if (!droppedPart) {
+            this.logger.error(`[PLAYER] Missing the item proto ${item.getId()}`);
+            return;
+        }
+
+        item.setCount(item.getCount() - count);
+
+        player.sendItemAdded({
+            window,
+            position,
+            item,
+        });
+
+        player.dropItem({ count, item: droppedPart });
+        await this.itemManager.update(item);
+        await this.itemManager.flush(player.getId());
     }
 
     dropGold(amount: number, player: Player) {
