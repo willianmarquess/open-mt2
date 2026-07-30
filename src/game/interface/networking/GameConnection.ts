@@ -45,6 +45,10 @@ export default class GameConnection extends Connection {
         return this.player;
     }
 
+    clearPlayer() {
+        this.player = null;
+    }
+
     onHandshakeSuccess() {
         this.logger.info('[HANDSHAKE] Finished');
         this.setState(ConnectionStateEnum.LOGIN);
