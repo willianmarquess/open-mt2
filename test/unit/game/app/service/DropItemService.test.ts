@@ -17,6 +17,8 @@ describe('DropItemService', function () {
 
         itemManagerMock = {
             delete: sinon.stub().resolves(),
+            update: sinon.stub().resolves(),
+            flush: sinon.stub().resolves(),
             getItem: sinon.stub().callsFake((id: number, count: number) => ({
                 getId: () => id,
                 getCount: () => count,
@@ -28,6 +30,26 @@ describe('DropItemService', function () {
             itemManager: itemManagerMock,
         });
     });
+
+    const partialDropSetup = () => {
+        const itemMock = {
+            getId: sinon.stub().returns(27001),
+            getCount: sinon.stub().returns(10),
+            setCount: sinon.spy(),
+        };
+
+        const playerMock = {
+            getId: sinon.stub().returns(7),
+            isItemLockedInPrivateShop: sinon.stub().returns(false),
+            getInventory: sinon.stub().returns({
+                getItem: sinon.stub().returns(itemMock),
+            }),
+            sendItemAdded: sinon.spy(),
+            dropItem: sinon.spy(),
+        };
+
+        return { itemMock, playerMock };
+    };
 
     describe('execute', function () {
         it('should drop gold if gold is greater than 0', async function () {
@@ -138,19 +160,7 @@ describe('DropItemService', function () {
         });
 
         it('should update item count if count is less than item count', async function () {
-            const itemMock = {
-                getCount: sinon.stub().returns(10),
-                setCount: sinon.spy(),
-            };
-
-            const playerMock = {
-                isItemLockedInPrivateShop: sinon.stub().returns(false),
-                getInventory: sinon.stub().returns({
-                    getItem: sinon.stub().returns(itemMock),
-                }),
-                sendItemAdded: sinon.spy(),
-                dropItem: sinon.spy(),
-            };
+            const { itemMock, playerMock } = partialDropSetup();
 
             await dropItemService.execute({
                 window: 1,
@@ -163,7 +173,58 @@ describe('DropItemService', function () {
             expect(itemMock.setCount.calledOnceWith(5)).to.be.true;
             expect(playerMock.sendItemAdded.calledOnce).to.be.true;
             expect(playerMock.dropItem.calledOnce).to.be.true;
-            expect(itemManagerMock.delete.calledOnceWith(itemMock)).to.be.true;
+        });
+
+        it('should keep the surviving stack in the database on a partial drop (issue #90)', async function () {
+            const { itemMock, playerMock } = partialDropSetup();
+
+            await dropItemService.execute({
+                window: 1,
+                position: 0,
+                gold: 0,
+                count: 5,
+                player: playerMock as unknown as Player,
+            });
+
+            expect(itemManagerMock.delete.called, 'the stack that stays is never deleted').to.be.false;
+            expect(itemManagerMock.update.calledOnceWith(itemMock), 'its row is updated').to.be.true;
+            expect(itemManagerMock.flush.calledOnce, 'and flushed').to.be.true;
+        });
+
+        it('should ground the dropped amount, not the remainder (issue #90)', async function () {
+            const { itemMock, playerMock } = partialDropSetup();
+
+            await dropItemService.execute({
+                window: 1,
+                position: 0,
+                gold: 0,
+                count: 5,
+                player: playerMock as unknown as Player,
+            });
+
+            const { item, count } = playerMock.dropItem.firstCall.args[0];
+            expect(item, 'a separate instance leaves the inventory').to.not.equal(itemMock);
+            expect(item.getId(), 'same proto').to.equal(27001);
+            expect(item.getCount(), 'worth the dropped amount').to.equal(5);
+            expect(count).to.equal(5);
+        });
+
+        it('should not touch the stack when the proto is missing (issue #90)', async function () {
+            const { itemMock, playerMock } = partialDropSetup();
+            itemManagerMock.getItem.returns(null);
+
+            await dropItemService.execute({
+                window: 1,
+                position: 0,
+                gold: 0,
+                count: 5,
+                player: playerMock as unknown as Player,
+            });
+
+            expect(itemMock.setCount.called, 'the stack is left alone').to.be.false;
+            expect(playerMock.dropItem.called).to.be.false;
+            expect(itemManagerMock.delete.called).to.be.false;
+            expect(loggerMock.error.calledOnce).to.be.true;
         });
 
         it('should do nothing if item is not found', async function () {
