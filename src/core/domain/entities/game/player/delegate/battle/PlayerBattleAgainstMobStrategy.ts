@@ -11,7 +11,6 @@ import BitFlag from '@/core/util/BitFlag';
 import { DamageFlagEnum } from '@/core/enum/DamageFlagEnum';
 import { MobResistEnum } from '@/core/enum/MobResistEnum';
 import { ItemWeaponSubTypeEnum } from '@/core/enum/ItemWeaponSubTypeEnum';
-import { ChatMessageTypeEnum } from '@/core/enum/ChatMessageTypeEnum';
 import { MobRaceFlagEnum } from '@/core/enum/MobRaceFlagEnum';
 import Monster from '../../../mob/Monster';
 import Player from '../../Player';
@@ -147,10 +146,7 @@ export default class PlayerBattleAgainstMobStrategy extends PlayerBattleStrategy
 
         damage = damage > 0 ? Math.round(damage) : MathUtil.getRandomInt(1, 5);
 
-        this.attacker.chat({
-            message: `your damage is: ${damage}`,
-            messageType: ChatMessageTypeEnum.INFO,
-        });
+        this.attacker.debugChat(`your damage is: ${damage}`);
 
         this.attacker.sendDamageCaused({
             virtualId: victim.getVirtualId(),
@@ -243,10 +239,7 @@ export default class PlayerBattleAgainstMobStrategy extends PlayerBattleStrategy
     private calculateStoneSkinner(damage: number, victim: Monster): number {
         if (victim.isStoneSkinner()) {
             if (victim.getHealthPercentage() < victim.getHpPercentToGetStoneSkin()) {
-                this.attacker.chat({
-                    messageType: ChatMessageTypeEnum.INFO,
-                    message: `[SYSTEM][STONE_SKINNER] Your damage was reduced from ${damage} to ${damage / 2}`,
-                });
+                this.attacker.debugChat(`[STONE_SKINNER] Your damage was reduced from ${damage} to ${damage / 2}`);
                 damage /= 2;
             }
         }
@@ -310,10 +303,7 @@ export default class PlayerBattleAgainstMobStrategy extends PlayerBattleStrategy
             //TODO: add gold bonus do multiply this
             const amount = MathUtil.getRandomInt(1, victim.getPoint(PointsEnum.LEVEL) * 50);
             this.attacker.addPoint(PointsEnum.GOLD, amount);
-            this.attacker.chat({
-                messageType: ChatMessageTypeEnum.INFO,
-                message: `[SYSTEM][GOLD_STEAL] You received ${amount} of gold`,
-            });
+            this.attacker.debugChat(`[GOLD_STEAL] You received ${amount} of gold`);
         }
     }
 
@@ -454,10 +444,7 @@ export default class PlayerBattleAgainstMobStrategy extends PlayerBattleStrategy
         if (MathUtil.getRandomInt(1, 100) <= criticalChance) {
             damage *= 2;
             damageFlags.set(DamageFlagEnum.CRITICAL);
-            this.attacker.chat({
-                messageType: ChatMessageTypeEnum.INFO,
-                message: `[SYSTEM][CRIT_DAMAGE] You deal ${Math.round(damage / 2)} extra damage as critical`,
-            });
+            this.attacker.debugChat(`[CRIT_DAMAGE] You deal ${Math.round(damage / 2)} extra damage as critical`);
         }
 
         return Math.round(damage);
@@ -468,10 +455,7 @@ export default class PlayerBattleAgainstMobStrategy extends PlayerBattleStrategy
         if (MathUtil.getRandomInt(1, 100) <= penetrateChance) {
             damage += victim.getDefense();
             damageFlags.set(DamageFlagEnum.PENETRATE);
-            this.attacker.chat({
-                messageType: ChatMessageTypeEnum.INFO,
-                message: `[SYSTEM][PENETRATE_DAMAGE] You deal ${victim.getDefense()} extra damage as penetrate`,
-            });
+            this.attacker.debugChat(`[PENETRATE_DAMAGE] You deal ${victim.getDefense()} extra damage as penetrate`);
         }
         return Math.round(damage);
     }
@@ -492,11 +476,8 @@ export default class PlayerBattleAgainstMobStrategy extends PlayerBattleStrategy
                 this.attacker.addPoint(PointsEnum.HEALTH, healthDamage);
 
                 victim.createFlyEffect(this.attacker.getVirtualId(), FlyEnum.HEALTH_BIG);
-                this.attacker.chat({
-                    messageType: ChatMessageTypeEnum.INFO,
-                    message: `[SYSTEM][HEALTH_STEAL] You received ${healthDamage} of health
-                    `,
-                });
+                this.attacker.debugChat(`[HEALTH_STEAL] You received ${healthDamage} of health
+                    `);
             }
         }
     }
@@ -521,10 +502,7 @@ export default class PlayerBattleAgainstMobStrategy extends PlayerBattleStrategy
                 this.attacker.addPoint(PointsEnum.MANA, manaDamage);
                 victim.createFlyEffect(this.attacker.getVirtualId(), FlyEnum.MANA_BIG);
 
-                this.attacker.chat({
-                    messageType: ChatMessageTypeEnum.INFO,
-                    message: `[SYSTEM][MANA_STEAL] You received ${manaDamage} of mana`,
-                });
+                this.attacker.debugChat(`[MANA_STEAL] You received ${manaDamage} of mana`);
             }
         }
     }
@@ -540,10 +518,7 @@ export default class PlayerBattleAgainstMobStrategy extends PlayerBattleStrategy
             if (amount > 0) {
                 this.attacker.addPoint(PointsEnum.HEALTH, amount);
                 victim.createFlyEffect(this.attacker.getVirtualId(), FlyEnum.HEALTH_BIG);
-                this.attacker.chat({
-                    messageType: ChatMessageTypeEnum.INFO,
-                    message: `[SYSTEM][HEALTH_HIT_RECOVERY] You received ${amount} of health`,
-                });
+                this.attacker.debugChat(`[HEALTH_HIT_RECOVERY] You received ${amount} of health`);
             }
         }
     }
@@ -560,10 +535,7 @@ export default class PlayerBattleAgainstMobStrategy extends PlayerBattleStrategy
             if (amount > 0) {
                 this.attacker.addPoint(PointsEnum.MANA, amount);
                 victim.createFlyEffect(this.attacker.getVirtualId(), FlyEnum.MANA_BIG);
-                this.attacker.chat({
-                    messageType: ChatMessageTypeEnum.INFO,
-                    message: `[SYSTEM][MANA_HIT_RECOVERY] You received ${amount} of mana`,
-                });
+                this.attacker.debugChat(`[MANA_HIT_RECOVERY] You received ${amount} of mana`);
             }
         }
     }

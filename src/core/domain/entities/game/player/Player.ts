@@ -121,6 +121,12 @@ const CHAT_MAX_PER_WINDOW = 10;
 const SHOUT_MIN_LEVEL = 15;
 const SHOUT_COOLDOWN_MS = 15_000;
 
+// From the original's recovery_event (char.cpp): the percent is indexed by how
+// many 3s steps since the character last moved, and the flat part is added
+// before the regen bonus, not after.
+const RECOVERY_PERCENT_BY_STEP = [1, 5, 5, 5, 5, 5, 5, 5, 5, 5];
+const RECOVERY_FLAT_HEALTH = 15;
+
 export default class Player extends Character {
     private readonly accountId: number;
     private readonly playerClass: number;
@@ -156,6 +162,7 @@ export default class Player extends Character {
     private recentMoves: Array<{ time: number; distance: number }> = [];
 
     //chat
+    private debugMode: boolean = false;
     private chatTimes: Array<number> = [];
     private lastShoutTime: number = 0;
 
@@ -550,6 +557,7 @@ export default class Player extends Character {
 
         this.setPos(PositionEnum.FIGHTING);
         this.lastTimeInBattle = now;
+        this.onMove();
         this.battle.attack(attackType, victim);
     }
 
@@ -742,10 +750,7 @@ export default class Player extends Character {
 
         const attackerName =
             attacker instanceof Mob ? `${attacker.getFolder()}:${attacker.getVirtualId()}` : attacker.getName();
-        this.chat({
-            messageType: ChatMessageTypeEnum.INFO,
-            message: `[SYSTEM] You has been attacked by ${attackerName}`,
-        });
+        this.debugChat(`You has been attacked by ${attackerName}`);
         this.addPoint(PointsEnum.HEALTH, -damage);
 
         if (this.points.getPoint(PointsEnum.HEALTH) <= 0) {
@@ -807,35 +812,61 @@ export default class Player extends Character {
         );
     }
 
-    regenHealth() {
-        if (this.isAffectByFlag(AffectBitsTypeEnum.STUN)) return;
-        if (this.isDead()) return;
-        if (this.points.getPoint(PointsEnum.HEALTH) >= this.points.getPoint(PointsEnum.MAX_HEALTH)) return;
+    toggleDebugMode() {
+        this.debugMode = !this.debugMode;
+        return this.debugMode;
+    }
 
-        let percent = this.stateMachine.getCurrentStateName() === EntityStateEnum.IDLE ? 5 : 1;
-        percent += percent * (this.points.getPoint(PointsEnum.HP_REGEN) / 100);
-        const amount = this.points.getPoint(PointsEnum.MAX_HEALTH) * (percent / 100);
-        this.points.addPoint(PointsEnum.HEALTH, Math.floor(amount));
+    isDebugMode() {
+        return this.debugMode;
+    }
+
+    /** Chat output that only the player's own /debug toggle turns on. */
+    debugChat(message: string) {
+        if (!this.debugMode) return;
+
         this.chat({
             messageType: ChatMessageTypeEnum.INFO,
-            message: `[SYSTEM][HP REGEN] amount: ${Math.floor(amount)} percent: ${percent}`,
+            message: `[DEBUG] ${message}`,
         });
+    }
+
+    private getRecoveryPercent() {
+        const steps = Math.floor((performance.now() - this.lastMoveTime) / REGEN_INTERVAL);
+        return RECOVERY_PERCENT_BY_STEP[Math.min(RECOVERY_PERCENT_BY_STEP.length - 1, steps)];
+    }
+
+    private isRecoveryBlocked() {
+        return (
+            this.isAffectByFlag(AffectBitsTypeEnum.STUN) ||
+            this.isAffectByFlag(AffectBitsTypeEnum.POISON) ||
+            this.isDead()
+        );
+    }
+
+    regenHealth() {
+        if (this.isRecoveryBlocked()) return;
+        if (this.points.getPoint(PointsEnum.HEALTH) >= this.points.getPoint(PointsEnum.MAX_HEALTH)) return;
+
+        const percent = this.getRecoveryPercent();
+        const base = RECOVERY_FLAT_HEALTH + (this.points.getPoint(PointsEnum.MAX_HEALTH) * percent) / 100;
+        const amount = Math.floor(base + (base * this.points.getPoint(PointsEnum.HP_REGEN)) / 100);
+
+        this.points.addPoint(PointsEnum.HEALTH, amount);
+        this.debugChat(`[HP REGEN] amount: ${amount} percent: ${percent}`);
         this.sendPoints();
     }
 
     regenMana() {
-        if (this.isAffectByFlag(AffectBitsTypeEnum.STUN)) return;
-        if (this.isDead()) return;
+        if (this.isRecoveryBlocked()) return;
         if (this.points.getPoint(PointsEnum.MANA) >= this.points.getPoint(PointsEnum.MAX_MANA)) return;
 
-        let percent = this.stateMachine.getCurrentStateName() === EntityStateEnum.IDLE ? 5 : 1;
-        percent += percent * (this.points.getPoint(PointsEnum.MANA_REGEN) / 100);
-        const amount = this.points.getPoint(PointsEnum.MAX_MANA) * (percent / 100);
-        this.points.addPoint(PointsEnum.MANA, Math.floor(amount));
-        this.chat({
-            messageType: ChatMessageTypeEnum.INFO,
-            message: `[SYSTEM][MANA REGEN] amount: ${Math.floor(amount)} percent: ${percent}`,
-        });
+        const percent = this.getRecoveryPercent();
+        const base = (this.points.getPoint(PointsEnum.MAX_MANA) * percent) / 100;
+        const amount = Math.floor(base + (base * this.points.getPoint(PointsEnum.MANA_REGEN)) / 100);
+
+        this.points.addPoint(PointsEnum.MANA, amount);
+        this.debugChat(`[MANA REGEN] amount: ${amount} percent: ${percent}`);
         this.sendPoints();
     }
 
