@@ -99,4 +99,8 @@ export default abstract class Connection {
         this.stopKeepalive();
         this.socket.destroy();
     }
+
+    isClosed() {
+        return this.socket.destroyed;
+    }
 }

@@ -30,6 +30,7 @@ export default class GameServer extends Server {
             await this.logoutService
                 .execute(player)
                 .catch((err) => this.logger.error(`[GameServer] Error despawning player on disconnect: ${err}`));
+            connection.clearPlayer();
         }
 
         await super.onClose(connection);

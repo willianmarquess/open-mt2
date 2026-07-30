@@ -89,7 +89,7 @@ export default abstract class Server {
             this.logger.error(
                 `[IN][PACKET] Receive buffer overflow (${state.buffer.byteLength} bytes) from connection: ID: ${connectionId}, closing`,
             );
-            this.frameStates.delete(connectionId);
+            this.discardFrames(connection);
             connection.close();
             return;
         }
@@ -98,13 +98,32 @@ export default abstract class Server {
 
         state.draining = true;
         try {
-            while (state.buffer.byteLength > 0) {
+            while (state.buffer.byteLength > 0 && !connection.isClosed()) {
                 const frame = this.extractFrame(connection, state);
                 if (!frame) break;
-                await this.onData(connection, frame);
+
+                try {
+                    await this.onData(connection, frame);
+                } catch (error) {
+                    this.logger.error(
+                        `[IN][PACKET] Handler failed for connection: ID: ${connectionId}, closing. ${error}`,
+                    );
+                    this.discardFrames(connection);
+                    connection.close();
+                    break;
+                }
             }
         } finally {
             state.draining = false;
+        }
+    }
+
+    /** Empties the buffer in place, so a drain already in flight stops next iteration. */
+    private discardFrames(connection: Connection) {
+        const state = this.frameStates.get(connection.getId());
+
+        if (state) {
+            state.buffer = Buffer.alloc(0);
         }
     }
 
@@ -128,7 +147,7 @@ export default abstract class Server {
             this.logger.error(
                 `[IN][PACKET] Invalid packet length ${frameLength} for header ${header} from connection: ID: ${connection.getId()}, closing`,
             );
-            this.frameStates.delete(connection.getId());
+            this.discardFrames(connection);
             connection.close();
             return null;
         }
@@ -149,6 +168,7 @@ export default abstract class Server {
     async onClose(connection: Connection) {
         this.logger.debug(`[IN][CLOSE SOCKET EVENT] Closing connection: ID: ${connection.getId()}`);
         connection.stopKeepalive();
+        this.discardFrames(connection);
         this.connections.delete(connection.getId());
         this.frameStates.delete(connection.getId());
     }
