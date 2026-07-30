@@ -29,9 +29,9 @@ export default class PickupItemService {
     }
 
     async execute(player: Player, virtualId: number) {
-        const droppedItem = this.entityManager.getEntity<DroppedItem>(virtualId);
+        const droppedItem = this.entityManager.getEntity(virtualId);
 
-        if (!droppedItem) return;
+        if (!(droppedItem instanceof DroppedItem)) return;
         if (droppedItem.getArea() !== player.getArea()) return;
 
         const distance = MathUtil.calcDistance(

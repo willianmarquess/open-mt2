@@ -33,6 +33,6 @@ export default class ItemPickupPacketHandler extends PacketHandler<ItemPickupPac
             return;
         }
 
-        this.pickupItemService.execute(player, virtualId);
+        await this.pickupItemService.execute(player, virtualId);
     }
 }
