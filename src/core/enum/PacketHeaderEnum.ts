@@ -17,6 +17,7 @@ export default {
     CHARACTERS_LIST: 0x20,
     SELECT_CHARACTER: 0x06,
     CHARACTER_POINTS: 0x10,
+    SKILL_LEVEL: 0x4c,
     CHARACTER_DETAILS: 0x71,
     CLIENT_VERSION: 0xf1,
     CHARACTER_UPDATE: 0x13,
@@ -46,6 +47,8 @@ export default {
     TARGET: 0x3d,
     TARGET_UPDATED: 0x3f,
     CHARACTER_DIED: 0x0e,
+    // GC direction — shares the value with ITEM_MOVE (CG); directions have separate header spaces.
+    STUN: 0x0d,
     FLY: 0x46,
     AFFECT_ADD: 0x7e,
     SPECIAL_EFFECT: 0x72,

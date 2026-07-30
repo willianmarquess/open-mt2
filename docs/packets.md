@@ -304,6 +304,25 @@
 
 ---
 
+### StunPacket
+
+**Type:** Out
+
+**Header:** 0x0d
+
+**Size:** 5 bytes
+
+**Description:** Marks a character as stunned. For a non-main vid the client stops the actor and attaches the stun effect without playing any motion and without marking it dead, so the actor stays clickable.
+
+**Fields:**
+
+| Name        | Type       | Size (bytes)   | Description               |
+|-------------|------------|----------------|---------------------------|
+| header | `byte` | 1 | Packet header. |
+| vid | `int` | 4 | Character identification in game. |
+
+---
+
 ### SyncPositionPacket
 
 **Type:** Out

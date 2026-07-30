@@ -10,5 +10,9 @@ export default class EnterGameService {
 
     execute(player: Player) {
         this.world.spawn(player);
+
+        // Remount the horse if the player was riding at logout (original:
+        // CHorseRider::EnterHorse). After spawn so nearby players see it.
+        player.restoreHorseRiding();
     }
 }

@@ -21,6 +21,15 @@ export class NpcQuest {
         return this.npc.getId();
     }
 
+    getVirtualId() {
+        return this.npc.getVirtualId();
+    }
+
+    isMine() {
+        const spawnedHorse = this.player.getSpawnedHorse();
+        return spawnedHorse !== null && spawnedHorse.getVirtualId() === this.npc.getVirtualId();
+    }
+
     async openShop(shopId: number) {
         await this.shopManager.openShop(this.npc, this.player, shopId);
     }

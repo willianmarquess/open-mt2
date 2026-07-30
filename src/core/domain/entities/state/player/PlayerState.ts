@@ -25,6 +25,11 @@ export default class PlayerState extends StateEntity {
     public readonly availableStatusPoints: number;
     public readonly slot: number;
     public readonly quickSlot: Map<number, { type: number; position: number }> = new Map();
+    public readonly horseLevel: number;
+    public readonly horseHealth: number;
+    public readonly horseStamina: number;
+    public readonly horseName: string;
+    public readonly horseRiding: number;
 
     constructor({
         id,
@@ -54,6 +59,11 @@ export default class PlayerState extends StateEntity {
         availableStatusPoints = 0,
         slot = 0,
         quickSlot,
+        horseLevel = 0,
+        horseHealth = 0,
+        horseStamina = 0,
+        horseName = '',
+        horseRiding = 0,
     }: {
         id: number;
         updatedAt?: Date;
@@ -82,6 +92,11 @@ export default class PlayerState extends StateEntity {
         availableStatusPoints: number;
         slot: number;
         quickSlot?: Map<number, { type: number; position: number }>;
+        horseLevel?: number;
+        horseHealth?: number;
+        horseStamina?: number;
+        horseName?: string;
+        horseRiding?: number;
     }) {
         super(id, createdAt, updatedAt);
         this.accountId = accountId;
@@ -108,5 +123,10 @@ export default class PlayerState extends StateEntity {
         this.availableStatusPoints = availableStatusPoints;
         this.slot = slot;
         this.quickSlot = quickSlot || new Map();
+        this.horseLevel = horseLevel;
+        this.horseHealth = horseHealth;
+        this.horseStamina = horseStamina;
+        this.horseName = horseName;
+        this.horseRiding = horseRiding;
     }
 }
