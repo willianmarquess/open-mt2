@@ -10,7 +10,7 @@ export default class ChatInPacket extends PacketIn {
         super({
             header: PacketHeaderEnum.CHAT_IN,
             name: 'ChatInPacket',
-            size: 5 + message?.length + 1,
+            size: 4 + (message?.length ?? 0) + 1,
             validator: ChatInPacketValidator,
         });
 
@@ -23,6 +23,11 @@ export default class ChatInPacket extends PacketIn {
     }
     getMessageType() {
         return this.messageType;
+    }
+
+    getFrameLength(buffer: Buffer): number | null {
+        if (buffer.byteLength < 3) return null;
+        return buffer.readUInt16LE(1) + this.getSequenceLength();
     }
 
     unpack(buffer: Buffer) {

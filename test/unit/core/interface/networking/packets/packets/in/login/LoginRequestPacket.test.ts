@@ -16,7 +16,7 @@ describe('LoginRequestPacket', function () {
     it('should initialize with correct header, name, and size', function () {
         expect(loginRequestPacket.getHeader()).to.equal(PacketHeaderEnum.LOGIN_REQUEST);
         expect(loginRequestPacket.getName()).to.equal('LoginRequestPacket');
-        expect(loginRequestPacket.getSize()).to.equal(66);
+        expect(loginRequestPacket.getSize()).to.equal(65);
     });
 
     it('should initialize properties correctly', function () {

@@ -12,7 +12,7 @@ export default class ItemDropPacket extends PacketIn {
         super({
             header: PacketHeaderEnum.ITEM_DROP,
             name: 'ItemDropPacket',
-            size: 5,
+            size: 9,
             validator: ItemDropPacketValidator,
         });
         this.window = window;

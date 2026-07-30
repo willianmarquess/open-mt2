@@ -1,10 +1,15 @@
 import PacketValidator from '@/core/interface/networking/packets/PacketValidator';
 
+// The client trails one sequence byte after most packets it sends; the original
+// opts out per header, which is what `sequenced` mirrors.
+const SEQUENCE_BYTE_LENGTH = 1;
+
 export default abstract class Packet {
     protected header: number;
     protected subHeader?: number;
     protected size: number;
     protected name: string;
+    protected sequenced: boolean;
     protected validator?: PacketValidator<this>;
 
     constructor({
@@ -12,18 +17,21 @@ export default abstract class Packet {
         subHeader = 0,
         size,
         name,
+        sequenced = true,
         validator = undefined,
     }: {
         header: number;
         subHeader?: number;
         size: number;
         name: string;
+        sequenced?: boolean;
         validator?: new (packet: any) => PacketValidator<any>;
     }) {
         this.header = header;
         this.subHeader = subHeader;
         this.size = size;
         this.name = name;
+        this.sequenced = sequenced;
         if (validator) {
             this.validator = this.createValidator(validator);
         }
@@ -43,6 +51,16 @@ export default abstract class Packet {
 
     getSize() {
         return this.size;
+    }
+
+    getSequenceLength() {
+        return this.sequenced ? SEQUENCE_BYTE_LENGTH : 0;
+    }
+
+    /** On-wire bytes at the start of the buffer, or null when more are needed to tell. */
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    getFrameLength(buffer: Buffer): number | null {
+        return this.size + this.getSequenceLength();
     }
 
     haveSubHeader() {

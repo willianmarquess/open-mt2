@@ -3,6 +3,8 @@ import BlockModeCommand from './command/blockMode/BlockModeCommand';
 import BlockModeCommandHandler from './command/blockMode/BlockModeCommandHandler';
 import CloseShopCommand from './command/closeShop/CloseShopCommand';
 import CloseShopCommandHandler from './command/closeShop/CloseShopCommandHandler';
+import DebugCommand from './command/debug/DebugCommand';
+import DebugCommandHandler from './command/debug/DebugCommandHandler';
 import UserHorseRideCommand from './command/userHorseRide/UserHorseRideCommand';
 import UserHorseRideCommandHandler from './command/userHorseRide/UserHorseRideCommandHandler';
 import UserHorseBackCommand from './command/userHorseBack/UserHorseBackCommand';
@@ -81,6 +83,13 @@ export default function createCommands() {
             {
                 command: LogoutCommand,
                 createHandler: (params) => new LogoutCommandHandler(params),
+            },
+        ],
+        [
+            DebugCommand.getName(),
+            {
+                command: DebugCommand,
+                createHandler: (params) => new DebugCommandHandler(params),
             },
         ],
         [

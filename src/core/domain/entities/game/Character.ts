@@ -21,6 +21,7 @@ import GlobalEventTimerManager from '../../manager/GlobalEventTimeManager';
 type MovementNodeProvider = () => { x: number; y: number } | null;
 
 const MOVEMENT_NODE_HANDOFF_RATE = 0.9;
+const SPEED_REFERENCE_DISTANCE = 10_000;
 
 export default abstract class Character extends GameEntity {
     protected id: number;
@@ -34,6 +35,7 @@ export default abstract class Character extends GameEntity {
     protected startPositionY: number = 0;
     protected movementStart: number = 0;
     protected movementDuration: number = 0;
+    protected lastMoveTime: number = performance.now();
 
     protected readonly nearbyEntities = new Map<number, GameEntity>();
 
@@ -219,6 +221,7 @@ export default abstract class Character extends GameEntity {
         }
 
         this.rotation = rotation * 5;
+        this.onMove();
         this.stateMachine.gotoState(EntityStateEnum.MOVING);
     }
 
@@ -313,6 +316,7 @@ export default abstract class Character extends GameEntity {
         this.positionX = this.startPositionX = this.targetPositionX = x;
         this.positionY = this.startPositionY = this.targetPositionY = y;
         this.setRotation(MathUtil.calcRotationFromXY(x, y));
+        this.onMove();
         this.stateMachine.gotoState(EntityStateEnum.IDLE);
     }
 
@@ -320,8 +324,36 @@ export default abstract class Character extends GameEntity {
         this.stateMachine.gotoState(EntityStateEnum.IDLE);
     }
 
+    /** Mirrors the original's OnMove(): moving and attacking both refresh this. */
+    protected onMove() {
+        this.lastMoveTime = performance.now();
+    }
+
+    getLastMoveTime() {
+        return this.lastMoveTime;
+    }
+
     getMovementSpeed() {
         return this.getPoint(PointsEnum.MOVE_SPEED);
+    }
+
+    /** Null when the class has no run animation, the case gotoInternal() also gives no duration. */
+    getMoveDistancePerMs(): number | null {
+        const animation = this.animationManager.getAnimation(
+            String(this.classId),
+            AnimationTypeEnum.RUN,
+            AnimationSubTypeEnum.GENERAL,
+        );
+
+        if (!animation) return null;
+
+        const duration = AnimationUtil.calcAnimationDuration(
+            animation,
+            this.getPoint(PointsEnum.MOVE_SPEED),
+            SPEED_REFERENCE_DISTANCE,
+        );
+
+        return duration > 0 ? SPEED_REFERENCE_DISTANCE / duration : null;
     }
 
     getAttackSpeed() {

@@ -3,6 +3,8 @@ import AuthConnection from '@/auth/interface/networking/AuthConnection';
 import { Socket } from 'node:net';
 
 export default class AuthServer extends Server {
+    protected readonly unknownHeaderLogLevel = 'debug' as const;
+
     async onData(connection: AuthConnection, data: Buffer) {
         this.container.containerInstance.createScope();
         this.logger.debug(`[IN][DATA SOCKET EVENT] Data received from ID: ${connection.getId()}`);

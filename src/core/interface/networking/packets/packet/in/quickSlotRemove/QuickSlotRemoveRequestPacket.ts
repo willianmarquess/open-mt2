@@ -9,7 +9,7 @@ export default class QuickSlotRemoveRequestPacket extends PacketIn {
         super({
             header: PacketHeaderEnum.QUICK_SLOT_REMOVE_REQUEST,
             name: 'QuickSlotRemoveRequestPacket',
-            size: 4,
+            size: 2,
             validator: QuickSlotRemoveRequestPacketValidator,
         });
         this.slot = slot;

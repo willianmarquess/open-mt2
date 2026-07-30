@@ -25,7 +25,7 @@ export default class ItemMovePacket extends PacketIn {
         super({
             header: PacketHeaderEnum.ITEM_MOVE,
             name: 'ItemMovePacket',
-            size: 9,
+            size: 8,
             validator: ItemMovePacketValidator,
         });
         this.fromWindow = fromWindow;

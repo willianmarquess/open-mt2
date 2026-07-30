@@ -110,6 +110,29 @@ const MIN_ATTACK_INTERVAL_MS = 80;
 const MAX_MOVE_DISTANCE = 2500;
 const MAX_MOVE_DISTANCE_RIDING = 4000;
 
+// The cap above has no time component: many small hops sent fast pass it.
+// Tolerance absorbs latency and the packet bunching that follows a lag spike.
+const MOVE_WINDOW_MS = 1_000;
+const MOVE_DISTANCE_TOLERANCE = 2;
+
+// Chat flood limit. The original scores banned words per IP instead of capping
+// the rate, which needs a banword list we do not have, so this is a plain
+// rolling window: wide enough that nobody types through it, narrow enough to
+// stop the spam modules the public hacks ship, which send dozens per second.
+const CHAT_WINDOW_MS = 5_000;
+const CHAT_MAX_PER_WINDOW = 10;
+
+// Shout rules from the original (input_main.cpp): a minimum level, then a
+// 15 second cooldown that silently drops the message.
+const SHOUT_MIN_LEVEL = 15;
+const SHOUT_COOLDOWN_MS = 15_000;
+
+// From the original's recovery_event (char.cpp): the percent is indexed by how
+// many 3s steps since the character last moved, and the flat part is added
+// before the regen bonus, not after.
+const RECOVERY_PERCENT_BY_STEP = [1, 5, 5, 5, 5, 5, 5, 5, 5, 5];
+const RECOVERY_FLAT_HEALTH = 15;
+
 export default class Player extends Character {
     private readonly accountId: number;
     private readonly playerClass: number;
@@ -147,6 +170,12 @@ export default class Player extends Character {
     private lastAttackVictimVid: number = 0;
     /** Last client-reported position accepted by the anti-teleport check. */
     private lastReportedPosition: { x: number; y: number } | null = null;
+    private recentMoves: Array<{ time: number; distance: number }> = [];
+
+    //chat
+    private debugMode: boolean = false;
+    private chatTimes: Array<number> = [];
+    private lastShoutTime: number = 0;
 
     //quests
     private readonly quests: Map<number, AbstractQuest> = new Map();
@@ -584,6 +613,7 @@ export default class Player extends Character {
 
         this.setPos(PositionEnum.FIGHTING);
         this.lastTimeInBattle = now;
+        this.onMove();
         this.battle.attack(attackType, victim);
     }
 
@@ -594,10 +624,60 @@ export default class Player extends Character {
     }
 
     /**
-     * Rejects move packets that jump farther than a single step allows
-     * (teleport hack). A legitimate client segments long walks, so a request
-     * beyond the cap is either a hack or a desync — in both cases we snap the
-     * client back to the server's authoritative position and drop the move.
+     * Rate limits every incoming chat packet, commands included. Counts this
+     * message when it is allowed, so a client that keeps sending stays blocked
+     * for as long as it floods rather than being let through every other window.
+     */
+    isChatAllowed(): boolean {
+        const now = performance.now();
+        this.chatTimes = this.chatTimes.filter((time) => now - time < CHAT_WINDOW_MS);
+
+        if (this.chatTimes.length >= CHAT_MAX_PER_WINDOW) return false;
+
+        this.chatTimes.push(now);
+        return true;
+    }
+
+    hasShoutLevel(): boolean {
+        return this.getPoint(PointsEnum.LEVEL) >= SHOUT_MIN_LEVEL;
+    }
+
+    getShoutMinLevel(): number {
+        return SHOUT_MIN_LEVEL;
+    }
+
+    /** True when the shout cooldown elapsed; starts a new one when it does. */
+    isShoutAllowed(): boolean {
+        const now = performance.now();
+
+        if (now - this.lastShoutTime < SHOUT_COOLDOWN_MS) return false;
+
+        this.lastShoutTime = now;
+        return true;
+    }
+
+    private isMoveRateAllowed(distance: number, now: number): boolean {
+        const distancePerMs = this.getMoveDistancePerMs();
+
+        if (distancePerMs === null) return true;
+
+        this.recentMoves = this.recentMoves.filter((move) => now - move.time < MOVE_WINDOW_MS);
+
+        const accumulated = this.recentMoves.reduce((total, move) => total + move.distance, 0);
+        const budget = distancePerMs * MOVE_WINDOW_MS * MOVE_DISTANCE_TOLERANCE;
+
+        if (accumulated + distance > budget) return false;
+
+        this.recentMoves.push({ time: now, distance });
+        return true;
+    }
+
+    /**
+     * Rejects move packets that jump farther than a single step allows, or
+     * that arrive faster than the character can walk (teleport hack). A
+     * legitimate client segments long walks, so a request beyond either bound
+     * is either a hack or a desync — in both cases we snap the client back to
+     * the server's authoritative position and drop the move.
      * Returns true when the requested destination is acceptable.
      */
     isMoveAllowed(x: number, y: number): boolean {
@@ -607,11 +687,15 @@ export default class Player extends Character {
         // report — the server-side position is interpolated and lags behind a
         // fast (mounted) client, which would trip the cap on honest moves.
         // The server position is the fallback anchor (first move after login
-        // or teleport), so a crafted jump is still capped from a trusted point.
-        const anchors = [this.lastReportedPosition, { x: this.getPositionX(), y: this.getPositionY() }];
-        const allowed = anchors.some((anchor) => anchor && MathUtil.calcDistance(anchor.x, anchor.y, x, y) <= max);
+        // or a teleport), so a crafted jump is still capped from a trusted point.
+        const serverPosition = { x: this.getPositionX(), y: this.getPositionY() };
+        const anchors = [this.lastReportedPosition, serverPosition];
+        const withinCap = anchors.some((anchor) => anchor && MathUtil.calcDistance(anchor.x, anchor.y, x, y) <= max);
 
-        if (allowed) {
+        const anchor = this.lastReportedPosition ?? serverPosition;
+        const distance = MathUtil.calcDistance(anchor.x, anchor.y, x, y);
+
+        if (withinCap && this.isMoveRateAllowed(distance, performance.now())) {
             this.lastReportedPosition = { x, y };
             return true;
         }
@@ -722,10 +806,7 @@ export default class Player extends Character {
 
         const attackerName =
             attacker instanceof Mob ? `${attacker.getFolder()}:${attacker.getVirtualId()}` : attacker.getName();
-        this.chat({
-            messageType: ChatMessageTypeEnum.INFO,
-            message: `[SYSTEM] You has been attacked by ${attackerName}`,
-        });
+        this.debugChat(`You has been attacked by ${attackerName}`);
         this.addPoint(PointsEnum.HEALTH, -damage);
 
         if (this.points.getPoint(PointsEnum.HEALTH) <= 0) {
@@ -787,35 +868,61 @@ export default class Player extends Character {
         );
     }
 
-    regenHealth() {
-        if (this.isAffectByFlag(AffectBitsTypeEnum.STUN)) return;
-        if (this.isDead()) return;
-        if (this.points.getPoint(PointsEnum.HEALTH) >= this.points.getPoint(PointsEnum.MAX_HEALTH)) return;
+    toggleDebugMode() {
+        this.debugMode = !this.debugMode;
+        return this.debugMode;
+    }
 
-        let percent = this.stateMachine.getCurrentStateName() === EntityStateEnum.IDLE ? 5 : 1;
-        percent += percent * (this.points.getPoint(PointsEnum.HP_REGEN) / 100);
-        const amount = this.points.getPoint(PointsEnum.MAX_HEALTH) * (percent / 100);
-        this.points.addPoint(PointsEnum.HEALTH, Math.floor(amount));
+    isDebugMode() {
+        return this.debugMode;
+    }
+
+    /** Chat output that only the player's own /debug toggle turns on. */
+    debugChat(message: string) {
+        if (!this.debugMode) return;
+
         this.chat({
             messageType: ChatMessageTypeEnum.INFO,
-            message: `[SYSTEM][HP REGEN] amount: ${Math.floor(amount)} percent: ${percent}`,
+            message: `[DEBUG] ${message}`,
         });
+    }
+
+    private getRecoveryPercent() {
+        const steps = Math.floor((performance.now() - this.lastMoveTime) / REGEN_INTERVAL);
+        return RECOVERY_PERCENT_BY_STEP[Math.min(RECOVERY_PERCENT_BY_STEP.length - 1, steps)];
+    }
+
+    private isRecoveryBlocked() {
+        return (
+            this.isAffectByFlag(AffectBitsTypeEnum.STUN) ||
+            this.isAffectByFlag(AffectBitsTypeEnum.POISON) ||
+            this.isDead()
+        );
+    }
+
+    regenHealth() {
+        if (this.isRecoveryBlocked()) return;
+        if (this.points.getPoint(PointsEnum.HEALTH) >= this.points.getPoint(PointsEnum.MAX_HEALTH)) return;
+
+        const percent = this.getRecoveryPercent();
+        const base = RECOVERY_FLAT_HEALTH + (this.points.getPoint(PointsEnum.MAX_HEALTH) * percent) / 100;
+        const amount = Math.floor(base + (base * this.points.getPoint(PointsEnum.HP_REGEN)) / 100);
+
+        this.points.addPoint(PointsEnum.HEALTH, amount);
+        this.debugChat(`[HP REGEN] amount: ${amount} percent: ${percent}`);
         this.sendPoints();
     }
 
     regenMana() {
-        if (this.isAffectByFlag(AffectBitsTypeEnum.STUN)) return;
-        if (this.isDead()) return;
+        if (this.isRecoveryBlocked()) return;
         if (this.points.getPoint(PointsEnum.MANA) >= this.points.getPoint(PointsEnum.MAX_MANA)) return;
 
-        let percent = this.stateMachine.getCurrentStateName() === EntityStateEnum.IDLE ? 5 : 1;
-        percent += percent * (this.points.getPoint(PointsEnum.MANA_REGEN) / 100);
-        const amount = this.points.getPoint(PointsEnum.MAX_MANA) * (percent / 100);
-        this.points.addPoint(PointsEnum.MANA, Math.floor(amount));
-        this.chat({
-            messageType: ChatMessageTypeEnum.INFO,
-            message: `[SYSTEM][MANA REGEN] amount: ${Math.floor(amount)} percent: ${percent}`,
-        });
+        const percent = this.getRecoveryPercent();
+        const base = (this.points.getPoint(PointsEnum.MAX_MANA) * percent) / 100;
+        const amount = Math.floor(base + (base * this.points.getPoint(PointsEnum.MANA_REGEN)) / 100);
+
+        this.points.addPoint(PointsEnum.MANA, amount);
+        this.debugChat(`[MANA REGEN] amount: ${amount} percent: ${percent}`);
         this.sendPoints();
     }
 
@@ -855,6 +962,7 @@ export default class Player extends Character {
 
         // The anti-teleport anchor is stale after a server-initiated warp.
         this.lastReportedPosition = null;
+        this.recentMoves = [];
 
         this.connection?.send(
             new TeleportPacket({
@@ -1451,6 +1559,24 @@ export default class Player extends Character {
         );
     }
 
+    getEquipFailureReason(item: Item): string | undefined {
+        if (item.getWearFlags().getFlag() < 1) return undefined;
+
+        if (this.getLevel() < item.getLevelLimit()) {
+            return `Your level is too low to equip this item. Required level: ${item.getLevelLimit()}.`;
+        }
+
+        if (item.getAntiFlags().is(this.antiFlagClass)) {
+            return 'Your class cannot use this item.';
+        }
+
+        if (item.getAntiFlags().is(this.antiFlagGender)) {
+            return 'This item cannot be equipped by your gender.';
+        }
+
+        return undefined;
+    }
+
     moveItem({
         fromWindow,
         fromPosition,
@@ -1471,7 +1597,11 @@ export default class Player extends Character {
         if (!this.getInventory().haveAvailablePosition(toPosition, item.getSize())) return;
 
         if (this.getInventory().isEquipmentPosition(toPosition)) {
-            if (!this.isWearable(item)) return;
+            if (!this.isWearable(item)) {
+                const reason = this.getEquipFailureReason(item);
+                if (reason) this.chat({ messageType: ChatMessageTypeEnum.INFO, message: reason });
+                return;
+            }
             if (!this.getInventory().isValidSlot(item, toPosition)) return;
         }
 
