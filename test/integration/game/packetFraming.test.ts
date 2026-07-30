@@ -23,14 +23,20 @@ describe('Security — TCP packet framing (issue #76)', function () {
     let harness: AttackHarness;
     let session: AttackSession;
 
+    // Built by hand rather than via session.command() so the tests can control
+    // exactly how the bytes are split across TCP writes. The trailing byte is
+    // the sequence byte the real client appends after every packet.
     const chatCommand = (message: string) => {
         const size = 1 + 2 + 1 + message.length + 1;
         const w = new BufferWriter(PacketHeaderEnum.CHAT_IN, size);
-        return w
-            .writeUint16LE(size)
-            .writeUint8(0)
-            .writeString(message, message.length + 1)
-            .getBuffer();
+        return Buffer.concat([
+            w
+                .writeUint16LE(size)
+                .writeUint8(0)
+                .writeString(message, message.length + 1)
+                .getBuffer(),
+            Buffer.of(0),
+        ]);
     };
 
     const totalOf = async (protoId: number) => {

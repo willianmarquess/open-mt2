@@ -11,6 +11,7 @@ export default class PongPacket extends PacketIn {
             header: PacketHeaderEnum.PONG,
             name: 'PongPacket',
             size: 1,
+            sequenced: false,
         });
     }
 

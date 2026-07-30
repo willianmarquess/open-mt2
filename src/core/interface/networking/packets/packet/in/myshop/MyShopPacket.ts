@@ -52,8 +52,8 @@ export default class MyShopPacket extends PacketIn {
 
     getFrameLength(buffer: Buffer): number | null {
         if (buffer.byteLength < FIXED_SIZE) return null;
-        const count = Math.min(buffer.readUInt8(FIXED_SIZE - 1), PRIVATE_SHOP_MAX_ITEMS);
-        return FIXED_SIZE + count * ITEM_ENTRY_SIZE;
+        const count = buffer.readUInt8(FIXED_SIZE - 1);
+        return FIXED_SIZE + count * ITEM_ENTRY_SIZE + this.getSequenceLength();
     }
 
     unpack(buffer: Buffer): this {

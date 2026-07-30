@@ -10,8 +10,15 @@ import ShopPacket from '@/core/interface/networking/packets/packet/in/shop/ShopP
 import MyShopPacket from '@/core/interface/networking/packets/packet/in/myshop/MyShopPacket';
 import EmpirePacket from '@/core/interface/networking/packets/packet/bidirectional/empire/EmpirePacket';
 import { ShopSubHeaderCG } from '@/core/enum/ShopSubHeaderEnum';
+import AuthServer from '@/auth/interface/server/AuthServer';
 
-const logger: any = { info: () => {}, error: () => {}, debug: () => {} };
+type LogLine = { level: string; message: string };
+const logged: Array<LogLine> = [];
+const logger: any = {
+    info: (message: string) => logged.push({ level: 'info', message }),
+    error: (message: string) => logged.push({ level: 'error', message }),
+    debug: (message: string) => logged.push({ level: 'debug', message }),
+};
 
 class TestConnection extends Connection {
     onHandshakeSuccess(): void {}
@@ -37,27 +44,35 @@ class FrameRecorder extends Server {
 const createFakeSocket = () => {
     const socket: any = new EventEmitter();
     socket.setNoDelay = () => {};
+    socket.write = () => true;
     socket.destroy = sinon.spy();
     return socket;
 };
 
 const settle = () => new Promise((resolve) => setImmediate(resolve));
 
+/** Packets carry a trailing sequence byte on the wire, as the client sends them. */
+const sequenced = (packet: Buffer) => Buffer.concat([packet, Buffer.of(0)]);
+
 const attackPacket = () =>
-    new BufferWriter(PacketHeaderEnum.ATTACK, 8)
-        .writeUint8(0)
-        .writeUint32LE(1234)
-        .writeUint8(0)
-        .writeUint8(0)
-        .getBuffer();
+    sequenced(
+        new BufferWriter(PacketHeaderEnum.ATTACK, 8)
+            .writeUint8(0)
+            .writeUint32LE(1234)
+            .writeUint8(0)
+            .writeUint8(0)
+            .getBuffer(),
+    );
 
 const chatPacket = (message: string) => {
     const size = 4 + message.length + 1;
-    return new BufferWriter(PacketHeaderEnum.CHAT_IN, size)
-        .writeUint16LE(size)
-        .writeUint8(0)
-        .writeString(message, message.length + 1)
-        .getBuffer();
+    return sequenced(
+        new BufferWriter(PacketHeaderEnum.CHAT_IN, size)
+            .writeUint16LE(size)
+            .writeUint8(0)
+            .writeString(message, message.length + 1)
+            .getBuffer(),
+    );
 };
 
 describe('Server packet framing', () => {
@@ -65,6 +80,7 @@ describe('Server packet framing', () => {
     let socket: any;
 
     beforeEach(() => {
+        logged.length = 0;
         server = new FrameRecorder({ logger, config: {} as any, packets: makePackets() });
         socket = createFakeSocket();
         server.onListener(socket);
@@ -79,9 +95,9 @@ describe('Server packet framing', () => {
         await settle();
 
         expect(server.frames).to.have.lengthOf(3);
-        expect(server.frames[0]).to.have.lengthOf(8);
-        expect(server.frames[1]).to.have.lengthOf(4 + 'hello'.length + 1);
-        expect(server.frames[2]).to.have.lengthOf(8);
+        expect(server.frames[0]).to.have.lengthOf(9);
+        expect(server.frames[1]).to.have.lengthOf(4 + 'hello'.length + 2);
+        expect(server.frames[2]).to.have.lengthOf(9);
     });
 
     it('should hold a partial packet until the rest of it arrives', async () => {
@@ -107,10 +123,15 @@ describe('Server packet framing', () => {
         socket.emit('data', attackPacket());
         await settle();
         expect(server.frames).to.have.lengthOf(2);
+
+        const unknown = logged.filter((line) => line.message.includes('Unknown header'));
+        expect(unknown.map((line) => line.level)).to.deep.equal(['info']);
     });
 
     it('should close the connection when a packet claims an absurd length', async () => {
-        const lyingChat = new BufferWriter(PacketHeaderEnum.CHAT_IN, 5).writeUint16LE(5000).writeUint8(0).getBuffer();
+        const lyingChat = sequenced(
+            new BufferWriter(PacketHeaderEnum.CHAT_IN, 5).writeUint16LE(5000).writeUint8(0).getBuffer(),
+        );
         socket.emit('data', lyingChat);
         await settle();
 
@@ -149,19 +170,21 @@ describe('Server packet framing', () => {
         await settle();
 
         expect(server.frames).to.have.lengthOf(3);
-        expect(server.frames.map((f) => f.subarray(4, f.length - 1).toString('ascii'))).to.deep.equal([
+        expect(server.frames.map((f) => f.subarray(4, f.length - 2).toString('ascii'))).to.deep.equal([
             'first',
             'second',
             'third',
         ]);
     });
 
-    it('should let a login request claim the whole read once its parsed prefix is buffered', async () => {
-        const login = new BufferWriter(PacketHeaderEnum.LOGIN_REQUEST, 66)
-            .writeString('admin', 31)
-            .writeString('admin', 16)
-            .writeUint32LE(123)
-            .getBuffer();
+    it('should frame a login request at its struct size plus the sequence byte', async () => {
+        const login = sequenced(
+            new BufferWriter(PacketHeaderEnum.LOGIN_REQUEST, 65)
+                .writeString('admin', 31)
+                .writeString('admin', 17)
+                .writeUint32LE(123)
+                .getBuffer(),
+        );
         socket.emit('data', login);
         await settle();
 
@@ -170,19 +193,66 @@ describe('Server packet framing', () => {
     });
 });
 
+describe('Unknown header log level', () => {
+    // Auth sees headers it does not implement as part of normal client traffic,
+    // so it kept them at debug before the framing loop moved into Server.
+    it('should stay at debug on the auth server', async () => {
+        logged.length = 0;
+        const server = new AuthServer({
+            logger,
+            config: {} as any,
+            packets: makePackets(),
+            containerInstance: { createScope: () => {} },
+        } as any);
+        const socket = createFakeSocket();
+        server.onListener(socket);
+
+        socket.emit('data', Buffer.from([0xee, 0x01, 0x02]));
+        await settle();
+
+        const unknown = logged.filter((line) => line.message.includes('Unknown header'));
+        expect(unknown).to.have.lengthOf(1);
+        expect(unknown[0].level).to.be.equal('debug');
+
+        socket.emit('close');
+    });
+});
+
+describe('Sequence byte exemptions', () => {
+    // The client appends no sequence byte to these, so framing them one byte
+    // too long stalls the connection waiting for a byte that never arrives.
+    const exempt = [PacketHeaderEnum.HANDSHAKE, PacketHeaderEnum.PONG, PacketHeaderEnum.SERVER_STATUS_REQUEST];
+
+    for (const header of exempt) {
+        it(`should not add a sequence byte to header ${header}`, () => {
+            const packet = makePackets().get(header)!.createPacket({ id: 0, time: 0, delta: 0 });
+
+            expect(packet.getSequenceLength()).to.be.equal(0);
+            expect(packet.getFrameLength(Buffer.alloc(64))).to.be.equal(packet.getSize());
+        });
+    }
+
+    it('should add a sequence byte to a regular client packet', () => {
+        const packet = makePackets().get(PacketHeaderEnum.ATTACK)!.createPacket({});
+
+        expect(packet.getSequenceLength()).to.be.equal(1);
+        expect(packet.getFrameLength(Buffer.alloc(64))).to.be.equal(packet.getSize() + 1);
+    });
+});
+
 describe('Variable-length frame sizes', () => {
     it('should size a shop packet by its subheader', () => {
         const frameFor = (subHeader: number) => new ShopPacket().getFrameLength(Buffer.from([0x32, subHeader]));
 
-        expect(frameFor(ShopSubHeaderCG.END)).to.be.equal(2);
-        expect(frameFor(ShopSubHeaderCG.BUY)).to.be.equal(4);
-        expect(frameFor(ShopSubHeaderCG.SELL)).to.be.equal(3);
-        expect(frameFor(ShopSubHeaderCG.SELL2)).to.be.equal(4);
+        expect(frameFor(ShopSubHeaderCG.END)).to.be.equal(3);
+        expect(frameFor(ShopSubHeaderCG.BUY)).to.be.equal(5);
+        expect(frameFor(ShopSubHeaderCG.SELL)).to.be.equal(4);
+        expect(frameFor(ShopSubHeaderCG.SELL2)).to.be.equal(5);
         expect(new ShopPacket().getFrameLength(Buffer.from([0x32]))).to.be.equal(null);
     });
 
-    it('should frame an incoming empire packet at its 2-byte wire size, not the 3-byte send size', () => {
-        expect(new EmpirePacket({ empireId: 1 }).getFrameLength()).to.be.equal(2);
+    it('should frame an incoming empire packet by its inbound size plus the sequence byte', () => {
+        expect(new EmpirePacket({ empireId: 1 }).getFrameLength()).to.be.equal(3);
     });
 
     it('should size a private-shop packet by its item count', () => {
@@ -193,8 +263,8 @@ describe('Variable-length frame sizes', () => {
             return new MyShopPacket().getFrameLength(buffer);
         };
 
-        expect(withCount(0)).to.be.equal(35);
-        expect(withCount(3)).to.be.equal(35 + 3 * 13);
+        expect(withCount(0)).to.be.equal(36);
+        expect(withCount(3)).to.be.equal(36 + 3 * 13);
         expect(new MyShopPacket().getFrameLength(Buffer.alloc(10))).to.be.equal(null);
     });
 });

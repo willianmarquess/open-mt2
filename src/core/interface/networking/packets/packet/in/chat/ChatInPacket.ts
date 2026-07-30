@@ -27,7 +27,7 @@ export default class ChatInPacket extends PacketIn {
 
     getFrameLength(buffer: Buffer): number | null {
         if (buffer.byteLength < 3) return null;
-        return buffer.readUInt16LE(1);
+        return buffer.readUInt16LE(1) + this.getSequenceLength();
     }
 
     unpack(buffer: Buffer) {

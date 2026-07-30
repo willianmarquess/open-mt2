@@ -10,6 +10,7 @@ export default class InternalPingPacket extends PacketIn {
             header: PacketHeaderEnum.INTERNAL_PING,
             name: 'InternalPing',
             size: 5,
+            sequenced: false,
             validator: InternalPingPacketValidator,
         });
         this.time = time;

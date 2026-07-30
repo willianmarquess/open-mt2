@@ -12,6 +12,7 @@ export default class HandshakePacket extends PacketBidirectional {
             header: PacketHeaderEnum.HANDSHAKE,
             name: 'HandshakePacket',
             size: 13,
+            sequenced: false,
             validator: HandshakePacketValidator,
         });
         this.id = id;

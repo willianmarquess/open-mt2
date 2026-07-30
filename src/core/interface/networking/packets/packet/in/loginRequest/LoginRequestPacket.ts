@@ -11,17 +11,12 @@ export default class LoginRequestPacket extends PacketIn {
         super({
             header: PacketHeaderEnum.LOGIN_REQUEST,
             name: 'LoginRequestPacket',
-            size: 52,
+            size: 65,
             validator: LoginRequestPacketValidator,
         });
         this.username = username;
         this.password = password;
         this.key = key;
-    }
-
-    // The struct size varies by client build, so claim the whole read.
-    getFrameLength(buffer: Buffer): number | null {
-        return buffer.byteLength >= this.size ? buffer.byteLength : null;
     }
 
     getUsername() {
