@@ -4,6 +4,10 @@ import Logger from '@/core/infra/logger/Logger';
 import { PacketMapValue } from '@/core/interface/networking/packets/Packets';
 import { GameConfig } from '@/game/infra/config/GameConfig';
 import { ConnectionStateEnum } from '@/core/enum/ConnectionStateEnum';
+import {
+    isUnimplementedHeader,
+    unimplementedFrameLength,
+} from '@/core/interface/networking/packets/UnimplementedPackets';
 
 const MAX_PACKET_LENGTH = 1024;
 const MAX_RECEIVE_BUFFER = 16_384;
@@ -110,6 +114,12 @@ export default abstract class Server {
 
     /** Next complete packet, or null while the buffer holds only a partial one. */
     private extractFrame(connection: Connection, state: FrameState): Buffer | null {
+        while (state.buffer.byteLength > 0 && isUnimplementedHeader(state.buffer[0])) {
+            if (!this.skipUnimplemented(connection, state)) return null;
+        }
+
+        if (state.buffer.byteLength === 0) return null;
+
         const header = state.buffer[0];
         const packetBuilder = this.packets.get(header);
 
@@ -138,6 +148,29 @@ export default abstract class Server {
         const frame = state.buffer.subarray(0, frameLength);
         state.buffer = state.buffer.subarray(frameLength);
         return frame;
+    }
+
+    /** True once the packet was stepped over, false while it needs more bytes. */
+    private skipUnimplemented(connection: Connection, state: FrameState): boolean {
+        const header = state.buffer[0];
+        const frameLength = unimplementedFrameLength(header, state.buffer);
+
+        if (frameLength === null) return false;
+
+        if (frameLength < 1 || frameLength > MAX_PACKET_LENGTH) {
+            this.logger.error(
+                `[IN][PACKET] Invalid packet length ${frameLength} for unimplemented header ${header} from connection: ID: ${connection.getId()}, closing`,
+            );
+            state.buffer = Buffer.alloc(0);
+            connection.close();
+            return false;
+        }
+
+        if (state.buffer.byteLength < frameLength) return false;
+
+        this.logger.debug(`[IN][PACKET] Skipping unimplemented header ${header} (${frameLength} bytes)`);
+        state.buffer = state.buffer.subarray(frameLength);
+        return true;
     }
 
     async onError(connection: Connection, err: Error) {
