@@ -32,6 +32,7 @@ export default class PickupItemService {
         const droppedItem = this.entityManager.getEntity(virtualId);
 
         if (!(droppedItem instanceof DroppedItem)) return;
+        if (droppedItem.isTaken()) return;
         if (droppedItem.getArea() !== player.getArea()) return;
 
         const distance = MathUtil.calcDistance(
@@ -60,6 +61,7 @@ export default class PickupItemService {
         const isGold = item.getId() === 1;
 
         if (isGold) {
+            droppedItem.markTaken();
             player.addPoint(PointsEnum.GOLD, Number(count));
             this.world.despawn(droppedItem);
             return;
@@ -68,6 +70,7 @@ export default class PickupItemService {
         const added = player.addItemStacking(item);
         if (!added) return;
 
+        droppedItem.markTaken();
         this.world.despawn(droppedItem);
 
         for (const updated of added.updated) {

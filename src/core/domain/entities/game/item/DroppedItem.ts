@@ -11,6 +11,7 @@ export default class DroppedItem extends GameEntity {
     private readonly item: Item;
     private readonly count: number;
     private ownerName: string | null;
+    private taken: boolean = false;
 
     constructor(
         {
@@ -56,6 +57,14 @@ export default class DroppedItem extends GameEntity {
     }
     getOwnerName() {
         return this.ownerName;
+    }
+
+    isTaken() {
+        return this.taken;
+    }
+
+    markTaken() {
+        this.taken = true;
     }
 
     public onSpawn() {
