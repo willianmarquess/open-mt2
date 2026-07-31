@@ -83,13 +83,13 @@ describe('Restart health fidelity', function () {
     }
 
     it('revives on the flat restart health and tells the client to stand up', async () => {
+        // takeDamage is a direct server-side call and needs no proximity, so we
+        // log in at the harness default location (always valid) and only use the
+        // monster as the attacker reference — logging in on a monster's position
+        // is flaky, since some spawn at locations the world rejects.
         const monster = await liveMonster();
 
-        session = await harness.login({
-            username: REVIVER,
-            x: monster.getPositionX(),
-            y: monster.getPositionY(),
-        });
+        session = await harness.login({ username: REVIVER });
 
         const player = await livePlayer(REVIVER);
 
