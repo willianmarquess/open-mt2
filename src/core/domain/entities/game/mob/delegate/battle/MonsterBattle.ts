@@ -76,8 +76,13 @@ export default class MonsterBattle {
         }
 
         const attackRating = this.calcAttackRating(victim);
-        const baseMonsterAttack = this.attacker.getAttack();
-        const attack = Math.floor(baseMonsterAttack * attackRating);
+        const level = this.attacker.getLevel();
+
+        const rolledDamage = MathUtil.getRandomInt(this.attacker.getDamageMin(), this.attacker.getDamageMax()) * 2;
+        let attack = this.attacker.getAttack() + rolledDamage - level * 2;
+        attack = Math.floor(attack * attackRating);
+        attack += level * 2;
+        attack = Math.floor(attack * this.attacker.getDamMultiply());
 
         this.applyAttackEffect(victim);
 
