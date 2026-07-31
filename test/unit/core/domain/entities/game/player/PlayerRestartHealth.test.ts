@@ -38,7 +38,26 @@ const config: any = {
     },
 };
 
-const createPlayer = (): Player =>
+// A timer manager that actually tracks which ids are armed per owner, so a
+// test can tell whether death cleared the regen timers and whether a restart
+// brought them back.
+const createTimerManager = () => {
+    const active = new Map<number, Set<string>>();
+    const ids = (ownerId: number) => active.get(ownerId) ?? new Set<string>();
+    return {
+        active,
+        addTimer: ({ id, ownerId }: { id: string; ownerId: number }) => {
+            if (!active.has(ownerId)) active.set(ownerId, new Set());
+            active.get(ownerId)!.add(id);
+        },
+        removeTimer: () => {},
+        isTimerActive: (ownerId: number, id: string) => ids(ownerId).has(id),
+        clearTimersByOwner: (ownerId: number) => active.delete(ownerId),
+        removeAllTimersFromOwner: (ownerId: number) => active.delete(ownerId),
+    };
+};
+
+const createPlayer = (timerManager: any = createTimerManager()): Player =>
     PlayerFactory.create(
         {
             playerClass: 0,
@@ -66,13 +85,7 @@ const createPlayer = (): Player =>
             logger,
             saveCharacterService: { execute: async () => {} } as any,
             questManager: { getQuestsByEvent: () => [], onKill: () => {} } as any,
-            eventTimerManager: {
-                addTimer: () => {},
-                removeTimer: () => {},
-                isTimerActive: () => false,
-                clearTimersByOwner: () => {},
-                removeAllTimersFromOwner: () => {},
-            } as any,
+            eventTimerManager: timerManager as any,
             mobManager: { getMobProto: () => undefined } as any,
         },
     );
@@ -98,12 +111,13 @@ const createKiller = () =>
     }) as unknown as Character;
 
 const createDeadPlayer = () => {
-    const player = createPlayer();
+    const timers = createTimerManager();
+    const player = createPlayer(timers);
     const area = createArea();
     player.setConnection({ send: () => {}, setState: () => {} } as any);
     player.setArea(area as any);
     player.die(createKiller());
-    return { player, area };
+    return { player, area, timers };
 };
 
 describe('Player restart health', () => {
@@ -143,6 +157,20 @@ describe('Player restart health', () => {
         // Going through wait() is what keeps the spatial grid and the nearby
         // entity lists consistent after the jump across the map.
         expect(area.moves, 'the warp went through the area movement path').to.have.lengthOf(1);
+    });
+
+    it('should re-arm the health and mana regeneration that death cleared', () => {
+        const { player, timers } = createDeadPlayer();
+        const vid = player.getVirtualId();
+
+        // Death clears every timer, so regeneration is off at this point — that
+        // is exactly what a naive restart would leave in place.
+        expect(timers.isTimerActive(vid, 'REGEN_HEALTH'), 'death cleared regen').to.equal(false);
+
+        player.restart('HERE');
+
+        expect(timers.isTimerActive(vid, 'REGEN_HEALTH')).to.equal(true);
+        expect(timers.isTimerActive(vid, 'REGEN_MANA')).to.equal(true);
     });
 
     it('should grant the revive invisibility when restarting in place', () => {

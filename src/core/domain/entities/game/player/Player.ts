@@ -577,6 +577,7 @@ export default class Player extends Character {
         }
 
         this.addPoint(PointsEnum.HEALTH, RESTART_HEALTH - this.getPoint(PointsEnum.HEALTH));
+        this.startRecovery();
 
         if (type === 'HERE') {
             this.applyInvisibleAffect(RESTART_INVISIBLE_SECONDS);
@@ -801,6 +802,10 @@ export default class Player extends Character {
         this.points.calcPointsAndResetValues();
         this.sendPoints();
 
+        this.startRecovery();
+    }
+
+    private startRecovery() {
         this.addEventTimer({
             id: TimedEventsEnum.REGEN_HEALTH,
             eventFunction: this.regenHealth.bind(this),
