@@ -228,24 +228,31 @@ export default class World {
 
     async tick() {
         const startTickTime = performance.now();
+        let delta: number | undefined;
 
-        for (const area of this.areas.values()) {
-            area.tick();
+        try {
+            for (const area of this.areas.values()) {
+                area.tick();
+            }
+
+            this.privilegeManager.tick();
+            this.eventTimerManager.tick();
+            this.entityManager.tick();
+
+            delta = performance.now() - startTickTime;
+            this.deltas.push(delta);
+
+            if (this.deltas.length === 100) {
+                const averageTick = this.deltas.reduce((acc, curr) => acc + curr, 0);
+                this.logger.info(`average tick time is: ~${(averageTick / 100).toFixed(2)}ms`);
+                this.deltas = [];
+            }
+        } catch (error) {
+            this.logger.error(
+                `[WORLD] Error during tick, world keeps ticking: ${error instanceof Error ? error.stack : String(error)}`,
+            );
+        } finally {
+            setTimeout(this.tick.bind(this), calculateTickDelay(delta));
         }
-
-        this.privilegeManager.tick();
-        this.eventTimerManager.tick();
-        this.entityManager.tick();
-
-        const delta = performance.now() - startTickTime;
-        this.deltas.push(delta);
-
-        if (this.deltas.length === 100) {
-            const averageTick = this.deltas.reduce((acc, curr) => acc + curr, 0);
-            this.logger.info(`average tick time is: ~${(averageTick / 100).toFixed(2)}ms`);
-            this.deltas = [];
-        }
-
-        setTimeout(this.tick.bind(this), calculateTickDelay(delta));
     }
 }
