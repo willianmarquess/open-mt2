@@ -343,7 +343,7 @@ export default class Behavior {
 
     private findNextVictim(): boolean {
         for (const entity of this.monster.getNearbyEntities().values()) {
-            if (!this.isAttackableVictim(entity)) return false;
+            if (!this.isAttackableVictim(entity)) continue;
 
             const distance = this.getDistance(entity.getPositionX(), entity.getPositionY());
 
