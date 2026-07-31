@@ -6,6 +6,7 @@ import InventoryEventsEnum from '../inventory/events/InventoryEventsEnum';
 import { PointsEnum } from '@/core/enum/PointsEnum';
 import PlayerApplies from './delegate/PlayerApplies';
 import { EntityStateEnum } from '@/core/enum/EntityStateEnum';
+import { MovementTypeEnum } from '@/core/enum/MovementTypeEnum';
 import { ChatMessageTypeEnum } from '@/core/enum/ChatMessageTypeEnum';
 import { ItemAntiFlagEnum } from '@/core/enum/ItemAntiFlagEnum';
 import Item, { MAX_ITEM_STACK } from '../item/Item';
@@ -132,6 +133,9 @@ const SHOUT_COOLDOWN_MS = 15_000;
 // before the regen bonus, not after.
 const RECOVERY_PERCENT_BY_STEP = [1, 5, 5, 5, 5, 5, 5, 5, 5, 5];
 const RECOVERY_FLAT_HEALTH = 15;
+
+const RESTART_HEALTH = 50;
+const RESTART_INVISIBLE_SECONDS = 5;
 
 export default class Player extends Character {
     private readonly accountId: number;
@@ -561,12 +565,24 @@ export default class Player extends Character {
         if (type === 'TOWN') {
             const position = this.area?.getStartPositionByEmpire(this.empire);
             if (position?.x !== undefined && position?.y !== undefined) {
-                this.setPositionX(position.x);
-                this.setPositionY(position.y);
+                this.wait({
+                    positionX: position.x,
+                    positionY: position.y,
+                    arg: 0,
+                    rotation: this.getRotation(),
+                    time: 0,
+                    movementType: MovementTypeEnum.WAIT,
+                });
             }
         }
 
-        this.area?.spawn(this);
+        this.addPoint(PointsEnum.HEALTH, RESTART_HEALTH - this.getPoint(PointsEnum.HEALTH));
+
+        if (type === 'HERE') {
+            this.applyInvisibleAffect(RESTART_INVISIBLE_SECONDS);
+        }
+
+        this.resendSelfToWorld();
     }
 
     setConnection(connection: GameConnection) {
@@ -2219,8 +2235,23 @@ export default class Player extends Character {
     }
 
     private broadcastMountChange(): void {
+        this.resendSelfToWorld();
+
+        // Send mount affect to self when mounting
+        if (this.horse.isRiding()) {
+            this.sendAffect({
+                type: AffectTypeEnum.MOUNT,
+                apply: 0,
+                duration: 0,
+                flag: 0,
+                value: this.horse.getMountVnum(),
+                manaCost: 0,
+            });
+        }
+    }
+
+    private resendSelfToWorld(): void {
         const mountVnum = this.horse.getMountVnum();
-        const isRiding = this.horse.isRiding();
         const parts = [this.getBody()?.getId() ?? 0, this.getWeapon()?.getId() ?? 0, 0, this.getHair()?.getId() ?? 0];
 
         // Packets are single-use (pack() advances the internal buffer cursor),
@@ -2275,18 +2306,6 @@ export default class Player extends Character {
                 state: this.isDead() ? 1 : 0,
             }),
         );
-
-        // Send mount affect to self when mounting
-        if (isRiding) {
-            this.sendAffect({
-                type: AffectTypeEnum.MOUNT,
-                apply: 0,
-                duration: 0,
-                flag: 0,
-                value: mountVnum,
-                manaCost: 0,
-            });
-        }
 
         // Rebuild our own scene wiped by the self-spawn above
         this.resendNearbyToSelf();
