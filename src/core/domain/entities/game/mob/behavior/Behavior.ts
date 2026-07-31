@@ -6,6 +6,7 @@ import Player from '../../player/Player';
 import { AffectBitsTypeEnum } from '@/core/enum/AffectBitsTypeEnum';
 import { PositionEnum } from '@/core/enum/PositionEnum';
 import { MobImmuneFlagEnum } from '@/core/enum/MobImmuneFlagEnum';
+import { BattleTypeEnum } from '@/core/enum/BattleTypeEnum';
 
 const POSITION_OFFSET = 600;
 const MIN_DELAY = 5000;
@@ -15,6 +16,8 @@ const MAX_DISTANCE_WITHOUT_ATTACK = 5_000;
 const BASE_NEXT_TIME_TO_ATTACK = 2_000;
 const MIN_NEXT_TIME_TO_ATTACK = 1_000;
 const MIN_NEXT_TIME_TO_MOVE = 500;
+const MELEE_FOLLOW_RATIO = 0.9;
+const RANGED_FOLLOW_RATIO = 0.8;
 
 type DamageMapType = {
     player: Player;
@@ -283,12 +286,18 @@ export default class Behavior {
         };
     }
 
+    private getFollowRangeRatio() {
+        const battleType = this.monster.getBattleType();
+        const keepsDistance = battleType === BattleTypeEnum.RANGE || battleType === BattleTypeEnum.MAGIC;
+        return keepsDistance ? RANGED_FOLLOW_RATIO : MELEE_FOLLOW_RATIO;
+    }
+
     private followTarget() {
         let targetX = this.monster.getTarget().getPositionX();
         let targetY = this.monster.getTarget().getPositionY();
         const monsterX = this.monster.getPositionX();
         const monsterY = this.monster.getPositionY();
-        const minDistance = this.monster.getAttackRange() * 0.9; //90%
+        const minDistance = this.monster.getAttackRange() * this.getFollowRangeRatio();
 
         const shouldPredictTargetMovement = this.monster.getTarget().getState() === EntityStateEnum.MOVING;
 

@@ -38,7 +38,7 @@ export default class MonsterBattle {
                 break;
 
             case BattleTypeEnum.RANGE:
-                //TODO
+                this.rangeAttack(victim);
                 break;
 
             case BattleTypeEnum.MAGIC:
@@ -48,6 +48,15 @@ export default class MonsterBattle {
     }
 
     private meleeAttack(victim: Player) {
+        this.resolveAttack(victim, DamageTypeEnum.NORMAL, 0);
+    }
+
+    private rangeAttack(victim: Player) {
+        this.attacker.createFlyTargeting(victim);
+        this.resolveAttack(victim, DamageTypeEnum.NORMAL_RANGE, victim.getPoint(PointsEnum.RESIST_BOW));
+    }
+
+    private resolveAttack(victim: Player, damageType: DamageTypeEnum, resistance: number) {
         const MAX_DISTANCE = this.attacker.getAttackRange() * 1.15;
         const distance = MathUtil.calcDistance(
             this.attacker.getPositionX(),
@@ -68,9 +77,9 @@ export default class MonsterBattle {
         this.applyAttackEffect(victim);
 
         const defense = victim.getDefense();
-        const damage = Math.max(0, attack - defense);
+        const damage = this.applyResistance(Math.max(0, attack - defense), resistance);
 
-        this.applyDamage(damage, DamageTypeEnum.NORMAL, victim);
+        this.applyDamage(damage, damageType, victim);
     }
 
     private isBlocked(victim: Player, damageType: DamageTypeEnum): boolean {
@@ -123,7 +132,9 @@ export default class MonsterBattle {
 
                 //TODO: apply buffs ()
 
-                this.applyReflectDamage(damage, victim);
+                if (damageType === DamageTypeEnum.NORMAL) {
+                    this.applyReflectDamage(damage, victim);
+                }
 
                 damage = this.calculateCriticalDamage(damage, damageFlags, victim);
                 damage = this.calculatePenetrateDamage(damage, damageFlags, victim);
