@@ -102,6 +102,11 @@ export default class AttackHarness {
         return this.entities().find((entity) => entity instanceof Monster);
     }
 
+    /** Every live monster, for specs that need one with particular surroundings. */
+    findMonsters(): Array<Monster> {
+        return this.entities().filter((entity) => entity instanceof Monster);
+    }
+
     /** The most recently spawned ground item, so earlier specs cannot shadow it. */
     findDroppedItem(): DroppedItem | undefined {
         return this.entities().findLast((entity) => entity instanceof DroppedItem);
