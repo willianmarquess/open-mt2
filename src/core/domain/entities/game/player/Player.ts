@@ -556,6 +556,7 @@ export default class Player extends Character {
             message: 'CloseRestartWindow',
         });
         this.connection?.setState(ConnectionStateEnum.GAME);
+        this.setPos(PositionEnum.STANDING);
 
         if (type === 'TOWN') {
             const position = this.area?.getStartPositionByEmpire(this.empire);
@@ -592,6 +593,8 @@ export default class Player extends Character {
             });
             return;
         }
+
+        if (this.isDead()) return;
 
         if (victim.isDead()) {
             this.setPos(PositionEnum.STANDING);
