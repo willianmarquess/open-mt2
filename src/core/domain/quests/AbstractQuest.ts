@@ -163,7 +163,7 @@ export abstract class AbstractQuest {
                     } finally {
                         this.rearmLetter(context.eventType, callbackResult);
                         this.autoDone();
-                        this.endRunning(callbackResult);
+                        await this.endRunning(callbackResult);
                     }
                 } catch (err) {
                     console.error('[QUEST] runState error', err);
