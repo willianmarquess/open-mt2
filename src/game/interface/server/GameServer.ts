@@ -47,6 +47,8 @@ export default class GameServer extends Server {
             return;
         }
 
+        if (!this.isAllowedInPhase(connection, header, packetBuilder)) return;
+
         const { createPacket, createHandler } = packetBuilder;
         const packet = createPacket({});
         const handler = createHandler(this.container);
