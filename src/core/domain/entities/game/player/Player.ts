@@ -1701,6 +1701,7 @@ export default class Player extends Character {
         if (existing === item) return false;
         if (existing.getWindow() !== WindowTypeEnum.INVENTORY) return false;
         if (existing.getId() !== item.getId() || !existing.isStackable()) return false;
+        if (this.isItemLockedInPrivateShop(existing)) return false;
         // Only merge into items actually present in the grid — a stale
         // map entry (ghost) would swallow the units into an empty slot.
         return this.inventory.getItem(existing.getPosition()) === existing;
