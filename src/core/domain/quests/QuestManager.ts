@@ -2,7 +2,7 @@ import * as fs from 'node:fs';
 import * as path from 'node:path';
 import Logger from '@/core/infra/logger/Logger';
 import { AbstractQuest } from './AbstractQuest';
-import { getQuestMeta, MetaTask, QuestStatusEnum } from './decorators/QuestDecorator';
+import { getQuestMeta, MetaTask, QuestStatusEnum, StateExecutionContextBase } from './decorators/QuestDecorator';
 
 type TaskTarget = number | number[] | undefined;
 import { QuestEventEnum } from '@/core/enum/QuestEventEnum';
@@ -257,6 +257,19 @@ export class QuestManager {
         }
     }
 
+    private async dispatchStateEvent(player: Player, context: StateExecutionContextBase) {
+        const questMap = this.getQuestsForEvent(context.eventType);
+        for (const [questId, states] of questMap) {
+            const quest = player.getQuest(questId);
+            if (!quest) continue;
+            const current = quest.getCurrentState()?.name;
+            if (!current) continue;
+            if (states.has(current)) {
+                await quest.runState(context);
+            }
+        }
+    }
+
     async onLogin(player: Player) {
         if (player.isQuestRunning()) {
             this.logger.info(
@@ -265,16 +278,16 @@ export class QuestManager {
             return;
         }
 
-        const questMap = this.getQuestsForEvent(QuestEventEnum.LOGIN);
-        for (const [questId, states] of questMap) {
-            const quest = player.getQuest(questId);
-            if (!quest) continue;
-            const current = quest.getCurrentState()?.name;
-            if (!current) continue;
-            if (states.has(current)) {
-                await quest.runState({ eventType: QuestEventEnum.LOGIN });
-            }
-        }
+        await this.dispatchStateEvent(player, { eventType: QuestEventEnum.LOGIN });
+    }
+
+    onDespawn(player: Player) {
+        this.pendingChatOptions.delete(player.getId());
+    }
+
+    async onLogout(player: Player) {
+        this.onDespawn(player);
+        await this.dispatchStateEvent(player, { eventType: QuestEventEnum.LOGOUT });
     }
 
     async onLevelUp(player: Player) {
@@ -285,22 +298,14 @@ export class QuestManager {
             return;
         }
 
-        const questMap = this.getQuestsForEvent(QuestEventEnum.LEVELUP);
-        for (const [questId, states] of questMap) {
-            const quest = player.getQuest(questId);
-            if (!quest) continue;
-            const current = quest.getCurrentState()?.name;
-            if (!current) continue;
-            if (states.has(current)) {
-                await quest.runState({ eventType: QuestEventEnum.LEVELUP });
-            }
-        }
+        await this.dispatchStateEvent(player, { eventType: QuestEventEnum.LEVELUP });
     }
 
     onAnswer(player: Player, answer: number) {
         const chatOptions = this.pendingChatOptions.get(player.getId());
-        if (chatOptions) {
-            this.pendingChatOptions.delete(player.getId());
+        this.pendingChatOptions.delete(player.getId());
+
+        if (chatOptions && !this.hasSuspendedQuest(player)) {
             const option = chatOptions[answer];
             if (!option) {
                 player.sendQuestScript(QuestSkinEnum.NO_WINDOW, '[DONE]');
@@ -352,6 +357,12 @@ export class QuestManager {
 
             this.logger.error(`[QUEST_MANAGER] No active quest paused or awaiting select, playerId: ${player.getId()}`);
         }
+    }
+
+    private hasSuspendedQuest(player: Player): boolean {
+        return Boolean(
+            player.getQuestByStatus(QuestStatusEnum.SELECT) ?? player.getQuestByStatus(QuestStatusEnum.PAUSE),
+        );
     }
 
     async onClick(player: Player, npc: NPC) {
@@ -437,15 +448,9 @@ export class QuestManager {
             return;
         }
 
-        const questMap = this.getQuestsForEvent(QuestEventEnum.KILL);
-        for (const [questId, states] of questMap) {
-            const quest = killer.getQuest(questId);
-            if (!quest) continue;
-            const current = quest.getCurrentState()?.name;
-            if (!current) continue;
-            if (states.has(current)) {
-                await quest.runState({ eventType: QuestEventEnum.KILL, victim: new VictimQuest({ victim }) });
-            }
-        }
+        await this.dispatchStateEvent(killer, {
+            eventType: QuestEventEnum.KILL,
+            victim: new VictimQuest({ victim }),
+        });
     }
 }
