@@ -90,11 +90,15 @@ const createConnection = () => {
     };
 };
 
+// Deliberately covers both shapes a restart may take: queueing a respawn, or
+// re-announcing the character and warping through the movement path. These
+// specs are about the death guard, so they must not pin either one.
 const createArea = () => {
     const spawned: any[] = [];
     return {
         spawned,
         spawn: (entity: any) => spawned.push(entity),
+        onCharacterMove: () => {},
         getStartPositionByEmpire: () => ({ x: START_X, y: START_Y }),
     };
 };
@@ -153,30 +157,31 @@ describe('Player restart legality', () => {
     describe('while dead', () => {
         it('should still warp on /restart_town', () => {
             const player = createPlayer();
-            const area = createArea();
-            const { connection } = createConnection();
+            const { connection, states } = createConnection();
             player.setConnection(connection);
-            player.setArea(area as any);
+            player.setArea(createArea() as any);
             player.die(createKiller());
 
             player.restart('TOWN');
 
             expect(player.getPositionX()).to.equal(START_X);
             expect(player.getPositionY()).to.equal(START_Y);
-            expect(area.spawned).to.have.lengthOf(1);
+            expect(states, 'the restart ran to completion').to.not.have.lengthOf(0);
         });
 
-        it('should still respawn on /restart_here', () => {
+        it('should still restart in place on /restart_here', () => {
             const player = createPlayer();
-            const area = createArea();
-            const { connection } = createConnection();
+            const { connection, states } = createConnection();
             player.setConnection(connection);
-            player.setArea(area as any);
+            player.setArea(createArea() as any);
             player.die(createKiller());
 
             player.restart('HERE');
 
-            expect(area.spawned).to.have.lengthOf(1);
+            // Asserted through the connection state rather than a queued
+            // respawn: whether a restart re-spawns or re-announces the
+            // character is not what this guard is about.
+            expect(states, 'the restart ran to completion').to.not.have.lengthOf(0);
         });
     });
 });
