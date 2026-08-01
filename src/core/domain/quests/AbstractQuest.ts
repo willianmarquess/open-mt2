@@ -490,14 +490,19 @@ export abstract class AbstractQuest {
 
     protected sendTarget({ virtualId, vnum, name }: { virtualId?: number; vnum?: number; name: string }) {
         if (vnum) {
-            return this.questTargetManager.sendTargetByVnum({ player: this.player, vnum, name });
+            return this.questTargetManager.sendTargetByVnum({ player: this.player, questId: this.id, vnum, name });
         }
         if (virtualId) {
-            return this.questTargetManager.sendTargetByVirtualId({ player: this.player, virtualId, name });
+            return this.questTargetManager.sendTargetByVirtualId({
+                player: this.player,
+                questId: this.id,
+                virtualId,
+                name,
+            });
         }
     }
 
     protected removeTarget({ name }: { name: string }) {
-        return this.questTargetManager.removeTarget({ player: this.player, targetName: name });
+        return this.questTargetManager.removeTarget({ player: this.player, questId: this.id, targetName: name });
     }
 }
