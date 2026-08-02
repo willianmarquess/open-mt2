@@ -556,7 +556,7 @@ export default class Item {
         const flagsBitFlag = parseFlags(proto.flag, ItemFlagEnum);
         const immuneFlagsBitFlag = parseFlags(proto.immune, ItemImmuneFlagEnum);
         const wearFlagsBitFlag = parseFlags(proto.item_wear, ItemWearFlagEnum);
-        const itemType: ItemTypeEnum = itemTypeMapper[proto.item_type] || ItemTypeEnum.ITEM_NONE;
+        const itemType: ItemTypeEnum = itemTypeMapper[proto.item_type] ?? ItemTypeEnum.ITEM_NONE;
         const itemSubTypeEnum = itemTypeSubTypeMapper[itemType];
         const itemSubType = itemSubTypeEnum?.[proto.sub_type] ?? 0;
 
@@ -580,11 +580,11 @@ export default class Item {
             wearFlags: wearFlagsBitFlag,
             limits: [
                 new ItemLimit({
-                    type: itemLimitMapper[proto.limit_type0.replace('LIMIT_', '')] || ItemLimitTypeEnum.NONE,
+                    type: itemLimitMapper[proto.limit_type0.replace('LIMIT_', '')] ?? ItemLimitTypeEnum.NONE,
                     value: Number(proto.limit_value0),
                 }),
                 new ItemLimit({
-                    type: itemLimitMapper[proto.limit_type1.replace('LIMIT_', '')] || ItemLimitTypeEnum.NONE,
+                    type: itemLimitMapper[proto.limit_type1.replace('LIMIT_', '')] ?? ItemLimitTypeEnum.NONE,
                     value: Number(proto.limit_value1),
                 }),
             ],

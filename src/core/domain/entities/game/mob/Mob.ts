@@ -206,8 +206,8 @@ export abstract class Mob extends Character {
         );
         const proto = params.proto;
 
-        this.rank = rankMapper[String(proto.rank)] || MobRankEnum.KNIGHT;
-        this.battleType = battleTypeMapper[String(proto.battle_type)] || BattleTypeEnum.MELEE;
+        this.rank = rankMapper[String(proto.rank)] ?? MobRankEnum.KNIGHT;
+        this.battleType = battleTypeMapper[String(proto.battle_type)] ?? BattleTypeEnum.MELEE;
 
         this.applyFlags(proto.ai_flag, aiFlagMapper, this.aiFlag);
         this.applyFlags(proto.race_flag, raceFlagMapper, this.raceFlag);

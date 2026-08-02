@@ -125,7 +125,7 @@ export default class SpawnConfig {
         count: number;
     }) {
         return new SpawnConfig({
-            type: SpawnConfigMap[type] || SpawnConfigMap.m,
+            type: SpawnConfigMap[type] ?? SpawnConfigMap.m,
             x,
             y,
             rangeX,
