@@ -22,7 +22,7 @@ export default class CharacterMoveService {
     async execute({ player, movementType, positionX, positionY, arg, rotation, time }: CharacterMoveServiceParams) {
         // Reject teleport-hack packets (destination too far for one step); the
         // player is snapped back to their real position inside isMoveAllowed.
-        if (!player.isMoveAllowed(positionX, positionY)) {
+        if (!player.isMoveAllowed(positionX, positionY, movementType)) {
             this.logger.info(
                 `[CharacterMoveService] Rejected move for ${player.getName()} to (${positionX}, ${positionY}) — too far from (${player.getPositionX()}, ${player.getPositionY()}), type=${movementType}`,
             );

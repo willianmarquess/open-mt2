@@ -6,6 +6,7 @@ import InventoryEventsEnum from '../inventory/events/InventoryEventsEnum';
 import { PointsEnum } from '@/core/enum/PointsEnum';
 import PlayerApplies from './delegate/PlayerApplies';
 import { EntityStateEnum } from '@/core/enum/EntityStateEnum';
+import { MovementTypeEnum } from '@/core/enum/MovementTypeEnum';
 import { ChatMessageTypeEnum } from '@/core/enum/ChatMessageTypeEnum';
 import { ItemAntiFlagEnum } from '@/core/enum/ItemAntiFlagEnum';
 import Item, { MAX_ITEM_STACK } from '../item/Item';
@@ -687,7 +688,7 @@ export default class Player extends Character {
      * the server's authoritative position and drop the move.
      * Returns true when the requested destination is acceptable.
      */
-    isMoveAllowed(x: number, y: number): boolean {
+    isMoveAllowed(x: number, y: number, movementType: MovementTypeEnum = MovementTypeEnum.WAIT): boolean {
         const max = this.horse.isRiding() ? MAX_MOVE_DISTANCE_RIDING : MAX_MOVE_DISTANCE;
 
         // Like the original, measure against the client's last accepted
@@ -702,7 +703,9 @@ export default class Player extends Character {
         const anchor = this.lastReportedPosition ?? serverPosition;
         const distance = MathUtil.calcDistance(anchor.x, anchor.y, x, y);
 
-        if (withinCap && this.isMoveRateAllowed(distance, performance.now())) {
+        const claimsPosition = movementType !== MovementTypeEnum.MOVE;
+
+        if (withinCap && (!claimsPosition || this.isMoveRateAllowed(distance, performance.now()))) {
             this.lastReportedPosition = { x, y };
             return true;
         }
