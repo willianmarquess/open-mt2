@@ -40,6 +40,26 @@ export default class ItemCache {
         return cache.delete.values();
     }
 
+    drain(ownerId: number) {
+        const cache = this.get(ownerId);
+        const drained = { update: [...cache.update.values()], delete: [...cache.delete.values()] };
+        cache.update.clear();
+        cache.delete.clear();
+        return drained;
+    }
+
+    restore(ownerId: number, drained: { update: Array<ItemState>; delete: Array<ItemState> }) {
+        const cache = this.get(ownerId);
+
+        for (const item of drained.update) {
+            if (!cache.update.has(item.id) && !cache.delete.has(item.id)) cache.update.set(item.id, item);
+        }
+
+        for (const item of drained.delete) {
+            if (!cache.delete.has(item.id)) cache.delete.set(item.id, item);
+        }
+    }
+
     clear(ownerId: number) {
         const cache = this.get(ownerId);
         cache?.update.clear();

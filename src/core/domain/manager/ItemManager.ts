@@ -108,17 +108,19 @@ export default class ItemManager {
             return;
         }
 
-        const itemsToUpdate = this.itemCache.getItemsToUpdate(ownerId);
-        const itemsToDelete = this.itemCache.getItemsToDelete(ownerId);
+        const drained = this.itemCache.drain(ownerId);
 
-        const updatePromises = Array.from(itemsToUpdate || []).map((item) => this.itemRepository.update(item));
-        const deletePromises = Array.from(itemsToDelete || []).map((item) => this.itemRepository.delete(item));
+        if (drained.update.length === 0 && drained.delete.length === 0) return;
 
-        if (updatePromises.length === 0 && deletePromises.length === 0) return;
-
-        await Promise.all([...updatePromises, ...deletePromises]);
-
-        this.itemCache.clear(ownerId);
+        try {
+            await Promise.all([
+                ...drained.update.map((item) => this.itemRepository.update(item)),
+                ...drained.delete.map((item) => this.itemRepository.delete(item)),
+            ]);
+        } catch (error) {
+            this.itemCache.restore(ownerId, drained);
+            throw error;
+        }
 
         this.logger.debug(`[ITEM MANAGER] Saving items of player id: ${ownerId}`);
     }
