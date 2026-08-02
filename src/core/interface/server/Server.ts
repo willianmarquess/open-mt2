@@ -44,6 +44,15 @@ export default abstract class Server {
     abstract createConnection(socket: Socket): Connection;
     abstract onData(connection: Connection, data: Buffer): Promise<void>;
 
+    protected isAllowedInPhase(connection: Connection, header: number, packetBuilder: PacketMapValue<any>): boolean {
+        if (packetBuilder.phases.has(connection.getState())) return true;
+
+        this.logger.info(
+            `[IN][PACKET] Header ${header} is not allowed in state ${connection.getState()} from connection: ID: ${connection.getId()}, ignoring`,
+        );
+        return false;
+    }
+
     /**
      * Unpacks a packet, closing the connection instead of letting a malformed
      * packet throw. A packet lying about its size makes unpack() read past the

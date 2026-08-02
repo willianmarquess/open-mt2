@@ -63,6 +63,10 @@ export default abstract class Connection {
         return this.lastHandshake;
     }
 
+    getState() {
+        return this.state;
+    }
+
     setState(value: ConnectionStateEnum) {
         this.state = value;
         this.updateState();
