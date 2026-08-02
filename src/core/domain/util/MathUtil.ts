@@ -116,4 +116,14 @@ export default class MathUtil {
     static distanceSQRT(dx: number, dy: number) {
         return Math.hypot(dx, dy);
     }
+
+    static calcDuration(speed: number, duration: number) {
+        let i: number = 100 - speed;
+
+        if (i > 0) i = 100 + i;
+        else if (i < 0) i = 10000 / (100 - i);
+        else i = 100;
+
+        return (duration * i) / 100;
+    }
 }

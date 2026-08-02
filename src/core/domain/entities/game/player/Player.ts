@@ -85,6 +85,10 @@ import QuestTargetCreatePacket from '@/core/interface/networking/packets/packet/
 import { AssasinSubJobEnum, ShamanSubJobEnum, SuraSubJobEnum, WarriorSubJobEnum } from '@/core/enum/SubJobEnum';
 import SetSkillGroupPacket from '@/core/interface/networking/packets/packet/out/SetSkillGroupPacket';
 import QuestTargetRemovePacket from '@/core/interface/networking/packets/packet/out/QuestTargetRemovePacket';
+import SkillLevelPacket from '@/core/interface/networking/packets/packet/out/SkillLevelPacket';
+import { PlayerSkill } from './delegate/PlayerSkill';
+import { SkillManager } from '@/core/domain/manager/SkillManager';
+import { SkillEnum } from '@/core/enum/SkillEnum';
 
 const REGEN_INTERVAL = 3000;
 const MAX_DISTANCE_FROM_TARGET = 3500;
@@ -123,6 +127,7 @@ export default class Player extends Character {
     private readonly applies: PlayerApplies;
     private readonly points: PlayerPoints;
     private readonly battle: PlayerBattle;
+    private readonly skills: PlayerSkill;
 
     //connection
     private connection: GameConnection | null = null;
@@ -242,6 +247,7 @@ export default class Player extends Character {
             questManager,
             eventTimerManager,
             mobManager,
+            skillManager,
         }: {
             animationManager: AnimationManager;
             experienceManager: ExperienceManager;
@@ -251,6 +257,7 @@ export default class Player extends Character {
             questManager: QuestManager;
             eventTimerManager: GlobalEventTimerManager;
             mobManager: MobManager;
+            skillManager: SkillManager;
         },
     ) {
         super(
@@ -321,6 +328,7 @@ export default class Player extends Character {
             },
         );
         this.battle = new PlayerBattle(this, logger);
+        this.skills = new PlayerSkill({ player: this, skillManager });
 
         this.saveCharacterService = saveCharacterService;
 
@@ -360,7 +368,7 @@ export default class Player extends Character {
         );
 
         for (const entity of this.nearbyEntities.values()) {
-            if (entity instanceof Player) {
+            if (entity.isPlayer()) {
                 entity.otherEntityLevelUp({ virtualId: this.virtualId, level });
             }
         }
@@ -2032,6 +2040,7 @@ export default class Player extends Character {
             questManager,
             eventTimerManager,
             mobManager,
+            skillManager,
         }: {
             animationManager: AnimationManager;
             config: GameConfig;
@@ -2041,6 +2050,7 @@ export default class Player extends Character {
             questManager: QuestManager;
             eventTimerManager: GlobalEventTimerManager;
             mobManager: MobManager;
+            skillManager: SkillManager;
         },
     ) {
         return new Player(
@@ -2094,6 +2104,7 @@ export default class Player extends Character {
                 questManager,
                 eventTimerManager,
                 mobManager,
+                skillManager,
             },
         );
     }
@@ -2291,12 +2302,37 @@ export default class Player extends Character {
         );
     }
 
-    setSkillGroup(subJob: WarriorSubJobEnum | SuraSubJobEnum | AssasinSubJobEnum | ShamanSubJobEnum) {
-        this.skillGroup = subJob;
+    sendSkillGroup() {
         this.connection?.send(
             new SetSkillGroupPacket({
                 skillGroup: this.skillGroup,
             }),
         );
+    }
+
+    setSkillGroup(subJob: WarriorSubJobEnum | SuraSubJobEnum | AssasinSubJobEnum | ShamanSubJobEnum) {
+        this.skillGroup = subJob;
+        this.sendSkillGroup();
+        this.skills.clearSkill();
+    }
+
+    sendSkillLevel() {
+        this.connection?.send(
+            new SkillLevelPacket({
+                skills: this.skills.getSkills(),
+            }),
+        );
+    }
+
+    learnSkillByBook(skillNum: SkillEnum): boolean {
+        return this.skills.learnSkillByBook(skillNum);
+    }
+
+    setSkillNextReadTime(skillNum: SkillEnum, time: number) {
+        return this.skills.setSkillnextReadTime(skillNum, time);
+    }
+
+    skillLevelUpByPoint(skillNum: SkillEnum) {
+        return this.skills.skillLevelUp(skillNum, 'POINT');
     }
 }

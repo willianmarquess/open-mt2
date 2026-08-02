@@ -6,7 +6,6 @@ import GameEntity from './entities/game/GameEntity';
 import { GameConfig } from '@/game/infra/config/GameConfig';
 import SpawnManager from './manager/SpawnManager';
 import { PrivilegeManager } from './manager/PrivilegeManager';
-import SaveCharacterService from '@/game/domain/service/SaveCharacterService';
 import GlobalEventTimerManager from './manager/GlobalEventTimeManager';
 import { EntityManager } from './manager/EntityManager';
 
@@ -24,13 +23,10 @@ export default class World {
     private readonly players = new Map<string, Player>();
     private readonly logger: Logger;
     private readonly config: GameConfig;
-    private readonly saveCharacterService: SaveCharacterService;
     private readonly spawnManager: SpawnManager;
     private readonly privilegeManager: PrivilegeManager;
     private readonly eventTimerManager: GlobalEventTimerManager;
     private readonly entityManager: EntityManager;
-
-    private virtualId = 0;
 
     private deltas: number[] = [];
 
@@ -42,7 +38,6 @@ export default class World {
     constructor({
         logger,
         config,
-        saveCharacterService,
         spawnManager,
         privilegeManager,
         eventTimerManager,
@@ -50,7 +45,6 @@ export default class World {
     }: {
         logger: Logger;
         config: GameConfig;
-        saveCharacterService: SaveCharacterService;
         spawnManager: SpawnManager;
         privilegeManager: PrivilegeManager;
         eventTimerManager: GlobalEventTimerManager;
@@ -58,7 +52,6 @@ export default class World {
     }) {
         this.logger = logger;
         this.config = config;
-        this.saveCharacterService = saveCharacterService;
         this.spawnManager = spawnManager;
         this.privilegeManager = privilegeManager;
         this.eventTimerManager = eventTimerManager;
@@ -73,10 +66,6 @@ export default class World {
     }
     getGrid() {
         return this.grid;
-    }
-
-    generateVirtualId() {
-        return ++this.virtualId; //TODO: add virtualId manager to reuse old virtualIds
     }
 
     getPlayers() {

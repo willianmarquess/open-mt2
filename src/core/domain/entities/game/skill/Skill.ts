@@ -7,7 +7,7 @@ import { SkillStatusEffectEnum } from '@/core/enum/SkillStatusEffectEnum';
 
 import Player from '../player/Player';
 import GameEntity from '../GameEntity';
-import { SkillTypeEnum } from '@/core/enum/SkilltypeEnum';
+import { SkillTypeEnum } from '@/core/enum/SkillTypeEnum';
 
 export interface SkillCalcContext {
     readonly skillLevel: number; // k

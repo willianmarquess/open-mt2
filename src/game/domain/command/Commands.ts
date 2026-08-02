@@ -31,6 +31,8 @@ import RestartTownCommand from './command/restartTown/RestartTownCommand';
 import RestartTownCommandHandler from './command/restartTown/RestartTownCommandHandler';
 import SelectCommand from './command/select/SelectCommand';
 import SelectCommandHandler from './command/select/SelectCommandHandler';
+import SkillUpCommand from './command/skillUp/SkillUpCommand';
+import SkillUpCommandHandler from './command/skillUp/SkillUpCommandHandler';
 import StatCommand from './command/stat/StatCommand';
 import StatCommandHandler from './command/stat/StatCommandHandler';
 import CommandHandler from './CommandHandler';
@@ -166,6 +168,13 @@ export default function createCommands() {
             {
                 command: PolymorphCommand,
                 createHandler: (params) => new PolymorphCommandHandler(params),
+            },
+        ],
+        [
+            SkillUpCommand.getName(),
+            {
+                command: SkillUpCommand,
+                createHandler: (params) => new SkillUpCommandHandler(params),
             },
         ],
     ]);

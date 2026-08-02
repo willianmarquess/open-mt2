@@ -13,6 +13,7 @@ import { GameConfig } from '@/game/infra/config/GameConfig';
 import { QuestManager } from '../quests/QuestManager';
 import AnimationManager from './AnimationManager';
 import ExperienceManager from './ExperienceManager';
+import { SkillManager } from './SkillManager';
 
 const SAVE_PLAYERS_INTERVAL = 120000;
 
@@ -31,6 +32,7 @@ export class EntityManager {
     private readonly experienceManager: ExperienceManager;
     private readonly config: GameConfig;
     private readonly questManager: QuestManager;
+    private readonly skillManager: SkillManager;
 
     constructor({
         virtualIdManager,
@@ -42,6 +44,7 @@ export class EntityManager {
         config,
         experienceManager,
         questManager,
+        skillManager,
     }: {
         virtualIdManager: VirtualIdManager;
         eventTimerManager: GlobalEventTimerManager;
@@ -52,6 +55,7 @@ export class EntityManager {
         experienceManager: ExperienceManager;
         config: GameConfig;
         questManager: QuestManager;
+        skillManager: SkillManager;
     }) {
         this.virtualIdManager = virtualIdManager;
         this.eventTimerManager = eventTimerManager;
@@ -62,6 +66,7 @@ export class EntityManager {
         this.experienceManager = experienceManager;
         this.config = config;
         this.questManager = questManager;
+        this.skillManager = skillManager;
     }
 
     init() {
@@ -154,6 +159,7 @@ export class EntityManager {
                 mobManager: this.mobManager,
                 questManager: this.questManager,
                 saveCharacterService: this.saveCharacterService,
+                skillManager: this.skillManager,
             },
         );
         return player;

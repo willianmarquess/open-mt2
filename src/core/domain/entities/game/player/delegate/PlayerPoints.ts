@@ -34,8 +34,8 @@ export class PlayerPoints extends Points {
     private readonly empirePoint: number;
     private readonly levelStep: number;
     private readonly statusPoints: number;
-    private readonly subSkill: number;
-    private readonly skill: number;
+    private subSkill: number;
+    private skill: number;
     private readonly minAttackDamage: number;
     private readonly maxAttackDamage: number;
     private readonly playTime: number;
@@ -120,7 +120,7 @@ export class PlayerPoints extends Points {
     private readonly partyHasteBonus: number;
     private readonly partyDefenderBonus: number;
     private readonly statResetCount: number;
-    private readonly horseSkill: number;
+    private horseSkill: number;
     private readonly mallAttbonus: number;
     private readonly mallDefbonus: number;
     private readonly mallExpbonus: number;
@@ -841,6 +841,21 @@ export class PlayerPoints extends Points {
                 this.player.setPolymorph(value);
             },
         });
+        this.points.set(PointsEnum.SKILL, {
+            get: () => this.skill,
+            add: (value) => this.addCommonPoint(value, 'skill'),
+            set: (value) => (this.skill = value),
+        });
+        this.points.set(PointsEnum.SUB_SKILL, {
+            get: () => this.subSkill,
+            add: (value) => this.addCommonPoint(value, 'subSkill'),
+            set: (value) => (this.subSkill = value),
+        });
+        this.points.set(PointsEnum.HORSE_SKILL, {
+            get: () => this.horseSkill,
+            add: (value) => this.addCommonPoint(value, 'horseSkill'),
+            set: (value) => (this.horseSkill = value),
+        });
     }
 
     private addCommonPoint(value: number, pointName: string) {
@@ -969,7 +984,14 @@ export class PlayerPoints extends Points {
         if (this.level + validatedValue > this.config.MAX_LEVEL) return;
         if (validatedValue < 1) return;
 
-        //TODO: add skill point
+        if (this.player.getSkillGroup() > 0) {
+            this.skill += this.level >= 5 ? 1 : 0;
+        }
+
+        if (this.player.getSkillGroup() >= 0) {
+            this.subSkill += this.level >= 9 ? 1 : 0;
+        }
+
         this.level += validatedValue;
         this.player.levelUp();
     }
@@ -978,8 +1000,8 @@ export class PlayerPoints extends Points {
         const validatedValue = MathUtil.toUnsignedNumber(value);
         if (validatedValue < 1 || validatedValue > this.config.MAX_LEVEL) return;
 
+        const diff = value - this.level;
         this.level = validatedValue;
-        //TODO: reset skills
 
         this.givenStatusPoints = 0;
         this.availableStatusPoints = 0;
@@ -990,9 +1012,10 @@ export class PlayerPoints extends Points {
         this.dx = this.config.jobs[className].common.dx;
         this.iq = this.config.jobs[className].common.iq;
 
+        this.addPoint(PointsEnum.SKILL, diff);
+        this.addPoint(PointsEnum.SUB_SKILL, value < 10 ? 0 : Math.max(this.level, 9));
+
         this.calcPointsAndResetValues();
-        // Original behaviour: PointChange(POINT_LEVEL) fires the quest hook and
-        // the level-up effect no matter how the level changed (/lvl included).
         this.player.levelUp();
     }
 

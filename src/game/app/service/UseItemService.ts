@@ -2,14 +2,19 @@ import Item from '@/core/domain/entities/game/item/Item';
 import Player from '@/core/domain/entities/game/player/Player';
 import ItemManager from '@/core/domain/manager/ItemManager';
 import MobManager from '@/core/domain/manager/MobManager';
+import MathUtil from '@/core/domain/util/MathUtil';
 import { ChatMessageTypeEnum } from '@/core/enum/ChatMessageTypeEnum';
 import { ItemTypeEnum } from '@/core/enum/ItemTypeEnum';
 import { ItemUseSubTypeEnum } from '@/core/enum/ItemUseSubTypeEnum';
 import { PointsEnum } from '@/core/enum/PointsEnum';
+import { SkillEnum } from '@/core/enum/SkillEnum';
 import { SpecialEffectTypeEnum } from '@/core/enum/SpecialEffectTypeEnum';
 import { TimedEventsEnum } from '@/core/enum/TimedEventsEnum';
 import { WindowTypeEnum } from '@/core/enum/WindowTypeEnum';
 import Logger from '@/core/infra/logger/Logger';
+
+const SKILLBOOK_DELAY_MIN = 64800;
+const SKILLBOOK_DELAY_MAX = 108000;
 
 export default class UseItemService {
     private readonly logger: Logger;
@@ -135,6 +140,8 @@ export default class UseItemService {
                 return this.useItemUsable(player, item);
             case ItemTypeEnum.ITEM_POLYMORPH:
                 return this.usePolymorphBall(player, item);
+            case ItemTypeEnum.ITEM_SKILLBOOK:
+                return this.useSkillBook(player, item);
             default:
                 break;
         }
@@ -293,5 +300,28 @@ export default class UseItemService {
                 duration: 1_000,
             },
         });
+    }
+
+    private async useSkillBook(player: Player, item: Item) {
+        if (player.isPolymorphed()) {
+            player.chat({
+                messageType: ChatMessageTypeEnum.INFO,
+                message: `You can't read while transformed.`,
+            });
+            return;
+        }
+
+        const skillNum: SkillEnum = item.getValues()[0];
+
+        if (skillNum === 0) {
+            await this.removeItemByQuantity(player, item, 1);
+            return;
+        }
+
+        if (player.learnSkillByBook(skillNum)) {
+            await this.removeItemByQuantity(player, item, 1);
+            const delay = MathUtil.getRandomInt(SKILLBOOK_DELAY_MIN, SKILLBOOK_DELAY_MAX);
+            player.setSkillNextReadTime(skillNum, performance.now() + delay);
+        }
     }
 }

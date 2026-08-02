@@ -9,6 +9,7 @@ import SaveCharacterService from '@/game/domain/service/SaveCharacterService';
 import { QuestManager } from '../quests/QuestManager';
 import GlobalEventTimerManager from '../manager/GlobalEventTimeManager';
 import MobManager from '../manager/MobManager';
+import { SkillManager } from '../manager/SkillManager';
 
 export type PlayerFactoryParams = {
     playerClass: number;
@@ -80,6 +81,7 @@ export class PlayerFactory {
             questManager,
             eventTimerManager,
             mobManager,
+            skillManager,
         }: {
             animationManager: AnimationManager;
             experienceManager: ExperienceManager;
@@ -89,6 +91,7 @@ export class PlayerFactory {
             questManager: QuestManager;
             eventTimerManager: GlobalEventTimerManager;
             mobManager: MobManager;
+            skillManager: SkillManager;
         },
     ): Player {
         const className = JobUtil.getClassNameFromClassId(playerClass);
@@ -145,6 +148,7 @@ export class PlayerFactory {
                 questManager,
                 eventTimerManager,
                 mobManager,
+                skillManager,
             },
         );
     }

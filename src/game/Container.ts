@@ -44,6 +44,7 @@ import GlobalEventTimerManager from '@/core/domain/manager/GlobalEventTimeManage
 import { VirtualIdManager } from '@/core/domain/manager/VirtualIdManager';
 import { EntityManager } from '@/core/domain/manager/EntityManager';
 import { QuestTargetManager } from '@/core/domain/quests/QuestTargetManager';
+import { SkillManager } from '@/core/domain/manager/SkillManager';
 
 const container = createContainer();
 
@@ -94,6 +95,7 @@ container.register({
     virtualIdManager: asClass(VirtualIdManager).singleton(),
     entityManager: asClass(EntityManager).singleton(),
     questTargetManager: asClass(QuestTargetManager).singleton(),
+    skillManager: asClass(SkillManager).singleton(),
 });
 
 export { container };
