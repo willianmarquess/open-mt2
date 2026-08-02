@@ -25,6 +25,7 @@ export default class LeaveGameService {
             player.setCurrentPrivateShopOwner(null);
         }
 
+        await player.flushSave();
         this.world.despawn(player);
     }
 }
