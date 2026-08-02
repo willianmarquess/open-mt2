@@ -264,21 +264,30 @@ export default class Area {
     private processDespawnQueue() {
         for (const entity of this.entitiesToDespawn.dequeueIterator()) {
             if (!entity) continue;
-            const entities = this.aoi.queryAround(entity, CHAR_VIEW_SIZE, EntityTypeEnum.PLAYER) as Map<number, Player>;
-
-            for (const otherEntity of entities.values()) {
-                if (entity instanceof Character) {
-                    entity.removeNearbyEntity(otherEntity);
-                }
-
-                if (otherEntity instanceof Character) {
-                    otherEntity.removeNearbyEntity(entity);
-                }
-            }
-
+            this.unlinkNearbyEntities(entity);
             this.entityManager.removeEntity(entity);
             this.aoi.remove(entity);
             entity.onDespawn();
+        }
+    }
+
+    private unlinkNearbyEntities(entity: GameEntity) {
+        const entities = this.aoi.queryAround(
+            entity,
+            CHAR_VIEW_SIZE,
+            entity.getEntityType() !== EntityTypeEnum.PLAYER ? EntityTypeEnum.PLAYER : undefined,
+        );
+
+        for (const otherEntity of entities.values()) {
+            if (otherEntity.getVirtualId() === entity.getVirtualId()) continue;
+
+            if (entity instanceof Character) {
+                entity.removeNearbyEntity(otherEntity);
+            }
+
+            if (otherEntity instanceof Character) {
+                otherEntity.removeNearbyEntity(entity);
+            }
         }
     }
 }
