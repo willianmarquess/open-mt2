@@ -2,9 +2,16 @@ import PacketHeaderEnum from '@/core/enum/PacketHeaderEnum';
 import PacketOut from '@/core/interface/networking/packets/packet/out/PacketOut';
 
 /**
- * GC_CHARACTER_DELETE_WRONG_SOCIAL_ID (header 11) — header-only packet; the
- * client shows the "wrong private code" message.
+ * @packet
+ * @type Out
+ * @name DeleteCharacterFailurePacket
+ * @header 0x0b
+ * @size 1
+ * @description Sent when the character deletion is refused, header only packet (GC_PLAYER_DELETE_WRONG_SOCIAL_ID), the client shows the wrong private code message.
+ * @fields
+ *   - {byte} header 1 Packet header
  */
+
 export default class DeleteCharacterFailurePacket extends PacketOut {
     constructor() {
         super({

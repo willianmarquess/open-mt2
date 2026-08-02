@@ -1,6 +1,22 @@
 import PacketHeaderEnum from '@/core/enum/PacketHeaderEnum';
 import PacketOut from '@/core/interface/networking/packets/packet/out/PacketOut';
 
+/**
+ * @packet
+ * @type Out
+ * @name ItemDroppedPacket
+ * @header 0x1a
+ * @size 21
+ * @description Tells the client to spawn a dropped item on the ground at the given position.
+ * @fields
+ *   - {byte} header 1 Packet header
+ *   - {int} positionX 4 Position X of the item on the ground
+ *   - {int} positionY 4 Position Y of the item on the ground
+ *   - {int} positionZ 4 Position Z of the item on the ground, always 0
+ *   - {int} virtualId 4 Virtual id assigned to the ground item
+ *   - {int} id 4 Item vnum (prototype id) used to render the item
+ */
+
 export default class ItemDroppedPacket extends PacketOut {
     private readonly positionX: number;
     private readonly positionY: number;

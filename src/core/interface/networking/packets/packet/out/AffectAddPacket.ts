@@ -12,6 +12,7 @@ import PacketOut from '@/core/interface/networking/packets/packet/out/PacketOut'
  *   - {byte} header 1 Packet header
  *   - {int} type 4 Apply type number. See in AffectTypeEnum
  *   - {byte} apply 1 Describe which point is affected by this affect. See in PointEnum
+ *   - {int} value 4 The amount applied to the affected point
  *   - {int} flag 4 The bit flag of applies. See in AffectBitsTypeEnum
  *   - {int} duration 4 The duration in seconds of an affect
  *   - {int} manaCost 4 The mana cost of an affect

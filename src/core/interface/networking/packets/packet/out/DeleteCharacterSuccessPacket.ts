@@ -2,9 +2,17 @@ import PacketHeaderEnum from '@/core/enum/PacketHeaderEnum';
 import PacketOut from '@/core/interface/networking/packets/packet/out/PacketOut';
 
 /**
- * GC_CHARACTER_DELETE_SUCCESS (header 10) — tells the client the character
- * in the given slot was deleted so it can clear the slot on screen.
+ * @packet
+ * @type Out
+ * @name DeleteCharacterSuccessPacket
+ * @header 0x0a
+ * @size 2
+ * @description Tells the client the character in the given slot was deleted so it can clear the slot on the select screen.
+ * @fields
+ *   - {byte} header 1 Packet header
+ *   - {byte} slot 1 Account character slot that was cleared (0 to 3).
  */
+
 export default class DeleteCharacterSuccessPacket extends PacketOut {
     private readonly slot: number;
 

@@ -1,6 +1,28 @@
 import PacketHeaderEnum from '@/core/enum/PacketHeaderEnum';
 import PacketOut from '@/core/interface/networking/packets/packet/out/PacketOut';
 
+/**
+ * @packet
+ * @type Out
+ * @name CharacterSpawnPacket
+ * @header 0x01
+ * @size 35
+ * @description Is used to spawn a character (player, mob, npc) on the client of nearby players. The affect flag is repeated 2x.
+ * @fields
+ *   - {byte} header 1 Packet header
+ *   - {int} vid 4 Character identification in game
+ *   - {float} rotation 4 Rotation of character in degrees
+ *   - {int} positionX 4 Position X of character in game
+ *   - {int} positionY 4 Position Y of character in game
+ *   - {int} positionZ 4 Position Z of character in game
+ *   - {byte} entityType 1 Kind of entity being spawned (See in EntityTypeEnum)
+ *   - {short} playerClass 2 Class of player, or vnum of the mob/npc
+ *   - {byte} movementSpeed 1 Movement speed of character
+ *   - {byte} attackSpeed 1 Attack speed of character
+ *   - {byte} state 1 State flag of character
+ *   - {int[2]} affects 8 Affect flags of character
+ */
+
 export default class CharacterSpawnPacket extends PacketOut {
     private readonly vid: number;
     private readonly rotation: number = 0;

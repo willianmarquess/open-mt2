@@ -14,6 +14,26 @@ export type ShopUpdateItemParams = {
     count?: number;
 };
 
+/**
+ * @packet
+ * @type Out
+ * @name ShopUpdateItemPacket
+ * @header 0x26
+ * @size 48
+ * @description Is used to refresh a single slot of an already open shop window. Matches TPacketGCShop + TPacketGCShopUpdateItem.
+ * @fields
+ *   - {byte} header 1 Packet header.
+ *   - {short} size 2 Total packet size in bytes, including the header.
+ *   - {byte} subheader 1 Shop subheader, always UPDATE_ITEM (2). See ShopSubHeaderGC.
+ *   - {byte} pos 1 Slot position being updated.
+ *   - {int} vnum 4 Item vnum of the slot, 0 when the slot became empty.
+ *   - {int} price 4 Price of the item in yang.
+ *   - {byte} count 1 Item stack count.
+ *   - {byte} displayPos 1 Slot position of the item inside the shop grid, same value as pos.
+ *   - {int[3]} sockets 12 Three socket values, always 0 for shop items.
+ *   - {bonus[7]} bonuses 21 Seven attribute slots, each one a {byte} id plus a {short} value, always 0 for shop items.
+ */
+
 export default class ShopUpdateItemPacket extends PacketOut {
     private readonly pos: number;
     private readonly vnum: number;
