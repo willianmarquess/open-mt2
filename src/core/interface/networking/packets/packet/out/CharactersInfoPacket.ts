@@ -46,7 +46,7 @@ type CharacterInfoParams = {
  *   - {int} positionX 4 Position X of player in game
  *   - {int} positionY 4 Position Y of player in game
  *   - {int} Ip 4 Ip Address to server where the map the player is on is managed (for now we have only one server, but we can add remote maps to increase the quantity of players of our server).
- *   - {int} Port 4 Port to server where the map the player is on is managed (for now we have only one server, but we can add remote maps to increase the quantity of players of our server).
+ *   - {short} Port 2 Port to server where the map the player is on is managed (for now we have only one server, but we can add remote maps to increase the quantity of players of our server).
  *   - {byte} skillGroup 1 Number which indicates the skill group of character (to be implemented).
  *   - {int} guildId 4 The guild id of current character
  *   - {string} guildName 13 The guild name of current character (ascii).
