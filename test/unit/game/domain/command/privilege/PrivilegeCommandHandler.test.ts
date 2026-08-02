@@ -7,6 +7,7 @@ import { PrivilegeManager, PrivilegeTypeEnum } from '@/core/domain/manager/Privi
 import PrivilegeCommandHandler from '@/game/domain/command/command/privilege/PrivilegeCommandHandler';
 import PrivilegeCommand from '@/game/domain/command/command/privilege/PrivilegeCommand';
 import World from '@/core/domain/World';
+import { ChatMessageTypeEnum } from '@/core/enum/ChatMessageTypeEnum';
 
 describe('PrivilegeCommandHandler', () => {
     let logger: sinon.SinonStubbedInstance<WinstonLoggerAdapter>;
@@ -70,24 +71,53 @@ describe('PrivilegeCommandHandler', () => {
             .be.true;
     });
 
-    it("should send command errors if the kind is 'empire' and name is invalid", async () => {
+    it("should chat the reason if the kind is 'empire' and name is invalid", async () => {
         command.isValid.returns(true);
         command.getArgs.returns(['empire', 'invalidEmpire', 'gold', '10', '7200']);
 
         await handler.execute(player, command);
 
-        expect(player.sendCommandErrors.calledOnceWith(['Invalid empire name: empire must be red, blue or yellow'])).to
-            .be.true;
+        expect(
+            player.chat.calledOnceWith({
+                messageType: ChatMessageTypeEnum.INFO,
+                message: 'Invalid empire name: empire must be red, blue or yellow',
+            }),
+        ).to.be.true;
+        expect(player.sendCommandErrors.called, 'sendCommandErrors is only for validator output').to.be.false;
         expect(privilegeManager.addEmpirePrivilege.notCalled).to.be.true;
     });
 
-    it("should send command errors if the kind is 'guild'", async () => {
+    it("should chat the reason if the kind is 'guild'", async () => {
         command.isValid.returns(true);
         command.getArgs.returns(['guild', '', 'gold', '10', '7200']);
 
         await handler.execute(player, command);
 
-        expect(player.sendCommandErrors.calledOnceWith(['Not implemented yet'])).to.be.true;
+        expect(player.chat.calledOnceWith({ messageType: ChatMessageTypeEnum.INFO, message: 'Not implemented yet' })).to
+            .be.true;
+        expect(player.sendCommandErrors.called, 'sendCommandErrors is only for validator output').to.be.false;
+    });
+
+    it('should not reject when it reports a reason, against the real sendCommandErrors (issue #155)', async () => {
+        const chatted: Array<string> = [];
+        const realPlayer = {
+            chat: ({ message }: { message: string }) => chatted.push(message),
+            sendCommandErrors(errors: Array<unknown>) {
+                Player.prototype.sendCommandErrors.call(this as unknown as Player, errors);
+            },
+        } as unknown as Player;
+
+        command.isValid.returns(true);
+        command.getArgs.returns(['guild', '', 'gold', '10', '7200']);
+
+        let rejection: unknown = null;
+        await handler.execute(realPlayer, command).catch((error) => (rejection = error));
+
+        expect(
+            rejection,
+            "an unawaited rejection reaches process.on('unhandledRejection') and exits the server",
+        ).to.equal(null);
+        expect(chatted).to.deep.equal(['Not implemented yet']);
     });
 
     it('should not throw if the privilege type is invalid', async () => {
