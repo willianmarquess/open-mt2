@@ -1,7 +1,6 @@
 import DropManager from '@/core/domain/manager/DropManager';
 import ExperienceManager from '@/core/domain/manager/ExperienceManager';
 import { AffectBitsTypeEnum } from '@/core/enum/AffectBitsTypeEnum';
-import { ChatMessageTypeEnum } from '@/core/enum/ChatMessageTypeEnum';
 import { EntityTypeEnum } from '@/core/enum/EntityTypeEnum';
 import { FlyEnum } from '@/core/enum/FlyEnum';
 import { PointsEnum } from '@/core/enum/PointsEnum';
@@ -268,10 +267,7 @@ export default class Monster extends Mob {
 
             const expToGive = this.experienceManager.calculateExpToGive(player, this, playerExp);
 
-            player.chat({
-                messageType: ChatMessageTypeEnum.INFO,
-                message: `[SYSTEM] Earned ${expToGive} of EXP after kill ${this.folder || this.name}`,
-            });
+            player.debugChat(`Earned ${expToGive} of EXP after kill ${this.folder || this.name}`);
 
             player.addPoint(PointsEnum.EXPERIENCE, expToGive);
 

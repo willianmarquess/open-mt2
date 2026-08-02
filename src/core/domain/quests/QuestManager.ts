@@ -2,34 +2,54 @@ import * as fs from 'node:fs';
 import * as path from 'node:path';
 import Logger from '@/core/infra/logger/Logger';
 import { AbstractQuest } from './AbstractQuest';
-import { getQuestMeta, QuestStatusEnum } from './decorators/QuestDecorator';
+import { getQuestMeta, MetaTask, QuestStatusEnum } from './decorators/QuestDecorator';
+
+type TaskTarget = number | number[] | undefined;
 import { QuestEventEnum } from '@/core/enum/QuestEventEnum';
+import { QuestSkinEnum } from '@/core/enum/QuestSkinEnum';
 import Player from '../entities/game/player/Player';
 import NPC from '../entities/game/mob/NPC';
 import { NpcQuest } from './facade/NpcQuest';
 import { VictimQuest } from './facade/VictimQuest';
 import Monster from '../entities/game/mob/Monster';
 import ShopManager from '@/core/domain/shop/ShopManager';
+import ItemManager from '../manager/ItemManager';
+import { PlayerQuest } from './facade/PlayerQuest';
+
+type ChatOption = {
+    questId: number;
+    stateName: string;
+    label: string;
+    handlerName: string;
+    with?: (args: any) => boolean | Promise<boolean>;
+    npc?: NPC;
+};
 
 export class QuestManager {
     private readonly logger: Logger;
     private readonly shopManager: ShopManager;
+    private readonly itemManager: ItemManager;
     private readonly containerInstance: any;
     private readonly questsClasses: Map<number, typeof AbstractQuest> = new Map();
     private readonly questsClickEvents: Map<number, Map<number, Set<string>>> = new Map();
     private readonly eventQuestMap: Map<QuestEventEnum, Map<number, Set<string>>> = new Map();
+    private readonly questsChatEvents: Map<number, ChatOption[]> = new Map();
+    private readonly pendingChatOptions: Map<number, ChatOption[]> = new Map();
 
     constructor({
         logger,
         shopManager,
+        itemManager,
         containerInstance,
     }: {
         logger: Logger;
         shopManager: ShopManager;
+        itemManager: ItemManager;
         containerInstance: any;
     }) {
         this.logger = logger;
         this.shopManager = shopManager;
+        this.itemManager = itemManager;
         this.containerInstance = containerInstance;
     }
 
@@ -96,7 +116,6 @@ export class QuestManager {
         QuestEventEnum.LEVELUP,
         QuestEventEnum.BUTTON,
         QuestEventEnum.INFO,
-        QuestEventEnum.CHAT,
         QuestEventEnum.ATTR_IN,
         QuestEventEnum.ATTR_OUT,
         QuestEventEnum.ITEM_USE,
@@ -106,9 +125,14 @@ export class QuestManager {
         QuestEventEnum.KILL,
     ]);
 
-    private registerTask(questId: number, stateName: string, task: { when: QuestEventEnum; target?: unknown }) {
+    private registerTask(questId: number, stateName: string, task: MetaTask) {
         if (task.when === QuestEventEnum.CLICK) {
-            this.registerClickTask(questId, stateName, task.target as number | number[] | undefined);
+            this.registerClickTask(questId, stateName, task.target as TaskTarget);
+            return;
+        }
+
+        if (task.when === QuestEventEnum.CHAT) {
+            this.registerChatTask(questId, stateName, task);
             return;
         }
 
@@ -117,7 +141,33 @@ export class QuestManager {
         }
     }
 
-    private registerClickTask(questId: number, stateName: string, target: number | number[] | undefined) {
+    /**
+     * A CHAT task with a target + chat label becomes an NPC dialog menu option
+     * (e.g. the Stable Boy's "Train a Horse"); without them it behaves like a
+     * plain chat-event subscription.
+     */
+    private registerChatTask(questId: number, stateName: string, task: MetaTask) {
+        const target = task.target as TaskTarget;
+
+        if (target !== undefined && task.chat) {
+            for (const targetId of [target].flat()) {
+                const options = this.questsChatEvents.get(targetId) ?? [];
+                options.push({
+                    questId,
+                    stateName,
+                    label: task.chat,
+                    handlerName: task.handlerName,
+                    with: task.with,
+                });
+                this.questsChatEvents.set(targetId, options);
+            }
+            return;
+        }
+
+        this.addQuestToEvent(QuestEventEnum.CHAT, questId, stateName);
+    }
+
+    private registerClickTask(questId: number, stateName: string, target: TaskTarget) {
         if (target === undefined) {
             this.addQuestToEvent(QuestEventEnum.CLICK, questId, stateName);
             return;
@@ -177,6 +227,7 @@ export class QuestManager {
 
             const instance: AbstractQuest = new (questClass as any)({
                 player,
+                itemManager: this.itemManager,
                 entityManager: this.containerInstance.cradle.entityManager,
                 questTargetManager: this.containerInstance.cradle.questTargetManager,
             });
@@ -193,7 +244,7 @@ export class QuestManager {
                                 : () => {
                                       console.warn(`[QUEST_MANAGER] handler not found: ${t.handlerName}`);
                                   };
-                        const task: any = { when: t.when, with: t.with, callback };
+                        const task: any = { when: t.when, with: t.with, callback, handlerName: t.handlerName };
                         if (t.target !== undefined) task.target = t.target;
                         return task;
                     });
@@ -247,6 +298,32 @@ export class QuestManager {
     }
 
     onAnswer(player: Player, answer: number) {
+        const chatOptions = this.pendingChatOptions.get(player.getId());
+        if (chatOptions) {
+            this.pendingChatOptions.delete(player.getId());
+            const option = chatOptions[answer];
+            if (!option) {
+                player.sendQuestScript(QuestSkinEnum.NO_WINDOW, '[DONE]');
+                return;
+            }
+
+            const quest = player.getQuest(option.questId);
+            if (quest && quest.getCurrentState()?.name === option.stateName) {
+                quest.run(
+                    {
+                        eventType: QuestEventEnum.CHAT,
+                        npc: new NpcQuest({
+                            npc: option.npc!,
+                            shopManager: this.shopManager,
+                            player,
+                        }),
+                    } as any,
+                    option.handlerName,
+                );
+            }
+            return;
+        }
+
         if (answer <= 250) {
             const quest = player.getQuestByStatus(QuestStatusEnum.SELECT);
 
@@ -287,6 +364,30 @@ export class QuestManager {
                 `[QUEST_MANAGER] Player ${player.getId()} clicked an NPC while quest ${player.getCurrentQuest()?.getName()} is running`,
             );
             return false;
+        }
+
+        const chatOptions = [] as ChatOption[];
+        for (const option of this.questsChatEvents.get(npc.getId()) ?? []) {
+            const quest = player.getQuest(option.questId);
+            if (!quest || quest.getCurrentState()?.name !== option.stateName) continue;
+            const context = {
+                player: new PlayerQuest({ player }),
+                npc: new NpcQuest({ npc, shopManager: this.shopManager, player }),
+                eventType: QuestEventEnum.CHAT,
+            };
+            if (!option.with || (await option.with(context))) chatOptions.push(option);
+        }
+
+        if (chatOptions.length > 0) {
+            this.pendingChatOptions.set(
+                player.getId(),
+                chatOptions.map((option) => ({ ...option, npc })),
+            );
+            const labels = [...chatOptions.map((option) => option.label), 'Close'];
+            const numberedLabels = labels.map((label, index) => `${index + 1}; ${label}`).join('|');
+            const src = `[QUESTION ${numberedLabels}]`;
+            player.sendQuestScript(QuestSkinEnum.NORMAL, src);
+            return true;
         }
 
         const questsMap = this.questsClickEvents.get(npc.getId()) ?? this.getQuestsForEvent(QuestEventEnum.CLICK);

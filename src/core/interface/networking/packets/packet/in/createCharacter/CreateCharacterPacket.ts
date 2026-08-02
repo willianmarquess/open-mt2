@@ -22,7 +22,7 @@ export default class CreateCharacterPacket extends PacketIn {
         super({
             header: PacketHeaderEnum.CREATE_CHARACTER,
             name: 'CreateCharacterPacket',
-            size: 29,
+            size: 34,
             validator: CreateCharacterPacketValidator,
         });
         this.slot = slot;

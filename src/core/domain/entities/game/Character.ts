@@ -15,7 +15,13 @@ import { PositionEnum } from '@/core/enum/PositionEnum';
 import { EmpireEnum } from '@/core/enum/EmpireEnum';
 import { QuestManager } from '../../quests/QuestManager';
 import { EntityTypeEnum } from '@/core/enum/EntityTypeEnum';
+import { MovementTypeEnum } from '@/core/enum/MovementTypeEnum';
 import GlobalEventTimerManager from '../../manager/GlobalEventTimeManager';
+
+type MovementNodeProvider = () => { x: number; y: number } | null;
+
+const MOVEMENT_NODE_HANDOFF_RATE = 0.9;
+const SPEED_REFERENCE_DISTANCE = 10_000;
 
 export default abstract class Character extends GameEntity {
     protected id: number;
@@ -29,6 +35,7 @@ export default abstract class Character extends GameEntity {
     protected startPositionY: number = 0;
     protected movementStart: number = 0;
     protected movementDuration: number = 0;
+    protected lastMoveTime: number = performance.now();
 
     protected readonly nearbyEntities = new Map<number, GameEntity>();
 
@@ -42,6 +49,7 @@ export default abstract class Character extends GameEntity {
     protected pos: PositionEnum = PositionEnum.STANDING;
 
     protected readonly questManager: QuestManager;
+    private movementNodeProvider: MovementNodeProvider | null = null;
     protected readonly eventTimerManager: GlobalEventTimerManager;
 
     constructor(
@@ -213,7 +221,74 @@ export default abstract class Character extends GameEntity {
         }
 
         this.rotation = rotation * 5;
+        this.onMove();
         this.stateMachine.gotoState(EntityStateEnum.MOVING);
+    }
+
+    /** Move an NPC or character and broadcast the movement to nearby players. */
+    moveTo(x: number, y: number): void {
+        this.movementNodeProvider = null;
+        const rotation = MathUtil.calcRotationFromXY(x - this.positionX, y - this.positionY) / 5;
+        this.gotoInternal(x, y, rotation);
+        this.broadcastMovement(x, y, rotation);
+    }
+
+    moveAlongNodes(provider: MovementNodeProvider): void {
+        this.movementNodeProvider = provider;
+        this.startNextMovementNode();
+    }
+
+    continueMovementNodes(): void {
+        if (this.movementNodeProvider && this.getState() === EntityStateEnum.IDLE) {
+            this.startNextMovementNode();
+        }
+    }
+
+    clearMovementNodes(): void {
+        this.movementNodeProvider = null;
+        this.stateMachine.gotoState(EntityStateEnum.IDLE);
+    }
+
+    private startNextMovementNode(): void {
+        const node = this.movementNodeProvider?.();
+        if (!node) {
+            this.stateMachine.gotoState(EntityStateEnum.IDLE);
+            return;
+        }
+
+        const rotation = MathUtil.calcRotationFromXY(node.x - this.positionX, node.y - this.positionY) / 5;
+        this.gotoInternal(node.x, node.y, rotation);
+        this.broadcastMovementMoving(node.x, node.y, rotation);
+    }
+
+    private broadcastMovementMoving(positionX: number, positionY: number, rotation: number): void {
+        this.area?.onCharacterMove({
+            entity: this,
+            params: {
+                positionX,
+                positionY,
+                arg: 0,
+                rotation,
+                time: performance.now(),
+                movementType: MovementTypeEnum.MOVE,
+                duration: 10,
+            },
+        });
+    }
+
+    private broadcastMovement(positionX: number, positionY: number, rotation: number): void {
+        this.area?.onCharacterMove({
+            entity: this,
+            params: {
+                positionX,
+                positionY,
+                arg: 0,
+                rotation,
+                time: performance.now(),
+                movementType: MovementTypeEnum.WAIT,
+                duration: this.movementDuration,
+            },
+        });
     }
 
     protected move(x: number, y: number) {
@@ -241,6 +316,7 @@ export default abstract class Character extends GameEntity {
         this.positionX = this.startPositionX = this.targetPositionX = x;
         this.positionY = this.startPositionY = this.targetPositionY = y;
         this.setRotation(MathUtil.calcRotationFromXY(x, y));
+        this.onMove();
         this.stateMachine.gotoState(EntityStateEnum.IDLE);
     }
 
@@ -248,8 +324,36 @@ export default abstract class Character extends GameEntity {
         this.stateMachine.gotoState(EntityStateEnum.IDLE);
     }
 
+    /** Mirrors the original's OnMove(): moving and attacking both refresh this. */
+    protected onMove() {
+        this.lastMoveTime = performance.now();
+    }
+
+    getLastMoveTime() {
+        return this.lastMoveTime;
+    }
+
     getMovementSpeed() {
         return this.getPoint(PointsEnum.MOVE_SPEED);
+    }
+
+    /** Null when the class has no run animation, the case gotoInternal() also gives no duration. */
+    getMoveDistancePerMs(): number | null {
+        const animation = this.animationManager.getAnimation(
+            String(this.classId),
+            AnimationTypeEnum.RUN,
+            AnimationSubTypeEnum.GENERAL,
+        );
+
+        if (!animation) return null;
+
+        const duration = AnimationUtil.calcAnimationDuration(
+            animation,
+            this.getPoint(PointsEnum.MOVE_SPEED),
+            SPEED_REFERENCE_DISTANCE,
+        );
+
+        return duration > 0 ? SPEED_REFERENCE_DISTANCE / duration : null;
     }
 
     getAttackSpeed() {
@@ -350,8 +454,26 @@ export default abstract class Character extends GameEntity {
         this.positionX = x;
         this.positionY = y;
 
-        if (rate >= 1) {
-            this.stateMachine.gotoState(EntityStateEnum.IDLE);
+        if (rate >= MOVEMENT_NODE_HANDOFF_RATE && this.movementNodeProvider) {
+            const node = this.movementNodeProvider();
+            if (node) {
+                this.startMovementNode(node);
+                return;
+            }
         }
+
+        if (rate >= 1) {
+            if (this.movementNodeProvider) {
+                this.startNextMovementNode();
+            } else {
+                this.stateMachine.gotoState(EntityStateEnum.IDLE);
+            }
+        }
+    }
+
+    private startMovementNode(node: { x: number; y: number }): void {
+        const rotation = MathUtil.calcRotationFromXY(node.x - this.positionX, node.y - this.positionY) / 5;
+        this.gotoInternal(node.x, node.y, rotation);
+        this.broadcastMovement(node.x, node.y, rotation);
     }
 }

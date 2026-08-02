@@ -50,6 +50,12 @@ export default class MyShopPacket extends PacketIn {
         return this.items;
     }
 
+    getFrameLength(buffer: Buffer): number | null {
+        if (buffer.byteLength < FIXED_SIZE) return null;
+        const count = buffer.readUInt8(FIXED_SIZE - 1);
+        return FIXED_SIZE + count * ITEM_ENTRY_SIZE + this.getSequenceLength();
+    }
+
     unpack(buffer: Buffer): this {
         this.bufferReader.setBuffer(buffer);
 

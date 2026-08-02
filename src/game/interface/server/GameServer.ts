@@ -30,6 +30,7 @@ export default class GameServer extends Server {
             await this.logoutService
                 .execute(player)
                 .catch((err) => this.logger.error(`[GameServer] Error despawning player on disconnect: ${err}`));
+            connection.clearPlayer();
         }
 
         await super.onClose(connection);
@@ -45,6 +46,8 @@ export default class GameServer extends Server {
             this.logger.info(`[IN][PACKET] Unknown header packet: ${data[0]}`);
             return;
         }
+
+        if (!this.isAllowedInPhase(connection, header, packetBuilder)) return;
 
         const { createPacket, createHandler } = packetBuilder;
         const packet = createPacket({});

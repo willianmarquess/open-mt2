@@ -1,3 +1,4 @@
+import DroppedItem from '@/core/domain/entities/game/item/DroppedItem';
 import Player from '@/core/domain/entities/game/player/Player';
 import { ChatMessageTypeEnum } from '@/core/enum/ChatMessageTypeEnum';
 import { PointsEnum } from '@/core/enum/PointsEnum';
@@ -6,6 +7,23 @@ import { expect } from 'chai';
 import sinon from 'sinon';
 
 describe('PickupItemService', function () {
+    const AREA = { name: 'area1' };
+    const OTHER_AREA = { name: 'area2' };
+    const POSITION = { x: 1000, y: 1000 };
+
+    /** Stubs the position/area getters every pickup goes through. */
+    const atPosition = (area: unknown, x: number, y: number) => ({
+        getArea: sinon.stub().returns(area),
+        getPositionX: sinon.stub().returns(x),
+        getPositionY: sinon.stub().returns(y),
+    });
+
+    // The service narrows with `instanceof DroppedItem`, so a stub has to carry
+    // the prototype or every case below would be rejected as the wrong type and
+    // pass without exercising the check it targets.
+    const groundItem = (fields: object) =>
+        Object.assign(Object.create(DroppedItem.prototype), { taken: false }, fields);
+
     let worldMock;
     let itemRepositoryMock;
     let entityManagerMock: any;
@@ -38,12 +56,14 @@ describe('PickupItemService', function () {
                 addItem: sinon.stub().returns(true),
                 chat: sinon.spy(),
                 addPoint: sinon.spy(),
+                ...atPosition(AREA, POSITION.x, POSITION.y),
             };
-            const droppedItemMock = {
+            const droppedItemMock = groundItem({
                 getItem: sinon.stub().returns({ getId: sinon.stub().returns(1) }),
                 getCount: sinon.stub().returns(100),
                 getOwnerName: sinon.stub().returns('player1'),
-            };
+                ...atPosition(AREA, POSITION.x, POSITION.y),
+            });
 
             entityManagerMock.getEntity.returns(droppedItemMock);
 
@@ -64,12 +84,14 @@ describe('PickupItemService', function () {
                 addItemStacking: sinon.stub().returns({ updated: [], inserted: itemMock }),
                 chat: sinon.spy(),
                 addPoint: sinon.spy(),
+                ...atPosition(AREA, POSITION.x, POSITION.y),
             };
-            const droppedItemMock = {
+            const droppedItemMock = groundItem({
                 getItem: sinon.stub().returns(itemMock),
                 getCount: sinon.stub().returns(1),
                 getOwnerName: sinon.stub().returns('player1'),
-            };
+                ...atPosition(AREA, POSITION.x, POSITION.y),
+            });
 
             entityManagerMock.getEntity.returns(droppedItemMock);
 
@@ -86,12 +108,14 @@ describe('PickupItemService', function () {
                 addItem: sinon.stub().returns(false),
                 chat: sinon.spy(),
                 addPoint: sinon.spy(),
+                ...atPosition(AREA, POSITION.x, POSITION.y),
             };
-            const droppedItemMock = {
+            const droppedItemMock = groundItem({
                 getItem: sinon.stub().returns({ getId: sinon.stub().returns(2) }),
                 getCount: sinon.stub().returns(1),
                 getOwnerName: sinon.stub().returns('player2'),
-            };
+                ...atPosition(AREA, POSITION.x, POSITION.y),
+            });
 
             entityManagerMock.getEntity.returns(droppedItemMock);
 
@@ -105,6 +129,75 @@ describe('PickupItemService', function () {
             ).to.be.true;
             expect(worldMock.despawn.called).to.be.false;
             expect(itemRepositoryMock.create.called).to.be.false;
+        });
+
+        it('should not pick up an item that is out of range (issue #66)', async function () {
+            const playerMock = {
+                getName: sinon.stub().returns('player1'),
+                addItemStacking: sinon.stub().returns({ updated: [], inserted: null }),
+                chat: sinon.spy(),
+                addPoint: sinon.spy(),
+                ...atPosition(AREA, POSITION.x, POSITION.y),
+            };
+            const droppedItemMock = groundItem({
+                getItem: sinon.stub().returns({ getId: sinon.stub().returns(2) }),
+                getCount: sinon.stub().returns(1),
+                getOwnerName: sinon.stub().returns('player1'),
+                ...atPosition(AREA, POSITION.x + 1000, POSITION.y),
+            });
+
+            entityManagerMock.getEntity.returns(droppedItemMock);
+
+            await pickupItemService.execute(playerMock as unknown as Player, 1);
+
+            expect(playerMock.addItemStacking.called).to.be.false;
+            expect(worldMock.despawn.called).to.be.false;
+        });
+
+        it('should not pick up an item that is in another area (issue #66)', async function () {
+            const playerMock = {
+                getName: sinon.stub().returns('player1'),
+                addItemStacking: sinon.stub().returns({ updated: [], inserted: null }),
+                chat: sinon.spy(),
+                addPoint: sinon.spy(),
+                ...atPosition(AREA, POSITION.x, POSITION.y),
+            };
+            const droppedItemMock = groundItem({
+                getItem: sinon.stub().returns({ getId: sinon.stub().returns(2) }),
+                getCount: sinon.stub().returns(1),
+                getOwnerName: sinon.stub().returns('player1'),
+                ...atPosition(OTHER_AREA, POSITION.x, POSITION.y),
+            });
+
+            entityManagerMock.getEntity.returns(droppedItemMock);
+
+            await pickupItemService.execute(playerMock as unknown as Player, 1);
+
+            expect(playerMock.addItemStacking.called).to.be.false;
+            expect(worldMock.despawn.called).to.be.false;
+        });
+
+        it('should not give gold dropped by someone else (issue #66)', async function () {
+            const playerMock = {
+                getName: sinon.stub().returns('player1'),
+                addItem: sinon.stub().returns(true),
+                chat: sinon.spy(),
+                addPoint: sinon.spy(),
+                ...atPosition(AREA, POSITION.x, POSITION.y),
+            };
+            const droppedItemMock = groundItem({
+                getItem: sinon.stub().returns({ getId: sinon.stub().returns(1) }),
+                getCount: sinon.stub().returns(100),
+                getOwnerName: sinon.stub().returns('player2'),
+                ...atPosition(AREA, POSITION.x, POSITION.y),
+            });
+
+            entityManagerMock.getEntity.returns(droppedItemMock);
+
+            await pickupItemService.execute(playerMock as unknown as Player, 1);
+
+            expect(playerMock.addPoint.called).to.be.false;
+            expect(worldMock.despawn.called).to.be.false;
         });
 
         it('should do nothing if the dropped item is not found', async function () {
@@ -122,6 +215,113 @@ describe('PickupItemService', function () {
             expect(playerMock.addPoint.called).to.be.false;
             expect(playerMock.addItem.called).to.be.false;
             expect(playerMock.chat.called).to.be.false;
+        });
+
+        it('should ignore a virtual id that belongs to another entity type (issue #83)', async function () {
+            const playerMock = {
+                getName: sinon.stub().returns('player1'),
+                addItemStacking: sinon.spy(),
+                chat: sinon.spy(),
+                addPoint: sinon.spy(),
+                ...atPosition(AREA, POSITION.x, POSITION.y),
+            };
+            // A player resolved by its own virtual id: getItem exists there too,
+            // but it is the inventory accessor and expects a position.
+            const anotherPlayer = {
+                getItem: sinon.stub().throws(new Error('inventory accessor reached')),
+                getCount: sinon.stub().throws(new Error('not a ground item')),
+                getOwnerName: sinon.stub().throws(new Error('not a ground item')),
+                ...atPosition(AREA, POSITION.x, POSITION.y),
+            };
+
+            entityManagerMock.getEntity.returns(anotherPlayer);
+
+            await pickupItemService.execute(playerMock as unknown as Player, 1);
+
+            expect(anotherPlayer.getItem.called, 'never treated as a ground item').to.be.false;
+            expect(playerMock.addPoint.called).to.be.false;
+            expect(playerMock.addItemStacking.called).to.be.false;
+            expect(worldMock.despawn.called).to.be.false;
+        });
+
+        it('should credit gold only once when the pickup is repeated (issue #84)', async function () {
+            const playerMock = {
+                getName: sinon.stub().returns('player1'),
+                addItem: sinon.stub().returns(true),
+                chat: sinon.spy(),
+                addPoint: sinon.spy(),
+                ...atPosition(AREA, POSITION.x, POSITION.y),
+            };
+            const droppedItemMock = groundItem({
+                getItem: sinon.stub().returns({ getId: sinon.stub().returns(1) }),
+                getCount: sinon.stub().returns(1_000_000),
+                getOwnerName: sinon.stub().returns('player1'),
+                ...atPosition(AREA, POSITION.x, POSITION.y),
+            });
+
+            entityManagerMock.getEntity.returns(droppedItemMock);
+
+            await pickupItemService.execute(playerMock as unknown as Player, 1);
+            await pickupItemService.execute(playerMock as unknown as Player, 1);
+            await pickupItemService.execute(playerMock as unknown as Player, 1);
+
+            expect(playerMock.addPoint.callCount, 'gold credited once').to.equal(1);
+            expect(worldMock.despawn.callCount, 'despawned once').to.equal(1);
+        });
+
+        it('should add a ground item only once when the pickup is repeated (issue #84)', async function () {
+            const itemMock = {
+                getId: sinon.stub().returns(2),
+                toDatabase: sinon.stub().returns({}),
+                setDbId: sinon.spy(),
+            };
+            const playerMock = {
+                getName: sinon.stub().returns('player1'),
+                addItemStacking: sinon.stub().returns({ updated: [], inserted: itemMock }),
+                chat: sinon.spy(),
+                addPoint: sinon.spy(),
+                ...atPosition(AREA, POSITION.x, POSITION.y),
+            };
+            const droppedItemMock = groundItem({
+                getItem: sinon.stub().returns(itemMock),
+                getCount: sinon.stub().returns(200),
+                getOwnerName: sinon.stub().returns('player1'),
+                ...atPosition(AREA, POSITION.x, POSITION.y),
+            });
+
+            entityManagerMock.getEntity.returns(droppedItemMock);
+
+            await pickupItemService.execute(playerMock as unknown as Player, 1);
+            await pickupItemService.execute(playerMock as unknown as Player, 1);
+            await pickupItemService.execute(playerMock as unknown as Player, 1);
+
+            expect(playerMock.addItemStacking.callCount, 'added to the inventory once').to.equal(1);
+            expect(itemRepositoryMock.create.callCount, 'one database row inserted').to.equal(1);
+            expect(worldMock.despawn.callCount, 'despawned once').to.equal(1);
+        });
+
+        it('should leave the item on the ground when the inventory is full (issue #84)', async function () {
+            const itemMock = { getId: sinon.stub().returns(2) };
+            const playerMock = {
+                getName: sinon.stub().returns('player1'),
+                addItemStacking: sinon.stub().returns(null),
+                chat: sinon.spy(),
+                addPoint: sinon.spy(),
+                ...atPosition(AREA, POSITION.x, POSITION.y),
+            };
+            const droppedItemMock = groundItem({
+                getItem: sinon.stub().returns(itemMock),
+                getCount: sinon.stub().returns(1),
+                getOwnerName: sinon.stub().returns('player1'),
+                ...atPosition(AREA, POSITION.x, POSITION.y),
+            });
+
+            entityManagerMock.getEntity.returns(droppedItemMock);
+
+            await pickupItemService.execute(playerMock as unknown as Player, 1);
+
+            expect(droppedItemMock.isTaken(), 'a refused pickup does not claim the item').to.be.false;
+            expect(worldMock.despawn.called).to.be.false;
         });
     });
 });

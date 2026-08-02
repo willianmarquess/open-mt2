@@ -122,6 +122,18 @@ export default class Area {
         this.entitiesToSpawn.enqueue(entity);
     }
 
+    /**
+     * Creates a mob with a proper virtualId and spawns it in this area.
+     * Used for runtime spawns tied to a location (e.g. a player's horse).
+     */
+    spawnMob(id: number, positionX: number, positionY: number, direction: number = 0) {
+        const mob = this.entityManager.createMob({ id, positionX, positionY, direction });
+        if (mob) {
+            this.spawn(mob);
+        }
+        return mob;
+    }
+
     despawn(entity: GameEntity) {
         this.entitiesToDespawn.enqueue(entity);
     }

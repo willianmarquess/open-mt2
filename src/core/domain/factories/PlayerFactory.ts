@@ -39,6 +39,11 @@ export type PlayerFactoryParams = {
     givenStatusPoints?: number;
     availableStatusPoints?: number;
     quickSlot?: Map<number, { type: number; position: number }>;
+    horseLevel?: number;
+    horseHealth?: number;
+    horseStamina?: number;
+    horseName?: string;
+    horseRiding?: number;
 };
 
 export class PlayerFactory {
@@ -71,6 +76,11 @@ export class PlayerFactory {
             givenStatusPoints,
             availableStatusPoints,
             quickSlot,
+            horseLevel,
+            horseHealth,
+            horseStamina,
+            horseName,
+            horseRiding,
         }: PlayerFactoryParams,
         {
             animationManager,
@@ -138,6 +148,11 @@ export class PlayerFactory {
                 experience: experience || 0,
                 gold: gold || 0,
                 quickSlot: quickSlot || new Map<number, { type: number; position: number }>(),
+                horseLevel: horseLevel || 0,
+                horseHealth: horseHealth || 0,
+                horseStamina: horseStamina || 0,
+                horseName: horseName || '',
+                horseRiding: horseRiding || 0,
             },
             {
                 animationManager,

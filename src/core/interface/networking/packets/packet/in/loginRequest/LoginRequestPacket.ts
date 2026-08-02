@@ -11,7 +11,7 @@ export default class LoginRequestPacket extends PacketIn {
         super({
             header: PacketHeaderEnum.LOGIN_REQUEST,
             name: 'LoginRequestPacket',
-            size: 66,
+            size: 65,
             validator: LoginRequestPacketValidator,
         });
         this.username = username;

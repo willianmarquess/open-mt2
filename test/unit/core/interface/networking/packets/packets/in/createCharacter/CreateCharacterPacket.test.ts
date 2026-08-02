@@ -17,7 +17,7 @@ describe('CreateCharacterPacket', function () {
     it('should initialize with correct header, name, and size', function () {
         expect(createCharacterPacket.getHeader()).to.equal(PacketHeaderEnum.CREATE_CHARACTER);
         expect(createCharacterPacket.getName()).to.equal('CreateCharacterPacket');
-        expect(createCharacterPacket.getSize()).to.equal(29);
+        expect(createCharacterPacket.getSize()).to.equal(34);
     });
 
     it('should initialize properties correctly', function () {

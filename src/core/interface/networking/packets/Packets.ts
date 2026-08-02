@@ -1,4 +1,5 @@
 import PacketHeaderEnum from '@/core/enum/PacketHeaderEnum';
+import { ConnectionStateEnum } from '@/core/enum/ConnectionStateEnum';
 import EmpirePacket from './packet/bidirectional/empire/EmpirePacket';
 import EmpirePacketHandler from './packet/bidirectional/empire/EmpirePacketHandler';
 import HandshakePacket from './packet/bidirectional/handshake/HandshakePacket';
@@ -58,9 +59,22 @@ import QuickSlotSwapRequestPacketHandler from './packet/in/quickSlotSwap/QuickSl
 import QuickSlotRemoveRequestPacket from './packet/in/quickSlotRemove/QuickSlotRemoveRequestPacket';
 import QuickSlotRemoveRequestPacketHandler from './packet/in/quickSlotRemove/QuickSlotRemoveRequestPacketHandler';
 
+const LOGIN_PHASES: ReadonlySet<ConnectionStateEnum> = new Set([
+    ConnectionStateEnum.HANDSHAKE,
+    ConnectionStateEnum.AUTH,
+    ConnectionStateEnum.LOGIN,
+    ConnectionStateEnum.SELECT,
+    ConnectionStateEnum.LOADING,
+]);
+
+const GAME_PHASES: ReadonlySet<ConnectionStateEnum> = new Set([ConnectionStateEnum.GAME, ConnectionStateEnum.DEAD]);
+
+const EVERY_PHASE: ReadonlySet<ConnectionStateEnum> = new Set([...LOGIN_PHASES, ...GAME_PHASES]);
+
 export type PacketMapValue<T extends Packet> = {
     createPacket: (params?: any) => T;
     createHandler: (container: any) => PacketHandler<T>;
+    phases: ReadonlySet<ConnectionStateEnum>;
 };
 
 const packets: Map<number, PacketMapValue<any>> = new Map<number, PacketMapValue<any>>([
@@ -69,6 +83,7 @@ const packets: Map<number, PacketMapValue<any>> = new Map<number, PacketMapValue
         {
             createPacket: (params = {}) => new HandshakePacket(params),
             createHandler: (params) => new HandshakePacketHandler(params),
+            phases: LOGIN_PHASES,
         },
     ],
     [
@@ -76,6 +91,7 @@ const packets: Map<number, PacketMapValue<any>> = new Map<number, PacketMapValue
         {
             createPacket: (params = {}) => new LoginRequestPacket(params),
             createHandler: (params) => new LoginRequestPacketHandler(params),
+            phases: LOGIN_PHASES,
         },
     ],
     [
@@ -83,6 +99,7 @@ const packets: Map<number, PacketMapValue<any>> = new Map<number, PacketMapValue
         {
             createPacket: () => new ServerStatusRequestPacket(),
             createHandler: (params) => new ServerStatusRequestPacketHandler(params),
+            phases: LOGIN_PHASES,
         },
     ],
     [
@@ -90,6 +107,7 @@ const packets: Map<number, PacketMapValue<any>> = new Map<number, PacketMapValue
         {
             createPacket: (params = {}) => new AuthTokenPacket(params),
             createHandler: (params) => new AuthTokenPacketHandler(params),
+            phases: LOGIN_PHASES,
         },
     ],
     [
@@ -97,6 +115,7 @@ const packets: Map<number, PacketMapValue<any>> = new Map<number, PacketMapValue
         {
             createPacket: (params = {}) => new EmpirePacket(params),
             createHandler: (params) => new EmpirePacketHandler(params),
+            phases: LOGIN_PHASES,
         },
     ],
     [
@@ -104,6 +123,7 @@ const packets: Map<number, PacketMapValue<any>> = new Map<number, PacketMapValue
         {
             createPacket: (params = {}) => new CreateCharacterPacket(params),
             createHandler: (params) => new CreateCharacterPacketHandler(params),
+            phases: LOGIN_PHASES,
         },
     ],
     [
@@ -111,6 +131,7 @@ const packets: Map<number, PacketMapValue<any>> = new Map<number, PacketMapValue
         {
             createPacket: (params = {}) => new DeleteCharacterPacket(params),
             createHandler: (params) => new DeleteCharacterPacketHandler(params),
+            phases: LOGIN_PHASES,
         },
     ],
     [
@@ -118,6 +139,7 @@ const packets: Map<number, PacketMapValue<any>> = new Map<number, PacketMapValue
         {
             createPacket: (params = {}) => new SelectCharacterPacket(params),
             createHandler: (params) => new SelectCharacterPacketHandler(params),
+            phases: LOGIN_PHASES,
         },
     ],
     [
@@ -125,6 +147,7 @@ const packets: Map<number, PacketMapValue<any>> = new Map<number, PacketMapValue
         {
             createPacket: (params = {}) => new ClientVersionPacket(params),
             createHandler: (params) => new ClientVersionPacketHandler(params),
+            phases: LOGIN_PHASES,
         },
     ],
     [
@@ -132,6 +155,7 @@ const packets: Map<number, PacketMapValue<any>> = new Map<number, PacketMapValue
         {
             createPacket: () => new EnterGamePacket(),
             createHandler: (params) => new EnterGamePacketHandler(params),
+            phases: LOGIN_PHASES,
         },
     ],
     [
@@ -139,6 +163,7 @@ const packets: Map<number, PacketMapValue<any>> = new Map<number, PacketMapValue
         {
             createPacket: (params = {}) => new CharacterMovePacket(params),
             createHandler: (params) => new CharacterMovePacketHandler(params),
+            phases: GAME_PHASES,
         },
     ],
     [
@@ -146,6 +171,7 @@ const packets: Map<number, PacketMapValue<any>> = new Map<number, PacketMapValue
         {
             createPacket: (params = {}) => new ChatInPacket(params),
             createHandler: (params) => new ChatInPacketHandler(params),
+            phases: GAME_PHASES,
         },
     ],
     [
@@ -153,6 +179,7 @@ const packets: Map<number, PacketMapValue<any>> = new Map<number, PacketMapValue
         {
             createPacket: (params = {}) => new ItemUsePacket(params),
             createHandler: (params) => new ItemUsePacketHandler(params),
+            phases: GAME_PHASES,
         },
     ],
     [
@@ -160,6 +187,7 @@ const packets: Map<number, PacketMapValue<any>> = new Map<number, PacketMapValue
         {
             createPacket: (params = {}) => new ItemMovePacket(params),
             createHandler: (params) => new ItemMovePacketHandler(params),
+            phases: GAME_PHASES,
         },
     ],
     [
@@ -167,6 +195,7 @@ const packets: Map<number, PacketMapValue<any>> = new Map<number, PacketMapValue
         {
             createPacket: (params = {}) => new ItemDropPacket(params),
             createHandler: (params) => new ItemDropPacketHandler(params),
+            phases: GAME_PHASES,
         },
     ],
     [
@@ -174,6 +203,7 @@ const packets: Map<number, PacketMapValue<any>> = new Map<number, PacketMapValue
         {
             createPacket: (params = {}) => new ItemPickupPacket(params),
             createHandler: (params) => new ItemPickupPacketHandler(params),
+            phases: GAME_PHASES,
         },
     ],
     [
@@ -181,6 +211,7 @@ const packets: Map<number, PacketMapValue<any>> = new Map<number, PacketMapValue
         {
             createPacket: (params = {}) => new AttackPacket(params),
             createHandler: (params) => new AttackPacketHandler(params),
+            phases: GAME_PHASES,
         },
     ],
     [
@@ -188,6 +219,7 @@ const packets: Map<number, PacketMapValue<any>> = new Map<number, PacketMapValue
         {
             createPacket: (params = {}) => new TargetPacket(params),
             createHandler: (params) => new TargetPacketHandler(params),
+            phases: GAME_PHASES,
         },
     ],
     [
@@ -195,6 +227,7 @@ const packets: Map<number, PacketMapValue<any>> = new Map<number, PacketMapValue
         {
             createPacket: (params = {}) => new InternalPingPacket(params),
             createHandler: (params) => new InternalPingPacketHandler(params),
+            phases: EVERY_PHASE,
         },
     ],
     [
@@ -202,6 +235,7 @@ const packets: Map<number, PacketMapValue<any>> = new Map<number, PacketMapValue
         {
             createPacket: () => new PongPacket(),
             createHandler: () => new PongPacketHandler(),
+            phases: EVERY_PHASE,
         },
     ],
     [
@@ -209,6 +243,7 @@ const packets: Map<number, PacketMapValue<any>> = new Map<number, PacketMapValue
         {
             createPacket: (params = {}) => new OnClickPacket(params),
             createHandler: (params) => new OnClickPacketHandler(params),
+            phases: GAME_PHASES,
         },
     ],
     [
@@ -216,6 +251,7 @@ const packets: Map<number, PacketMapValue<any>> = new Map<number, PacketMapValue
         {
             createPacket: (params = {}) => new QuestAnswerPacket(params),
             createHandler: (params) => new QuestAnswerPacketHandler(params),
+            phases: GAME_PHASES,
         },
     ],
     [
@@ -223,6 +259,7 @@ const packets: Map<number, PacketMapValue<any>> = new Map<number, PacketMapValue
         {
             createPacket: (params = {}) => new QuestButtonPacket(params),
             createHandler: (params) => new QuestButtonPacketHandler(params),
+            phases: GAME_PHASES,
         },
     ],
     [
@@ -230,6 +267,7 @@ const packets: Map<number, PacketMapValue<any>> = new Map<number, PacketMapValue
         {
             createPacket: () => new ShopPacket(),
             createHandler: (params) => new ShopPacketHandler(params),
+            phases: GAME_PHASES,
         },
     ],
     [
@@ -237,6 +275,7 @@ const packets: Map<number, PacketMapValue<any>> = new Map<number, PacketMapValue
         {
             createPacket: () => new MyShopPacket(),
             createHandler: (params) => new MyShopPacketHandler(params),
+            phases: GAME_PHASES,
         },
     ],
     [
@@ -244,6 +283,7 @@ const packets: Map<number, PacketMapValue<any>> = new Map<number, PacketMapValue
         {
             createPacket: (params = {}) => new QuickSlotAddRequestPacket(params),
             createHandler: (params) => new QuickSlotAddRequestPacketHandler(params),
+            phases: GAME_PHASES,
         },
     ],
     [
@@ -251,6 +291,7 @@ const packets: Map<number, PacketMapValue<any>> = new Map<number, PacketMapValue
         {
             createPacket: (params = {}) => new QuickSlotSwapRequestPacket(params),
             createHandler: (params) => new QuickSlotSwapRequestPacketHandler(params),
+            phases: GAME_PHASES,
         },
     ],
     [
@@ -258,6 +299,7 @@ const packets: Map<number, PacketMapValue<any>> = new Map<number, PacketMapValue
         {
             createPacket: (params = {}) => new QuickSlotRemoveRequestPacket(params),
             createHandler: (params) => new QuickSlotRemoveRequestPacketHandler(params),
+            phases: GAME_PHASES,
         },
     ],
 ]);

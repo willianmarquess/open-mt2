@@ -6,7 +6,8 @@ export default class ServerStatusRequestPacket extends PacketIn {
         super({
             header: PacketHeaderEnum.SERVER_STATUS_REQUEST,
             name: 'ServerStatusRequestPacket',
-            size: 10,
+            size: 1,
+            sequenced: false,
         });
     }
 

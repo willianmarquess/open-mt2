@@ -24,10 +24,13 @@ class TestQuest extends AbstractQuest {
 
 const createPlayer = () => {
     let currentQuest: any = null;
+    const scripts: Array<{ skin: number; src: string }> = [];
     return {
         setCurrentQuest: (q: any) => (currentQuest = q),
         getCurrentQuest: () => currentQuest,
-        sendQuestScript: () => {},
+        sendQuestScript: (skin: number, src: string) => scripts.push({ skin, src }),
+        sendQuestInfoPacket: () => {},
+        scripts,
     };
 };
 
@@ -83,6 +86,143 @@ describe('AbstractQuest', () => {
                 await tick();
                 expect(quest.isRunning()).to.be.equal(false);
             }
+        });
+    });
+
+    describe('letter lifecycle and trailing [DONE] (issue #58)', () => {
+        class LetterQuest extends AbstractQuest {
+            constructor(player: any) {
+                super({ player } as any);
+                (this as any).id = 7;
+                (this as any).name = 'LetterQuest';
+            }
+
+            public async letterTask() {
+                (this as any).letter('Hunt Quest');
+            }
+
+            public async describeTask() {
+                (this as any).text('Kill 10 boars');
+            }
+
+            public async describeAndAdvanceTask() {
+                (this as any).text('All done!');
+                return (this as any).nextState('DONE_STATE');
+            }
+
+            public async countingTask() {}
+
+            public async abortableSelectTask() {
+                (this as any).text('Pick one');
+                await (this as any).select(['A', 'B']);
+            }
+        }
+
+        const buildLetterQuest = () => {
+            const player = createPlayer();
+            const quest = new LetterQuest(player);
+            quest.addState({
+                name: 'HUNT',
+                tasks: [
+                    { when: QuestEventEnum.LETTER, callback: () => quest.letterTask() },
+                    { when: QuestEventEnum.BUTTON, callback: () => quest.describeTask() },
+                    { when: QuestEventEnum.KILL, callback: () => quest.countingTask() },
+                ] as any,
+            });
+            quest.addState({
+                name: 'FINISH',
+                tasks: [
+                    { when: QuestEventEnum.LETTER, callback: () => quest.letterTask() },
+                    { when: QuestEventEnum.BUTTON, callback: () => quest.describeAndAdvanceTask() },
+                ] as any,
+            });
+            quest.addState({ name: 'DONE_STATE', tasks: [] as any });
+            (quest as any).currentState = (quest as any).states.get('HUNT');
+            return { quest, player };
+        };
+
+        it('should not send a bare [DONE] after showing a letter', async () => {
+            const { quest, player } = buildLetterQuest();
+
+            await quest.runState({ eventType: QuestEventEnum.LETTER } as any);
+
+            expect(player.scripts).to.have.lengthOf(1);
+            expect(player.scripts[0].src).to.include('[QUESTBUTTON');
+            expect(player.scripts[0].src).to.not.include('[DONE]');
+        });
+
+        it('should re-arm the letter in the same script as the BUTTON reply', async () => {
+            const { quest, player } = buildLetterQuest();
+            await quest.runState({ eventType: QuestEventEnum.LETTER } as any);
+            player.scripts.length = 0;
+
+            await quest.runState({ eventType: QuestEventEnum.BUTTON } as any);
+
+            expect(player.scripts).to.have.lengthOf(1);
+            const { src } = player.scripts[0];
+            expect(src).to.include('[QUESTBUTTON');
+            expect(src).to.include('Kill 10 boars');
+            expect(src).to.include('[DONE]');
+            expect(src.indexOf('[QUESTBUTTON')).to.be.lessThan(src.indexOf('Kill 10 boars'));
+        });
+
+        it('should not re-arm the letter when the BUTTON task changes state', async () => {
+            const { quest, player } = buildLetterQuest();
+            (quest as any).currentState = (quest as any).states.get('FINISH');
+            await quest.runState({ eventType: QuestEventEnum.LETTER } as any);
+            player.scripts.length = 0;
+
+            await quest.runState({ eventType: QuestEventEnum.BUTTON } as any);
+
+            expect(player.scripts).to.have.lengthOf(1);
+            expect(player.scripts[0].src).to.include('All done!');
+            expect(player.scripts[0].src).to.not.include('[QUESTBUTTON');
+        });
+
+        it('should send nothing for a task with no output and no interaction', async () => {
+            const { quest, player } = buildLetterQuest();
+
+            await quest.runState({ eventType: QuestEventEnum.KILL } as any);
+
+            expect(player.scripts).to.have.lengthOf(0);
+        });
+
+        it('should still send the bare [DONE] that releases an answered window', async () => {
+            const player = createPlayer();
+            const quest = new LetterQuest(player);
+            quest.addState({
+                name: 'START',
+                tasks: [{ when: QuestEventEnum.CLICK, callback: () => quest.abortableSelectTask() }] as any,
+            });
+            (quest as any).currentState = (quest as any).states.get('START');
+
+            quest.run({ eventType: QuestEventEnum.CLICK } as any);
+            await tick();
+            quest.unselect(0);
+            await tick();
+            await tick();
+
+            const last = player.scripts[player.scripts.length - 1];
+            expect(last.src).to.be.equal('[DONE]');
+        });
+
+        it('should re-send the letter when a letter select is closed without an answer', async () => {
+            const { quest, player } = buildLetterQuest();
+            (quest as any).currentState.tasks = [
+                { when: QuestEventEnum.LETTER, callback: () => quest.letterTask() },
+                { when: QuestEventEnum.BUTTON, callback: () => quest.abortableSelectTask() },
+            ];
+            await quest.runState({ eventType: QuestEventEnum.LETTER } as any);
+            player.scripts.length = 0;
+
+            quest.run({ eventType: QuestEventEnum.BUTTON } as any);
+            await tick();
+            quest.cancel();
+            await tick();
+            await tick();
+
+            const rearmed = player.scripts.some((s) => s.src.includes('[QUESTBUTTON'));
+            expect(rearmed).to.be.equal(true);
         });
     });
 });

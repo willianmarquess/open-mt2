@@ -6,8 +6,16 @@ import { GameConfig } from '@/game/infra/config/GameConfig';
 import Player from '../Player';
 import JobUtil from '@/core/domain/util/JobUtil';
 import { Points } from '../../shared/Points';
+import { HORSE_STATS } from '@/core/domain/entities/game/horse/HorseStats';
 import MobManager from '@/core/domain/manager/MobManager';
 import { AffectBitsTypeEnum } from '@/core/enum/AffectBitsTypeEnum';
+
+type StatPoints = {
+    st: number;
+    ht: number;
+    dx: number;
+    iq: number;
+};
 
 export class PlayerPoints extends Points {
     private level: number;
@@ -641,22 +649,22 @@ export class PlayerPoints extends Points {
             add: (value: number) => this.addExperience(value),
         });
         this.points.set(PointsEnum.HT, {
-            get: () => this.calcPolymorphPoint(StatsEnum.HT),
+            get: () => this.getEffectiveStat(PointsEnum.HT),
             add: (value: number) => this.addStat(StatsEnum.HT, value),
             afterAddHooks: () => [this.calcDefense, this.calcMagicDefense, this.calcMaxHealth],
         });
         this.points.set(PointsEnum.ST, {
-            get: () => this.calcPolymorphPoint(StatsEnum.ST),
+            get: () => this.getEffectiveStat(PointsEnum.ST),
             add: (value: number) => this.addStat(StatsEnum.ST, value),
             afterAddHooks: () => [this.calcAttack],
         });
         this.points.set(PointsEnum.IQ, {
-            get: () => this.calcPolymorphPoint(StatsEnum.IQ),
+            get: () => this.getEffectiveStat(PointsEnum.IQ),
             add: (value: number) => this.addStat(StatsEnum.IQ, value),
             afterAddHooks: () => [this.calcAttack, this.calcMagicAttack, this.calcMagicDefense, this.calcMaxMana],
         });
         this.points.set(PointsEnum.DX, {
-            get: () => this.calcPolymorphPoint(StatsEnum.DX),
+            get: () => this.getEffectiveStat(PointsEnum.DX),
             add: (value: number) => this.addStat(StatsEnum.DX, value),
             afterAddHooks: () => [this.calcAttack],
         });
@@ -856,6 +864,12 @@ export class PlayerPoints extends Points {
             add: (value) => this.addCommonPoint(value, 'horseSkill'),
             set: (value) => (this.horseSkill = value),
         });
+        this.points.set(PointsEnum.MOUNT, {
+            get: () => this.player.getMountVnum(),
+        });
+        this.points.set(PointsEnum.HORSE_SKILL, {
+            get: () => this.player.getHorseLevel(),
+        });
     }
 
     private addCommonPoint(value: number, pointName: string) {
@@ -1020,11 +1034,11 @@ export class PlayerPoints extends Points {
     }
 
     private calcAttack() {
+        const st = this.getEffectiveStat(PointsEnum.ST);
+        const dx = this.getEffectiveStat(PointsEnum.DX);
+        const iq = this.getEffectiveStat(PointsEnum.IQ);
         let attack =
-            this.level * 2 +
-            this.attackPerStPoint * this.st +
-            this.attackPerIqPoint * this.iq +
-            this.attackPerDxPoint * this.dx;
+            this.level * 2 + this.attackPerStPoint * st + this.attackPerIqPoint * iq + this.attackPerDxPoint * dx;
         attack += this.attackBonus;
         const { physic } = this.player.getWeaponValues();
         attack += MathUtil.getRandomInt(physic.min, physic.max) * 2;
@@ -1033,7 +1047,8 @@ export class PlayerPoints extends Points {
     }
 
     private calcMagicAttack() {
-        let magicAttack = this.level * 2 + 2 * this.iq;
+        const iq = this.getEffectiveStat(PointsEnum.IQ);
+        let magicAttack = this.level * 2 + 2 * iq;
         magicAttack += this.magicAttGradeBonus;
         const { magic } = this.player.getWeaponValues();
         magicAttack += MathUtil.getRandomInt(magic.min, magic.max) * 2;
@@ -1042,7 +1057,8 @@ export class PlayerPoints extends Points {
     }
 
     private calcDefense() {
-        let defense = this.level + Math.floor(this.defensePerHtPoint * this.ht);
+        const ht = this.getEffectiveStat(PointsEnum.HT);
+        let defense = this.level + Math.floor(this.defensePerHtPoint * ht);
         const armorValues = this.player.getArmorValues();
         armorValues.forEach(({ flat, multi }) => {
             defense += flat;
@@ -1053,13 +1069,16 @@ export class PlayerPoints extends Points {
 
     private calcMagicDefense() {
         this.calcDefense();
-        let magicDefense = this.level + (this.iq * 3 + this.ht / 3 + this.defense / 2);
+        const iq = this.getEffectiveStat(PointsEnum.IQ);
+        const ht = this.getEffectiveStat(PointsEnum.HT);
+        let magicDefense = this.level + (iq * 3 + ht / 3 + this.defense / 2);
         magicDefense += this.magicDefGradeBonus;
         this.magicDefGrade = Math.floor(magicDefense);
     }
 
     private calcMaxHealth() {
-        this.maxHealth = this.baseHealth + this.ht * this.hpPerHtPoint + this.level * this.hpPerLvl;
+        const ht = this.getEffectiveStat(PointsEnum.HT);
+        this.maxHealth = this.baseHealth + ht * this.hpPerHtPoint + this.level * this.hpPerLvl;
     }
 
     private resetHealth() {
@@ -1071,7 +1090,48 @@ export class PlayerPoints extends Points {
     }
 
     private calcMaxMana() {
-        this.maxMana = this.baseMana + this.iq * this.mpPerIqPoint + this.level * this.mpPerLvl;
+        const iq = this.getEffectiveStat(PointsEnum.IQ);
+        this.maxMana = this.baseMana + iq * this.mpPerIqPoint + this.level * this.mpPerLvl;
+    }
+
+    private getEffectiveStat(point: PointsEnum): number {
+        const isRiding = this.player.isHorseRiding();
+
+        if (isRiding) {
+            const horse = HORSE_STATS[this.player.getHorseLevel()];
+            return this.getBaseStat(horse, point);
+        }
+
+        return this.calcPolymorphPoint(this.getStatName(point));
+    }
+
+    private getStatName(point: PointsEnum): StatsEnum {
+        switch (point) {
+            case PointsEnum.ST:
+                return StatsEnum.ST;
+            case PointsEnum.DX:
+                return StatsEnum.DX;
+            case PointsEnum.IQ:
+                return StatsEnum.IQ;
+            case PointsEnum.HT:
+            default:
+                return StatsEnum.HT;
+        }
+    }
+
+    private getBaseStat(target: StatPoints, point: PointsEnum): number {
+        switch (point) {
+            case PointsEnum.ST:
+                return target.st;
+            case PointsEnum.DX:
+                return target.dx;
+            case PointsEnum.HT:
+                return target.ht;
+            case PointsEnum.IQ:
+                return target.iq;
+            default:
+                return 0;
+        }
     }
 
     private resetMoveSpeed() {

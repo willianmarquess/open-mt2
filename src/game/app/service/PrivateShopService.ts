@@ -49,6 +49,13 @@ export default class PrivateShopService {
             return;
         }
 
+        // The client dismounts locally before sending MyShopPacket, but the
+        // server must dismount too — otherwise riding stays true and nearby
+        // players keep seeing a rider carrying the shop stand around.
+        if (player.isHorseRiding()) {
+            player.stopRiding(true);
+        }
+
         // Leave any NPC shop or browsed private shop first instead of refusing:
         // the client may close the shop window without sending SHOP_END (e.g.
         // after buying the bundle), leaving stale browsing state behind.

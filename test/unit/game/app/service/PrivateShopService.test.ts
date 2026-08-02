@@ -37,6 +37,8 @@ const makePlayer = (overrides: Partial<any> = {}): any => ({
     getPositionX: sinon.stub().returns(0),
     getPositionY: sinon.stub().returns(0),
     isRunningPrivateShop: sinon.stub().returns(false),
+    isHorseRiding: sinon.stub().returns(false),
+    stopRiding: sinon.stub(),
     getPrivateShop: sinon.stub().returns(null),
     setPrivateShop: sinon.stub(),
     getCurrentShop: sinon.stub().returns(null),

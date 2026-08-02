@@ -7,6 +7,7 @@ import { QuestFlagEnum } from '@/core/enum/QuestSendFlagEnum';
 import { PlayerQuest } from './facade/PlayerQuest';
 import ItemManager from '../manager/ItemManager';
 import MathUtil from '../util/MathUtil';
+import { WindowTypeEnum } from '@/core/enum/WindowTypeEnum';
 import { QuestTargetManager } from './QuestTargetManager';
 import { WarriorSubJobEnum, AssasinSubJobEnum, ShamanSubJobEnum, SuraSubJobEnum } from '@/core/enum/SubJobEnum';
 import { QuestUtil } from './QuestUtil';
@@ -34,17 +35,70 @@ export abstract class AbstractQuest {
     // reaches select()/nextPage() (several awaits in), leaving a window where a
     // second click could start a concurrent run. This flag closes that window.
     private running: boolean = false;
+    private shouldSendDone: boolean = false;
     private readonly questFlags: BitFlag = new BitFlag();
 
-    private readonly player: Player;
-    private readonly playerQuest: PlayerQuest;
-    private readonly itemManager!: ItemManager;
+    protected readonly player: Player;
+    protected readonly playerQuest: PlayerQuest;
+    protected readonly itemManager: ItemManager;
     private readonly questTargetManager: QuestTargetManager;
 
-    constructor({ player, questTargetManager }: { player: Player; questTargetManager: QuestTargetManager }) {
+    constructor({
+        player,
+        itemManager,
+        questTargetManager,
+    }: {
+        player: Player;
+        itemManager: ItemManager;
+        questTargetManager: QuestTargetManager;
+    }) {
         this.player = player;
         this.questTargetManager = questTargetManager;
         this.playerQuest = new PlayerQuest({ player });
+        this.itemManager = itemManager;
+    }
+
+    protected countItem(id: number): number {
+        let count = 0;
+        const vnum = Number(id);
+        for (const item of this.player.getInventory().getItems().values()) {
+            if (item.getId() === vnum) {
+                count += item.getCount();
+            }
+        }
+        return count;
+    }
+
+    protected async removeItem(id: number, quantity: number = 1): Promise<boolean> {
+        const vnum = Number(id);
+        let needed = quantity;
+        const inventory = this.player.getInventory();
+        const items = [...inventory.getItems().values()].filter((item) => item.getId() === vnum);
+
+        if (this.countItem(vnum) < quantity) {
+            return false;
+        }
+
+        for (const item of items) {
+            const currentCount = item.getCount();
+            if (currentCount > needed) {
+                item.decreaseCount(needed);
+                this.player.sendItemUpdate(item);
+                await this.itemManager.update(item);
+                break;
+            } else {
+                inventory.removeItem(item.getPosition(), item.getSize());
+                this.player.sendItemRemoved({
+                    window: WindowTypeEnum.INVENTORY,
+                    position: item.getPosition(),
+                });
+                await this.itemManager.delete(item);
+                needed -= currentCount;
+            }
+            if (needed <= 0) break;
+        }
+
+        return true;
     }
 
     protected nextState(stateName: string): TaskResult {
@@ -79,16 +133,18 @@ export abstract class AbstractQuest {
      * returned and uncorked the socket, so they never interleave with other
      * handlers' output.
      */
-    run(context: StateExecutionContextBase): void {
+    run(context: StateExecutionContextBase, handlerName?: string): void {
         this.running = true;
-        void this.runState(context).finally(() => {
+        void this.runState(context, handlerName).finally(() => {
             this.running = false;
         });
     }
 
-    async runState(context: StateExecutionContextBase) {
+    async runState(context: StateExecutionContextBase, handlerName?: string) {
         if (this.currentState) {
-            const tasks = this.getCurrentTasksByEvent(context.eventType);
+            const tasks = this.getCurrentTasksByEvent(context.eventType).filter(
+                (task: any) => !handlerName || task.handlerName === handlerName,
+            );
             for (const routine of tasks) {
                 try {
                     const withFunc = routine.with
@@ -105,7 +161,8 @@ export abstract class AbstractQuest {
                     } catch (err) {
                         console.error('[QUEST] condition error', err);
                     } finally {
-                        this.done();
+                        this.rearmLetter(context.eventType, callbackResult);
+                        this.autoDone();
                         this.endRunning(callbackResult);
                     }
                 } catch (err) {
@@ -117,6 +174,30 @@ export abstract class AbstractQuest {
 
     private getCurrentTasksByEvent(event: QuestEventEnum) {
         return this.currentState?.tasks.filter((routine) => routine.when === event) ?? [];
+    }
+
+    private autoDone() {
+        const playerInteracted = this.shouldSendDone;
+        this.shouldSendDone = false;
+
+        if (this.src.length < 1 && !playerInteracted) return;
+
+        this.done();
+    }
+
+    private rearmLetter(eventType: QuestEventEnum, result?: TaskResult) {
+        if (eventType !== QuestEventEnum.BUTTON) return;
+        if (result && result.nextState && result.nextState !== this.currentState?.name) return;
+
+        const letterTitle = this.currentState?.letterTitle;
+        if (!letterTitle || !this.currentState?.wasStarted) return;
+
+        if (this.src.length > 0) {
+            this.src = this.button(letterTitle) + this.src;
+            return;
+        }
+
+        this.letter(letterTitle);
     }
 
     public async setState(name: string) {
@@ -170,6 +251,7 @@ export abstract class AbstractQuest {
 
     protected letter(title: string) {
         const src = this.button(title);
+        if (this.currentState) this.currentState.letterTitle = title;
         this.skin = QuestSkinEnum.NO_WINDOW;
         this.setStart();
         this.setTitle(this.currentState?.title || this.name);
@@ -180,6 +262,7 @@ export abstract class AbstractQuest {
     protected clearLetter() {
         if (!this.currentState) return;
         this.currentState.wasStarted = false;
+        this.currentState.letterTitle = undefined;
         this.questFlags.set(QuestFlagEnum.ISBEGIN);
     }
 
@@ -207,10 +290,12 @@ export abstract class AbstractQuest {
     }
 
     public unselect(answer: number) {
+        this.shouldSendDone = true;
         this.currentChoicePromise.resolve(answer);
     }
 
     public unpause() {
+        this.shouldSendDone = true;
         this.nextPagePromise.resolve();
     }
 
@@ -221,11 +306,13 @@ export abstract class AbstractQuest {
      */
     public cancel() {
         if (this.status === QuestStatusEnum.SELECT) {
+            this.shouldSendDone = true;
             this.currentChoicePromise.resolve(CLOSE_WINDOW_ANSWER);
             return;
         }
 
         if (this.status === QuestStatusEnum.PAUSE) {
+            this.shouldSendDone = true;
             this.nextPagePromise.resolve();
         }
     }
@@ -336,6 +423,7 @@ export abstract class AbstractQuest {
         this.questFlags.reset();
         if (!this.currentState) return;
         this.currentState.wasStarted = false;
+        this.currentState.letterTitle = undefined;
         this.currentState.title = undefined;
         this.currentState.clockName = undefined;
         this.currentState.clockValue = undefined;
@@ -383,6 +471,11 @@ export abstract class AbstractQuest {
 
     protected async giveGold(value: number) {
         this.playerQuest.addGold(value);
+    }
+
+    protected giveHorse(level: number = 1) {
+        this.player.setHorseLevel(level);
+        this.hasReward = true;
     }
 
     isRunning() {

@@ -12,15 +12,17 @@ export default abstract class PacketBidirectional extends Packet {
         subHeader = 0,
         size,
         name,
+        sequenced = true,
         validator,
     }: {
         header: number;
         subHeader?: number;
         size: number;
         name: string;
+        sequenced?: boolean;
         validator?: new (packet: any) => PacketValidator<any>;
     }) {
-        super({ header, subHeader, size, name, validator });
+        super({ header, subHeader, size, name, sequenced, validator });
         this.bufferWriter = new BufferWriter(this.header, this.size);
         this.bufferReader = new BufferReader();
     }

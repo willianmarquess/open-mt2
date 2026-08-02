@@ -16,7 +16,11 @@ describe('UseItemService', () => {
         loggerStub = sinon.createStubInstance(WinstonLoggerAdapter);
         itemManagerStub = { update: sinon.stub().resolves() };
         mobManagerStub = { hasMob: sinon.stub().resolves() };
-        service = new UseItemService({ logger: loggerStub, itemManager: itemManagerStub, mobManager: mobManagerStub });
+        service = new UseItemService({
+            logger: loggerStub,
+            itemManager: itemManagerStub,
+            mobManager: mobManagerStub,
+        });
         playerStub = {
             getItem: sinon.stub(),
             isItemLockedInPrivateShop: sinon.stub().returns(false),
@@ -25,6 +29,7 @@ describe('UseItemService', () => {
             sendItemAdded: sinon.stub(),
             chat: sinon.stub(),
             isWearable: sinon.stub(),
+            getEquipFailureReason: sinon.stub(),
         };
     });
 
@@ -167,5 +172,35 @@ describe('UseItemService', () => {
         expect(inventoryStub.addItemAt.calledWith(mockItem, 4)).to.be.true;
         expect(playerStub.sendItemRemoved.calledWith({ window: WindowTypeEnum.EQUIPMENT, position: 4 })).to.be.true;
         expect(playerStub.sendItemRemoved.calledWith({ window: WindowTypeEnum.INVENTORY, position: 2 })).to.be.true;
+    });
+
+    it('should explain why equipment the player cannot wear was refused (issue #57)', async () => {
+        const mockItem = { getType: sinon.stub() };
+        playerStub.getItem.returns(mockItem);
+        playerStub.isWearable.returns(false);
+        playerStub.getEquipFailureReason.returns('Your level is too low to equip this item. Required level: 105.');
+
+        await service.execute(playerStub, 1, 2);
+
+        expect(
+            playerStub.chat.calledOnceWith({
+                messageType: ChatMessageTypeEnum.INFO,
+                message: 'Your level is too low to equip this item. Required level: 105.',
+            }),
+        ).to.be.true;
+        expect(mockItem.getType.notCalled).to.be.true;
+        expect(playerStub.getInventory.notCalled).to.be.true;
+    });
+
+    it('should still route non-equipment items to the non-wearable handlers without chatting', async () => {
+        const mockItem = { getType: sinon.stub().returns(0), getSubType: sinon.stub().returns(0) };
+        playerStub.getItem.returns(mockItem);
+        playerStub.isWearable.returns(false);
+        playerStub.getEquipFailureReason.returns(undefined);
+
+        await service.execute(playerStub, 1, 2);
+
+        expect(playerStub.chat.notCalled).to.be.true;
+        expect(mockItem.getType.called).to.be.true;
     });
 });

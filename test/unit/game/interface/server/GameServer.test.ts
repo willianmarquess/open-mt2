@@ -18,6 +18,7 @@ const createConnection = (player: unknown) =>
     ({
         getId: () => 'connection-id',
         getPlayer: () => player,
+        clearPlayer: sinon.stub(),
         stopKeepalive: sinon.stub(),
     }) as any;
 
@@ -49,6 +50,16 @@ describe('GameServer', () => {
             await server.onClose(createConnection({ getName: () => 'Test' }));
 
             expect(logoutService.execute.calledOnce).to.be.equal(true);
+        });
+
+        it('should drop the player reference so a late packet cannot act on it (issue #91)', async () => {
+            const logoutService = { execute: sinon.stub().resolves() };
+            const server = createGameServer(logoutService);
+            const connection = createConnection({ getName: () => 'Test' });
+
+            await server.onClose(connection);
+
+            expect(connection.clearPlayer.calledOnce).to.be.equal(true);
         });
     });
 });

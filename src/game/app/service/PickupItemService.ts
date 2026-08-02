@@ -5,6 +5,9 @@ import { ChatMessageTypeEnum } from '@/core/enum/ChatMessageTypeEnum';
 import { IItemRepository } from '@/core/domain/repository/IItemRepository';
 import { PointsEnum } from '@/core/enum/PointsEnum';
 import { EntityManager } from '@/core/domain/manager/EntityManager';
+import MathUtil from '@/core/domain/util/MathUtil';
+
+const MAX_PICKUP_DISTANCE = 300;
 
 export default class PickupItemService {
     private readonly world: World;
@@ -26,23 +29,24 @@ export default class PickupItemService {
     }
 
     async execute(player: Player, virtualId: number) {
-        const droppedItem = this.entityManager.getEntity<DroppedItem>(virtualId);
+        const droppedItem = this.entityManager.getEntity(virtualId);
 
-        if (!droppedItem) return;
+        if (!(droppedItem instanceof DroppedItem)) return;
+        if (droppedItem.isTaken()) return;
+        if (droppedItem.getArea() !== player.getArea()) return;
 
-        //TODO: validate id the dropped item is in the same map, and validate distance (avoid hacking)
+        const distance = MathUtil.calcDistance(
+            player.getPositionX(),
+            player.getPositionY(),
+            droppedItem.getPositionX(),
+            droppedItem.getPositionY(),
+        );
+
+        if (distance > MAX_PICKUP_DISTANCE) return;
 
         const item = droppedItem.getItem();
         const count = droppedItem.getCount();
         const ownerName = droppedItem.getOwnerName();
-
-        const isGold = item.getId() === 1;
-
-        if (isGold) {
-            player.addPoint(PointsEnum.GOLD, Number(count));
-            this.world.despawn(droppedItem);
-            return;
-        }
 
         const canPickup = ownerName === player.getName() || !ownerName;
 
@@ -54,9 +58,19 @@ export default class PickupItemService {
             return;
         }
 
+        const isGold = item.getId() === 1;
+
+        if (isGold) {
+            droppedItem.markTaken();
+            player.addPoint(PointsEnum.GOLD, Number(count));
+            this.world.despawn(droppedItem);
+            return;
+        }
+
         const added = player.addItemStacking(item);
         if (!added) return;
 
+        droppedItem.markTaken();
         this.world.despawn(droppedItem);
 
         for (const updated of added.updated) {

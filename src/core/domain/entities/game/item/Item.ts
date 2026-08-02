@@ -580,11 +580,11 @@ export default class Item {
             wearFlags: wearFlagsBitFlag,
             limits: [
                 new ItemLimit({
-                    type: itemLimitMapper[`${proto.limit_type0.split('LIMIT_')[1]}`] || ItemLimitTypeEnum.NONE,
+                    type: itemLimitMapper[proto.limit_type0.replace('LIMIT_', '')] || ItemLimitTypeEnum.NONE,
                     value: Number(proto.limit_value0),
                 }),
                 new ItemLimit({
-                    type: itemLimitMapper[`${proto.limit_type1.split('LIMIT_')[1]}`] || ItemLimitTypeEnum.NONE,
+                    type: itemLimitMapper[proto.limit_type1.replace('LIMIT_', '')] || ItemLimitTypeEnum.NONE,
                     value: Number(proto.limit_value1),
                 }),
             ],

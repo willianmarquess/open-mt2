@@ -15,6 +15,45 @@ import Logger from '@/core/infra/logger/Logger';
 
 const SKILLBOOK_DELAY_MIN = 64800;
 const SKILLBOOK_DELAY_MAX = 108000;
+// Horse item vnums from unique_item.h
+// Feed items restore 1 HP to a living horse.
+// Revive items restore a dead horse to full health/stamina.
+// Grade matching: grade 1 horse (lvl 1-10) uses _1 items, etc.
+const ITEM_HORSE_FOOD_1 = 50054;
+const ITEM_HORSE_FOOD_2 = 50055;
+const ITEM_HORSE_FOOD_3 = 50056;
+const ITEM_REVIVE_HORSE_1 = 50057;
+const ITEM_REVIVE_HORSE_2 = 50058;
+const ITEM_REVIVE_HORSE_3 = 50059;
+
+// Horse summoning books (ITEM_QUEST type, vnums 50051-50053).
+// Using a book grants the player a horse of that grade (sets horseLevel to 1/11/21).
+export const ITEM_HORSE_SUMMON_BOOK_1 = 50051; // grade 1 – beginner  horse (level 1)
+const ITEM_HORSE_SUMMON_BOOK_2 = 50052; // grade 2 – intermediate horse (level 11)
+const ITEM_HORSE_SUMMON_BOOK_3 = 50053; // grade 3 – advanced horse (level 21)
+
+const HORSE_SUMMON_BOOK_VNUMS = new Set([ITEM_HORSE_SUMMON_BOOK_1, ITEM_HORSE_SUMMON_BOOK_2, ITEM_HORSE_SUMMON_BOOK_3]);
+
+const HORSE_FEED_BY_GRADE: Record<number, number> = {
+    1: ITEM_HORSE_FOOD_1,
+    2: ITEM_HORSE_FOOD_2,
+    3: ITEM_HORSE_FOOD_3,
+};
+
+const HORSE_REVIVE_BY_GRADE: Record<number, number> = {
+    1: ITEM_REVIVE_HORSE_1,
+    2: ITEM_REVIVE_HORSE_2,
+    3: ITEM_REVIVE_HORSE_3,
+};
+
+const ALL_HORSE_ITEM_VNUMS = new Set([
+    ITEM_HORSE_FOOD_1,
+    ITEM_HORSE_FOOD_2,
+    ITEM_HORSE_FOOD_3,
+    ITEM_REVIVE_HORSE_1,
+    ITEM_REVIVE_HORSE_2,
+    ITEM_REVIVE_HORSE_3,
+]);
 
 export default class UseItemService {
     private readonly logger: Logger;
@@ -46,6 +85,15 @@ export default class UseItemService {
         if (player.isWearable(item)) {
             await this.useWearableItem(player, item, position, window);
         } else {
+            const equipFailureReason = player.getEquipFailureReason(item);
+            if (equipFailureReason) {
+                player.chat({
+                    messageType: ChatMessageTypeEnum.INFO,
+                    message: equipFailureReason,
+                });
+                return;
+            }
+
             await this.useNonWearableItem(player, item);
         }
     }
@@ -138,6 +186,18 @@ export default class UseItemService {
         switch (item.getType()) {
             case ItemTypeEnum.ITEM_USE:
                 return this.useItemUsable(player, item);
+            case ItemTypeEnum.ITEM_QUEST:
+                if (HORSE_SUMMON_BOOK_VNUMS.has(item.getId())) {
+                    return this.useHorseSummonBook(player);
+                }
+                break;
+            case ItemTypeEnum.ITEM_SPECIAL:
+                // Horse feed/revive herbs are ITEM_SPECIAL/SPECIAL_MAP in the
+                // item proto, not ITEM_USE/USE_SPECIAL.
+                if (ALL_HORSE_ITEM_VNUMS.has(item.getId())) {
+                    return this.useHorseItem(player, item);
+                }
+                break;
             case ItemTypeEnum.ITEM_POLYMORPH:
                 return this.usePolymorphBall(player, item);
             case ItemTypeEnum.ITEM_SKILLBOOK:
@@ -151,7 +211,6 @@ export default class UseItemService {
         switch (item.getSubType()) {
             case ItemUseSubTypeEnum.USE_SPECIAL:
                 return this.useSpecialItem(player, item);
-
             case ItemUseSubTypeEnum.USE_POTION:
                 {
                     if (item.getCount() <= 0) {
@@ -184,6 +243,11 @@ export default class UseItemService {
         if (item.getId() === 50200) {
             //TODO: add this to an enum avoiding magical numbers
             player.chat({ messageType: ChatMessageTypeEnum.COMMAND, message: 'OpenPrivateShop' });
+            return;
+        }
+
+        if (ALL_HORSE_ITEM_VNUMS.has(item.getId())) {
+            return this.useHorseItem(player, item);
         }
     }
 
@@ -217,22 +281,75 @@ export default class UseItemService {
         });
     }
 
-    private async removeItemByQuantity(player: Player, item: Item, quantity: number) {
-        if (item.getCount() - quantity <= 0) {
-            player.getInventory().removeItem(item.getPosition(), item.getSize());
+    private useHorseSummonBook(player: Player): void {
+        if (player.getHorseLevel() <= 0) {
+            player.chat({ messageType: ChatMessageTypeEnum.INFO, message: 'You do not own a horse.' });
+            return;
+        }
 
+        if (player.isHorseRiding()) {
+            player.stopRiding();
+        } else if (player.getHorseHealth() <= 0) {
+            player.summonHorse();
+        } else {
+            player.startRiding();
+        }
+    }
+
+    private async useHorseItem(player: Player, item: Item): Promise<void> {
+        const grade = player.getHorseGrade();
+
+        if (grade <= 0) {
+            player.chat({ messageType: ChatMessageTypeEnum.INFO, message: 'You do not own a horse.' });
+            return;
+        }
+
+        const vnum = item.getId();
+        const feedVnum = HORSE_FEED_BY_GRADE[grade];
+        const reviveVnum = HORSE_REVIVE_BY_GRADE[grade];
+
+        if (vnum === reviveVnum) {
+            if (player.getHorseHealth() > 0) {
+                player.chat({ messageType: ChatMessageTypeEnum.INFO, message: 'Your horse is not dead.' });
+                return;
+            }
+            player.reviveHorse();
+            player.chat({ messageType: ChatMessageTypeEnum.INFO, message: 'You revived your horse.' });
+            await this.removeItemByQuantity(player, item);
+        } else if (vnum === feedVnum) {
+            if (player.getHorseHealth() <= 0) {
+                player.chat({ messageType: ChatMessageTypeEnum.INFO, message: 'You cannot feed a dead horse.' });
+                return;
+            }
+            if (!player.feedHorse()) return;
+            player.chat({ messageType: ChatMessageTypeEnum.INFO, message: 'You fed your horse.' });
+            await this.removeItemByQuantity(player, item);
+        } else {
+            // Wrong grade item for this horse
+            player.chat({
+                messageType: ChatMessageTypeEnum.INFO,
+                message: 'This item is not suitable for your horse.',
+            });
+        }
+    }
+
+    async removeItemByQuantity(player: Player, item: Item, quantity: number = 1): Promise<boolean> {
+        if (quantity <= 0 || item.getCount() < quantity) return false;
+
+        if (item.getCount() <= quantity) {
+            player.getInventory().removeItem(item.getPosition(), item.getSize());
             player.sendItemRemoved({
                 window: WindowTypeEnum.INVENTORY,
                 position: item.getPosition(),
             });
-
             await this.itemManager.delete(item);
-            return;
+            return true;
         }
 
         item.decreaseCount(quantity);
         player.sendItemUpdate(item);
         await this.itemManager.update(item);
+        return true;
     }
 
     private async useManaPotion(player: Player, item: Item) {

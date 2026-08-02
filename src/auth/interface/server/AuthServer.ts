@@ -3,6 +3,8 @@ import AuthConnection from '@/auth/interface/networking/AuthConnection';
 import { Socket } from 'node:net';
 
 export default class AuthServer extends Server {
+    protected readonly unknownHeaderLogLevel = 'debug' as const;
+
     async onData(connection: AuthConnection, data: Buffer) {
         this.container.containerInstance.createScope();
         this.logger.debug(`[IN][DATA SOCKET EVENT] Data received from ID: ${connection.getId()}`);
@@ -14,6 +16,8 @@ export default class AuthServer extends Server {
             this.logger.debug(`[IN][PACKET] Unknown header packet: ${data[0]}`);
             return;
         }
+
+        if (!this.isAllowedInPhase(connection, header, packetBuilder)) return;
 
         const { createPacket, createHandler } = packetBuilder;
         const packet = createPacket({});

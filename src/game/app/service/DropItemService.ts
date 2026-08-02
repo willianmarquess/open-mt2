@@ -4,6 +4,8 @@ import { ChatMessageTypeEnum } from '@/core/enum/ChatMessageTypeEnum';
 import { PointsEnum } from '@/core/enum/PointsEnum';
 import Logger from '@/core/infra/logger/Logger';
 
+const GOLD_PROTO_ID = 1;
+
 type DropItemServiceParams = {
     window: number;
     position: number;
@@ -32,24 +34,38 @@ export default class DropItemService {
         if (!item) return;
         if (player.isItemLockedInPrivateShop(item)) return;
 
+        if (!Number.isInteger(count) || count <= 0 || count > item.getCount()) return;
+
         if (count === item.getCount()) {
             player.getInventory().removeItem(position, item.getSize());
             player.sendItemRemoved({
                 window,
                 position,
             });
-        } else {
-            item.setCount(item.getCount() - count);
 
-            player.sendItemAdded({
-                window,
-                position,
-                item,
-            });
+            player.dropItem({ count, item });
+            await this.itemManager.delete(item);
+            return;
         }
 
-        player.dropItem({ count, item });
-        await this.itemManager.delete(item);
+        const droppedPart = this.itemManager.getItem(item.getId(), count);
+
+        if (!droppedPart) {
+            this.logger.error(`[PLAYER] Missing the item proto ${item.getId()}`);
+            return;
+        }
+
+        item.setCount(item.getCount() - count);
+
+        player.sendItemAdded({
+            window,
+            position,
+            item,
+        });
+
+        player.dropItem({ count, item: droppedPart });
+        await this.itemManager.update(item);
+        await this.itemManager.flush(player.getId());
     }
 
     dropGold(amount: number, player: Player) {
@@ -64,13 +80,17 @@ export default class DropItemService {
             return;
         }
 
-        player.addPoint(PointsEnum.GOLD, -amount);
+        const gold = this.itemManager.getItem(GOLD_PROTO_ID, amountValidated);
+
+        if (!gold) {
+            this.logger.error(`[PLAYER] Missing the gold item proto ${GOLD_PROTO_ID}`);
+            return;
+        }
+
+        player.addPoint(PointsEnum.GOLD, -amountValidated);
         player.dropItem({
-            count: amount,
-            item: {
-                id: 1,
-                count: amount,
-            } as any,
+            count: amountValidated,
+            item: gold,
         });
     }
 }

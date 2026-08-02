@@ -34,6 +34,14 @@ export default class ChatInPacketHandler extends PacketHandler<ChatInPacket> {
         const message = packet.getMessage();
         const messageType = packet.getMessageType();
 
+        // Dropped silently, the way the original handles a client talking too
+        // fast: closing the connection would punish a burst of legitimate
+        // typing, and a spam module gets nothing out of either.
+        if (!player.isChatAllowed()) {
+            this.logger.debug(`[ChatInPacketHandler] Chat flood from ${player.getName()}, message dropped`);
+            return;
+        }
+
         switch (messageType) {
             case ChatMessageTypeEnum.NORMAL:
                 this.logger.debug(`[ChatInPacketHandler] NORMAL CHAT: ${message}`);
@@ -46,8 +54,19 @@ export default class ChatInPacketHandler extends PacketHandler<ChatInPacket> {
                 break;
             case ChatMessageTypeEnum.SHOUT:
                 this.logger.debug(`[ChatInPacketHandler] SHOUT CHAT: ${message}`);
-                //TODO: validate 15 sec countdown between shout
-                //TODO: validate level min for shout
+
+                if (!player.hasShoutLevel()) {
+                    player.chat({
+                        messageType: ChatMessageTypeEnum.INFO,
+                        message: `[SYSTEM] You must be at least level ${player.getShoutMinLevel()} to shout`,
+                    });
+                    return;
+                }
+
+                if (!player.isShoutAllowed()) return;
+
+                //TODO: send shout to every player in the empire
+
                 break;
             case ChatMessageTypeEnum.COMMAND:
                 this.logger.debug(`[ChatInPacketHandler] COMMAND CHAT: ${message}`);

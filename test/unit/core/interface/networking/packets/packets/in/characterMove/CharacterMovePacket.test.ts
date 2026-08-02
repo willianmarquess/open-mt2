@@ -19,7 +19,7 @@ describe('CharacterMovePacket', function () {
     it('should initialize with correct header, name, and size', function () {
         expect(characterMovePacket.getHeader()).to.equal(PacketHeaderEnum.CHARACTER_MOVE);
         expect(characterMovePacket.getName()).to.equal('CharacterMovePacket');
-        expect(characterMovePacket.getSize()).to.equal(17);
+        expect(characterMovePacket.getSize()).to.equal(16);
     });
 
     it('should initialize properties correctly', function () {

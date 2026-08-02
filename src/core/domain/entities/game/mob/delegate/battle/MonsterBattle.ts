@@ -7,7 +7,6 @@ import Logger from '@/core/infra/logger/Logger';
 import { DamageTypeEnum } from '@/core/enum/DamageTypeEnum';
 import BitFlag from '@/core/util/BitFlag';
 import { DamageFlagEnum } from '@/core/enum/DamageFlagEnum';
-import { ChatMessageTypeEnum } from '@/core/enum/ChatMessageTypeEnum';
 import { MobEnchantEnum } from '@/core/enum/MobEnchantEnum';
 import Player from '../../../player/Player';
 import { MobImmuneFlagEnum } from '@/core/enum/MobImmuneFlagEnum';
@@ -136,10 +135,7 @@ export default class MonsterBattle {
 
         damage = damage > 0 ? Math.round(damage) : MathUtil.getRandomInt(1, 5);
 
-        victim.chat({
-            message: `[SYSTEM] Damage received: ${damage}`,
-            messageType: ChatMessageTypeEnum.INFO,
-        });
+        victim.debugChat(`Damage received: ${damage}`);
 
         victim.sendDamageReceived({
             damage,
@@ -159,15 +155,9 @@ export default class MonsterBattle {
                 reflectDamage = reflectDamage / 3 + 0.5; //TODO: verify this numbers
             }
 
-            victim.chat({
-                messageType: ChatMessageTypeEnum.INFO,
-                message: `[SYSTEM][REFLECT] You applied ${Math.round(reflectDamage)} as a reflect damage`,
-            });
+            victim.debugChat(`[REFLECT] You applied ${Math.round(reflectDamage)} as a reflect damage`);
 
-            victim.chat({
-                message: `[SYSTEM] Damage received: ${damage}`,
-                messageType: ChatMessageTypeEnum.INFO,
-            });
+            victim.debugChat(`Damage received: ${damage}`);
 
             victim.sendDamageReceived({
                 damage,
@@ -204,10 +194,7 @@ export default class MonsterBattle {
         if (this.attacker.isDeathBlower()) {
             if (MathUtil.getRandomInt(1, 100) <= this.attacker.getDeathBlowChance()) {
                 damage *= 4;
-                victim.chat({
-                    messageType: ChatMessageTypeEnum.INFO,
-                    message: `[SYSTEM][DEATH_BLOW] You received ${Math.round(damage / 5)} extra damage as deathblow`,
-                });
+                victim.debugChat(`[DEATH_BLOW] You received ${Math.round(damage / 5)} extra damage as deathblow`);
             }
         }
 
@@ -219,10 +206,7 @@ export default class MonsterBattle {
         if (MathUtil.getRandomInt(1, 100) <= criticalChance) {
             damage *= 2;
             damageFlags.set(DamageFlagEnum.CRITICAL);
-            victim.chat({
-                messageType: ChatMessageTypeEnum.INFO,
-                message: `[SYSTEM][CRIT_DAMAGE] You received ${Math.round(damage / 2)} extra damage as critical`,
-            });
+            victim.debugChat(`[CRIT_DAMAGE] You received ${Math.round(damage / 2)} extra damage as critical`);
         }
 
         return Math.round(damage);
@@ -233,10 +217,7 @@ export default class MonsterBattle {
         if (MathUtil.getRandomInt(1, 100) <= penetrateChance) {
             damage += victim.getDefense(); //TODO: is this a bug or feature?
             damageFlags.set(DamageFlagEnum.PENETRATE);
-            victim.chat({
-                messageType: ChatMessageTypeEnum.INFO,
-                message: `[SYSTEM][PENETRATE_DAMAGE] You received ${victim.getDefense()} extra damage as penetrate`,
-            });
+            victim.debugChat(`[PENETRATE_DAMAGE] You received ${victim.getDefense()} extra damage as penetrate`);
         }
         return Math.round(damage);
     }

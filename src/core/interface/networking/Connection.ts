@@ -63,6 +63,10 @@ export default abstract class Connection {
         return this.lastHandshake;
     }
 
+    getState() {
+        return this.state;
+    }
+
     setState(value: ConnectionStateEnum) {
         this.state = value;
         this.updateState();
@@ -98,5 +102,9 @@ export default abstract class Connection {
     close() {
         this.stopKeepalive();
         this.socket.destroy();
+    }
+
+    isClosed() {
+        return this.socket.destroyed;
     }
 }

@@ -24,6 +24,7 @@ import CharacterUpdatePacket from '@/core/interface/networking/packets/packet/ou
 import CharacterPointsPacket from '@/core/interface/networking/packets/packet/out/CharacterPointsPacket';
 import CharacterDetailsPacket from '@/core/interface/networking/packets/packet/out/CharacterDetailsPacket';
 import CharacterDiedPacket from '@/core/interface/networking/packets/packet/out/CharacterDiedPacket';
+import StunPacket from '@/core/interface/networking/packets/packet/out/StunPacket';
 import SyncPositionPacket from '@/core/interface/networking/packets/packet/out/SyncPositionPacket';
 import TeleportPacket from '@/core/interface/networking/packets/packet/out/TeleportPacket';
 import Ip from '@/core/util/Ip';
@@ -46,6 +47,7 @@ import { PlayerBattle } from './delegate/battle/PlayerBattle';
 import { AttackTypeEnum } from '@/core/enum/AttackTypeEnum';
 import type Monster from '../mob/Monster';
 import { AffectBitsTypeEnum } from '@/core/enum/AffectBitsTypeEnum';
+import { AffectTypeEnum } from '@/core/enum/AffectTypeEnum';
 import SpecialEffectPacket from '@/core/interface/networking/packets/packet/out/SpecialEffectPacket';
 import { SpecialEffectTypeEnum } from '@/core/enum/SpecialEffectTypeEnum';
 import UpdateItemPacket from '@/core/interface/networking/packets/packet/out/UpdateItemPacket';
@@ -68,11 +70,13 @@ import ShopResultPacket, {
     ShopResultPacketParams,
 } from '@/core/interface/networking/packets/packet/out/ShopResultPacket';
 import ShopEndPacket from '@/core/interface/networking/packets/packet/out/ShopEndPacket';
+import { PlayerHorse } from './delegate/PlayerHorse';
 import PrivateShop from '@/core/domain/shop/PrivateShop';
 import ShopSignPacket, { ShopSignPacketParams } from '@/core/interface/networking/packets/packet/out/ShopSignPacket';
 import ShopUpdateItemPacket, {
     ShopUpdateItemParams,
 } from '@/core/interface/networking/packets/packet/out/ShopUpdateItemPacket';
+import NPC from '../mob/NPC';
 import { TimedEventsEnum } from '@/core/enum/TimedEventsEnum';
 import GlobalEventTimerManager from '@/core/domain/manager/GlobalEventTimeManager';
 import { QuickSlotTypeEnum } from '@/core/enum/QuickSlotTypeEnum';
@@ -104,9 +108,33 @@ const ATTACK_SPEED_REFERENCE_MS = 15_000;
 const MIN_ATTACK_INTERVAL_MS = 80;
 
 // Anti-teleport: max distance (map units, 100/m) a single move packet may cover.
-// The original rejects longer jumps and resyncs the client; a legitimate
-// client never sends a longer segment. Kept generous here.
+// The original rejects > 25m walking / 40m riding and warps the player back;
+// a legitimate client never sends a longer segment. Kept generous here.
 const MAX_MOVE_DISTANCE = 2500;
+const MAX_MOVE_DISTANCE_RIDING = 4000;
+
+// The cap above has no time component: many small hops sent fast pass it.
+// Tolerance absorbs latency and the packet bunching that follows a lag spike.
+const MOVE_WINDOW_MS = 1_000;
+const MOVE_DISTANCE_TOLERANCE = 2;
+
+// Chat flood limit. The original scores banned words per IP instead of capping
+// the rate, which needs a banword list we do not have, so this is a plain
+// rolling window: wide enough that nobody types through it, narrow enough to
+// stop the spam modules the public hacks ship, which send dozens per second.
+const CHAT_WINDOW_MS = 5_000;
+const CHAT_MAX_PER_WINDOW = 10;
+
+// Shout rules from the original (input_main.cpp): a minimum level, then a
+// 15 second cooldown that silently drops the message.
+const SHOUT_MIN_LEVEL = 15;
+const SHOUT_COOLDOWN_MS = 15_000;
+
+// From the original's recovery_event (char.cpp): the percent is indexed by how
+// many 3s steps since the character last moved, and the flat part is added
+// before the regen bonus, not after.
+const RECOVERY_PERCENT_BY_STEP = [1, 5, 5, 5, 5, 5, 5, 5, 5, 5];
+const RECOVERY_FLAT_HEALTH = 15;
 
 export default class Player extends Character {
     private readonly accountId: number;
@@ -132,8 +160,13 @@ export default class Player extends Character {
     //connection
     private connection: GameConnection | null = null;
 
+    private readonly logger: Logger;
+
     //save
     private readonly saveCharacterService: SaveCharacterService;
+
+    //manager
+    private readonly mobManager: MobManager;
 
     //pos
     private lastTimeInBattle: number = 0;
@@ -141,6 +174,12 @@ export default class Player extends Character {
     private lastAttackVictimVid: number = 0;
     /** Last client-reported position accepted by the anti-teleport check. */
     private lastReportedPosition: { x: number; y: number } | null = null;
+    private recentMoves: Array<{ time: number; distance: number }> = [];
+
+    //chat
+    private debugMode: boolean = false;
+    private chatTimes: Array<number> = [];
+    private lastShoutTime: number = 0;
 
     //quests
     private readonly quests: Map<number, AbstractQuest> = new Map();
@@ -148,6 +187,7 @@ export default class Player extends Character {
 
     private currentShop: Shop | null = null;
     private currentShopNpc: Mob | null = null;
+
     private privateShop: PrivateShop | null = null;
     private currentPrivateShopOwner: Player | null = null;
 
@@ -155,6 +195,9 @@ export default class Player extends Character {
     private myShopClosedAt: number | null = null;
 
     private polymorphVnum: number = 0;
+
+    // Horse riding delegate
+    private readonly horse: PlayerHorse;
 
     constructor(
         {
@@ -197,6 +240,11 @@ export default class Player extends Character {
             baseAttackSpeed = 0,
             baseMovementSpeed = 0,
             quickSlot,
+            horseLevel = 0,
+            horseHealth = 0,
+            horseStamina = 0,
+            horseName = '',
+            horseRiding = 0,
         }: {
             id: number;
             accountId: number;
@@ -237,6 +285,11 @@ export default class Player extends Character {
             baseAttackSpeed?: number;
             baseMovementSpeed?: number;
             quickSlot?: Map<number, { type: number; position: number }>;
+            horseLevel?: number;
+            horseHealth?: number;
+            horseStamina?: number;
+            horseName?: string;
+            horseRiding?: number;
         },
         {
             animationManager,
@@ -286,7 +339,27 @@ export default class Player extends Character {
         this.appearance = appearance;
         this.quickSlot = quickSlot || new Map<number, { type: QuickSlotTypeEnum; position: number }>();
 
+        this.logger = logger;
         this.config = config;
+        this.mobManager = mobManager;
+        this.horse = new PlayerHorse({
+            logger,
+            chat: (opts) => this.chat(opts),
+            isEventTimerActive: (id) => this.isEventTimerActive(id),
+            addEventTimer: (opts) => this.addEventTimer(opts),
+            removeEventTimer: (id) => this.removeEventTimer(id),
+            broadcastMountChange: () => this.broadcastMountChange(),
+            showHorseCorpse: (entity) => this.showHorseCorpse(entity),
+            isRunningPrivateShop: () => this.isRunningPrivateShop(),
+            getPositionX: () => this.positionX,
+            getPositionY: () => this.positionY,
+            getTargetPosition: () => this.getTargetPosition(),
+            getName: () => this.name,
+            getArea: () => this.area,
+            save: () => this.save(),
+            recalculatePoints: () => this.points.calcPoints(),
+            sendPoints: () => this.sendPoints(),
+        });
         this.inventory = new Inventory({ config: this.config, ownerId: this.id });
         this.inventory.subscribe(InventoryEventsEnum.ITEM_EQUIPPED, this.onItemEquipped.bind(this));
         this.inventory.subscribe(InventoryEventsEnum.ITEM_UNEQUIPPED, this.onItemUnequipped.bind(this));
@@ -331,6 +404,7 @@ export default class Player extends Character {
         this.skills = new PlayerSkill({ player: this, skillManager });
 
         this.saveCharacterService = saveCharacterService;
+        this.horse.initialize(horseLevel, horseHealth, horseStamina, horseName, Boolean(horseRiding));
 
         this.stateMachine
             .addState({
@@ -390,6 +464,7 @@ export default class Player extends Character {
             level: this.getLevel(),
             name: this.getName(),
             rotation: this.getRotation(),
+            mountId: this.getMountVnum(),
         });
         this.applyInvisibleAffect(3);
 
@@ -433,6 +508,7 @@ export default class Player extends Character {
     }
 
     async onDespawn(): Promise<void> {
+        this.horse.despawn();
         this.removeTimers();
         this.forgetMeAsTarget();
         //TODO: logout from party
@@ -516,6 +592,14 @@ export default class Player extends Character {
     }
 
     attack(attackType: AttackTypeEnum, victim: Player | Monster) {
+        if (this.horse.isTemporaryRiding()) {
+            this.chat({
+                messageType: ChatMessageTypeEnum.INFO,
+                message: 'You cannot attack while using a rented horse.',
+            });
+            return;
+        }
+
         if (victim.isDead()) {
             this.setPos(PositionEnum.STANDING);
             return;
@@ -536,6 +620,7 @@ export default class Player extends Character {
 
         this.setPos(PositionEnum.FIGHTING);
         this.lastTimeInBattle = now;
+        this.onMove();
         this.battle.attack(attackType, victim);
     }
 
@@ -546,24 +631,78 @@ export default class Player extends Character {
     }
 
     /**
-     * Rejects move packets that jump farther than a single step allows
-     * (teleport hack). A legitimate client segments long walks, so a request
-     * beyond the cap is either a hack or a desync — in both cases we snap the
-     * client back to the server's authoritative position and drop the move.
+     * Rate limits every incoming chat packet, commands included. Counts this
+     * message when it is allowed, so a client that keeps sending stays blocked
+     * for as long as it floods rather than being let through every other window.
+     */
+    isChatAllowed(): boolean {
+        const now = performance.now();
+        this.chatTimes = this.chatTimes.filter((time) => now - time < CHAT_WINDOW_MS);
+
+        if (this.chatTimes.length >= CHAT_MAX_PER_WINDOW) return false;
+
+        this.chatTimes.push(now);
+        return true;
+    }
+
+    hasShoutLevel(): boolean {
+        return this.getPoint(PointsEnum.LEVEL) >= SHOUT_MIN_LEVEL;
+    }
+
+    getShoutMinLevel(): number {
+        return SHOUT_MIN_LEVEL;
+    }
+
+    /** True when the shout cooldown elapsed; starts a new one when it does. */
+    isShoutAllowed(): boolean {
+        const now = performance.now();
+
+        if (now - this.lastShoutTime < SHOUT_COOLDOWN_MS) return false;
+
+        this.lastShoutTime = now;
+        return true;
+    }
+
+    private isMoveRateAllowed(distance: number, now: number): boolean {
+        const distancePerMs = this.getMoveDistancePerMs();
+
+        if (distancePerMs === null) return true;
+
+        this.recentMoves = this.recentMoves.filter((move) => now - move.time < MOVE_WINDOW_MS);
+
+        const accumulated = this.recentMoves.reduce((total, move) => total + move.distance, 0);
+        const budget = distancePerMs * MOVE_WINDOW_MS * MOVE_DISTANCE_TOLERANCE;
+
+        if (accumulated + distance > budget) return false;
+
+        this.recentMoves.push({ time: now, distance });
+        return true;
+    }
+
+    /**
+     * Rejects move packets that jump farther than a single step allows, or
+     * that arrive faster than the character can walk (teleport hack). A
+     * legitimate client segments long walks, so a request beyond either bound
+     * is either a hack or a desync — in both cases we snap the client back to
+     * the server's authoritative position and drop the move.
      * Returns true when the requested destination is acceptable.
      */
     isMoveAllowed(x: number, y: number): boolean {
+        const max = this.horse.isRiding() ? MAX_MOVE_DISTANCE_RIDING : MAX_MOVE_DISTANCE;
+
         // Like the original, measure against the client's last accepted
         // report — the server-side position is interpolated and lags behind a
-        // fast client, which would trip the cap on honest moves. The server
-        // position is the fallback anchor (first move after login or a
-        // teleport), so a crafted jump is still capped from a trusted point.
-        const anchors = [this.lastReportedPosition, { x: this.getPositionX(), y: this.getPositionY() }];
-        const allowed = anchors.some(
-            (anchor) => anchor && MathUtil.calcDistance(anchor.x, anchor.y, x, y) <= MAX_MOVE_DISTANCE,
-        );
+        // fast (mounted) client, which would trip the cap on honest moves.
+        // The server position is the fallback anchor (first move after login
+        // or a teleport), so a crafted jump is still capped from a trusted point.
+        const serverPosition = { x: this.getPositionX(), y: this.getPositionY() };
+        const anchors = [this.lastReportedPosition, serverPosition];
+        const withinCap = anchors.some((anchor) => anchor && MathUtil.calcDistance(anchor.x, anchor.y, x, y) <= max);
 
-        if (allowed) {
+        const anchor = this.lastReportedPosition ?? serverPosition;
+        const distance = MathUtil.calcDistance(anchor.x, anchor.y, x, y);
+
+        if (withinCap && this.isMoveRateAllowed(distance, performance.now())) {
             this.lastReportedPosition = { x, y };
             return true;
         }
@@ -674,10 +813,7 @@ export default class Player extends Character {
 
         const attackerName =
             attacker instanceof Mob ? `${attacker.getFolder()}:${attacker.getVirtualId()}` : attacker.getName();
-        this.chat({
-            messageType: ChatMessageTypeEnum.INFO,
-            message: `[SYSTEM] You has been attacked by ${attackerName}`,
-        });
+        this.debugChat(`You has been attacked by ${attackerName}`);
         this.addPoint(PointsEnum.HEALTH, -damage);
 
         if (this.points.getPoint(PointsEnum.HEALTH) <= 0) {
@@ -739,35 +875,61 @@ export default class Player extends Character {
         );
     }
 
-    regenHealth() {
-        if (this.isAffectByFlag(AffectBitsTypeEnum.STUN)) return;
-        if (this.isDead()) return;
-        if (this.points.getPoint(PointsEnum.HEALTH) >= this.points.getPoint(PointsEnum.MAX_HEALTH)) return;
+    toggleDebugMode() {
+        this.debugMode = !this.debugMode;
+        return this.debugMode;
+    }
 
-        let percent = this.stateMachine.getCurrentStateName() === EntityStateEnum.IDLE ? 5 : 1;
-        percent += percent * (this.points.getPoint(PointsEnum.HP_REGEN) / 100);
-        const amount = this.points.getPoint(PointsEnum.MAX_HEALTH) * (percent / 100);
-        this.points.addPoint(PointsEnum.HEALTH, Math.floor(amount));
+    isDebugMode() {
+        return this.debugMode;
+    }
+
+    /** Chat output that only the player's own /debug toggle turns on. */
+    debugChat(message: string) {
+        if (!this.debugMode) return;
+
         this.chat({
             messageType: ChatMessageTypeEnum.INFO,
-            message: `[SYSTEM][HP REGEN] amount: ${Math.floor(amount)} percent: ${percent}`,
+            message: `[DEBUG] ${message}`,
         });
+    }
+
+    private getRecoveryPercent() {
+        const steps = Math.floor((performance.now() - this.lastMoveTime) / REGEN_INTERVAL);
+        return RECOVERY_PERCENT_BY_STEP[Math.min(RECOVERY_PERCENT_BY_STEP.length - 1, steps)];
+    }
+
+    private isRecoveryBlocked() {
+        return (
+            this.isAffectByFlag(AffectBitsTypeEnum.STUN) ||
+            this.isAffectByFlag(AffectBitsTypeEnum.POISON) ||
+            this.isDead()
+        );
+    }
+
+    regenHealth() {
+        if (this.isRecoveryBlocked()) return;
+        if (this.points.getPoint(PointsEnum.HEALTH) >= this.points.getPoint(PointsEnum.MAX_HEALTH)) return;
+
+        const percent = this.getRecoveryPercent();
+        const base = RECOVERY_FLAT_HEALTH + (this.points.getPoint(PointsEnum.MAX_HEALTH) * percent) / 100;
+        const amount = Math.floor(base + (base * this.points.getPoint(PointsEnum.HP_REGEN)) / 100);
+
+        this.points.addPoint(PointsEnum.HEALTH, amount);
+        this.debugChat(`[HP REGEN] amount: ${amount} percent: ${percent}`);
         this.sendPoints();
     }
 
     regenMana() {
-        if (this.isAffectByFlag(AffectBitsTypeEnum.STUN)) return;
-        if (this.isDead()) return;
+        if (this.isRecoveryBlocked()) return;
         if (this.points.getPoint(PointsEnum.MANA) >= this.points.getPoint(PointsEnum.MAX_MANA)) return;
 
-        let percent = this.stateMachine.getCurrentStateName() === EntityStateEnum.IDLE ? 5 : 1;
-        percent += percent * (this.points.getPoint(PointsEnum.MANA_REGEN) / 100);
-        const amount = this.points.getPoint(PointsEnum.MAX_MANA) * (percent / 100);
-        this.points.addPoint(PointsEnum.MANA, Math.floor(amount));
-        this.chat({
-            messageType: ChatMessageTypeEnum.INFO,
-            message: `[SYSTEM][MANA REGEN] amount: ${Math.floor(amount)} percent: ${percent}`,
-        });
+        const percent = this.getRecoveryPercent();
+        const base = (this.points.getPoint(PointsEnum.MAX_MANA) * percent) / 100;
+        const amount = Math.floor(base + (base * this.points.getPoint(PointsEnum.MANA_REGEN)) / 100);
+
+        this.points.addPoint(PointsEnum.MANA, amount);
+        this.debugChat(`[MANA REGEN] amount: ${amount} percent: ${percent}`);
         this.sendPoints();
     }
 
@@ -807,6 +969,7 @@ export default class Player extends Character {
 
         // The anti-teleport anchor is stale after a server-initiated warp.
         this.lastReportedPosition = null;
+        this.recentMoves = [];
 
         this.connection?.send(
             new TeleportPacket({
@@ -830,6 +993,8 @@ export default class Player extends Character {
         level,
         name,
         rotation,
+        mountId = 0,
+        state = 0,
     }: {
         virtualId: number;
         playerClass: number;
@@ -842,6 +1007,8 @@ export default class Player extends Character {
         level: number;
         name: string;
         rotation: number;
+        mountId?: number;
+        state?: number;
     }) {
         this.connection?.send(
             new CharacterSpawnPacket({
@@ -855,7 +1022,7 @@ export default class Player extends Character {
                 positionZ: 0,
                 rotation,
                 affects: new Array(2).fill(0), //TODO
-                state: 0, //TODO
+                state,
             }),
         );
 
@@ -866,7 +1033,7 @@ export default class Player extends Character {
                 level,
                 playerName: name,
                 guildId: 0, //todo
-                mountId: 0, //todo
+                mountId,
                 pkMode: 0, //todo
                 rankPoints: 0, //todo
             }),
@@ -885,6 +1052,8 @@ export default class Player extends Character {
         level,
         name,
         rotation,
+        mountId = 0,
+        state = 0,
     }: {
         virtualId: number;
         playerClass: number;
@@ -897,6 +1066,8 @@ export default class Player extends Character {
         level: number;
         name: string;
         rotation: number;
+        mountId?: number;
+        state?: number;
     }) {
         this.showEntity({
             virtualId,
@@ -910,6 +1081,8 @@ export default class Player extends Character {
             level,
             name,
             rotation,
+            mountId,
+            state,
         });
     }
 
@@ -940,6 +1113,7 @@ export default class Player extends Character {
         weaponId,
         hairId,
         affects,
+        mountVnum = 0,
     }: {
         vid: number;
         attackSpeed: number;
@@ -948,6 +1122,7 @@ export default class Player extends Character {
         weaponId: number;
         hairId: number;
         affects: AffectBitsTypeEnum[];
+        mountVnum?: number;
     }) {
         this.connection?.send(
             new CharacterUpdatePacket({
@@ -958,7 +1133,7 @@ export default class Player extends Character {
                 affects,
                 state: 0, //TODO
                 guildId: 0, //TODO
-                mountVnum: 0, //TODO
+                mountVnum,
                 pkMode: 0, //TODO
                 rankPoints: 0, //TODO
             }),
@@ -1181,7 +1356,7 @@ export default class Player extends Character {
                 parts: [this.getBody()?.getId() ?? 0, this.getWeapon()?.getId() ?? 0, 0, this.getHair()?.getId() ?? 0],
                 affects: this.getAffectFlags(),
                 guildId: 0, //TODO
-                mountVnum: 0, //TODO
+                mountVnum: this.horse.getMountVnum(),
                 pkMode: 0, //TODO
                 rankPoints: 0, //TODO
                 state: 0, //TODO
@@ -1198,6 +1373,7 @@ export default class Player extends Character {
                     weaponId: this.getWeaponId() ?? 0,
                     hairId: this.getHairId() ?? 0,
                     affects: this.getAffectFlags(),
+                    mountVnum: this.horse.getMountVnum(),
                 });
             }
         }
@@ -1382,6 +1558,24 @@ export default class Player extends Character {
         );
     }
 
+    getEquipFailureReason(item: Item): string | undefined {
+        if (item.getWearFlags().getFlag() < 1) return undefined;
+
+        if (this.getLevel() < item.getLevelLimit()) {
+            return `Your level is too low to equip this item. Required level: ${item.getLevelLimit()}.`;
+        }
+
+        if (item.getAntiFlags().is(this.antiFlagClass)) {
+            return 'Your class cannot use this item.';
+        }
+
+        if (item.getAntiFlags().is(this.antiFlagGender)) {
+            return 'This item cannot be equipped by your gender.';
+        }
+
+        return undefined;
+    }
+
     moveItem({
         fromWindow,
         fromPosition,
@@ -1402,7 +1596,11 @@ export default class Player extends Character {
         if (!this.getInventory().haveAvailablePosition(toPosition, item.getSize())) return;
 
         if (this.getInventory().isEquipmentPosition(toPosition)) {
-            if (!this.isWearable(item)) return;
+            if (!this.isWearable(item)) {
+                const reason = this.getEquipFailureReason(item);
+                if (reason) this.chat({ messageType: ChatMessageTypeEnum.INFO, message: reason });
+                return;
+            }
             if (!this.getInventory().isValidSlot(item, toPosition)) return;
         }
 
@@ -1616,6 +1814,14 @@ export default class Player extends Character {
 
     onNearbyEntityAdded(otherEntity: GameEntity) {
         if (otherEntity instanceof Character) {
+            // A corpse-flagged NPC (dead horse) is alive server-side but must
+            // look dead to everyone except its owner — the owner needs it
+            // alive client-side to be able to click it (picking filters dead
+            // actors), so the owner sees it standing with a stun marker.
+            const corpseOwnerVid = otherEntity instanceof NPC ? otherEntity.getCorpseOwnerVirtualId() : null;
+            const displayAsDead =
+                otherEntity.isDead() || (corpseOwnerVid !== null && corpseOwnerVid !== this.virtualId);
+
             this.showOtherEntity({
                 virtualId: otherEntity.getVirtualId(),
                 playerClass: otherEntity.getClassId(),
@@ -1628,29 +1834,20 @@ export default class Player extends Character {
                 level: otherEntity.getLevel(),
                 name: otherEntity.getName(),
                 rotation: otherEntity.getRotation(),
+                mountId: otherEntity instanceof Player ? otherEntity.getMountVnum() : 0,
+                state: displayAsDead ? 1 : 0,
             });
 
-            if (otherEntity instanceof Player) {
-                this.otherEntityUpdated({
-                    vid: otherEntity.getVirtualId(),
-                    attackSpeed: otherEntity.getAttackSpeed(),
-                    moveSpeed: otherEntity.getMovementSpeed(),
-                    bodyId: otherEntity.getBody()?.getId() ?? 0,
-                    weaponId: otherEntity.getWeapon()?.getId() ?? 0,
-                    hairId: otherEntity.getHair()?.getId() ?? 0,
-                    affects: otherEntity.getAffectFlags(),
-                });
+            // Entities that are already dead (e.g. a summoned dead horse) must
+            // be rendered lying on the ground, not standing idle.
+            if (displayAsDead) {
+                this.otherEntityDied(otherEntity);
+            } else if (corpseOwnerVid === this.virtualId) {
+                this.sendStun(otherEntity.getVirtualId());
+            }
 
-                // If the other player has an active private shop, announce it to us
-                if (otherEntity.isRunningPrivateShop()) {
-                    const shop = otherEntity.getPrivateShop();
-                    if (shop) {
-                        this.sendShopSign({
-                            ownerVid: otherEntity.getVirtualId(),
-                            sign: shop.getSign(),
-                        });
-                    }
-                }
+            if (otherEntity instanceof Player) {
+                this.onNearbyPlayerAdded(otherEntity);
             }
         }
 
@@ -1666,6 +1863,30 @@ export default class Player extends Character {
         }
     }
 
+    private onNearbyPlayerAdded(otherPlayer: Player) {
+        this.otherEntityUpdated({
+            vid: otherPlayer.getVirtualId(),
+            attackSpeed: otherPlayer.getAttackSpeed(),
+            moveSpeed: otherPlayer.getMovementSpeed(),
+            bodyId: otherPlayer.getBody()?.getId() ?? 0,
+            weaponId: otherPlayer.getWeapon()?.getId() ?? 0,
+            hairId: otherPlayer.getHair()?.getId() ?? 0,
+            affects: otherPlayer.getAffectFlags(),
+            mountVnum: otherPlayer.getMountVnum(),
+        });
+
+        // If the other player has an active private shop, announce it to us
+        if (otherPlayer.isRunningPrivateShop()) {
+            const shop = otherPlayer.getPrivateShop();
+            if (shop) {
+                this.sendShopSign({
+                    ownerVid: otherPlayer.getVirtualId(),
+                    sign: shop.getSign(),
+                });
+            }
+        }
+    }
+
     onNearbyEntityRemoved(otherEntity: GameEntity) {
         if (otherEntity instanceof Character) {
             this.hideOtherEntity({ virtualId: otherEntity.getVirtualId() });
@@ -1673,6 +1894,22 @@ export default class Player extends Character {
 
         if (otherEntity instanceof DroppedItem) {
             this.hideDroppedItem({ virtualId: otherEntity.getVirtualId() });
+        }
+    }
+
+    /**
+     * Re-sends every entity currently in view to our own client.
+     *
+     * The client wipes its whole scene whenever it receives a CharacterSpawn
+     * for its own VID (used to swap the player's own appearance — polymorph,
+     * mount, etc.). Any code that sends such a self-spawn MUST call this
+     * afterwards, or nearby entities that stay in range are never re-spawned
+     * (the AOI only re-announces on a nearby-set change) and vanish from the
+     * player's view until relog.
+     */
+    resendNearbyToSelf() {
+        for (const entity of this.nearbyEntities.values()) {
+            this.onNearbyEntityAdded(entity);
         }
     }
 
@@ -1847,6 +2084,229 @@ export default class Player extends Character {
         );
     }
 
+    getArea() {
+        return this.area;
+    }
+
+    // ─── Horse Riding ─────────────────────────────────────────────────────────
+
+    getHorseLevel(): number {
+        return this.horse.getLevel();
+    }
+
+    setHorseLevel(level: number): void {
+        this.horse.setLevel(level);
+    }
+
+    getHorseHealth(): number {
+        return this.horse.getHealth();
+    }
+
+    getHorseMaxHealth(): number {
+        return this.horse.getMaxHealth();
+    }
+
+    getHorseStamina(): number {
+        return this.horse.getStamina();
+    }
+
+    getHorseMaxStamina(): number {
+        return this.horse.getMaxStamina();
+    }
+
+    getHorseGrade(): number {
+        return this.horse.getGrade();
+    }
+
+    getHorseStats() {
+        return this.horse.getStats();
+    }
+
+    getMountVnum(): number {
+        return this.horse.getMountVnum();
+    }
+
+    isHorseRiding(): boolean {
+        return this.horse.isRiding();
+    }
+
+    isTemporaryHorseRiding(): boolean {
+        return this.horse.isTemporaryRiding();
+    }
+
+    startRiding(): boolean {
+        return this.horse.startRiding();
+    }
+
+    summonHorse(): boolean {
+        return this.horse.summon();
+    }
+
+    restoreHorseRiding(): void {
+        this.horse.restoreRidingState();
+    }
+
+    startTemporaryRiding(mountVnum: number, durationMs: number): boolean {
+        return this.horse.startTemporaryRiding(mountVnum, durationMs);
+    }
+
+    stopRiding(forced: boolean = false): boolean {
+        return this.horse.stopRiding(forced);
+    }
+
+    toggleRiding() {
+        if (this.isHorseRiding()) {
+            this.stopRiding();
+        } else {
+            this.startRiding();
+        }
+    }
+
+    sendHorseAway(): boolean {
+        return this.horse.sendAway();
+    }
+
+    reviveHorse(): boolean {
+        return this.horse.revive();
+    }
+
+    feedHorse(): boolean {
+        return this.horse.feed();
+    }
+
+    setHorseHealth(value: number): void {
+        this.horse.setHealth(value);
+    }
+
+    setHorseStamina(value: number): void {
+        this.horse.setStamina(value);
+    }
+
+    getSpawnedHorse(): NPC | null {
+        return this.horse.getSpawnedHorse();
+    }
+
+    getHorseName(): string {
+        return this.horse.getName();
+    }
+
+    setHorseName(name: string): number {
+        return this.horse.setName(name);
+    }
+
+    private sendStun(vid: number): void {
+        this.connection?.send(new StunPacket({ vid }));
+    }
+
+    /**
+     * Turn an alive NPC into a corpse for everyone but this player: others
+     * render it lying dead, the owner keeps it clickable (standing, stunned).
+     */
+    private showHorseCorpse(entity: NPC): void {
+        entity.setCorpseOwnerVirtualId(this.virtualId);
+
+        for (const other of entity.getNearbyEntities().values()) {
+            if (other instanceof Player && other.getVirtualId() !== this.virtualId) {
+                other.otherEntityDied(entity);
+            }
+        }
+
+        this.sendStun(entity.getVirtualId());
+    }
+
+    private broadcastMountChange(): void {
+        const mountVnum = this.horse.getMountVnum();
+        const isRiding = this.horse.isRiding();
+        const parts = [this.getBody()?.getId() ?? 0, this.getWeapon()?.getId() ?? 0, 0, this.getHair()?.getId() ?? 0];
+
+        // Packets are single-use (pack() advances the internal buffer cursor),
+        // so a fresh instance is required per recipient.
+        const createSpawnPacket = () =>
+            new CharacterSpawnPacket({
+                vid: this.getVirtualId(),
+                playerClass: this.getClassId(),
+                entityType: this.getEntityType(),
+                attackSpeed: this.getAttackSpeed(),
+                movementSpeed: this.getMovementSpeed(),
+                positionX: this.positionX,
+                positionY: this.positionY,
+                positionZ: 0,
+                rotation: this.getRotation(),
+                affects: this.getAffectFlags(),
+                state: this.isDead() ? 1 : 0,
+            });
+
+        const createInfoPacket = () =>
+            new CharacterInfoPacket({
+                vid: this.getVirtualId(),
+                empireId: this.empire,
+                level: this.getLevel(),
+                playerName: this.name,
+                parts: parts,
+                guildId: 0,
+                mountId: mountVnum,
+                pkMode: 0,
+                rankPoints: 0,
+            });
+
+        // Send CharacterSpawnPacket and CharacterInfoPacket to self first.
+        // The self-spawn wipes the client scene, so nearby entities are
+        // re-announced below (resendNearbyToSelf) — otherwise onlookers who
+        // stay in range disappear from this player's view until relog.
+        this.connection?.send(createSpawnPacket());
+        this.connection?.send(createInfoPacket());
+
+        // Send CharacterUpdatePacket to self with new mount info
+        this.connection?.send(
+            new CharacterUpdatePacket({
+                vid: this.virtualId,
+                attackSpeed: this.points.getPoint(PointsEnum.ATTACK_SPEED),
+                moveSpeed: this.points.getPoint(PointsEnum.MOVE_SPEED),
+                parts: parts,
+                affects: this.getAffectFlags(),
+                guildId: 0,
+                mountVnum: mountVnum,
+                pkMode: 0,
+                rankPoints: 0,
+                state: this.isDead() ? 1 : 0,
+            }),
+        );
+
+        // Send mount affect to self when mounting
+        if (isRiding) {
+            this.sendAffect({
+                type: AffectTypeEnum.MOUNT,
+                apply: 0,
+                duration: 0,
+                flag: 0,
+                value: mountVnum,
+                manaCost: 0,
+            });
+        }
+
+        // Rebuild our own scene wiped by the self-spawn above
+        this.resendNearbyToSelf();
+
+        for (const entity of this.nearbyEntities.values()) {
+            if (entity instanceof Player) {
+                // Send CharacterSpawnPacket and CharacterInfoPacket to other players
+                entity.connection?.send(createSpawnPacket());
+                entity.connection?.send(createInfoPacket());
+                // Also send CharacterUpdatePacket with the new mount info
+                entity.otherEntityUpdated({
+                    vid: this.getVirtualId(),
+                    attackSpeed: this.points.getPoint(PointsEnum.ATTACK_SPEED),
+                    moveSpeed: this.points.getPoint(PointsEnum.MOVE_SPEED),
+                    bodyId: this.getBody()?.getId() ?? 0,
+                    weaponId: this.getWeapon()?.getId() ?? 0,
+                    hairId: this.getHair()?.getId() ?? 0,
+                    affects: this.getAffectFlags(),
+                    mountVnum: mountVnum,
+                });
+            }
+        }
+    }
+
     /**
      * Quickslot area
      */
@@ -1990,6 +2450,11 @@ export default class Player extends Character {
             baseAttackSpeed,
             baseMovementSpeed,
             quickSlot,
+            horseLevel,
+            horseHealth,
+            horseStamina,
+            horseName,
+            horseRiding,
         }: {
             id: number;
             accountId: number;
@@ -2030,6 +2495,11 @@ export default class Player extends Character {
             baseAttackSpeed: number;
             baseMovementSpeed: number;
             quickSlot: Map<number, { type: QuickSlotTypeEnum; position: number }>;
+            horseLevel?: number;
+            horseHealth?: number;
+            horseStamina?: number;
+            horseName?: string;
+            horseRiding?: number;
         },
         {
             animationManager,
@@ -2094,6 +2564,11 @@ export default class Player extends Character {
                 baseAttackSpeed,
                 baseMovementSpeed,
                 quickSlot,
+                horseLevel,
+                horseHealth,
+                horseStamina,
+                horseName,
+                horseRiding,
             },
             {
                 animationManager,
@@ -2136,6 +2611,17 @@ export default class Player extends Character {
             availableStatusPoints: this.points.getPoint(PointsEnum.STATUS_POINTS),
             slot: this.slot,
             quickSlot: this.quickSlot,
+            horseLevel: this.getHorseLevel(),
+            horseHealth: this.getHorseHealth(),
+            horseStamina: this.getHorseStamina(),
+            horseName: this.getHorseName(),
+            horseRiding: this.isHorseRiding() && !this.horse.isTemporaryRiding() ? 1 : 0,
+        });
+    }
+
+    save(): void {
+        this.saveCharacterService.execute(this).catch((err) => {
+            this.logger.error('Failed to save character:', err);
         });
     }
 
@@ -2228,12 +2714,7 @@ export default class Player extends Character {
             rotation: this.getRotation(),
         });
 
-        // Re-announce all nearby entities to our own client.
-        // The client clears the scene when it receives a CharacterSpawn for its own VID,
-        // so we need to re-send every entity that was already in view.
-        for (const entity of this.nearbyEntities.values()) {
-            this.onNearbyEntityAdded(entity);
-        }
+        this.resendNearbyToSelf();
 
         this.sendPoints();
 
