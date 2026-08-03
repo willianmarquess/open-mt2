@@ -8,13 +8,13 @@ import { GameConfig } from '@/game/infra/config/GameConfig';
 
 const PAGE_SIZE = 45; // 5 x 9
 
-function createItem(id: number, dbId: number) {
+function createItem(id: number, dbId: number, size: number = 1) {
     return new Item({
         id,
         name: `item-${id}`,
         type: ItemTypeEnum.ITEM_USE,
         subType: ItemUseSubTypeEnum.USE_POTION,
-        size: 1,
+        size,
         antiFlags: new BitFlag(),
         flags: new BitFlag(),
         wearFlags: new BitFlag(),
@@ -92,5 +92,75 @@ describe('Inventory', () => {
         expect(inventory.getItem(PAGE_SIZE + 25)).to.equal(secondPageItem);
         expect(firstPageItem.getPosition()).to.equal(25);
         expect(secondPageItem.getPosition()).to.equal(PAGE_SIZE + 25);
+    });
+
+    it('should resolve a multi-cell item only at its anchor cell', () => {
+        const inventory = createInventory();
+        const item = createItem(11299, 1, 2);
+
+        inventory.addItemAt(item, 0);
+
+        expect(inventory.getItem(0)).to.equal(item);
+        expect(inventory.getItem(5)).to.equal(null);
+    });
+
+    it('should ignore a removal addressed by a cell that is not the anchor', () => {
+        const inventory = createInventory();
+        const item = createItem(11299, 1, 2);
+
+        inventory.addItemAt(item, 0);
+
+        inventory.removeItem(5, item.getSize());
+
+        expect(inventory.getItem(0)).to.equal(item);
+        expect(inventory.getItems().size).to.equal(1);
+        expect(inventory.haveAvailablePosition(5, 1)).to.equal(false);
+    });
+
+    it('should not clear a neighbour when a non-anchor cell is removed', () => {
+        const inventory = createInventory();
+        const item = createItem(11299, 1, 2);
+        const neighbour = createItem(27003, 2);
+
+        inventory.addItemAt(item, 0);
+        inventory.addItemAt(neighbour, 10);
+
+        inventory.removeItem(5, item.getSize());
+
+        expect(inventory.getItem(10)).to.equal(neighbour);
+    });
+
+    it('should keep every cell of a multi-cell item occupied', () => {
+        const inventory = createInventory();
+        const item = createItem(11299, 1, 2);
+
+        inventory.addItemAt(item, 0);
+
+        expect(inventory.haveAvailablePosition(0, 1)).to.equal(false);
+        expect(inventory.haveAvailablePosition(5, 1)).to.equal(false);
+        expect(inventory.haveAvailablePosition(10, 1)).to.equal(true);
+    });
+
+    it('should refuse to place an item over the non-anchor cell of a multi-cell item', () => {
+        const inventory = createInventory();
+        const item = createItem(11299, 1, 2);
+        const other = createItem(27003, 2);
+
+        inventory.addItemAt(item, 0);
+        inventory.addItemAt(other, 5);
+
+        expect(inventory.getItem(0)).to.equal(item);
+        expect(other.getPosition()).to.equal(null);
+    });
+
+    it('should free every cell when a multi-cell item is removed from its anchor', () => {
+        const inventory = createInventory();
+        const item = createItem(11299, 1, 2);
+
+        inventory.addItemAt(item, 0);
+        inventory.removeItem(0, item.getSize());
+
+        expect(inventory.getItem(0)).to.equal(null);
+        expect(inventory.haveAvailablePosition(0, 2)).to.equal(true);
     });
 });
