@@ -58,13 +58,13 @@ export default class PrivilegeCommandHandler extends CommandHandler<PrivilegeCom
         switch (kind) {
             case 'player': {
                 if (!name) {
-                    player.sendCommandErrors(['Player name is required']);
+                    player.chat({ messageType: ChatMessageTypeEnum.INFO, message: 'Player name is required' });
                     return;
                 }
                 const target = this.world.getPlayerByName(name);
 
                 if (!target) {
-                    player.sendCommandErrors(['Player not found']);
+                    player.chat({ messageType: ChatMessageTypeEnum.INFO, message: 'Player not found' });
                     return;
                 }
 
@@ -78,7 +78,10 @@ export default class PrivilegeCommandHandler extends CommandHandler<PrivilegeCom
             case 'empire': {
                 const empire = empireMapper[name as unknown as EmpireEnum];
                 if (!empire) {
-                    player.sendCommandErrors(['Invalid empire name: empire must be red, blue or yellow']);
+                    player.chat({
+                        messageType: ChatMessageTypeEnum.INFO,
+                        message: 'Invalid empire name: empire must be red, blue or yellow',
+                    });
                     return;
                 }
                 this.privilegeManager.addEmpirePrivilege(empire, privilegeType, Number(timeInSeconds), Number(value));
@@ -89,7 +92,7 @@ export default class PrivilegeCommandHandler extends CommandHandler<PrivilegeCom
                 break;
             }
             case 'guild': {
-                player.sendCommandErrors(['Not implemented yet']);
+                player.chat({ messageType: ChatMessageTypeEnum.INFO, message: 'Not implemented yet' });
                 break;
             }
         }

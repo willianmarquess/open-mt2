@@ -46,7 +46,7 @@ export default class ChatInPacketHandler extends PacketHandler<ChatInPacket> {
             case ChatMessageTypeEnum.NORMAL:
                 this.logger.debug(`[ChatInPacketHandler] NORMAL CHAT: ${message}`);
                 if (message.startsWith('/')) {
-                    this.commandManager.execute({ message, player });
+                    await this.commandManager.execute({ message, player });
                 }
 
                 //TODO: send normal message to other players in map

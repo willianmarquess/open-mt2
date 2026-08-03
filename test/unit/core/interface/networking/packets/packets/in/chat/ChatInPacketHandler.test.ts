@@ -88,6 +88,16 @@ describe('ChatInPacketHandler', () => {
         expect(playerMock.chat.called, 'the original stays silent on the cooldown').to.be.false;
     });
 
+    it('should surface a failing command instead of leaking its rejection to the process (issue #155)', async () => {
+        const failure = new Error('command handler blew up');
+        commandManagerMock.execute.rejects(failure);
+
+        let rejection: unknown = null;
+        await chatInPacketHandler.execute(connectionMock, packetMock).catch((error) => (rejection = error));
+
+        expect(rejection, 'GameServer.onData can only log a rejection the handler awaited').to.equal(failure);
+    });
+
     it('should log an error and close the connection if the packet is invalid', async () => {
         packetMock.isValid.returns(false);
         packetMock.getErrorMessage = () => ['Invalid packet format'];
