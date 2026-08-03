@@ -181,7 +181,7 @@ export default class Player extends Character {
     //chat
     private debugMode: boolean = false;
     private chatTimes: Array<number> = [];
-    private lastShoutTime: number = 0;
+    private lastShoutTime: number = Number.NEGATIVE_INFINITY;
 
     //quests
     private readonly quests: Map<number, AbstractQuest> = new Map();
@@ -638,9 +638,9 @@ export default class Player extends Character {
     }
 
     /**
-     * Rate limits every incoming chat packet, commands included. Counts this
-     * message when it is allowed, so a client that keeps sending stays blocked
-     * for as long as it floods rather than being let through every other window.
+     * Rate limits every incoming chat packet, commands included. Only delivered
+     * messages count toward the window, so a rejected flood does not extend its
+     * own block; it is capped at the per-window maximum.
      */
     isChatAllowed(): boolean {
         const now = performance.now();
