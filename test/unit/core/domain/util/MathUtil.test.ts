@@ -45,4 +45,50 @@ describe('MathUtil', () => {
         expect(randomInt).to.be.at.least(min);
         expect(randomInt).to.be.at.most(max);
     });
+
+    describe('getRandomInt over a wide range (issue #158)', () => {
+        it('should reach more than 256 distinct values', () => {
+            const seen = new Set<number>();
+            for (let i = 0; i < 4000; i++) seen.add(MathUtil.getRandomInt(1, 50_000));
+
+            expect(seen.size, 'a single byte can only produce 256 outcomes').to.be.greaterThan(256);
+        });
+
+        it('should not turn a 1-in-50000 chance into 1-in-256', () => {
+            let hits = 0;
+            for (let i = 0; i < 20_000; i++) if (MathUtil.getRandomInt(1, 50_000) === 1) hits++;
+
+            expect(hits, 'a one-byte draw would hit about 78 times in 20000').to.be.lessThan(10);
+        });
+
+        it('should produce values that are not all multiples of range/256', () => {
+            const step = Math.floor(4_000_001 / 256);
+            let offGrid = 0;
+            for (let i = 0; i < 500; i++) if ((MathUtil.getRandomInt(1, 4_000_001) - 1) % step !== 0) offGrid++;
+
+            expect(offGrid, 'a scaled byte can only land on the grid').to.be.greaterThan(400);
+        });
+    });
+
+    describe('getRandomInt bounds (issue #158)', () => {
+        it('should accept a non-integer max, as the drop range is', () => {
+            const range = (4_000_000 * 100) / 103;
+
+            expect(() => MathUtil.getRandomInt(1, range + 1)).to.not.throw();
+            expect(MathUtil.getRandomInt(1, range + 1)).to.be.at.most(Math.floor(range + 1));
+        });
+
+        it('should return min when the range is empty or inverted', () => {
+            expect(MathUtil.getRandomInt(5, 5)).to.equal(5);
+            expect(MathUtil.getRandomInt(5, 3)).to.equal(5);
+        });
+
+        it('should still honour a negative range', () => {
+            for (let i = 0; i < 200; i++) {
+                const value = MathUtil.getRandomInt(-90, 90);
+                expect(value).to.be.at.least(-90);
+                expect(value).to.be.at.most(90);
+            }
+        });
+    });
 });

@@ -35,11 +35,12 @@ export default class MathUtil {
     }
 
     static getRandomInt(min: number, max: number) {
-        const randomBytes = crypto.randomBytes(1);
-        const randomInt = randomBytes[0];
-        const range = max - min + 1;
-        const adjustedInt = Math.floor((randomInt / 256) * range) + min;
-        return adjustedInt;
+        const lower = Math.ceil(min);
+        const upper = Math.floor(max);
+
+        if (!Number.isFinite(lower) || !Number.isFinite(upper) || upper <= lower) return lower;
+
+        return crypto.randomInt(lower, upper + 1);
     }
 
     static calcRotationFromXY(x: number, y: number) {
