@@ -5,6 +5,12 @@ import AnimationManager from '@/core/domain/manager/AnimationManager';
 import { EntityStateEnum } from '@/core/enum/EntityStateEnum';
 import GlobalEventTimerManager from '@/core/domain/manager/GlobalEventTimeManager';
 
+/** Minimal surface of the rider's horse delegate that a summoned horse reads its health from. */
+export interface IHorseStats {
+    getHealth(): number;
+    getMaxHealth(): number;
+}
+
 export default class NPC extends Mob {
     /**
      * When set, every viewer except this virtualId renders the NPC as a dead
@@ -13,6 +19,9 @@ export default class NPC extends Mob {
      * clickable for its owner (used by the dead horse, issue #42).
      */
     private corpseOwnerVirtualId: number | null = null;
+
+    /** Set while this NPC is a player's summoned horse, so TARGET reports the rider's horse health. */
+    private horseStats: IHorseStats | null = null;
 
     constructor(
         params: Omit<MobParams, 'entityType'>,
@@ -59,6 +68,10 @@ export default class NPC extends Mob {
         return this.corpseOwnerVirtualId;
     }
 
+    setHorseStats(horseStats: IHorseStats | null): void {
+        this.horseStats = horseStats;
+    }
+
     applyPoison(): void {
         throw new Error('Method not implemented.');
     }
@@ -69,7 +82,13 @@ export default class NPC extends Mob {
         throw new Error('Method not implemented.');
     }
     getHealthPercentage(): number {
-        return 100;
+        if (!this.horseStats) return 100;
+
+        const maxHealth = this.horseStats.getMaxHealth();
+
+        if (!maxHealth) return 100;
+
+        return Math.round(Math.max(0, Math.min(100, (this.horseStats.getHealth() * 100) / maxHealth)));
     }
     getAttack(): number {
         throw new Error('Method not implemented.');

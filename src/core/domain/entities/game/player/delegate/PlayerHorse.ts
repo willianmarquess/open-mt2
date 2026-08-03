@@ -486,6 +486,7 @@ export class PlayerHorse {
             // m_chHorse->SetLevel(GetHorseLevel())).
             horseEntity.setPoint(PointsEnum.LEVEL, this.level);
 
+            horseEntity.setHorseStats(this);
             this.spawnedHorse = horseEntity;
 
             if (this.health <= 0) {
@@ -519,6 +520,7 @@ export class PlayerHorse {
         }
 
         this.spawnedHorse.clearMovementNodes();
+        this.spawnedHorse.setHorseStats(null);
 
         const area = this.owner.getArea();
         if (area) {

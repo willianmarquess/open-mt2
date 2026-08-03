@@ -850,6 +850,8 @@ export default class Player extends Character {
     }
 
     setTarget(target: Character) {
+        if (this.getTarget() === target) return;
+
         super.setTarget(target);
         this.sendTargetUpdated(target);
     }
@@ -857,8 +859,8 @@ export default class Player extends Character {
     sendTargetUpdated(target?: Character) {
         this.connection?.send(
             new TargetUpdatedPacket({
-                virtualId: target?.getVirtualId() || 0,
-                healthPercentage: target?.getHealthPercentage() || 0,
+                virtualId: target?.getVirtualId() ?? 0,
+                healthPercentage: target instanceof Player ? 0 : (target?.getHealthPercentage() ?? 0),
             }),
         );
     }

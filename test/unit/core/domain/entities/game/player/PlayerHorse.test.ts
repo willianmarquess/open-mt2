@@ -95,10 +95,15 @@ const createPlayer = (
 const createFakeHorse = (virtualId: number) => {
     let dead = false;
     let corpseOwnerVid: number | null = null;
+    let horseStats: any = null;
     const nearby = new Map<number, any>();
     return {
         name: '',
         nearby,
+        setHorseStats: (stats: any) => {
+            horseStats = stats;
+        },
+        getHorseStats: () => horseStats,
         die: () => {
             dead = true;
         },
