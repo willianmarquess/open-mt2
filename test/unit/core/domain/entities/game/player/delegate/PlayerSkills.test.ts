@@ -50,6 +50,7 @@ function createPlayer(overrides: Record<string, unknown> = {}): Player {
         chat: sinon.stub(),
         sendPoints: sinon.stub(),
         sendSkillLevel: sinon.stub(),
+        save: sinon.stub(),
         ...overrides,
     } as unknown as Player;
 }

@@ -58,6 +58,10 @@ import StatCommandHandler from './command/stat/StatCommandHandler';
 import CommandHandler from './CommandHandler';
 import HorseUnmountCommand from './command/horseUnmount/HorseUnmountCommand';
 import HorseUnmountCommandHandler from './command/horseUnmount/HorseUnmountCommandHandler';
+import ClearSkillCommand from './command/clearSkill/ClearSkillCommand';
+import ClearSkillCommandHandler from './command/clearSkill/ClearSkillCommandHandler';
+import ClearSkillGroupCommand from './command/clearSkillGroup/ClearSkillGroupCommand';
+import ClearSkillGroupCommandHandler from './command/clearSkillGroup/ClearSkillCommandHandler';
 
 export type CommandConstructor<T extends Command> = {
     new (args?: any): T;
@@ -274,6 +278,20 @@ export default function createCommands() {
             {
                 command: HorseUnmountCommand,
                 createHandler: () => new HorseUnmountCommandHandler(),
+            },
+        ],
+        [
+            ClearSkillCommand.getName(),
+            {
+                command: ClearSkillCommand,
+                createHandler: (params) => new ClearSkillCommandHandler(params),
+            },
+        ],
+        [
+            ClearSkillGroupCommand.getName(),
+            {
+                command: ClearSkillGroupCommand,
+                createHandler: (params) => new ClearSkillGroupCommandHandler(params),
             },
         ],
     ]);

@@ -57,6 +57,7 @@ export default class SelectCharacterService {
         }
 
         player.sendPoints();
+        player.sendSkillLevel();
 
         return Result.ok(player);
     }

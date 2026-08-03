@@ -56,6 +56,7 @@ describe('SelectCharacterService', () => {
             sendDetails: sinon.spy(),
             addItems: sinon.spy(),
             sendPoints: sinon.spy(),
+            sendSkillLevel: sinon.spy(),
         };
         playerRepositoryStub.getByAccountIdAndSlot.resolves(playerData);
         entityManagerStub.createPlayer.returns(playerData);

@@ -201,7 +201,6 @@ export class PlayerPoints extends Points {
             levelStep = 0,
             statusPoints = 0,
             subSkill = 0,
-            skill = 0,
             minAttackDamage = 0,
             maxAttackDamage = 0,
             playTime = 0,
@@ -461,7 +460,6 @@ export class PlayerPoints extends Points {
             resistPenetrate?: number;
             minWeaponDamage?: number;
             maxWeaponDamage?: number;
-
             givenStatusPoints: number;
             availableStatusPoints: number;
             availableSkillPoints: number;
@@ -1001,7 +999,7 @@ export class PlayerPoints extends Points {
         if (validatedValue < 1) return;
 
         if (this.player.getSkillGroup() > 0) {
-            this.addPoint(PointsEnum.SKILL, this.level >= 5 ? 1 : 0);
+            this.addPoint(PointsEnum.SKILL, 1);
         }
 
         this.level += validatedValue;
@@ -1023,7 +1021,12 @@ export class PlayerPoints extends Points {
         this.dx = this.config.jobs[className].common.dx;
         this.iq = this.config.jobs[className].common.iq;
 
-        this.addPoint(PointsEnum.SKILL, 4 + (this.getPoint(PointsEnum.LEVEL) - 5) - this.getPoint(PointsEnum.SKILL));
+        if (this.player.getSkillGroup() > 0) {
+            this.addPoint(
+                PointsEnum.SKILL,
+                4 + (this.getPoint(PointsEnum.LEVEL) - 5) - this.getPoint(PointsEnum.SKILL),
+            );
+        }
         this.addPoint(PointsEnum.SUB_SKILL, value < 10 ? 0 : Math.max(this.level, 9));
 
         this.calcPointsAndResetValues();

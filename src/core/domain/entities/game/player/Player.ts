@@ -11,7 +11,7 @@ import { ChatMessageTypeEnum } from '@/core/enum/ChatMessageTypeEnum';
 import { ItemAntiFlagEnum } from '@/core/enum/ItemAntiFlagEnum';
 import Item, { MAX_ITEM_STACK } from '../item/Item';
 import DroppedItem from '../item/DroppedItem';
-import PlayerState from '../../state/player/PlayerState';
+import { PlayerState, SkillState } from '../../state/player/PlayerState';
 import Character from '../Character';
 import { SpecialItemEnum } from '@/core/enum/SpecialItemEnum';
 import { FlyEnum } from '@/core/enum/FlyEnum';
@@ -247,6 +247,7 @@ export default class Player extends Character {
             horseStamina = 0,
             horseName = '',
             horseRiding = 0,
+            skills,
         }: {
             id: number;
             accountId: number;
@@ -293,6 +294,7 @@ export default class Player extends Character {
             horseStamina?: number;
             horseName?: string;
             horseRiding?: number;
+            skills: Array<SkillState>;
         },
         {
             animationManager,
@@ -405,7 +407,7 @@ export default class Player extends Character {
             },
         );
         this.battle = new PlayerBattle(this, logger);
-        this.skills = new PlayerSkill({ player: this, skillManager });
+        this.skills = new PlayerSkill({ player: this, skillManager, skills });
 
         this.saveCharacterService = saveCharacterService;
         this.horse.initialize(horseLevel, horseHealth, horseStamina, horseName, Boolean(horseRiding));
@@ -2462,6 +2464,7 @@ export default class Player extends Character {
             horseStamina,
             horseName,
             horseRiding,
+            skills,
         }: {
             id: number;
             accountId: number;
@@ -2508,6 +2511,7 @@ export default class Player extends Character {
             horseStamina?: number;
             horseName?: string;
             horseRiding?: number;
+            skills: Array<SkillState>;
         },
         {
             animationManager,
@@ -2578,6 +2582,7 @@ export default class Player extends Character {
                 horseStamina,
                 horseName,
                 horseRiding,
+                skills,
             },
             {
                 animationManager,
@@ -2626,6 +2631,7 @@ export default class Player extends Character {
             horseStamina: this.getHorseStamina(),
             horseName: this.getHorseName(),
             horseRiding: this.isHorseRiding() && !this.horse.isTemporaryRiding() ? 1 : 0,
+            skills: this.skills.getSkills(),
         });
     }
 
@@ -2793,6 +2799,10 @@ export default class Player extends Character {
         );
     }
 
+    /**
+     * SKILLS
+     */
+
     sendSkillGroup() {
         this.connection?.send(
             new SetSkillGroupPacket({
@@ -2803,6 +2813,12 @@ export default class Player extends Character {
 
     setSkillGroup(subJob: WarriorSubJobEnum | SuraSubJobEnum | AssasinSubJobEnum | ShamanSubJobEnum) {
         this.skillGroup = subJob;
+        this.sendSkillGroup();
+        this.skills.clearSkill();
+    }
+
+    clearSkillGroup() {
+        this.skillGroup = 0;
         this.sendSkillGroup();
         this.skills.clearSkill();
     }
@@ -2825,5 +2841,9 @@ export default class Player extends Character {
 
     skillLevelUpByPoint(skillNum: SkillEnum) {
         return this.skills.skillLevelUp(skillNum, 'POINT');
+    }
+
+    clearSkill(): void {
+        return this.skills.clearSkill();
     }
 }

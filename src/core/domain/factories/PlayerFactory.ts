@@ -10,6 +10,7 @@ import { QuestManager } from '../quests/QuestManager';
 import GlobalEventTimerManager from '../manager/GlobalEventTimeManager';
 import MobManager from '../manager/MobManager';
 import { SkillManager } from '../manager/SkillManager';
+import { SkillState } from '../entities/state/player/PlayerState';
 
 export type PlayerFactoryParams = {
     playerClass: number;
@@ -45,6 +46,7 @@ export type PlayerFactoryParams = {
     horseName?: string;
     horseRiding?: number;
     availableSkillPoints?: number;
+    skills?: Array<SkillState>;
 };
 
 export class PlayerFactory {
@@ -83,6 +85,7 @@ export class PlayerFactory {
             horseName,
             horseRiding,
             availableSkillPoints,
+            skills,
         }: PlayerFactoryParams,
         {
             animationManager,
@@ -156,6 +159,7 @@ export class PlayerFactory {
                 horseName: horseName || '',
                 horseRiding: horseRiding || 0,
                 availableSkillPoints: availableSkillPoints || 0,
+                skills: skills || [],
             },
             {
                 animationManager,

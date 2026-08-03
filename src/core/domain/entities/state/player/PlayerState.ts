@@ -1,6 +1,14 @@
+import { SkillRankEnum } from '@/core/enum/SkillRankEnum';
 import StateEntity from '../StateEntity';
 
-export default class PlayerState extends StateEntity {
+export interface SkillState {
+    rank: SkillRankEnum;
+    level: number;
+    timeToNextRead: number;
+    readCount: number;
+}
+
+export class PlayerState extends StateEntity {
     public readonly accountId: number;
     public readonly empire: number;
     public readonly playerClass: number;
@@ -31,6 +39,7 @@ export default class PlayerState extends StateEntity {
     public readonly horseStamina: number;
     public readonly horseName: string;
     public readonly horseRiding: number;
+    public readonly skills: Array<SkillState>;
 
     constructor({
         id,
@@ -66,6 +75,7 @@ export default class PlayerState extends StateEntity {
         horseStamina = 0,
         horseName = '',
         horseRiding = 0,
+        skills,
     }: {
         id: number;
         updatedAt?: Date;
@@ -100,6 +110,7 @@ export default class PlayerState extends StateEntity {
         horseStamina?: number;
         horseName?: string;
         horseRiding?: number;
+        skills: Array<SkillState>;
     }) {
         super(id, createdAt, updatedAt);
         this.accountId = accountId;
@@ -132,5 +143,6 @@ export default class PlayerState extends StateEntity {
         this.horseStamina = horseStamina;
         this.horseName = horseName;
         this.horseRiding = horseRiding;
+        this.skills = skills;
     }
 }

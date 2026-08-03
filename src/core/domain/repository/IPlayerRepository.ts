@@ -1,4 +1,4 @@
-import PlayerState from '@/core/domain/entities/state/player/PlayerState';
+import { PlayerState } from '@/core/domain/entities/state/player/PlayerState';
 
 export interface IPlayerRepository {
     create(player: PlayerState): Promise<number>;

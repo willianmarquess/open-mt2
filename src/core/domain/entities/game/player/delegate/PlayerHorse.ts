@@ -11,6 +11,8 @@ import MathUtil from '@/core/domain/util/MathUtil';
 import type NPC from '../../mob/NPC';
 import type Logger from '@/core/infra/logger/Logger';
 
+//TODO: remove this and use player instance instead of passing in the player instance to the PlayerHorse class. This will allow us to access the player instance directly from the PlayerHorse class and remove the need for the IHorseOwner interface.
+
 /** Minimal surface of Player that PlayerHorse needs to call back into. */
 export interface IHorseOwner {
     logger: Logger;
@@ -203,6 +205,7 @@ export class PlayerHorse {
         // Refresh the whole points packet: the client reads the riding skill
         // level from POINT_HORSE_SKILL, not from the skill-level packet alone.
         this.owner.sendPoints();
+        //TODO: call playerSkill to dealt with skill points and skill level up
         if (this.level > 0) {
             const stat = HORSE_STATS[this.level];
             this.health = stat.maxHealth;

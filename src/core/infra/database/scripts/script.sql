@@ -80,6 +80,7 @@ CREATE TABLE game.player (
     horseStamina INT UNSIGNED NOT NULL DEFAULT 0,
     horseName VARCHAR(24) NOT NULL DEFAULT '',
     horseRiding TINYINT UNSIGNED NOT NULL DEFAULT 0,
+    skills JSON NOT NULL,
     deletedAt TIMESTAMP NULL DEFAULT NULL
 );
 

@@ -1,5 +1,5 @@
 import Result from '@/core/domain/util/Result';
-import PlayerState from '@/core/domain/entities/state/player/PlayerState';
+import { PlayerState } from '@/core/domain/entities/state/player/PlayerState';
 import { IPlayerRepository } from '@/core/domain/repository/IPlayerRepository';
 
 export default class LoadCharactersService {

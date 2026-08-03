@@ -194,6 +194,15 @@ export class EntityManager {
         return this.entities.get(virtualId) as T;
     }
 
+    getPlayerByName(name: string): Player | null {
+        for (const player of this.players.values()) {
+            if (player.getName() === name) {
+                return player;
+            }
+        }
+        return null;
+    }
+
     getEntityByVnum(vnum: number): Array<number> {
         return this.vnumToVirtualIdMobMapper.get(vnum) ?? [];
     }

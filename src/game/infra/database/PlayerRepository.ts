@@ -1,6 +1,6 @@
 import DatabaseManager from '@/core/infra/database/DatabaseManager';
 import { ResultSetHeader, RowDataPacket } from 'mysql2';
-import PlayerState from '@/core/domain/entities/state/player/PlayerState';
+import { PlayerState, SkillState } from '@/core/domain/entities/state/player/PlayerState';
 import { IPlayerRepository } from '@/core/domain/repository/IPlayerRepository';
 
 type PlayerRow = RowDataPacket & PlayerState;
@@ -46,11 +46,12 @@ export default class PlayerRepository implements IPlayerRepository {
             horseHealth,
             horseStamina,
             horseName,
-            horseRiding
+            horseRiding,
+            skills
         )
             values
         (
-            ?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?
+            ?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?
         );
         `,
             [
@@ -85,6 +86,7 @@ export default class PlayerRepository implements IPlayerRepository {
                 player.horseStamina,
                 player.horseName,
                 player.horseRiding,
+                this.getSkillJson(player.skills),
             ],
         );
         if (player.quickSlot.size > 0) {
@@ -105,6 +107,16 @@ export default class PlayerRepository implements IPlayerRepository {
         await this.databaseManager
             .getConnection()
             .query<ResultSetHeader>(`UPDATE game.player SET deletedAt = NOW() WHERE id = ?;`, [id]);
+    }
+
+    private getSkillJson(skills: Array<SkillState>): string {
+        let skillsJson: string = '[]';
+        try {
+            skillsJson = JSON.stringify(skills);
+        } catch (error) {
+            console.error('Error serializing skills:', error);
+        }
+        return skillsJson;
     }
 
     async update(player: PlayerState) {
@@ -141,7 +153,8 @@ export default class PlayerRepository implements IPlayerRepository {
             horseHealth = ?,
             horseStamina = ?,
             horseName = ?,
-            horseRiding = ?
+            horseRiding = ?,
+            skills = ?
         WHERE id = ?;
         `,
             [
@@ -176,6 +189,7 @@ export default class PlayerRepository implements IPlayerRepository {
                 player.horseStamina,
                 player.horseName,
                 player.horseRiding,
+                this.getSkillJson(player.skills),
                 player.id,
             ],
         );
@@ -308,6 +322,7 @@ export default class PlayerRepository implements IPlayerRepository {
             horseName,
             horseRiding,
             availableSkillPoints,
+            skills,
         } = player;
 
         return new PlayerState({
@@ -344,6 +359,7 @@ export default class PlayerRepository implements IPlayerRepository {
             horseName,
             horseRiding,
             availableSkillPoints,
+            skills,
         });
     }
 }

@@ -7,22 +7,9 @@ import { SkillFlagsEnum } from '@/core/enum/SkillFlagsEnum';
 import { Skill } from '../../skill/Skill';
 import { SkillTypeEnum } from '@/core/enum/SkillTypeEnum';
 import { ChatMessageTypeEnum } from '@/core/enum/ChatMessageTypeEnum';
-
-enum SkillRankEnum {
-    NORMAL,
-    MASTER,
-    GRAND_MASTER,
-    PERFECT_MASTER,
-}
-
-interface SkillState {
-    rank: SkillRankEnum;
-    level: number;
-    timeToNextRead: number;
-    readCount: number;
-}
-
-const SKILL_MAX_LEVEL = 40;
+import { SkillState } from '../../../state/player/PlayerState';
+import { SkillRankEnum } from '@/core/enum/SkillRankEnum';
+import { SKILL_MAX_LEVEL } from '@/core/util/Constants';
 
 export class PlayerSkill {
     private readonly player: Player;
@@ -34,9 +21,27 @@ export class PlayerSkill {
         timeToNextRead: 0,
         readCount: 0,
     }));
-    constructor({ player, skillManager }: { player: Player; skillManager: SkillManager }) {
+
+    constructor({
+        player,
+        skillManager,
+        skills,
+    }: {
+        player: Player;
+        skillManager: SkillManager;
+        skills: Array<SkillState>;
+    }) {
         this.player = player;
         this.skillManager = skillManager;
+        this.skills =
+            skills?.length > 0
+                ? skills
+                : Array.from({ length: 255 }, () => ({
+                      rank: SkillRankEnum.NORMAL,
+                      level: 0,
+                      timeToNextRead: 0,
+                      readCount: 0,
+                  }));
     }
 
     getSkills(): Array<SkillState> {
@@ -145,6 +150,7 @@ export class PlayerSkill {
         }
 
         //TODO: save player
+        this.player.save();
         this.player.sendPoints();
         this.player.sendSkillLevel();
     }
@@ -377,5 +383,9 @@ export class PlayerSkill {
 
     setSkillnextReadTime(skillNum: SkillEnum, time: number) {
         this.skills[skillNum].timeToNextRead = time;
+    }
+
+    toDatabase() {
+        return JSON.stringify(this.skills);
     }
 }
