@@ -1119,6 +1119,10 @@ export class PlayerPoints extends Points {
         }
     }
 
+    getPersistedStat(point: PointsEnum): number {
+        return this[this.getStatName(point)];
+    }
+
     private getBaseStat(target: StatPoints, point: PointsEnum): number {
         switch (point) {
             case PointsEnum.ST:
