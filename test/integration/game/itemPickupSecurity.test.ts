@@ -49,10 +49,9 @@ describe('Security — item pickup validation (issue #66)', function () {
 
         // Both players must share an area, otherwise the map check — not the
         // distance check — would be what rejects the pickup.
-        expect(
-            harness.findPlayer(THIEF)?.getArea(),
-            'setup: attacker is on the same map, only further away',
-        ).to.equal(harness.findPlayer(OWNER)?.getArea());
+        expect(harness.findPlayer(THIEF)?.getArea(), 'setup: attacker is on the same map, only further away').to.equal(
+            harness.findPlayer(OWNER)?.getArea(),
+        );
 
         thief.pickup(virtualId);
         await thief.settle(600);

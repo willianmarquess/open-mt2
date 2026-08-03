@@ -225,6 +225,7 @@ export default class Player extends Character {
             name,
             givenStatusPoints = 0,
             availableStatusPoints = 0,
+            availableSkillPoints = 0,
             slot = 0,
             virtualId = 0,
             hpPerLvl = 0,
@@ -270,6 +271,7 @@ export default class Player extends Character {
             name: string;
             givenStatusPoints?: number;
             availableStatusPoints?: number;
+            availableSkillPoints?: number;
             slot?: number;
             virtualId: number;
             hpPerLvl?: number;
@@ -381,6 +383,7 @@ export default class Player extends Character {
                 stamina,
                 givenStatusPoints,
                 availableStatusPoints,
+                availableSkillPoints,
                 hpPerLvl,
                 hpPerHtPoint,
                 mpPerLvl,
@@ -2437,6 +2440,7 @@ export default class Player extends Character {
             name,
             givenStatusPoints,
             availableStatusPoints,
+            availableSkillPoints,
             slot,
             virtualId,
             hpPerLvl,
@@ -2482,6 +2486,7 @@ export default class Player extends Character {
             name: string;
             givenStatusPoints: number;
             availableStatusPoints: number;
+            availableSkillPoints: number;
             slot: number;
             virtualId: number;
             hpPerLvl: number;
@@ -2551,6 +2556,7 @@ export default class Player extends Character {
                 name,
                 givenStatusPoints,
                 availableStatusPoints,
+                availableSkillPoints,
                 slot,
                 virtualId,
                 hpPerLvl,
@@ -2612,6 +2618,7 @@ export default class Player extends Character {
             name: this.name,
             givenStatusPoints: this.points.getGivenStatusPoints(),
             availableStatusPoints: this.points.getPoint(PointsEnum.STATUS_POINTS),
+            availableSkillPoints: this.points.getPoint(PointsEnum.SKILL),
             slot: this.slot,
             quickSlot: this.quickSlot,
             horseLevel: this.getHorseLevel(),

@@ -44,6 +44,7 @@ export type PlayerFactoryParams = {
     horseStamina?: number;
     horseName?: string;
     horseRiding?: number;
+    availableSkillPoints?: number;
 };
 
 export class PlayerFactory {
@@ -81,6 +82,7 @@ export class PlayerFactory {
             horseStamina,
             horseName,
             horseRiding,
+            availableSkillPoints,
         }: PlayerFactoryParams,
         {
             animationManager,
@@ -153,6 +155,7 @@ export class PlayerFactory {
                 horseStamina: horseStamina || 0,
                 horseName: horseName || '',
                 horseRiding: horseRiding || 0,
+                availableSkillPoints: availableSkillPoints || 0,
             },
             {
                 animationManager,

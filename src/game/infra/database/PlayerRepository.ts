@@ -40,6 +40,7 @@ export default class PlayerRepository implements IPlayerRepository {
             name, 
             givenStatusPoints, 
             availableStatusPoints,
+            availableSkillPoints,
             slot,
             horseLevel,
             horseHealth,
@@ -49,7 +50,7 @@ export default class PlayerRepository implements IPlayerRepository {
         )
             values
         (
-            ?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?
+            ?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?
         );
         `,
             [
@@ -77,6 +78,7 @@ export default class PlayerRepository implements IPlayerRepository {
                 player.name,
                 player.givenStatusPoints,
                 player.availableStatusPoints,
+                player.availableSkillPoints,
                 player.slot,
                 player.horseLevel,
                 player.horseHealth,
@@ -133,6 +135,7 @@ export default class PlayerRepository implements IPlayerRepository {
             name = ?, 
             givenStatusPoints = ?, 
             availableStatusPoints = ?,
+            availableSkillPoints = ?,
             slot = ?,
             horseLevel = ?,
             horseHealth = ?,
@@ -166,6 +169,7 @@ export default class PlayerRepository implements IPlayerRepository {
                 player.name,
                 player.givenStatusPoints,
                 player.availableStatusPoints,
+                player.availableSkillPoints,
                 player.slot,
                 player.horseLevel,
                 player.horseHealth,
@@ -303,6 +307,7 @@ export default class PlayerRepository implements IPlayerRepository {
             horseStamina,
             horseName,
             horseRiding,
+            availableSkillPoints,
         } = player;
 
         return new PlayerState({
@@ -338,6 +343,7 @@ export default class PlayerRepository implements IPlayerRepository {
             horseStamina,
             horseName,
             horseRiding,
+            availableSkillPoints,
         });
     }
 }

@@ -23,6 +23,7 @@ export default class PlayerState extends StateEntity {
     public readonly name: string;
     public readonly givenStatusPoints: number;
     public readonly availableStatusPoints: number;
+    public readonly availableSkillPoints: number;
     public readonly slot: number;
     public readonly quickSlot: Map<number, { type: number; position: number }> = new Map();
     public readonly horseLevel: number;
@@ -57,6 +58,7 @@ export default class PlayerState extends StateEntity {
         name = '',
         givenStatusPoints = 0,
         availableStatusPoints = 0,
+        availableSkillPoints = 0,
         slot = 0,
         quickSlot,
         horseLevel = 0,
@@ -90,6 +92,7 @@ export default class PlayerState extends StateEntity {
         name: string;
         givenStatusPoints: number;
         availableStatusPoints: number;
+        availableSkillPoints: number;
         slot: number;
         quickSlot?: Map<number, { type: number; position: number }>;
         horseLevel?: number;
@@ -121,6 +124,7 @@ export default class PlayerState extends StateEntity {
         this.name = name;
         this.givenStatusPoints = givenStatusPoints;
         this.availableStatusPoints = availableStatusPoints;
+        this.availableSkillPoints = availableSkillPoints;
         this.slot = slot;
         this.quickSlot = quickSlot || new Map();
         this.horseLevel = horseLevel;

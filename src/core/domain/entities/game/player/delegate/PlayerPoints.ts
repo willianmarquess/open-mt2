@@ -43,7 +43,7 @@ export class PlayerPoints extends Points {
     private readonly levelStep: number;
     private readonly statusPoints: number;
     private subSkill: number;
-    private skill: number;
+    private availableSkillPoints: number;
     private readonly minAttackDamage: number;
     private readonly maxAttackDamage: number;
     private readonly playTime: number;
@@ -313,6 +313,7 @@ export class PlayerPoints extends Points {
 
             givenStatusPoints = 0,
             availableStatusPoints = 0,
+            availableSkillPoints = 0,
             hpPerLvl,
             hpPerHtPoint,
             mpPerLvl,
@@ -463,6 +464,7 @@ export class PlayerPoints extends Points {
 
             givenStatusPoints: number;
             availableStatusPoints: number;
+            availableSkillPoints: number;
             hpPerLvl: number;
             hpPerHtPoint: number;
             mpPerLvl: number;
@@ -514,7 +516,6 @@ export class PlayerPoints extends Points {
         this.levelStep = levelStep;
         this.statusPoints = statusPoints;
         this.subSkill = subSkill;
-        this.skill = skill;
         this.minAttackDamage = minAttackDamage;
         this.maxAttackDamage = maxAttackDamage;
         this.playTime = playTime;
@@ -636,6 +637,7 @@ export class PlayerPoints extends Points {
         this.attackPerIqPoint = attackPerIqPoint;
         this.givenStatusPoints = givenStatusPoints;
         this.availableStatusPoints = availableStatusPoints;
+        this.availableSkillPoints = availableSkillPoints;
         this.baseAttackSpeed = baseAttackSpeed;
         this.baseMovementSpeed = baseMovementSpeed;
 
@@ -850,9 +852,9 @@ export class PlayerPoints extends Points {
             },
         });
         this.points.set(PointsEnum.SKILL, {
-            get: () => this.skill,
-            add: (value) => this.addCommonPoint(value, 'skill'),
-            set: (value) => (this.skill = value),
+            get: () => this.availableSkillPoints,
+            add: (value) => this.addCommonPoint(value, 'availableSkillPoints'),
+            set: (value) => (this.availableSkillPoints = value),
         });
         this.points.set(PointsEnum.SUB_SKILL, {
             get: () => this.subSkill,
@@ -999,11 +1001,7 @@ export class PlayerPoints extends Points {
         if (validatedValue < 1) return;
 
         if (this.player.getSkillGroup() > 0) {
-            this.skill += this.level >= 5 ? 1 : 0;
-        }
-
-        if (this.player.getSkillGroup() >= 0) {
-            this.subSkill += this.level >= 9 ? 1 : 0;
+            this.addPoint(PointsEnum.SKILL, this.level >= 5 ? 1 : 0);
         }
 
         this.level += validatedValue;
@@ -1014,7 +1012,6 @@ export class PlayerPoints extends Points {
         const validatedValue = MathUtil.toUnsignedNumber(value);
         if (validatedValue < 1 || validatedValue > this.config.MAX_LEVEL) return;
 
-        const diff = value - this.level;
         this.level = validatedValue;
 
         this.givenStatusPoints = 0;
@@ -1026,7 +1023,7 @@ export class PlayerPoints extends Points {
         this.dx = this.config.jobs[className].common.dx;
         this.iq = this.config.jobs[className].common.iq;
 
-        this.addPoint(PointsEnum.SKILL, diff);
+        this.addPoint(PointsEnum.SKILL, 4 + (this.getPoint(PointsEnum.LEVEL) - 5) - this.getPoint(PointsEnum.SKILL));
         this.addPoint(PointsEnum.SUB_SKILL, value < 10 ? 0 : Math.max(this.level, 9));
 
         this.calcPointsAndResetValues();

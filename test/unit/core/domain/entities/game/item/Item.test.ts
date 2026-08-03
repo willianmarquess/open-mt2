@@ -47,10 +47,7 @@ describe('Item', () => {
         });
 
         it('should parse the prefixed LIMIT_NONE limit type as no limit', () => {
-            const item = Item.create(
-                { ...baseProto, limit_type0: 'LIMIT_NONE', limit_value0: '0' } as any,
-                1,
-            );
+            const item = Item.create({ ...baseProto, limit_type0: 'LIMIT_NONE', limit_value0: '0' } as any, 1);
 
             expect(item.getLevelLimit()).to.be.equal(0);
             expect(item.getLimits().every((limit) => limit.type === ItemLimitTypeEnum.NONE)).to.be.equal(true);
