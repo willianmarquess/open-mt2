@@ -17,7 +17,7 @@ export default class Inventory {
     private readonly height = DEFAULT_INVENTORY_HEIGHT;
     private readonly equipment: Equipment;
     private readonly emitter = new EventEmitter();
-    private readonly items: Map<number, Item>;
+    private readonly items: Set<Item>;
     private readonly ownerId: number;
 
     constructor({ config, ownerId }: { config: GameConfig; ownerId: number }) {
@@ -26,7 +26,7 @@ export default class Inventory {
         }
 
         this.equipment = new Equipment(this.size());
-        this.items = new Map<number, Item>();
+        this.items = new Set<Item>();
         this.ownerId = ownerId;
     }
 
@@ -58,7 +58,7 @@ export default class Inventory {
                 item.setWindow(
                     this.isEquipmentPosition(realPosition) ? WindowTypeEnum.EQUIPMENT : WindowTypeEnum.INVENTORY,
                 );
-                this.items.set(item.getDbId()!, item);
+                this.items.add(item);
                 return realPosition;
             }
         }
@@ -72,7 +72,7 @@ export default class Inventory {
             item.setPosition(position);
             item.setOwnerId(this.ownerId);
             item.setWindow(this.isEquipmentPosition(position) ? WindowTypeEnum.EQUIPMENT : WindowTypeEnum.INVENTORY);
-            this.items.set(item.getDbId()!, item);
+            this.items.add(item);
             this.publish(ItemEquippedEvent.type, new ItemEquippedEvent({ item, slot: position - this.size() }));
             return;
         }
@@ -87,7 +87,7 @@ export default class Inventory {
             item.setPosition(position);
             item.setOwnerId(this.ownerId);
             item.setWindow(this.isEquipmentPosition(position) ? WindowTypeEnum.EQUIPMENT : WindowTypeEnum.INVENTORY);
-            this.items.set(item.getDbId()!, item);
+            this.items.add(item);
         }
     }
 
@@ -128,7 +128,7 @@ export default class Inventory {
 
         if (this.isFromEquipmentSlots(position)) {
             const unequippedItem = this.equipment.removeItem(position);
-            this.deleteFromItemsMap(item);
+            this.items.delete(item);
             this.publish(
                 ItemUnequippedEvent.type,
                 new ItemUnequippedEvent({ item: unequippedItem!, slot: position - this.size() }),
@@ -139,21 +139,7 @@ export default class Inventory {
         const page = this.calcPage(position);
         const pagePosition = this.calcPagePosition(page, position);
         this.pages[page].removeItem(pagePosition, size);
-        this.deleteFromItemsMap(item);
-    }
-
-    /**
-     * Removes the map entry for this exact item instance. Items bought from a
-     * shop are added to the map before their dbId is assigned (key undefined),
-     * so deleting by getDbId() would miss them and leave a ghost entry behind.
-     */
-    private deleteFromItemsMap(item: Item) {
-        for (const [key, mapped] of this.items) {
-            if (mapped === item) {
-                this.items.delete(key);
-                return;
-            }
-        }
+        this.items.delete(item);
     }
 
     haveAvailablePosition(position: number, size: number) {
