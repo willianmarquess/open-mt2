@@ -9,6 +9,7 @@ import ItemManager from './ItemManager';
 import Player from '../entities/game/player/Player';
 import { PrivilegeManager, PrivilegeTypeEnum } from './PrivilegeManager';
 import { PointsEnum } from '@/core/enum/PointsEnum';
+import { ItemTypeEnum } from '@/core/enum/ItemTypeEnum';
 
 class DropItem {
     public readonly item: Item;
@@ -41,9 +42,10 @@ export default class DropManager {
     }
 
     load() {
-        Object.keys(this.config.commonDrops).forEach((rank) => {
-            const rankEnum = rank as unknown as MobRankEnum;
-            this.commonDrops.set(rankEnum, this.config.commonDrops[rankEnum]);
+        Object.entries(this.config.commonDrops).forEach(([rank, drops]) => {
+            const rankEnum = MobRankEnum[rank as keyof typeof MobRankEnum];
+            if (rankEnum === undefined) return;
+            this.commonDrops.set(rankEnum, drops);
         });
     }
 
@@ -64,6 +66,12 @@ export default class DropManager {
             if (percent >= target) {
                 const item = this.itemManager.getItem(drop.vnum);
                 if (!item) continue;
+
+                if (item.getType() === ItemTypeEnum.ITEM_POLYMORPH) {
+                    if (drop.vnum !== monster.getPolymorphItem()) continue;
+                    item.setSocket0(monster.getId());
+                }
+
                 drops.push(new DropItem(item, 1));
             }
         }
@@ -88,8 +96,8 @@ export default class DropManager {
 
         let delta =
             monster.getRank() === MobRankEnum.BOSS
-                ? this.config.dropDeltaBoss[MathUtil.minMax(0, levelDelta, this.config.dropDeltaBoss.length)]
-                : this.config.dropDeltaLevel[MathUtil.minMax(0, levelDelta, this.config.dropDeltaLevel.length)];
+                ? this.config.dropDeltaBoss[MathUtil.minMax(0, levelDelta, this.config.dropDeltaBoss.length - 1)]
+                : this.config.dropDeltaLevel[MathUtil.minMax(0, levelDelta, this.config.dropDeltaLevel.length - 1)];
 
         if (1 === MathUtil.getRandomInt(1, 50_000)) {
             delta += 1000;
@@ -123,13 +131,15 @@ export default class DropManager {
         let percent =
             (goldPercent *
                 (monster.getRank() === MobRankEnum.BOSS
-                    ? this.config.dropDeltaBoss[MathUtil.minMax(0, levelDelta, this.config.dropDeltaBoss.length)]
-                    : this.config.dropDeltaLevel[MathUtil.minMax(0, levelDelta, this.config.dropDeltaLevel.length)])) /
+                    ? this.config.dropDeltaBoss[MathUtil.minMax(0, levelDelta, this.config.dropDeltaBoss.length - 1)]
+                    : this.config.dropDeltaLevel[
+                          MathUtil.minMax(0, levelDelta, this.config.dropDeltaLevel.length - 1)
+                      ])) /
             100;
 
         percent += this.privilegeManager.getEmpirePrivilege(player.getEmpire(), PrivilegeTypeEnum.GOLD);
         percent += this.privilegeManager.getPlayerPrivilege(player, PrivilegeTypeEnum.GOLD);
-        percent = Math.max(100, percent);
+        percent = Math.min(100, percent);
 
         if (MathUtil.getRandomInt(1, 100) > percent) return null;
 
@@ -216,11 +226,6 @@ export default class DropManager {
         if (goldDrop) {
             drops.push(goldDrop);
         }
-
-        const item = this.itemManager.getItem(70104);
-        if (!item) return drops;
-        item.setSocket0(monster.getId());
-        drops.push(new DropItem(item, 1));
 
         return drops;
     }
