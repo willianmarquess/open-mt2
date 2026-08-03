@@ -47,8 +47,7 @@ export default class GotoCommandHandler extends CommandHandler<GotoCommand> {
                         `[GotoCommandHandler] Teleport ${player.getName()} to area: ${areaByName.getName()}, x: ${x}, y: ${y}`,
                     );
 
-                    this.world.despawn(player);
-                    player.teleport(x, y);
+                    this.warp(player, x, y);
                 }
                 break;
 
@@ -64,8 +63,7 @@ export default class GotoCommandHandler extends CommandHandler<GotoCommand> {
                     return;
                 }
 
-                this.world.despawn(player);
-                player.teleport(target.getPositionX() + 200, target.getPositionY() + 200);
+                this.warp(player, target.getPositionX() + 200, target.getPositionY() + 200);
                 break;
             }
 
@@ -81,11 +79,18 @@ export default class GotoCommandHandler extends CommandHandler<GotoCommand> {
                     return;
                 }
 
-                this.world.despawn(player);
-                player.teleport(Number(x), Number(y));
+                this.warp(player, Number(x), Number(y));
                 break;
             }
         }
+    }
+
+    private warp(player: Player, x: number, y: number) {
+        if (player.canTeleport()) {
+            this.world.despawn(player);
+        }
+
+        player.teleport(x, y);
     }
 
     private getAreaCoordinates(area: Area, player: Player): [number, number] {
