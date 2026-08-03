@@ -157,8 +157,8 @@ export default class AttackHarness {
         await this.db.getConnection().query(
             `INSERT INTO game.player (accountId, empire, playerClass, skillGroup, playTime, level, experience,
                 gold, st, ht, dx, iq, positionX, positionY, health, mana, stamina, bodyPart, hairPart, name,
-                givenStatusPoints, availableStatusPoints, slot)
-             VALUES (?, 2, 4, 0, 9105, 99, 0, 12038002, 17, 107, 12, 6, ?, ?, 15950, 5570, 1000, 0, 0, ?, 396, 192, 0)`,
+                givenStatusPoints, availableStatusPoints, slot, skills)
+             VALUES (?, 2, 4, 0, 9105, 99, 0, 12038002, 17, 107, 12, 6, ?, ?, 15950, 5570, 1000, 0, 0, ?, 396, 192, 0, '[]')`,
             [accountId, x, y, username],
         );
         this.seededAccounts.push(username);
