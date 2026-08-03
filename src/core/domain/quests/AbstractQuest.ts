@@ -58,22 +58,21 @@ export abstract class AbstractQuest {
         this.itemManager = itemManager;
     }
 
+    private getCountableItems(vnum: number) {
+        return [...this.player.getInventory().getItems().values()].filter(
+            (item) => item.getId() === vnum && !this.player.isItemLockedInPrivateShop(item),
+        );
+    }
+
     protected countItem(id: number): number {
-        let count = 0;
-        const vnum = Number(id);
-        for (const item of this.player.getInventory().getItems().values()) {
-            if (item.getId() === vnum) {
-                count += item.getCount();
-            }
-        }
-        return count;
+        return this.getCountableItems(Number(id)).reduce((count, item) => count + item.getCount(), 0);
     }
 
     protected async removeItem(id: number, quantity: number = 1): Promise<boolean> {
         const vnum = Number(id);
         let needed = quantity;
         const inventory = this.player.getInventory();
-        const items = [...inventory.getItems().values()].filter((item) => item.getId() === vnum);
+        const items = this.getCountableItems(vnum);
 
         if (this.countItem(vnum) < quantity) {
             return false;

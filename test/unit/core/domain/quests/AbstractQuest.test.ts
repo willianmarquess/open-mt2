@@ -225,4 +225,73 @@ describe('AbstractQuest', () => {
             expect(rearmed).to.be.equal(true);
         });
     });
+
+    describe('inventory items listed in a private shop (issue #128)', () => {
+        const POTION_VNUM = 27001;
+
+        class InventoryQuest extends AbstractQuest {
+            constructor(player: any, itemManager: any) {
+                super({ player, itemManager } as any);
+                (this as any).id = 9;
+                (this as any).name = 'InventoryQuest';
+            }
+
+            public count(vnum: number) {
+                return (this as any).countItem(vnum);
+            }
+
+            public take(vnum: number, quantity: number) {
+                return (this as any).removeItem(vnum, quantity);
+            }
+        }
+
+        const createItem = (dbId: number, count: number) => ({
+            dbId,
+            getId: () => POTION_VNUM,
+            getCount: () => count,
+            getPosition: () => dbId,
+            getSize: () => 1,
+            decreaseCount: () => {},
+        });
+
+        const buildQuest = (items: Array<any>, listed: Array<any>) => {
+            const removed: Array<any> = [];
+            const player: any = {
+                getInventory: () => ({
+                    getItems: () => new Map(items.map((item) => [item.dbId, item])),
+                    removeItem: (position: number) => removed.push(position),
+                }),
+                isItemLockedInPrivateShop: (item: any) => listed.includes(item),
+                sendItemUpdate: () => {},
+                sendItemRemoved: () => {},
+            };
+            const itemManager: any = { update: async () => {}, delete: async () => {} };
+
+            return { quest: new InventoryQuest(player, itemManager), removed };
+        };
+
+        it('should not count items that are for sale in the private shop', () => {
+            const forSale = createItem(1, 5);
+            const spare = createItem(2, 3);
+            const { quest } = buildQuest([forSale, spare], [forSale]);
+
+            expect(quest.count(POTION_VNUM)).to.be.equal(3);
+        });
+
+        it('should count everything while no private shop lists them', () => {
+            const first = createItem(1, 5);
+            const second = createItem(2, 3);
+            const { quest } = buildQuest([first, second], []);
+
+            expect(quest.count(POTION_VNUM)).to.be.equal(8);
+        });
+
+        it('should refuse to consume a quest requirement that is only met by items for sale', async () => {
+            const forSale = createItem(1, 5);
+            const { quest, removed } = buildQuest([forSale], [forSale]);
+
+            expect(await quest.take(POTION_VNUM, 5)).to.be.equal(false);
+            expect(removed).to.be.deep.equal([]);
+        });
+    });
 });
