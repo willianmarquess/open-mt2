@@ -5,22 +5,33 @@ import { EntityManager } from '../manager/EntityManager';
 
 export class QuestTargetManager {
     private readonly entityManager: EntityManager;
-    private readonly targets: Map<string, number> = new Map();
+    private readonly targetsByPlayer: Map<number, Map<string, number>> = new Map();
     private nextTargetId: number = 0;
 
     constructor({ entityManager }: { entityManager: EntityManager }) {
         this.entityManager = entityManager;
     }
 
-    removeTarget({ player, targetName }: { player: Player; targetName: string }) {
-        const targetId = this.targets.get(targetName);
+    removeTarget({ player, questId, targetName }: { player: Player; questId: number; targetName: string }) {
+        const targets = this.targetsByPlayer.get(player.getId());
+
+        if (!targets) return;
+
+        const key = QuestTargetManager.createKey(questId, targetName);
+        const targetId = targets.get(key);
 
         if (!targetId) return;
+
+        targets.delete(key);
+
+        if (targets.size === 0) {
+            this.targetsByPlayer.delete(player.getId());
+        }
 
         player.sendQuestTargetRemove({ id: targetId });
     }
 
-    sendTargetByVnum({ player, vnum, name }: { player: Player; vnum: number; name: string }) {
+    sendTargetByVnum({ player, questId, vnum, name }: { player: Player; questId: number; vnum: number; name: string }) {
         const targetsVirtualId = this.entityManager.getEntityByVnum(vnum);
 
         if (targetsVirtualId.length <= 0) return;
@@ -31,32 +42,59 @@ export class QuestTargetManager {
 
         if (!target) return;
 
-        const targetId = ++this.nextTargetId;
-
-        this.targets.set(name, targetId);
-
         player.sendQuestTarget({
-            id: targetId,
+            id: this.createTarget({ player, questId, name }),
             targetName: name,
             targetVirtualId: target.getVirtualId(),
             type: QuestTargetTypeEnum.VIRTUAL_ID,
         });
     }
 
-    sendTargetByVirtualId({ player, virtualId, name }: { player: Player; virtualId: number; name: string }) {
+    sendTargetByVirtualId({
+        player,
+        questId,
+        virtualId,
+        name,
+    }: {
+        player: Player;
+        questId: number;
+        virtualId: number;
+        name: string;
+    }) {
         const target = this.entityManager.getEntity(virtualId);
 
         if (!target) return;
 
-        const targetId = ++this.nextTargetId;
-
-        this.targets.set(name, targetId);
-
         player.sendQuestTarget({
-            id: targetId,
+            id: this.createTarget({ player, questId, name }),
             targetName: name,
             targetVirtualId: target.getVirtualId(),
             type: QuestTargetTypeEnum.VIRTUAL_ID,
         });
+    }
+
+    private createTarget({ player, questId, name }: { player: Player; questId: number; name: string }): number {
+        let targets = this.targetsByPlayer.get(player.getId());
+
+        if (!targets) {
+            targets = new Map<string, number>();
+            this.targetsByPlayer.set(player.getId(), targets);
+        }
+
+        const key = QuestTargetManager.createKey(questId, name);
+        const previousTargetId = targets.get(key);
+
+        if (previousTargetId) {
+            player.sendQuestTargetRemove({ id: previousTargetId });
+        }
+
+        const targetId = ++this.nextTargetId;
+        targets.set(key, targetId);
+
+        return targetId;
+    }
+
+    private static createKey(questId: number, name: string): string {
+        return `${questId}:${name}`;
     }
 }
