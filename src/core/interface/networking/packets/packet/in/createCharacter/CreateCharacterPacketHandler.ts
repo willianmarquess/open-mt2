@@ -62,9 +62,10 @@ export default class CreateCharacterPacketHandler extends PacketHandler<CreateCh
 
             switch (error) {
                 case ErrorTypesEnum.NAME_ALREADY_EXISTS:
+                case ErrorTypesEnum.SLOT_ALREADY_TAKEN:
                     connection.send(
                         new CreateCharacterFailurePacket({
-                            reason: CreateCharacterFailureReasonEnum.NAME_ALREADY_EXISTS,
+                            reason: CreateCharacterFailureReasonEnum.ALREADY_EXISTS,
                         }),
                     );
                     break;

@@ -2,6 +2,7 @@ import { ErrorTypesEnum } from '@/core/enum/ErrorTypesEnum';
 import { PointsEnum } from '@/core/enum/PointsEnum';
 import CreateCharacterPacketHandler from '@/core/interface/networking/packets/packet/in/createCharacter/CreateCharacterPacketHandler';
 import CreateCharacterFailurePacket from '@/core/interface/networking/packets/packet/out/CreateCharacterFailurePacket';
+import { CreateCharacterFailureReasonEnum } from '@/core/enum/CreateCharacterFailureReasonEnum';
 import CreateCharacterSuccessPacket from '@/core/interface/networking/packets/packet/out/CreateCharacterSuccessPacket';
 import { expect } from 'chai';
 import sinon from 'sinon';
@@ -57,6 +58,30 @@ describe('CreateCharacterPacketHandler', function () {
         expect(mockConnection.send.calledOnce).to.be.true;
         const sentPacket = mockConnection.send.getCall(0).args[0];
         expect(sentPacket).to.be.instanceOf(CreateCharacterFailurePacket);
+    });
+
+    it('should refuse an occupied slot with a failure packet rather than a disconnect', async function () {
+        const validPacket = {
+            isValid: () => true,
+            getPlayerName: () => 'test',
+            getPlayerClass: () => 1,
+            getAppearance: () => 'appearance',
+            getSlot: () => 0,
+        } as any;
+
+        mockCreateCharacterService.execute.resolves({
+            hasError: () => true,
+            getError: () => ErrorTypesEnum.SLOT_ALREADY_TAKEN,
+        });
+
+        await createCharacterPacketHandler.execute(mockConnection, validPacket);
+
+        const sentPacket = mockConnection.send.getCall(0).args[0];
+        expect(sentPacket).to.be.instanceOf(CreateCharacterFailurePacket);
+        expect(sentPacket.pack()[1], 'the original answers an occupied slot with the ALREADY reason').to.equal(
+            CreateCharacterFailureReasonEnum.ALREADY_EXISTS,
+        );
+        expect(mockConnection.close.called).to.be.false;
     });
 
     it('should close connection if account is full', async function () {
