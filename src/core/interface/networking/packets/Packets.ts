@@ -58,6 +58,8 @@ import QuickSlotSwapRequestPacket from './packet/in/quickSlotSwap/QuickSlotSwapR
 import QuickSlotSwapRequestPacketHandler from './packet/in/quickSlotSwap/QuickSlotSwapRequestPacketHandler';
 import QuickSlotRemoveRequestPacket from './packet/in/quickSlotRemove/QuickSlotRemoveRequestPacket';
 import QuickSlotRemoveRequestPacketHandler from './packet/in/quickSlotRemove/QuickSlotRemoveRequestPacketHandler';
+import MarkLoginPacket from './packet/in/markLogin/MarkLoginPacket';
+import MarkLoginPacketHandler from './packet/in/markLogin/MarkLoginPacketHandler';
 
 const LOGIN_PHASES: ReadonlySet<ConnectionStateEnum> = new Set([
     ConnectionStateEnum.HANDSHAKE,
@@ -300,6 +302,14 @@ const packets: Map<number, PacketMapValue<any>> = new Map<number, PacketMapValue
             createPacket: (params = {}) => new QuickSlotRemoveRequestPacket(params),
             createHandler: (params) => new QuickSlotRemoveRequestPacketHandler(params),
             phases: GAME_PHASES,
+        },
+    ],
+    [
+        PacketHeaderEnum.MARK_LOGIN,
+        {
+            createPacket: () => new MarkLoginPacket(),
+            createHandler: (params) => new MarkLoginPacketHandler(params),
+            phases: LOGIN_PHASES,
         },
     ],
 ]);

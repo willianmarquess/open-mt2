@@ -20,6 +20,7 @@ export default {
     SKILL_LEVEL: 0x4c,
     CHARACTER_DETAILS: 0x71,
     CLIENT_VERSION: 0xf1,
+    MARK_LOGIN: 0x64,
     CHARACTER_UPDATE: 0x13,
     ENTER_GAME: 0x0a,
     GAME_TIME: 0x6a,
