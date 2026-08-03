@@ -38,6 +38,9 @@ const mountedPlayer = () =>
             getPersistedStat: (point: PointsEnum) => statOf(BASE, point),
             getGivenStatusPoints: () => 0,
         },
+        skills: {
+            getSkills: () => [],
+        },
         calcPlayTime: () => 0,
         getBody: () => null,
         getHair: () => null,
