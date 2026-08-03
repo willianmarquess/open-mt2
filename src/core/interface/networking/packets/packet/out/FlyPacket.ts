@@ -10,7 +10,7 @@ import PacketOut from '@/core/interface/networking/packets/packet/out/PacketOut'
  * @description Used to send fly particle from entity to another.
  * @fields
  *   - {byte} header 1 Packet header
- *   - {byte} type 4 type of fly. See in FlyEnum.
+ *   - {byte} type 1 type of fly. See in FlyEnum.
  *   - {number} fromVirtualId 4 wich entity the fly starts
  *   - {number} toVirtualId 4 wich entity the fly ends
  */

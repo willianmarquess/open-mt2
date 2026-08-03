@@ -214,7 +214,7 @@
 | positionX | `int` | 4 | Position X of player in game |
 | positionY | `int` | 4 | Position Y of player in game |
 | Ip | `int` | 4 | Ip Address to server where the map the player is on is managed (for now we have only one server, but we can add remote maps to increase the quantity of players of our server). |
-| Port | `int` | 4 | Port to server where the map the player is on is managed (for now we have only one server, but we can add remote maps to increase the quantity of players of our server). |
+| Port | `short` | 2 | Port to server where the map the player is on is managed (for now we have only one server, but we can add remote maps to increase the quantity of players of our server). |
 | skillGroup | `byte` | 1 | Number which indicates the skill group of character (to be implemented). |
 | guildId | `int` | 4 | The guild id of current character |
 | guildName | `string` | 13 | The guild name of current character (ascii). |
@@ -259,7 +259,7 @@
 | Name        | Type       | Size (bytes)   | Description               |
 |-------------|------------|----------------|---------------------------|
 | header | `byte` | 1 | Packet header |
-| type | `byte` | 4 | type of fly. See in FlyEnum. |
+| type | `byte` | 1 | type of fly. See in FlyEnum. |
 | fromVirtualId | `number` | 4 | wich entity the fly starts |
 | toVirtualId | `number` | 4 | wich entity the fly ends |
 
