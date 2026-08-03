@@ -166,6 +166,7 @@ export default class Player extends Character {
 
     //save
     private readonly saveCharacterService: SaveCharacterService;
+    private skipSave = false;
 
     //manager
     private readonly mobManager: MobManager;
@@ -524,7 +525,22 @@ export default class Player extends Character {
         //TODO: call quest disconnect callback
         //TODO: close safebox, close mall
         //TODO: remove from pvp instance
-        await this.saveCharacterService.execute(this);
+        if (!this.skipSave) {
+            await this.saveCharacterService.execute(this);
+        }
+    }
+
+    async flushSave(): Promise<void> {
+        if (this.skipSave) return;
+        this.skipSave = true;
+
+        const results = await this.saveCharacterService.execute(this);
+        for (const result of results) {
+            if (result.status === 'rejected') {
+                const reason = result.reason instanceof Error ? result.reason.stack : result.reason;
+                this.logger.error(`[Player] logout save failed for ${this.getName()}: ${reason}`);
+            }
+        }
     }
 
     die(killer: Character) {
@@ -1214,7 +1230,6 @@ export default class Player extends Character {
                 }
                 const countDown = SECONDS_TO_LEAVE - count;
                 if (countDown <= 0) {
-                    this.area?.despawn(this);
                     switch (command) {
                         case 'QUIT':
                             this.chat({
@@ -1226,6 +1241,7 @@ export default class Player extends Character {
                             this.connection?.setState(ConnectionStateEnum.CLOSE);
                             break;
                         case 'SELECT':
+                            this.area?.despawn(this);
                             this.connection?.setState(ConnectionStateEnum.SELECT);
                             break;
                     }
@@ -2662,6 +2678,7 @@ export default class Player extends Character {
     }
 
     save(): void {
+        if (this.skipSave) return;
         this.saveCharacterService.execute(this).catch((err) => {
             this.logger.error('Failed to save character:', err);
         });
