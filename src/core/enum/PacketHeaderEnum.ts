@@ -50,6 +50,7 @@ export default {
     // GC direction — shares the value with ITEM_MOVE (CG); directions have separate header spaces.
     STUN: 0x0d,
     FLY: 0x46,
+    FLY_TARGETING: 0x47,
     AFFECT_ADD: 0x7e,
     SPECIAL_EFFECT: 0x72,
     ITEM_UPDATE: 0x19,

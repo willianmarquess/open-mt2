@@ -265,6 +265,28 @@
 
 ---
 
+### FlyTargetingPacket
+
+**Type:** Out
+
+**Header:** 0x47
+
+**Size:** 17 bytes
+
+**Description:** Draws a projectile flying from a shooter to a target. The client homes it on the target when the target is in view, otherwise it flies to the given position.
+
+**Fields:**
+
+| Name        | Type       | Size (bytes)   | Description               |
+|-------------|------------|----------------|---------------------------|
+| header | `byte` | 1 | Packet header |
+| shooterVirtualId | `number` | 4 | Entity the projectile starts from |
+| targetVirtualId | `number` | 4 | Entity the projectile homes on |
+| positionX | `number` | 4 | Fallback target position X |
+| positionY | `number` | 4 | Fallback target position Y |
+
+---
+
 ### InternalPongPacket
 
 **Type:** Out

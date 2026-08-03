@@ -38,6 +38,7 @@ import ItemPacket from '@/core/interface/networking/packets/packet/out/ItemPacke
 import { WindowTypeEnum } from '@/core/enum/WindowTypeEnum';
 import { ItemEquipmentSlotEnum } from '@/core/enum/ItemEquipmentSlotEnum';
 import FlyPacket from '@/core/interface/networking/packets/packet/out/FlyPacket';
+import FlyTargetingPacket from '@/core/interface/networking/packets/packet/out/FlyTargetingPacket';
 import CharacterMoveOutPacket from '@/core/interface/networking/packets/packet/out/CharacterMoveOutPacket';
 import AffectAddPacket from '@/core/interface/networking/packets/packet/out/AffectAddPacket';
 import ItemEquippedEvent from '../inventory/events/ItemEquippedEvent';
@@ -1931,6 +1932,27 @@ export default class Player extends Character {
                 fromVirtualId: from,
                 toVirtualId: to,
                 type,
+            }),
+        );
+    }
+
+    showFlyTargeting({
+        shooterVirtualId,
+        targetVirtualId,
+        positionX,
+        positionY,
+    }: {
+        shooterVirtualId: number;
+        targetVirtualId: number;
+        positionX: number;
+        positionY: number;
+    }) {
+        this.connection?.send(
+            new FlyTargetingPacket({
+                shooterVirtualId,
+                targetVirtualId,
+                positionX,
+                positionY,
             }),
         );
     }

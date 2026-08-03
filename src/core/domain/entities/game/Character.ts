@@ -137,6 +137,19 @@ export default abstract class Character extends GameEntity {
         }
     }
 
+    public createFlyTargeting(target: Character) {
+        for (const otherEntity of this.nearbyEntities.values()) {
+            if (otherEntity.isPlayer()) {
+                (otherEntity as Player).showFlyTargeting({
+                    shooterVirtualId: this.virtualId,
+                    targetVirtualId: target.getVirtualId(),
+                    positionX: target.getPositionX(),
+                    positionY: target.getPositionY(),
+                });
+            }
+        }
+    }
+
     setPos(pos: PositionEnum) {
         this.pos = pos;
     }
