@@ -9,4 +9,5 @@ export enum ErrorTypesEnum {
     INVALID_EMPIRE = 8,
     PLAYER_NOT_FOUND = 9,
     INVALID_DELETE_CODE = 10,
+    SLOT_ALREADY_TAKEN = 11,
 }
