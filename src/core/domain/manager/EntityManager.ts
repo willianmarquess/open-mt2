@@ -102,13 +102,28 @@ export class EntityManager {
     }
 
     removeEntity(entity: GameEntity) {
-        if (entity.isMob()) return;
+        const virtualId = entity.getVirtualId();
 
         if (entity.isPlayer()) {
-            this.players.delete(entity.getVirtualId());
+            this.players.delete(virtualId);
         }
 
-        this.entities.delete(entity.getVirtualId());
+        if (entity.isMob()) {
+            this.mobs.delete(virtualId);
+            const mobsVirtualId = this.vnumToVirtualIdMobMapper.get(entity.getId());
+            if (mobsVirtualId) {
+                const index = mobsVirtualId.indexOf(virtualId);
+                if (index !== -1) {
+                    mobsVirtualId.splice(index, 1);
+                }
+                if (mobsVirtualId.length === 0) {
+                    this.vnumToVirtualIdMobMapper.delete(entity.getId());
+                }
+            }
+        }
+
+        this.entities.delete(virtualId);
+        this.virtualIdManager.release(virtualId);
     }
 
     createMob(info: { id: number; positionX: number; positionY: number; direction?: number }) {
