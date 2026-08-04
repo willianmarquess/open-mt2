@@ -1,6 +1,5 @@
 import { PointsEnum } from '@/core/enum/PointsEnum';
 import { Points } from '../../shared/Points';
-import MathUtil from '@/core/domain/util/MathUtil';
 import { MobsProto } from '@/game/infra/config/GameConfig';
 
 export class MobPoints extends Points {
@@ -71,10 +70,7 @@ export class MobPoints extends Points {
     }
 
     private calcAttack() {
-        this.attack =
-            (MathUtil.getRandomInt(Number(this.mobProto.damage_min), Number(this.mobProto.damage_max)) +
-                Math.floor(this.getPoint(PointsEnum.LEVEL) * 3 + this.getPoint(PointsEnum.ST) * 4)) *
-            Number(this.mobProto.dam_multiply);
+        this.attack = this.getPoint(PointsEnum.LEVEL) * 2 + this.getPoint(PointsEnum.ST) * 2;
     }
 
     private calcHealth() {
