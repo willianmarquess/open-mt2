@@ -1,6 +1,8 @@
 import Player from '@/core/domain/entities/game/player/Player';
 import { ChatMessageTypeEnum } from '@/core/enum/ChatMessageTypeEnum';
+import { ItemAntiFlagEnum } from '@/core/enum/ItemAntiFlagEnum';
 import { PointsEnum } from '@/core/enum/PointsEnum';
+import BitFlag from '@/core/util/BitFlag';
 import DropItemService from '@/game/app/service/DropItemService';
 import { expect } from 'chai';
 import sinon from 'sinon';
@@ -36,6 +38,7 @@ describe('DropItemService', function () {
             getId: sinon.stub().returns(27001),
             getCount: sinon.stub().returns(10),
             setCount: sinon.spy(),
+            getAntiFlags: sinon.stub().returns(new BitFlag()),
         };
 
         const playerMock = {
@@ -131,6 +134,7 @@ describe('DropItemService', function () {
             const itemMock = {
                 getCount: sinon.stub().returns(5),
                 getSize: sinon.stub().returns(1),
+                getAntiFlags: sinon.stub().returns(new BitFlag()),
             };
 
             const playerMock = {
@@ -225,6 +229,82 @@ describe('DropItemService', function () {
             expect(playerMock.dropItem.called).to.be.false;
             expect(itemManagerMock.delete.called).to.be.false;
             expect(loggerMock.error.calledOnce).to.be.true;
+        });
+
+        const antiFlagDropSetup = (flag: number) => {
+            const antiFlags = new BitFlag();
+            antiFlags.set(flag);
+
+            const itemMock = {
+                getCount: sinon.stub().returns(5),
+                getSize: sinon.stub().returns(1),
+                getAntiFlags: sinon.stub().returns(antiFlags),
+            };
+
+            const playerMock = {
+                isItemLockedInPrivateShop: sinon.stub().returns(false),
+                getInventory: sinon.stub().returns({
+                    getItem: sinon.stub().returns(itemMock),
+                    removeItem: sinon.spy(),
+                }),
+                sendItemRemoved: sinon.spy(),
+                dropItem: sinon.spy(),
+                chat: sinon.spy(),
+            };
+
+            return { itemMock, playerMock };
+        };
+
+        it('should refuse to drop an item carrying ANTI_DROP (issue #97)', async function () {
+            const { playerMock } = antiFlagDropSetup(ItemAntiFlagEnum.ANTI_DROP);
+
+            await dropItemService.execute({
+                window: 1,
+                position: 0,
+                gold: 0,
+                count: 5,
+                player: playerMock as unknown as Player,
+            });
+
+            expect(playerMock.getInventory().removeItem.called, 'the item stays in the inventory').to.be.false;
+            expect(playerMock.dropItem.called, 'nothing hits the ground').to.be.false;
+            expect(itemManagerMock.delete.called, 'the row survives').to.be.false;
+            expect(playerMock.chat.calledOnce).to.be.true;
+            expect(playerMock.chat.firstCall.args[0]).to.deep.equal({
+                messageType: ChatMessageTypeEnum.INFO,
+                message: '[SYSTEM] This item cannot be dropped',
+            });
+        });
+
+        it('should refuse to drop an item carrying ANTI_GIVE, like the original (issue #97)', async function () {
+            const { playerMock } = antiFlagDropSetup(ItemAntiFlagEnum.ANTI_GIVE);
+
+            await dropItemService.execute({
+                window: 1,
+                position: 0,
+                gold: 0,
+                count: 5,
+                player: playerMock as unknown as Player,
+            });
+
+            expect(playerMock.getInventory().removeItem.called).to.be.false;
+            expect(playerMock.dropItem.called).to.be.false;
+            expect(playerMock.chat.calledOnce).to.be.true;
+        });
+
+        it('should still drop an item whose anti-flags do not include ANTI_DROP or ANTI_GIVE', async function () {
+            const { playerMock } = antiFlagDropSetup(ItemAntiFlagEnum.ANTI_SELL);
+
+            await dropItemService.execute({
+                window: 1,
+                position: 0,
+                gold: 0,
+                count: 5,
+                player: playerMock as unknown as Player,
+            });
+
+            expect(playerMock.dropItem.calledOnce, 'ANTI_SELL alone does not block a drop').to.be.true;
+            expect(playerMock.chat.called).to.be.false;
         });
 
         it('should do nothing if item is not found', async function () {
