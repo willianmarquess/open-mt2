@@ -8,6 +8,19 @@ export type ShopResultPacketParams = {
     result: ShopSubHeaderGC;
 };
 
+/**
+ * @packet
+ * @type Out
+ * @name ShopResultPacket
+ * @header 0x26
+ * @size 4
+ * @description Is used to send the outcome of a shop operation to the client. Matches TPacketGCShop, the subheader carries the result code.
+ * @fields
+ *   - {byte} header 1 Packet header.
+ *   - {short} size 2 Total packet size in bytes, including the header.
+ *   - {byte} subheader 1 Result code: OK (4), NOT_ENOUGH_MONEY (5), INVENTORY_FULL (7), INVALID_POS (8), SOLD_OUT (9). See ShopSubHeaderGC.
+ */
+
 export default class ShopResultPacket extends PacketOut {
     private readonly result: ShopSubHeaderGC;
 

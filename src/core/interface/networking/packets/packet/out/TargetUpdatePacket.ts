@@ -4,7 +4,7 @@ import PacketOut from '@/core/interface/networking/packets/packet/out/PacketOut'
 /**
  * @packet
  * @type Out
- * @name TargetUpdatedPacket
+ * @name TargetUpdatePacket
  * @header 0x3f
  * @size 6
  * @description Used to send the target to client.

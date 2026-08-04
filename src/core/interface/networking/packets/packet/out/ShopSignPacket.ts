@@ -11,6 +11,19 @@ export type ShopSignPacketParams = {
     sign: string;
 };
 
+/**
+ * @packet
+ * @type Out
+ * @name ShopSignPacket
+ * @header 0x27
+ * @size 38
+ * @description Is used to show or hide the private shop sign above a player. An empty sign string tells the client the shop is closed. Matches SPacketGCShopSign.
+ * @fields
+ *   - {byte} header 1 Packet header.
+ *   - {int} ownerVid 4 Virtual id of the player owning the private shop.
+ *   - {string} sign 33 Shop sign text (ascii), at most 32 chars plus a null terminator.
+ */
+
 export default class ShopSignPacket extends PacketOut {
     private readonly ownerVid: number;
     private readonly sign: string;

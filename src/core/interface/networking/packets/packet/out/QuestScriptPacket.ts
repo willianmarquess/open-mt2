@@ -6,6 +6,21 @@ type QuestScriptPacketParams = {
     src: string;
 };
 
+/**
+ * @packet
+ * @type Out
+ * @name QuestScriptPacket
+ * @header 0x2d
+ * @size 6 + srcSize
+ * @description Used to send a quest script (the text and buttons of a quest dialog) to the client. The size is dynamic: a fixed 6 byte head followed by srcSize raw script bytes, so the packet is 6 + srcSize bytes. The script is not zero terminated on the wire, the client appends the terminator itself.
+ * @fields
+ *   - {byte} header 1 Packet header
+ *   - {short} size 2 Total size in bytes of this packet (6 + srcSize)
+ *   - {byte} skin 1 Quest dialog skin the client should render with
+ *   - {short} srcSize 2 Length in bytes of the script that follows
+ *   - {string} src 0 Quest script source. Variable length, srcSize bytes, so no fixed width applies.
+ */
+
 export default class QuestScriptPacket extends PacketOut {
     private readonly totalSize: number;
     private readonly skin: number;
