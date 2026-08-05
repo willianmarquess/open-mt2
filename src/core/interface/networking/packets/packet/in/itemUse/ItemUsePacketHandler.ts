@@ -35,6 +35,6 @@ export default class ItemUsePacketHandler extends PacketHandler<ItemUsePacket> {
         const window = packet.getWindow();
         const position = packet.getPosition();
 
-        this.useItemService.execute(player, window, position);
+        await this.useItemService.execute(player, window, position);
     }
 }

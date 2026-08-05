@@ -32,7 +32,7 @@ export default class ItemMovePacketHandler extends PacketHandler<ItemMovePacket>
             return;
         }
 
-        this.moveItemService.execute({
+        await this.moveItemService.execute({
             player,
             fromWindow: packet.getFromWindow(),
             fromPosition: packet.getFromPosition(),
