@@ -9,6 +9,10 @@ import { IAccountRepository } from '@/core/domain/repository/IAccountRepository'
 
 const TOKEN_EXPIRATION_SECS = 60 * 60 * 24;
 
+export type LoginError =
+    | { type: Exclude<ErrorTypesEnum, ErrorTypesEnum.LOGIN_NOT_ALLOWED> }
+    | { type: ErrorTypesEnum.LOGIN_NOT_ALLOWED; clientStatus: string };
+
 export default class LoginService {
     private readonly accountRepository: IAccountRepository;
     private readonly logger: Logger;
@@ -32,25 +36,31 @@ export default class LoginService {
         this.encryptionProvider = encryptionProvider;
     }
 
-    async execute({
-        username,
-        password,
-    }: {
-        username: string;
-        password: string;
-    }): Promise<Result<number, ErrorTypesEnum>> {
+    async execute({ username, password }: { username: string; password: string }): Promise<Result<number, LoginError>> {
         const account = await this.accountRepository.findByUsername(username);
 
         if (!account) {
             this.logger.info(`[LoginService] Username not found for username ${username}`);
-            return Result.error(ErrorTypesEnum.INVALID_USERNAME);
+            return Result.error({ type: ErrorTypesEnum.INVALID_USERNAME });
         }
 
         const isPasswordValid = await this.encryptionProvider.compare(password, account.getPassword());
 
         if (!isPasswordValid) {
             this.logger.info(`[LoginService] Invalid password for username ${username}`);
-            return Result.error(ErrorTypesEnum.INVALID_PASSWORD);
+            return Result.error({ type: ErrorTypesEnum.INVALID_PASSWORD });
+        }
+
+        const accountStatus = account.getAccountStatus();
+
+        if (!accountStatus.getAllowLogin()) {
+            this.logger.info(
+                `[LoginService] Login not allowed for username ${username} (status: ${accountStatus.getClientStatus()})`,
+            );
+            return Result.error({
+                type: ErrorTypesEnum.LOGIN_NOT_ALLOWED,
+                clientStatus: accountStatus.getClientStatus(),
+            });
         }
 
         const key = randomBytes(4).readUInt32LE();
