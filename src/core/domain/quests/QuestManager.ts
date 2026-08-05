@@ -415,6 +415,13 @@ export class QuestManager {
     }
 
     async onButton(player: Player, questId: number) {
+        if (player.isQuestRunning()) {
+            this.logger.info(
+                `[QUEST_MANAGER] Player ${player.getId()} pressed a quest button with running quest ${player.getCurrentQuest()?.getName()}`,
+            );
+            return;
+        }
+
         const event: QuestEventEnum = questId & 0x80000000 ? QuestEventEnum.INFO : QuestEventEnum.BUTTON;
 
         const questMap = this.getQuestsForEvent(event);
