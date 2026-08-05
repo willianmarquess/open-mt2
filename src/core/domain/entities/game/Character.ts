@@ -42,6 +42,9 @@ export default abstract class Character extends GameEntity {
     protected target: Character | null = null;
     protected readonly targetedBy = new Map<number, Character>();
 
+    private lastAttackedById: number = 0;
+    private lastAttackedTime: number = 0;
+
     protected readonly affectBitFlag = new AffectBitFlag();
     protected readonly animationManager: AnimationManager;
 
@@ -186,6 +189,15 @@ export default abstract class Character extends GameEntity {
 
     addTargetedBy(entity: Character) {
         this.targetedBy.set(entity.virtualId, entity);
+    }
+
+    wasAttackedRecentlyBy(attackerId: number, within: number, now: number) {
+        return this.lastAttackedById === attackerId && now - this.lastAttackedTime < within;
+    }
+
+    recordAttackedBy(attackerId: number, now: number) {
+        this.lastAttackedById = attackerId;
+        this.lastAttackedTime = now;
     }
 
     broadcastMyTarget() {
