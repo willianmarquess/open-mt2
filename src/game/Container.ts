@@ -13,6 +13,7 @@ import CommandManager from './app/command/CommandManager';
 import CharacterAttackService from './app/service/CharacterAttackService';
 import CharacterMoveService from './app/service/CharacterMoveService';
 import CharacterUpdateTargetService from './app/service/CharacterUpdateTargetService';
+import ChatService from './app/service/ChatService';
 import CreateCharacterService from './app/service/CreateCharacterService';
 import DeleteCharacterService from './app/service/DeleteCharacterService';
 import DropItemService from './app/service/DropItemService';
@@ -85,6 +86,7 @@ container.register({
     spawnManager: asClass(SpawnManager).singleton(),
     characterAttackService: asClass(CharacterAttackService).singleton(),
     characterUpdateTargetService: asClass(CharacterUpdateTargetService).singleton(),
+    chatService: asClass(ChatService).singleton(),
     dropManager: asClass(DropManager).singleton(),
     privilegeManager: asClass(PrivilegeManager).singleton(),
     questManager: asClass(QuestManager).singleton(),

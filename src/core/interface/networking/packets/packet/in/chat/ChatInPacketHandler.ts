@@ -4,15 +4,26 @@ import ChatInPacket from './ChatInPacket';
 import GameConnection from '@/game/interface/networking/GameConnection';
 import { ChatMessageTypeEnum } from '@/core/enum/ChatMessageTypeEnum';
 import CommandManager from '@/game/app/command/CommandManager';
+import ChatService from '@/game/app/service/ChatService';
 
 export default class ChatInPacketHandler extends PacketHandler<ChatInPacket> {
     private readonly logger: Logger;
     private readonly commandManager: CommandManager;
+    private readonly chatService: ChatService;
 
-    constructor({ logger, commandManager }: { logger: Logger; commandManager: CommandManager }) {
+    constructor({
+        logger,
+        commandManager,
+        chatService,
+    }: {
+        logger: Logger;
+        commandManager: CommandManager;
+        chatService: ChatService;
+    }) {
         super();
         this.logger = logger;
         this.commandManager = commandManager;
+        this.chatService = chatService;
     }
 
     async execute(connection: GameConnection, packet: ChatInPacket) {
@@ -45,11 +56,12 @@ export default class ChatInPacketHandler extends PacketHandler<ChatInPacket> {
         switch (messageType) {
             case ChatMessageTypeEnum.NORMAL:
                 this.logger.debug(`[ChatInPacketHandler] NORMAL CHAT: ${message}`);
-                if (message.startsWith('/')) {
+                if (message.length > 1 && message.startsWith('/')) {
                     await this.commandManager.execute({ message, player });
+                    return;
                 }
 
-                //TODO: send normal message to other players in map
+                this.chatService.talk(player, message);
 
                 break;
             case ChatMessageTypeEnum.SHOUT:
@@ -65,7 +77,7 @@ export default class ChatInPacketHandler extends PacketHandler<ChatInPacket> {
 
                 if (!player.isShoutAllowed()) return;
 
-                //TODO: send shout to every player in the empire
+                this.chatService.shout(player, message);
 
                 break;
             case ChatMessageTypeEnum.COMMAND:
@@ -75,9 +87,19 @@ export default class ChatInPacketHandler extends PacketHandler<ChatInPacket> {
             case ChatMessageTypeEnum.GROUP:
                 this.logger.debug(`[ChatInPacketHandler] GROUP CHAT: ${message}`);
 
+                player.chat({
+                    messageType: ChatMessageTypeEnum.INFO,
+                    message: '[SYSTEM] You are not in a party',
+                });
+
                 break;
             case ChatMessageTypeEnum.GUILD:
                 this.logger.debug(`[ChatInPacketHandler] GUILD CHAT: ${message}`);
+
+                player.chat({
+                    messageType: ChatMessageTypeEnum.INFO,
+                    message: '[SYSTEM] You are not in a guild',
+                });
 
                 break;
             case ChatMessageTypeEnum.INFO:
