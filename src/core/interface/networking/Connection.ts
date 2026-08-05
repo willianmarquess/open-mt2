@@ -104,6 +104,12 @@ export default abstract class Connection {
         this.socket.destroy();
     }
 
+    /** Flushes pending writes before closing; close() destroys them instead. */
+    closeGracefully() {
+        this.stopKeepalive();
+        this.socket.end();
+    }
+
     isClosed() {
         return this.socket.destroyed;
     }
