@@ -1,6 +1,7 @@
 import Player from '@/core/domain/entities/game/player/Player';
 import ItemManager from '@/core/domain/manager/ItemManager';
 import { ChatMessageTypeEnum } from '@/core/enum/ChatMessageTypeEnum';
+import { ItemAntiFlagEnum } from '@/core/enum/ItemAntiFlagEnum';
 import { PointsEnum } from '@/core/enum/PointsEnum';
 import Logger from '@/core/infra/logger/Logger';
 
@@ -33,6 +34,14 @@ export default class DropItemService {
 
         if (!item) return;
         if (player.isItemLockedInPrivateShop(item)) return;
+
+        if (item.getAntiFlags().is(ItemAntiFlagEnum.ANTI_DROP | ItemAntiFlagEnum.ANTI_GIVE)) {
+            player.chat({
+                messageType: ChatMessageTypeEnum.INFO,
+                message: '[SYSTEM] This item cannot be dropped',
+            });
+            return;
+        }
 
         if (!Number.isInteger(count) || count <= 0 || count > item.getCount()) return;
 
