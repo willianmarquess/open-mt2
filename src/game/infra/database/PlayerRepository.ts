@@ -193,9 +193,7 @@ export default class PlayerRepository implements IPlayerRepository {
                 player.id,
             ],
         );
-        if (player.quickSlot.size > 0) {
-            await this.bulkUpsertQuickSlots(player);
-        }
+        await this.bulkUpsertQuickSlots(player);
     }
 
     private async getQuickSlots(playerId: number): Promise<Map<number, { type: number; position: number }>> {
@@ -257,6 +255,11 @@ export default class PlayerRepository implements IPlayerRepository {
 
     private async bulkUpsertQuickSlots(player: PlayerState): Promise<void> {
         const { id: playerId, quickSlot: quickSlots } = player;
+
+        await this.databaseManager
+            .getConnection()
+            .query<ResultSetHeader>(`DELETE FROM game.quick_slot WHERE playerId = ?;`, [playerId]);
+
         if (quickSlots.size === 0) return;
 
         const values: (number | string)[] = [];
@@ -266,10 +269,6 @@ export default class PlayerRepository implements IPlayerRepository {
             placeholders.push('(?, ?, ?, ?)');
             values.push(playerId, slot, quickSlot.type, quickSlot.position);
         }
-
-        await this.databaseManager
-            .getConnection()
-            .query<ResultSetHeader>(`DELETE FROM game.quick_slot WHERE playerId = ?;`, [playerId]);
 
         await this.databaseManager.getConnection().query<ResultSetHeader>(
             `
