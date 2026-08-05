@@ -7,7 +7,7 @@ import { EncryptionProvider } from '@/core/infra/encryption/EncryptionProvider';
 import Result from '@/core/domain/util/Result';
 import { IAccountRepository } from '@/core/domain/repository/IAccountRepository';
 
-const TOKEN_EXPIRATION_SECS = 60 * 60 * 24;
+const TOKEN_EXPIRATION_SECS = 60;
 
 export default class LoginService {
     private readonly accountRepository: IAccountRepository;

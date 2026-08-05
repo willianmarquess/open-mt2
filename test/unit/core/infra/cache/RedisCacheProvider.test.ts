@@ -25,6 +25,7 @@ describe('RedisCacheProvider', () => {
             set: sinon.stub().resolves(),
             get: sinon.stub().resolves(),
             del: sinon.stub().resolves(),
+            getDel: sinon.stub().resolves(),
             quit: sinon.stub().resolves(),
             expire: sinon.stub().resolves(),
             exists: sinon.stub().resolves(),
@@ -69,6 +70,15 @@ describe('RedisCacheProvider', () => {
         redisClient.get.resolves('value');
         const value = await cacheProvider.get('key');
         expect(redisClient.get.calledWith('key')).to.be.true;
+        expect(value).to.equal('value');
+    });
+
+    it('should read and remove a value in one round trip', async () => {
+        redisClient.getDel.resolves('value');
+
+        const value = await cacheProvider.take('key');
+
+        expect(redisClient.getDel.calledOnceWith('key')).to.be.true;
         expect(value).to.equal('value');
     });
 
