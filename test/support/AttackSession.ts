@@ -247,12 +247,17 @@ export class AttackSession {
 
     /** Fire a raw command through the chat channel (e.g. "/item 27001 5"). */
     command(message: string) {
+        this.chat(message);
+    }
+
+    /** Fire a raw chat packet; the type defaults to NORMAL, 6 is SHOUT. */
+    chat(message: string, messageType = 0) {
         const size = 1 + 2 + 1 + message.length + 1;
         const w = new BufferWriter(PacketHeaderEnum.CHAT_IN, size);
         this.sendSequenced(
             w
                 .writeUint16LE(size)
-                .writeUint8(0)
+                .writeUint8(messageType)
                 .writeString(message, message.length + 1)
                 .getBuffer(),
         );

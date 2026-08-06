@@ -1277,13 +1277,23 @@ export default class Player extends Character {
         return this.createTimedEvent('SELECT', 'Back to Select');
     }
 
-    chat({ message, messageType }: { message: string; messageType: ChatMessageTypeEnum }) {
+    chat({
+        message,
+        messageType,
+        vid = this.getVirtualId(),
+        empireId = this.getEmpire(),
+    }: {
+        message: string;
+        messageType: ChatMessageTypeEnum;
+        vid?: number;
+        empireId?: number;
+    }) {
         this.connection?.send(
             new ChatOutPacket({
                 messageType,
                 message,
-                vid: this.getVirtualId(),
-                empireId: this.getEmpire(),
+                vid,
+                empireId,
             }),
         );
     }
