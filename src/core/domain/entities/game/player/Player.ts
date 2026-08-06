@@ -628,18 +628,22 @@ export default class Player extends Character {
             return;
         }
 
-        // Reject hits that arrive faster than the attack speed allows (packet
-        // flood / attack-speed hack). Only throttles repeated hits on the same
-        // victim, matching the original's per-target attack log.
+        // Mirrors the original's two speed-hack logs: the attacker's own
+        // last-victim slot, then the victim's last-attacker slot, which is the
+        // one that catches target rotation.
         const now = performance.now();
-        if (
-            victim.getVirtualId() === this.lastAttackVictimVid &&
-            now - this.lastAttackTime < this.getAttackCooldown()
-        ) {
+        const cooldown = this.getAttackCooldown();
+        if (victim.getVirtualId() === this.lastAttackVictimVid && now - this.lastAttackTime < cooldown) {
             return;
         }
         this.lastAttackVictimVid = victim.getVirtualId();
         this.lastAttackTime = now;
+
+        if (victim.wasAttackedRecentlyBy(this.getId(), cooldown, now)) {
+            victim.recordAttackedBy(this.getId(), now);
+            return;
+        }
+        victim.recordAttackedBy(this.getId(), now);
 
         this.setPos(PositionEnum.FIGHTING);
         this.lastTimeInBattle = now;
