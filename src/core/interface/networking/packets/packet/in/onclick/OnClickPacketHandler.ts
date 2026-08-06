@@ -6,6 +6,8 @@ import { QuestManager } from '@/core/domain/quests/QuestManager';
 import NPC from '@/core/domain/entities/game/mob/NPC';
 import ShopManager from '@/core/domain/shop/ShopManager';
 import { EntityManager } from '@/core/domain/manager/EntityManager';
+import { CHAR_VIEW_SIZE } from '@/core/domain/Area';
+import MathUtil from '@/core/domain/util/MathUtil';
 
 export default class OnClickPacketHandler extends PacketHandler<OnClickPacket> {
     private readonly logger: Logger;
@@ -58,7 +60,26 @@ export default class OnClickPacketHandler extends PacketHandler<OnClickPacket> {
             return;
         }
 
-        //TODO: validate id the target item is in the same map, maybe the distance too (avoid hacking)
+        if (target.getArea() !== player.getArea()) {
+            this.logger.info(
+                `[OnClickPacketHandler] Player ${player.getName()} clicked virtualId ${packet.getTargetVirtualId()} from another area`,
+            );
+            return;
+        }
+
+        const distance = MathUtil.calcDistance(
+            player.getPositionX(),
+            player.getPositionY(),
+            target.getPositionX(),
+            target.getPositionY(),
+        );
+
+        if (distance > CHAR_VIEW_SIZE) {
+            this.logger.info(
+                `[OnClickPacketHandler] Player ${player.getName()} clicked virtualId ${packet.getTargetVirtualId()} from ${distance} units away`,
+            );
+            return;
+        }
 
         if (target instanceof NPC) {
             this.logger.info(`[OnClickPacketHandler] You have clicked on: ${target.getId()}`);
