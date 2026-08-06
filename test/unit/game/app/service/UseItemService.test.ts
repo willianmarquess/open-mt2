@@ -47,7 +47,7 @@ describe('UseItemService', () => {
         expect(itemManagerStub.update.notCalled).to.be.true;
     });
 
-    it('should equip a wearable item from inventory', async () => {
+    it('should unequip a worn item back into the inventory', async () => {
         const mockItem = { getSize: () => 1, isWearable: true };
         playerStub.getItem.returns(mockItem);
         playerStub.isWearable.returns(true);
@@ -67,7 +67,10 @@ describe('UseItemService', () => {
         expect(inventoryStub.isEquipmentPosition.calledOnceWith(2)).to.be.true;
         expect(inventoryStub.removeItem.calledOnceWith(2, 1)).to.be.true;
         expect(inventoryStub.addItem.calledOnceWith(mockItem)).to.be.true;
-        expect(playerStub.sendItemRemoved.calledOnceWith({ window: 1, position: 2 })).to.be.true;
+        expect(
+            playerStub.sendItemRemoved.calledOnceWith({ window: WindowTypeEnum.EQUIPMENT, position: 2 }),
+            'the removal is echoed for the window the item actually left',
+        ).to.be.true;
         expect(
             playerStub.sendItemAdded.calledOnceWith({ window: WindowTypeEnum.INVENTORY, position: 3, item: mockItem }),
         ).to.be.true;
@@ -202,5 +205,46 @@ describe('UseItemService', () => {
 
         expect(playerStub.chat.notCalled).to.be.true;
         expect(mockItem.getType.called).to.be.true;
+    });
+
+    describe('window validation (issue #103)', () => {
+        const unimplementedWindows = [
+            ['SAFEBOX', WindowTypeEnum.SAFEBOX],
+            ['MALL', WindowTypeEnum.MALL],
+            ['DRAGON_SOUL_INVENTORY', WindowTypeEnum.DRAGON_SOUL_INVENTORY],
+            ['BELT_INVENTORY', WindowTypeEnum.BELT_INVENTORY],
+            ['RESERVED_WINDOW', WindowTypeEnum.RESERVED_WINDOW],
+        ] as const;
+
+        for (const [name, window] of unimplementedWindows) {
+            it(`should ignore a use addressed to ${name}, which has no backing store`, async () => {
+                playerStub.getItem.returns({ getSize: () => 1 });
+
+                await service.execute(playerStub, window, 2);
+
+                expect(playerStub.getItem.notCalled, 'the position must not be resolved against the inventory').to.be
+                    .true;
+                expect(playerStub.sendItemRemoved.notCalled, 'and nothing is echoed back').to.be.true;
+            });
+        }
+
+        it('should not disconnect a client that names an unimplemented window', async () => {
+            await service.execute(playerStub, WindowTypeEnum.DRAGON_SOUL_INVENTORY, 2);
+
+            expect(playerStub.chat.notCalled, 'the original returns false silently').to.be.true;
+        });
+
+        for (const [name, window] of [
+            ['INVENTORY', WindowTypeEnum.INVENTORY],
+            ['EQUIPMENT', WindowTypeEnum.EQUIPMENT],
+        ] as const) {
+            it(`should still handle a use addressed to ${name}`, async () => {
+                playerStub.getItem.returns(undefined);
+
+                await service.execute(playerStub, window, 2);
+
+                expect(playerStub.getItem.calledOnceWith(2)).to.be.true;
+            });
+        }
     });
 });

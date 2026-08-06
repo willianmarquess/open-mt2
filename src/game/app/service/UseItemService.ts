@@ -77,13 +77,15 @@ export default class UseItemService {
     async execute(player: Player, window: number, position: number) {
         this.logger.debug(`[UseItemService] using item in window: ${window}, position: ${position}`);
 
+        if (window !== WindowTypeEnum.INVENTORY && window !== WindowTypeEnum.EQUIPMENT) return;
+
         const item = player.getItem(position);
 
         if (!item) return;
         if (player.isItemLockedInPrivateShop(item)) return;
 
         if (player.isWearable(item)) {
-            await this.useWearableItem(player, item, position, window);
+            await this.useWearableItem(player, item, position);
         } else {
             const equipFailureReason = player.getEquipFailureReason(item);
             if (equipFailureReason) {
@@ -98,14 +100,14 @@ export default class UseItemService {
         }
     }
 
-    private async useWearableItem(player: Player, item: Item, position: number, window: number) {
+    private async useWearableItem(player: Player, item: Item, position: number) {
         if (player.getInventory().isEquipmentPosition(position)) {
             player.getInventory().removeItem(position, item.getSize());
             const addedPosition = player.getInventory().addItem(item);
 
             if (addedPosition >= 0) {
                 player.sendItemRemoved({
-                    window,
+                    window: WindowTypeEnum.EQUIPMENT,
                     position,
                 });
 
