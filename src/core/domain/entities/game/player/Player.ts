@@ -736,13 +736,7 @@ export default class Player extends Character {
         // the only packet the client applies to its own character, so a
         // desynced client self-recovers instead of rubber-banding forever.
         this.lastReportedPosition = null;
-        this.connection?.send(
-            new SyncPositionPacket({
-                virtualId: this.virtualId,
-                positionX: this.getPositionX(),
-                positionY: this.getPositionY(),
-            }),
-        );
+        this.sendSyncPosition(this);
         return false;
     }
 
@@ -871,6 +865,16 @@ export default class Player extends Character {
 
         super.setTarget(target);
         this.sendTargetUpdated(target);
+    }
+
+    sendSyncPosition(entity: Character) {
+        this.connection?.send(
+            new SyncPositionPacket({
+                virtualId: entity.getVirtualId(),
+                positionX: entity.getPositionX(),
+                positionY: entity.getPositionY(),
+            }),
+        );
     }
 
     sendTargetUpdated(target?: Character) {

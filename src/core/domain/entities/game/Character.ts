@@ -311,13 +311,27 @@ export default abstract class Character extends GameEntity {
     }
 
     protected stun() {
-        //TODO: verify the necessity to send sync packet
-        if (this.targetPositionX === this.positionX || this.targetPositionY === this.positionY) {
-            this.startPositionX = this.targetPositionX = this.positionX;
-            this.startPositionY = this.targetPositionY = this.positionY;
-            if (this.pos === PositionEnum.FIGHTING) {
-                this.setPos(PositionEnum.STANDING);
+        if (this.targetPositionX === this.positionX && this.targetPositionY === this.positionY) return;
+
+        this.startPositionX = this.targetPositionX = this.positionX;
+        this.startPositionY = this.targetPositionY = this.positionY;
+
+        if (this.pos === PositionEnum.FIGHTING) {
+            this.setPos(PositionEnum.STANDING);
+        }
+
+        this.syncPosition();
+    }
+
+    protected syncPosition() {
+        for (const entity of this.nearbyEntities.values()) {
+            if (entity.isPlayer()) {
+                entity.sendSyncPosition(this);
             }
+        }
+
+        if (this.isPlayer()) {
+            this.sendSyncPosition(this);
         }
     }
 
