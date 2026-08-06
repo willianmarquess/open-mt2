@@ -282,7 +282,6 @@ export default class MonsterBattle {
     }
 
     private applyStun(victim: Player) {
-        //TODO: reset player future position
         if (victim.isAffectByFlag(AffectBitsTypeEnum.STUN)) return;
         //If the player has stun immune, they will only have a 20% chance of being stunned.
         if (victim.getPoint(PointsEnum.IMMUNE_STUN) && MathUtil.getRandomInt(1, 100) <= 80) return;
