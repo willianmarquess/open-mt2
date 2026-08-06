@@ -44,6 +44,10 @@ export default class RedisCacheProvider implements CacheProvider {
         return this.client.get(key) as T;
     }
 
+    async take<T>(key: string) {
+        return (await this.client.getDel(key)) as T | null;
+    }
+
     async delete(key: string) {
         await this.client.del(key);
     }
