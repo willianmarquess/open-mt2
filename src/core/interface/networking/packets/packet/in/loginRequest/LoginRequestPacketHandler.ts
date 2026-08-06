@@ -9,6 +9,7 @@ import LoginStatusEnum from '@/core/enum/LoginStatusEnum';
 import LoginSuccessPacket from '../../out/LoginSuccessPacket';
 
 const LOGIN_SUCCESS_RESULT = 1;
+const ACCOUNT_STATUS_MAX_LEN = 8;
 
 export default class LoginRequestPacketHandler extends PacketHandler<LoginRequestPacket> {
     private readonly loginService: LoginService;
@@ -37,9 +38,9 @@ export default class LoginRequestPacketHandler extends PacketHandler<LoginReques
         });
 
         if (result.hasError()) {
-            const error = result.getError();
+            const error = result.getError()!;
 
-            switch (error) {
+            switch (error.type) {
                 case ErrorTypesEnum.INVALID_USERNAME:
                 case ErrorTypesEnum.INVALID_PASSWORD:
                     connection.send(
@@ -49,8 +50,16 @@ export default class LoginRequestPacketHandler extends PacketHandler<LoginReques
                     );
                     break;
 
+                case ErrorTypesEnum.LOGIN_NOT_ALLOWED:
+                    connection.send(
+                        new LoginFailedPacket({
+                            status: error.clientStatus.slice(0, ACCOUNT_STATUS_MAX_LEN),
+                        }),
+                    );
+                    break;
+
                 default:
-                    this.logger.info(`[LoginRequestPacketHandler] Invalid error: ${error}`);
+                    this.logger.info(`[LoginRequestPacketHandler] Invalid error: ${error.type}`);
                     break;
             }
             return;
