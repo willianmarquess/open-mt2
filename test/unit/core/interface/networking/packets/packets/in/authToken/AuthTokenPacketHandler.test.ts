@@ -6,17 +6,19 @@ import { expect } from 'chai';
 import sinon from 'sinon';
 
 describe('AuthTokenPacketHandler', () => {
-    let loadCharactersServiceMock, authenticateServiceMock, configMock, loggerMock;
+    let loadCharactersServiceMock, authenticateServiceMock, sessionManagerMock, configMock, loggerMock;
     let connectionMock, packetMock, authTokenPacketHandler: AuthTokenPacketHandler;
 
     beforeEach(() => {
         loadCharactersServiceMock = { execute: sinon.stub() };
         authenticateServiceMock = { execute: sinon.stub() };
+        sessionManagerMock = { get: sinon.stub().returns(undefined), set: sinon.spy(), remove: sinon.spy() };
         configMock = { SERVER_PORT: 12345, SERVER_ADDRESS: '127.0.0.1' };
-        loggerMock = { error: sinon.spy() };
+        loggerMock = { error: sinon.spy(), info: sinon.spy() };
 
         connectionMock = {
             close: sinon.spy(),
+            closeGracefully: sinon.spy(),
             send: sinon.spy(),
             getAccountId: () => 1,
             state: null,
@@ -37,6 +39,7 @@ describe('AuthTokenPacketHandler', () => {
         authTokenPacketHandler = new AuthTokenPacketHandler({
             loadCharactersService: loadCharactersServiceMock,
             authenticateService: authenticateServiceMock,
+            sessionManager: sessionManagerMock,
             config: configMock,
             logger: loggerMock,
         });
@@ -137,5 +140,63 @@ describe('AuthTokenPacketHandler', () => {
         await authTokenPacketHandler.execute(connectionMock, packetMock);
 
         expect(connectionMock.state).to.equal(ConnectionStateEnum.SELECT);
+    });
+
+    describe('single session per account (issue #105)', () => {
+        const authenticateAs = (accountId: number) => {
+            packetMock.isValid.returns(true);
+            authenticateServiceMock.execute.resolves({
+                hasError: () => false,
+                getData: () => ({ accountId }),
+            });
+            loadCharactersServiceMock.execute.resolves({ isOk: () => false });
+        };
+
+        it('should register the session when the account is not connected', async () => {
+            authenticateAs(1);
+
+            await authTokenPacketHandler.execute(connectionMock, packetMock);
+
+            expect(sessionManagerMock.set.calledOnceWith(1, connectionMock)).to.equal(true);
+        });
+
+        it('should refuse the newcomer and kick the live session when the account is already connected', async () => {
+            authenticateAs(1);
+            const liveConnection = { close: sinon.spy() };
+            sessionManagerMock.get.returns(liveConnection);
+
+            await authTokenPacketHandler.execute(connectionMock, packetMock);
+
+            expect(liveConnection.close.calledOnce, 'the ghost session is dropped').to.equal(true);
+            expect(connectionMock.closeGracefully.calledOnce, 'the newcomer is refused').to.equal(true);
+            expect(connectionMock.state, 'and never reaches character selection').to.not.equal(
+                ConnectionStateEnum.SELECT,
+            );
+            expect(sessionManagerMock.set.called, 'no session is registered for a refused connection').to.equal(false);
+        });
+
+        it('should tell the refused client why, before closing', async () => {
+            authenticateAs(1);
+            sessionManagerMock.get.returns({ close: sinon.spy() });
+
+            await authTokenPacketHandler.execute(connectionMock, packetMock);
+
+            expect(connectionMock.send.calledOnce).to.equal(true);
+            const sent = connectionMock.send.firstCall.args[0];
+            expect(sent['status'], 'the stock client renders this status').to.equal('ALREADY');
+            expect(
+                connectionMock.close.called,
+                'close() destroys the socket and would discard the packet still corked',
+            ).to.equal(false);
+        });
+
+        it('should not load characters for a refused connection', async () => {
+            authenticateAs(1);
+            sessionManagerMock.get.returns({ close: sinon.spy() });
+
+            await authTokenPacketHandler.execute(connectionMock, packetMock);
+
+            expect(loadCharactersServiceMock.execute.called).to.equal(false);
+        });
     });
 });

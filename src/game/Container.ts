@@ -44,6 +44,7 @@ import PrivateShopService from './app/service/PrivateShopService';
 import GlobalEventTimerManager from '@/core/domain/manager/GlobalEventTimeManager';
 import { VirtualIdManager } from '@/core/domain/manager/VirtualIdManager';
 import { EntityManager } from '@/core/domain/manager/EntityManager';
+import SessionManager from '@/game/domain/manager/SessionManager';
 import { QuestTargetManager } from '@/core/domain/quests/QuestTargetManager';
 import { SkillManager } from '@/core/domain/manager/SkillManager';
 
@@ -96,6 +97,7 @@ container.register({
     eventTimerManager: asClass(GlobalEventTimerManager).singleton(),
     virtualIdManager: asClass(VirtualIdManager).singleton(),
     entityManager: asClass(EntityManager).singleton(),
+    sessionManager: asClass(SessionManager).singleton(),
     questTargetManager: asClass(QuestTargetManager).singleton(),
     skillManager: asClass(SkillManager).singleton(),
 });

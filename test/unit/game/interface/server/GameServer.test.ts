@@ -4,13 +4,16 @@ import GameServer from '@/game/interface/server/GameServer';
 
 const logger: any = { info: () => {}, error: () => {}, debug: () => {} };
 
-const createGameServer = (logoutService: any) => {
+const createSessionManager = () => ({ remove: sinon.stub() }) as any;
+
+const createGameServer = (logoutService: any, sessionManager: any = createSessionManager()) => {
     return new GameServer({
         logger,
         config: {} as any,
         packets: new Map(),
         world: {} as any,
         logoutService,
+        sessionManager,
     });
 };
 
@@ -18,6 +21,7 @@ const createConnection = (player: unknown) =>
     ({
         getId: () => 'connection-id',
         getPlayer: () => player,
+        getAccountId: () => 1,
         clearPlayer: sinon.stub(),
         stopKeepalive: sinon.stub(),
     }) as any;
@@ -60,6 +64,28 @@ describe('GameServer', () => {
             await server.onClose(connection);
 
             expect(connection.clearPlayer.calledOnce).to.be.equal(true);
+        });
+
+        it('should release the account session so the player can log in again (issue #105)', async () => {
+            const logoutService = { execute: sinon.stub().resolves() };
+            const sessionManager = createSessionManager();
+            const server = createGameServer(logoutService, sessionManager);
+            const connection = createConnection({ getName: () => 'Test' });
+
+            await server.onClose(connection);
+
+            expect(sessionManager.remove.calledOnceWith(connection)).to.be.equal(true);
+        });
+
+        it('should release the account session even when no character was selected', async () => {
+            const logoutService = { execute: sinon.stub().resolves() };
+            const sessionManager = createSessionManager();
+            const server = createGameServer(logoutService, sessionManager);
+            const connection = createConnection(null);
+
+            await server.onClose(connection);
+
+            expect(sessionManager.remove.calledOnceWith(connection), 'a session dies at TOKEN too').to.be.equal(true);
         });
     });
 });
