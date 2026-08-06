@@ -40,7 +40,8 @@ describe('Security — aggressive monster victim scan (issue #107)', function ()
                     (monster) =>
                         monster.isAggresive() &&
                         monster.getPoint(PointsEnum.HEALTH) > 0 &&
-                        monster.getNearbyEntities().size === 0,
+                        monster.getNearbyEntities().size === 0 &&
+                        harness.areaAt(monster.getPositionX(), monster.getPositionY()) === monster.getArea(),
                 );
 
             if (candidate) return candidate;
