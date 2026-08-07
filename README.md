@@ -1,5 +1,9 @@
 # Open Metin2 - Server Emulator
 
+<!-- hy-mt2-i18n:start -->
+| **English** | [中文](./README_zh-CN.md) | [日本語](./README_ja.md) | [Español](./README_es.md) |
+<!-- hy-mt2-i18n:end -->
+
 ![GitHub repo size](https://img.shields.io/github/repo-size/willianmarquess/open-mt2?style=for-the-badge)
 ![GitHub language count](https://img.shields.io/github/languages/count/willianmarquess/open-mt2?style=for-the-badge)
 ![GitHub forks](https://img.shields.io/github/forks/willianmarquess/open-mt2?style=for-the-badge)
