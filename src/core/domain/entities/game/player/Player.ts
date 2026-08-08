@@ -585,6 +585,8 @@ export default class Player extends Character {
             messageType: ChatMessageTypeEnum.COMMAND,
             message: 'CloseRestartWindow',
         });
+        if (!this.isDead()) return;
+
         this.connection?.setState(ConnectionStateEnum.GAME);
 
         if (type === 'TOWN') {
