@@ -18,6 +18,7 @@ import MathUtil from '@/core/domain/util/MathUtil';
 import { FlyEnum } from '@/core/enum/FlyEnum';
 import PlayerBattleStrategy from './PlayerBattleStrategy';
 import { TimedEventsEnum } from '@/core/enum/TimedEventsEnum';
+import { SLOW_AFFECT_MOVE_SPEED_PENALTY } from '../../../shared/AffectConstants';
 
 const weaponResistanceMapper: { [key in ItemWeaponSubTypeEnum]: MobResistEnum } = {
     [ItemWeaponSubTypeEnum.WEAPON_BELL]: MobResistEnum.BELL,
@@ -418,8 +419,7 @@ export default class PlayerBattleAgainstMobStrategy extends PlayerBattleStrategy
     protected applySlow(victim: Monster) {
         if (victim.isImmuneByFlag(MobImmuneFlagEnum.SLOW)) return;
         if (victim.isAffectByFlag(AffectBitsTypeEnum.SLOW)) return;
-        const SLOW_VALUE = 30;
-        victim.addPoint(PointsEnum.MOVE_SPEED, -SLOW_VALUE);
+        victim.addPoint(PointsEnum.MOVE_SPEED, -SLOW_AFFECT_MOVE_SPEED_PENALTY);
 
         victim.setAffectFlag(AffectBitsTypeEnum.SLOW);
         victim.sendUpdateEvent();
@@ -427,7 +427,7 @@ export default class PlayerBattleAgainstMobStrategy extends PlayerBattleStrategy
         victim.addEventTimer({
             id: TimedEventsEnum.SLOW,
             eventFunction: () => {
-                victim.addPoint(PointsEnum.MOVE_SPEED, SLOW_VALUE);
+                victim.addPoint(PointsEnum.MOVE_SPEED, SLOW_AFFECT_MOVE_SPEED_PENALTY);
                 victim.removeAffectFlag(AffectBitsTypeEnum.SLOW);
                 victim.sendUpdateEvent();
             },

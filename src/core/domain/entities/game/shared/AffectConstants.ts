@@ -1,0 +1,1 @@
+export const SLOW_AFFECT_MOVE_SPEED_PENALTY = 30;

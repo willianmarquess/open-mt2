@@ -12,6 +12,7 @@ import Player from '../../../player/Player';
 import { MobImmuneFlagEnum } from '@/core/enum/MobImmuneFlagEnum';
 import Monster from '../../Monster';
 import { TimedEventsEnum } from '@/core/enum/TimedEventsEnum';
+import { SLOW_AFFECT_MOVE_SPEED_PENALTY } from '../../../shared/AffectConstants';
 
 export default class MonsterBattle {
     private readonly logger: Logger;
@@ -304,8 +305,7 @@ export default class MonsterBattle {
     private applySlow(victim: Player) {
         //TODO: use antislow to calculate this chance to apply or not
         if (victim.isAffectByFlag(AffectBitsTypeEnum.SLOW)) return;
-        const SLOW_VALUE = 30;
-        victim.addPoint(PointsEnum.MOVE_SPEED, -SLOW_VALUE);
+        victim.addPoint(PointsEnum.MOVE_SPEED, -SLOW_AFFECT_MOVE_SPEED_PENALTY);
 
         victim.setAffectFlag(AffectBitsTypeEnum.SLOW);
         victim.updateView();
@@ -313,7 +313,7 @@ export default class MonsterBattle {
         victim.addEventTimer({
             id: TimedEventsEnum.SLOW,
             eventFunction: () => {
-                victim.addPoint(PointsEnum.MOVE_SPEED, SLOW_VALUE);
+                victim.addPoint(PointsEnum.MOVE_SPEED, SLOW_AFFECT_MOVE_SPEED_PENALTY);
                 victim.removeAffectFlag(AffectBitsTypeEnum.SLOW);
                 victim.updateView();
             },
