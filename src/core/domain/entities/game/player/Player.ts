@@ -2147,6 +2147,7 @@ export default class Player extends Character {
 
     setHorseLevel(level: number): void {
         this.horse.setLevel(level);
+        this.skills.setSkillLevel(SkillEnum.HORSE, level);
     }
 
     getHorseHealth(): number {
@@ -2880,7 +2881,7 @@ export default class Player extends Character {
     }
 
     setSkillNextReadTime(skillNum: SkillEnum, time: number) {
-        return this.skills.setSkillnextReadTime(skillNum, time);
+        return this.skills.setSkillNextReadTime(skillNum, time);
     }
 
     skillLevelUpByPoint(skillNum: SkillEnum) {

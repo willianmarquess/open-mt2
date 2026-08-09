@@ -12,9 +12,8 @@ import { SpecialEffectTypeEnum } from '@/core/enum/SpecialEffectTypeEnum';
 import { TimedEventsEnum } from '@/core/enum/TimedEventsEnum';
 import { WindowTypeEnum } from '@/core/enum/WindowTypeEnum';
 import Logger from '@/core/infra/logger/Logger';
+import { SKILLBOOK_DELAY_MAX, SKILLBOOK_DELAY_MIN } from '@/core/util/Constants';
 
-const SKILLBOOK_DELAY_MIN = 64800;
-const SKILLBOOK_DELAY_MAX = 108000;
 // Horse item vnums from unique_item.h
 // Feed items restore 1 HP to a living horse.
 // Revive items restore a dead horse to full health/stamina.
@@ -53,6 +52,7 @@ const ALL_HORSE_ITEM_VNUMS = new Set([
     ITEM_REVIVE_HORSE_1,
     ITEM_REVIVE_HORSE_2,
     ITEM_REVIVE_HORSE_3,
+    // SpecialItemEnum.ITEM_HORSE_SKILL_TRAIN_BOOK,
 ]);
 
 export default class UseItemService {
@@ -297,6 +297,14 @@ export default class UseItemService {
     }
 
     private async useHorseItem(player: Player, item: Item): Promise<void> {
+        //TODO: verify if this is used
+        // if (item.getId() === SpecialItemEnum.ITEM_HORSE_SKILL_TRAIN_BOOK) {
+        //     if (player.learnHorseSkillByBook()) {
+        //         await this.removeItemByQuantity(player, item, 1);
+        //     }
+        //     return;
+        // }
+
         const grade = player.getHorseGrade();
 
         if (grade <= 0) {
