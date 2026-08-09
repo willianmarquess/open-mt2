@@ -408,7 +408,7 @@ export class PlayerSkill {
     }
 
     clearSkill() {
-        this.player.setPoint(
+        this.player.addPoint(
             PointsEnum.SKILL,
             4 + (this.player.getPoint(PointsEnum.LEVEL) - 5) - this.player.getPoint(PointsEnum.SKILL),
         );
