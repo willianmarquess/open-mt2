@@ -58,7 +58,7 @@ export class PlayerSkill {
             };
         }
 
-        this.skills[skillNum].level = Math.min(level, SKILL_MAX_LEVEL);
+        this.skills[skillNum].level = Math.max(0, Math.min(level, SKILL_MAX_LEVEL));
 
         switch (true) {
             case level >= 40:

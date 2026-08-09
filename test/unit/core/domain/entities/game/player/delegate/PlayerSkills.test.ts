@@ -128,6 +128,11 @@ describe('PlayerSkill', () => {
             expect(playerSkill.getSkills()[TEST_SKILL].level).to.equal(SKILL_MAX_LEVEL);
         });
 
+        it('clamps a negative level to zero, which the skill packet cannot encode', () => {
+            playerSkill.setSkillLevel(TEST_SKILL, -1);
+            expect(playerSkill.getSkills()[TEST_SKILL].level).to.equal(0);
+        });
+
         it('sets rank to NORMAL when level < 20', () => {
             playerSkill.setSkillLevel(TEST_SKILL, 10);
             expect(playerSkill.getSkills()[TEST_SKILL].rank).to.equal(RANK.NORMAL);

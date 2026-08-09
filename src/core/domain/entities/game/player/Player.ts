@@ -2188,7 +2188,8 @@ export default class Player extends Character {
 
     setHorseLevel(level: number): void {
         this.horse.setLevel(level);
-        this.skills.setSkillLevel(SkillEnum.HORSE, level);
+        this.skills.setSkillLevel(SkillEnum.HORSE, this.horse.getLevel());
+        this.sendSkillLevel();
     }
 
     getHorseHealth(): number {
