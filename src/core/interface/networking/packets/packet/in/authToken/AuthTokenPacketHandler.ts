@@ -9,27 +9,34 @@ import EmpirePacket from '../../bidirectional/empire/EmpirePacket';
 import CharactersInfoPacket from '../../out/CharactersInfoPacket';
 import Ip from '@/core/util/Ip';
 import { ConnectionStateEnum } from '@/core/enum/ConnectionStateEnum';
+import SessionManager from '@/game/domain/manager/SessionManager';
+import LoginFailedPacket from '../../out/LoginFailedPacket';
+import LoginStatusEnum from '@/core/enum/LoginStatusEnum';
 
 export default class AuthTokenPacketHandler extends PacketHandler<AuthTokenPacket> {
     private readonly loadCharactersService: LoadCharactersService;
     private readonly authenticateService: AuthenticateService;
+    private readonly sessionManager: SessionManager;
     private readonly config: GameConfig;
     private readonly logger: Logger;
 
     constructor({
         loadCharactersService,
         authenticateService,
+        sessionManager,
         config,
         logger,
     }: {
         loadCharactersService: LoadCharactersService;
         authenticateService: AuthenticateService;
+        sessionManager: SessionManager;
         config: GameConfig;
         logger: Logger;
     }) {
         super();
         this.loadCharactersService = loadCharactersService;
         this.authenticateService = authenticateService;
+        this.sessionManager = sessionManager;
         this.config = config;
         this.logger = logger;
     }
@@ -59,7 +66,20 @@ export default class AuthTokenPacketHandler extends PacketHandler<AuthTokenPacke
             return;
         }
 
+        const liveConnection = this.sessionManager.get(token.accountId);
+
+        if (liveConnection) {
+            this.logger.info(
+                `[AuthTokenPacketHandler] Account ${token.accountId} is already connected, dropping both sessions`,
+            );
+            liveConnection.close();
+            connection.send(new LoginFailedPacket({ status: LoginStatusEnum.ALREADY_CONNECTED }));
+            connection.closeGracefully();
+            return;
+        }
+
         connection.setAccountId(token.accountId);
+        this.sessionManager.set(token.accountId, connection);
 
         const charactersResult = await this.loadCharactersService.execute({ accountId: token.accountId });
 

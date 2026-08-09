@@ -7,7 +7,7 @@ import CacheKeyGenerator from '@/core/util/CacheKeyGenerator';
 import { IPlayerRepository } from '@/core/domain/repository/IPlayerRepository';
 import { EntityManager } from '@/core/domain/manager/EntityManager';
 
-const MAX_PLAYERS_PER_ACCOUNT = 4;
+export const MAX_PLAYERS_PER_ACCOUNT = 4;
 
 type CreateCharacterServiceParams = {
     playerName: string;
@@ -54,9 +54,16 @@ export default class CreateCharacterService {
             return Result.error(ErrorTypesEnum.NAME_ALREADY_EXISTS);
         }
 
+        const slotTaken = await this.playerRepository.getByAccountIdAndSlot(accountId, slot);
+
+        if (slotTaken) {
+            this.logger.info(`[CreateCharacterService] The slot: ${slot} is already taken, accountId: ${accountId}`);
+            return Result.error(ErrorTypesEnum.SLOT_ALREADY_TAKEN);
+        }
+
         const players = await this.playerRepository.getByAccountId(accountId);
 
-        if (players.length > MAX_PLAYERS_PER_ACCOUNT) {
+        if (players.length >= MAX_PLAYERS_PER_ACCOUNT) {
             this.logger.info(`[CreateCharacterService] The player account is full`);
             return Result.error(ErrorTypesEnum.ACCOUNT_FULL);
         }

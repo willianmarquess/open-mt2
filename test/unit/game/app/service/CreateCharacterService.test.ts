@@ -1,7 +1,7 @@
 import { expect } from 'chai';
 import sinon from 'sinon';
 import { ErrorTypesEnum } from '@/core/enum/ErrorTypesEnum';
-import CreateCharacterService from '@/game/app/service/CreateCharacterService';
+import CreateCharacterService, { MAX_PLAYERS_PER_ACCOUNT } from '@/game/app/service/CreateCharacterService';
 
 describe('CreateCharacterService', function () {
     let loggerMock;
@@ -23,6 +23,7 @@ describe('CreateCharacterService', function () {
         playerRepositoryMock = {
             nameAlreadyExists: sinon.stub(),
             getByAccountId: sinon.stub(),
+            getByAccountIdAndSlot: sinon.stub().resolves(null),
             create: sinon.stub(),
         };
 
@@ -57,7 +58,7 @@ describe('CreateCharacterService', function () {
 
         it('should return error if the account is full', async function () {
             playerRepositoryMock.nameAlreadyExists.resolves(false);
-            playerRepositoryMock.getByAccountId.resolves(new Array(5));
+            playerRepositoryMock.getByAccountId.resolves(new Array(MAX_PLAYERS_PER_ACCOUNT));
 
             const result = await createCharacterService.execute({
                 playerName: 'newName',
@@ -70,6 +71,61 @@ describe('CreateCharacterService', function () {
             expect(playerRepositoryMock.getByAccountId.calledOnce).to.be.true;
             expect(result.hasError()).to.be.true;
             expect(result.getError()).to.equal(ErrorTypesEnum.ACCOUNT_FULL);
+            expect(playerRepositoryMock.create.called).to.be.false;
+        });
+
+        it('should still allow a character while the account is one short of full', async function () {
+            playerRepositoryMock.nameAlreadyExists.resolves(false);
+            playerRepositoryMock.getByAccountId.resolves(new Array(MAX_PLAYERS_PER_ACCOUNT - 1));
+            cacheProviderMock.exists.resolves(true);
+            cacheProviderMock.get.resolves(2);
+            entityManagerMock.createPlayer.returns({ toDatabase: sinon.stub().returns({}), setId: sinon.spy() });
+            playerRepositoryMock.create.resolves(100);
+
+            const result = await createCharacterService.execute({
+                playerName: 'newName',
+                playerClass: 1,
+                appearance: 123,
+                slot: 1,
+                accountId: 10,
+            });
+
+            expect(result.hasError()).to.be.false;
+        });
+
+        it('should return error if the slot is already taken', async function () {
+            playerRepositoryMock.nameAlreadyExists.resolves(false);
+            playerRepositoryMock.getByAccountIdAndSlot.resolves({ id: 1, slot: 1, name: 'occupant' });
+
+            const result = await createCharacterService.execute({
+                playerName: 'newName',
+                playerClass: 1,
+                appearance: 123,
+                slot: 1,
+                accountId: 10,
+            });
+
+            expect(playerRepositoryMock.getByAccountIdAndSlot.calledOnceWith(10, 1)).to.be.true;
+            expect(result.hasError()).to.be.true;
+            expect(result.getError()).to.equal(ErrorTypesEnum.SLOT_ALREADY_TAKEN);
+            expect(playerRepositoryMock.create.called).to.be.false;
+        });
+
+        it('should refuse the occupied slot even when the account has room', async function () {
+            playerRepositoryMock.nameAlreadyExists.resolves(false);
+            playerRepositoryMock.getByAccountId.resolves([{ slot: 0 }]);
+            playerRepositoryMock.getByAccountIdAndSlot.resolves({ id: 1, slot: 0, name: 'occupant' });
+
+            const result = await createCharacterService.execute({
+                playerName: 'newName',
+                playerClass: 1,
+                appearance: 123,
+                slot: 0,
+                accountId: 10,
+            });
+
+            expect(result.getError()).to.equal(ErrorTypesEnum.SLOT_ALREADY_TAKEN);
+            expect(playerRepositoryMock.create.called).to.be.false;
         });
 
         it('should return error if the empire is not selected', async function () {

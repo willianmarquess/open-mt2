@@ -14,6 +14,26 @@ export type ShopStartPacketParams = {
     items: Array<ShopItem | undefined>;
 };
 
+/**
+ * @packet
+ * @type Out
+ * @name ShopStartPacket
+ * @header 0x26
+ * @size 1728
+ * @description Is used to open the shop window with its full item grid (we need to repeat the item block 40x, empty slots are sent zeroed). Matches TPacketGCShop + owner vid + TPacketGCShopStart.
+ * @fields
+ *   - {byte} header 1 Packet header.
+ *   - {short} size 2 Total packet size in bytes, including the header.
+ *   - {byte} subheader 1 Shop subheader, always START (0). See ShopSubHeaderGC.
+ *   - {int} ownerVid 4 Virtual id of the shop owner (npc or player).
+ *   - {int} vnum 4 Item vnum of this shop slot, 0 when the slot is empty.
+ *   - {int} price 4 Price of the item in yang.
+ *   - {byte} count 1 Item stack count.
+ *   - {byte} displayPos 1 Slot position of the item inside the shop grid.
+ *   - {int[3]} sockets 12 Three socket values, always 0 for shop items.
+ *   - {bonus[7]} bonuses 21 Seven attribute slots, each one a {byte} id plus a {short} value, always 0 for shop items.
+ */
+
 export default class ShopStartPacket extends PacketOut {
     private readonly ownerVid: number;
     private readonly items: Array<ShopItem | undefined>;

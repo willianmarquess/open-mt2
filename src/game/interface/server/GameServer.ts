@@ -6,10 +6,12 @@ import { Logger } from 'winston';
 import { GameConfig } from '@/game/infra/config/GameConfig';
 import { PacketMapValue } from '@/core/interface/networking/packets/Packets';
 import LogoutService from '@/game/app/service/LogoutService';
+import SessionManager from '@/game/domain/manager/SessionManager';
 
 export default class GameServer extends Server {
     private readonly world: World;
     private readonly logoutService: LogoutService;
+    private readonly sessionManager: SessionManager;
 
     constructor(container: {
         logger: Logger;
@@ -17,13 +19,17 @@ export default class GameServer extends Server {
         packets: Map<number, PacketMapValue<any>>;
         world: World;
         logoutService: LogoutService;
+        sessionManager: SessionManager;
     }) {
         super(container);
         this.world = container.world;
         this.logoutService = container.logoutService;
+        this.sessionManager = container.sessionManager;
     }
 
     async onClose(connection: GameConnection) {
+        this.sessionManager.remove(connection);
+
         const player = connection.getPlayer();
 
         if (player) {

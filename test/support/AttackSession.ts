@@ -7,6 +7,7 @@ import PacketHeaderEnum from '@/core/enum/PacketHeaderEnum';
 import CacheKeyGenerator from '@/core/util/CacheKeyGenerator';
 import Monster from '@/core/domain/entities/game/mob/Monster';
 import DroppedItem from '@/core/domain/entities/game/item/DroppedItem';
+import { PointsEnum } from '@/core/enum/PointsEnum';
 
 /**
  * A "malicious client" test harness: it speaks the raw game protocol against a
@@ -89,6 +90,10 @@ export default class AttackHarness {
         return container.resolve<any>('entityManager');
     }
 
+    private get world() {
+        return container.resolve<any>('world');
+    }
+
     /**
      * Every live entity in the world. Tests use this to learn virtual ids the
      * attacker is not supposed to know — which is exactly the attacker's own
@@ -105,6 +110,37 @@ export default class AttackHarness {
     /** Every live monster, for specs that need one with particular surroundings. */
     findMonsters(): Array<Monster> {
         return this.entities().filter((entity) => entity instanceof Monster);
+    }
+
+    /** The area owning these coordinates, or undefined where none does. */
+    areaAt(x: number, y: number) {
+        return this.world.getArea(x, y);
+    }
+
+    /**
+     * A monster still standing on the area that spawned it. An entity's area is
+     * stamped once and never re-evaluated, so a monster that charged a target
+     * can sit on coordinates no area owns — and seeding a character there makes
+     * World.spawn drop it silently.
+     */
+    findMonsterInPlace(): Monster | undefined {
+        return this.findMonsters().find(
+            (monster) =>
+                monster.getPoint(PointsEnum.HEALTH) > 0 &&
+                monster.getArea() &&
+                this.areaAt(monster.getPositionX(), monster.getPositionY()) === monster.getArea(),
+        );
+    }
+
+    /** Retried across ticks: mobs reach the world through the area spawn queue. */
+    async awaitMonsterInPlace(timeoutMs = 8_000): Promise<Monster | undefined> {
+        const deadline = Date.now() + timeoutMs;
+        do {
+            const monster = this.findMonsterInPlace();
+            if (monster) return monster;
+            await new Promise((resolve) => setTimeout(resolve, 250));
+        } while (Date.now() < deadline);
+        return undefined;
     }
 
     /** The most recently spawned ground item, so earlier specs cannot shadow it. */
@@ -172,8 +208,36 @@ export default class AttackHarness {
         );
 
         const session = new AttackSession(this.host, this.port, this.db);
-        await session.enterGame(username, key);
+        try {
+            await session.enterGame(username, key);
+            await this.awaitInWorld(username, x, y);
+        } catch (error) {
+            // An orphaned socket keeps the server's close() waiting for the
+            // rest of the run, so it has to go before the failure propagates.
+            await session.close();
+            throw error;
+        }
         return session;
+    }
+
+    /**
+     * Spawns are queued to the next area tick, so the character is not in the
+     * world when enterGame resolves — and World.spawn drops it outright when no
+     * area owns (x, y). Failing by name here stops every spec from going on to
+     * assert against an undefined entity.
+     */
+    private async awaitInWorld(username: string, x: number, y: number) {
+        const deadline = Date.now() + 5_000;
+        do {
+            if (this.findPlayer(username)) return;
+            await new Promise((resolve) => setTimeout(resolve, 50));
+        } while (Date.now() < deadline);
+
+        const area = this.areaAt(x, y);
+        throw new Error(
+            `[harness] ${username} never entered the world at (${x}, ${y}); ` +
+                `World.getArea says ${area ? area.getName() : 'no area owns that spot'}`,
+        );
     }
 }
 
@@ -196,13 +260,19 @@ export class AttackSession {
         });
     }
 
-    private next(length: number): Promise<Buffer> {
-        return new Promise((resolve) => {
+    private next(length: number, timeoutMs = 10_000): Promise<Buffer> {
+        return new Promise((resolve, reject) => {
+            const deadline = Date.now() + timeoutMs;
             const tick = () => {
                 if (this.buffer.length >= length) {
                     const out = this.buffer.subarray(0, length);
                     this.buffer = this.buffer.subarray(length);
                     return resolve(out);
+                }
+                if (Date.now() > deadline) {
+                    return reject(
+                        new Error(`[harness] timed out waiting for ${length} bytes, got ${this.buffer.length}`),
+                    );
                 }
                 setTimeout(tick, 20);
             };
@@ -247,12 +317,17 @@ export class AttackSession {
 
     /** Fire a raw command through the chat channel (e.g. "/item 27001 5"). */
     command(message: string) {
+        this.chat(message);
+    }
+
+    /** Fire a raw chat packet; the type defaults to NORMAL, 6 is SHOUT. */
+    chat(message: string, messageType = 0) {
         const size = 1 + 2 + 1 + message.length + 1;
         const w = new BufferWriter(PacketHeaderEnum.CHAT_IN, size);
         this.sendSequenced(
             w
                 .writeUint16LE(size)
-                .writeUint8(0)
+                .writeUint8(messageType)
                 .writeString(message, message.length + 1)
                 .getBuffer(),
         );
@@ -329,6 +404,7 @@ export class AttackSession {
     }
 
     async close() {
+        if (!this.client || this.client.destroyed) return;
         return new Promise<void>((resolve) => this.client.end(() => resolve()));
     }
 }

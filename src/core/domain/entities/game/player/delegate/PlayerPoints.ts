@@ -821,6 +821,9 @@ export class PlayerPoints extends Points {
         this.points.set(PointsEnum.RESIST_BOW, {
             get: () => this.resistBow,
         });
+        this.points.set(PointsEnum.RESIST_MAGIC, {
+            get: () => this.resistMagic,
+        });
         this.points.set(PointsEnum.REFLECT_MELEE, {
             get: () => this.reflectMelee,
         });

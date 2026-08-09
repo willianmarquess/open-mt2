@@ -5,7 +5,7 @@ import PacketOut from '@/core/interface/networking/packets/packet/out/PacketOut'
  * @packet
  * @type Out
  * @name InternalPongPacket
- * @header 253
+ * @header 0xef
  * @size 5
  * @description Used to internal pong.
  * @fields

@@ -1,6 +1,5 @@
 import { expect } from 'chai';
 import sinon from 'sinon';
-import { PointsEnum } from '@/core/enum/PointsEnum';
 import AttackHarness, { AttackSession } from '../../support/AttackSession';
 import { container } from '@/game/Container';
 
@@ -69,15 +68,9 @@ describe('Security — item pickup entity type (issue #83)', function () {
     });
 
     it('ignores a pickup aimed at a monster, without throwing', async () => {
-        // Mobs reach the world through the area spawn queue, so it takes a few
-        // ticks before there is a live one to aim at.
-        let monster = harness.findMonster();
-        for (let attempt = 0; attempt < 20 && !monster?.getPoint(PointsEnum.HEALTH); attempt++) {
-            await new Promise((resolve) => setTimeout(resolve, 250));
-            monster = harness.findMonster();
-        }
+        const monster = await harness.awaitMonsterInPlace();
 
-        expect(monster, 'setup: the world spawned a monster').to.not.equal(undefined);
+        expect(monster, 'setup: a monster spawned and is standing on its own area').to.not.equal(undefined);
 
         hunter = await harness.login({
             username: HUNTER,
@@ -85,7 +78,7 @@ describe('Security — item pickup entity type (issue #83)', function () {
             y: monster!.getPositionY(),
         });
 
-        expect(harness.findPlayer(HUNTER)?.getArea(), 'setup: standing on the monster').to.equal(monster!.getArea());
+        expect(harness.findPlayer(HUNTER)!.getArea(), 'setup: standing on the monster').to.equal(monster!.getArea());
 
         hunter.pickup(monster!.getVirtualId());
         await hunter.settle(800);

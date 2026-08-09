@@ -37,16 +37,21 @@ describe('Security — melee attack range (issue #68)', function () {
     });
 
     it('ignores a melee attack from out of range, and still lands one up close', async () => {
-        // Mobs reach the world through the area spawn queue, so it takes a few
-        // ticks before there is a live one to hit.
-        let monster = harness.findMonster();
-        for (let attempt = 0; attempt < 20 && !monster?.getPoint(PointsEnum.HEALTH); attempt++) {
-            await new Promise((resolve) => setTimeout(resolve, 250));
-            monster = harness.findMonster();
-        }
+        // Both the monster's own spot and the sniper's spot have to be owned by
+        // the monster's area, or the character is dropped on spawn.
+        await harness.awaitMonsterInPlace();
+        const monster = harness
+            .findMonsters()
+            .find(
+                (candidate) =>
+                    candidate.getPoint(PointsEnum.HEALTH) > 0 &&
+                    candidate.getArea() &&
+                    harness.areaAt(candidate.getPositionX(), candidate.getPositionY()) === candidate.getArea() &&
+                    harness.areaAt(candidate.getPositionX() + OUT_OF_RANGE, candidate.getPositionY()) ===
+                        candidate.getArea(),
+            );
 
-        expect(monster, 'setup: the world spawned a monster to attack').to.not.equal(undefined);
-        expect(monster!.getPoint(PointsEnum.HEALTH), 'setup: the monster is alive').to.be.greaterThan(0);
+        expect(monster, 'setup: the world spawned a monster with room to stand back from').to.not.equal(undefined);
 
         const virtualId = monster!.getVirtualId();
 
@@ -55,6 +60,19 @@ describe('Security — melee attack range (issue #68)', function () {
             x: monster!.getPositionX() + OUT_OF_RANGE,
             y: monster!.getPositionY(),
         });
+
+        expect(harness.findPlayer(SNIPER), 'setup: the sniper is in the world').to.not.equal(undefined);
+
+        // Both characters log in before either attacks: a provoked monster
+        // charges off its spawn cell, and the cell next to it belongs to no
+        // area, so a later login at its position would be dropped.
+        brawler = await harness.login({
+            username: BRAWLER,
+            x: monster!.getPositionX(),
+            y: monster!.getPositionY(),
+        });
+
+        expect(harness.findPlayer(BRAWLER), 'setup: the brawler is in the world').to.not.equal(undefined);
 
         // The damage line is debug output now, so it has to be switched on or
         // both assertions below would be vacuously false.
@@ -69,12 +87,6 @@ describe('Security — melee attack range (issue #68)', function () {
 
         // Positive control: the same packet from a character standing on the
         // monster does land, so the rejection above was the range check.
-        brawler = await harness.login({
-            username: BRAWLER,
-            x: monster!.getPositionX(),
-            y: monster!.getPositionY(),
-        });
-
         brawler.command('/debug');
         await brawler.settle(400);
 

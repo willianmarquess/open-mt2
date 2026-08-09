@@ -1,6 +1,27 @@
 import PacketHeaderEnum from '@/core/enum/PacketHeaderEnum';
 import PacketOut from '@/core/interface/networking/packets/packet/out/PacketOut';
 
+/**
+ * @packet
+ * @type Out
+ * @name CharacterUpdatePacket
+ * @header 0x13
+ * @size 35
+ * @description Is used to send the updated state of an already spawned character to nearby players. The equipment part is repeated 4x and the affect flag 2x.
+ * @fields
+ *   - {byte} header 1 Packet header
+ *   - {int} vid 4 Character identification in game
+ *   - {short[4]} parts 8 Equipment parts (armor, weapon, head, hair)
+ *   - {byte} moveSpeed 1 Movement speed of character
+ *   - {byte} attackSpeed 1 Attack speed of character
+ *   - {byte} state 1 State flag of character
+ *   - {int[2]} affects 8 Affect flags of character
+ *   - {int} guildId 4 Id of guild
+ *   - {short} rankPoints 2 Rank points
+ *   - {byte} pkMode 1 If pk is enable
+ *   - {int} mountVnum 4 Vnum of mount
+ */
+
 export default class CharacterUpdatePacket extends PacketOut {
     private readonly vid: number;
     private readonly parts: Array<number> = new Array(4).fill(0);

@@ -13,6 +13,7 @@ import CommandManager from './app/command/CommandManager';
 import CharacterAttackService from './app/service/CharacterAttackService';
 import CharacterMoveService from './app/service/CharacterMoveService';
 import CharacterUpdateTargetService from './app/service/CharacterUpdateTargetService';
+import ChatService from './app/service/ChatService';
 import CreateCharacterService from './app/service/CreateCharacterService';
 import DeleteCharacterService from './app/service/DeleteCharacterService';
 import DropItemService from './app/service/DropItemService';
@@ -43,6 +44,7 @@ import PrivateShopService from './app/service/PrivateShopService';
 import GlobalEventTimerManager from '@/core/domain/manager/GlobalEventTimeManager';
 import { VirtualIdManager } from '@/core/domain/manager/VirtualIdManager';
 import { EntityManager } from '@/core/domain/manager/EntityManager';
+import SessionManager from '@/game/domain/manager/SessionManager';
 import { QuestTargetManager } from '@/core/domain/quests/QuestTargetManager';
 import { SkillManager } from '@/core/domain/manager/SkillManager';
 
@@ -85,6 +87,7 @@ container.register({
     spawnManager: asClass(SpawnManager).singleton(),
     characterAttackService: asClass(CharacterAttackService).singleton(),
     characterUpdateTargetService: asClass(CharacterUpdateTargetService).singleton(),
+    chatService: asClass(ChatService).singleton(),
     dropManager: asClass(DropManager).singleton(),
     privilegeManager: asClass(PrivilegeManager).singleton(),
     questManager: asClass(QuestManager).singleton(),
@@ -94,6 +97,7 @@ container.register({
     eventTimerManager: asClass(GlobalEventTimerManager).singleton(),
     virtualIdManager: asClass(VirtualIdManager).singleton(),
     entityManager: asClass(EntityManager).singleton(),
+    sessionManager: asClass(SessionManager).singleton(),
     questTargetManager: asClass(QuestTargetManager).singleton(),
     skillManager: asClass(SkillManager).singleton(),
 });

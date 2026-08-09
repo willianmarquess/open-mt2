@@ -70,9 +70,9 @@ export default class DroppedItem extends GameEntity {
     public onSpawn() {
         this.addEventTimer({
             eventFunction: () => {
+                this.ownerName = null;
                 for (const entity of this.getNearbyEntities().values()) {
                     if (entity instanceof Player) {
-                        this.ownerName = null;
                         entity.sendSetItemOwnership({
                             ownerName: '\0',
                             virtualId: this.getVirtualId(),

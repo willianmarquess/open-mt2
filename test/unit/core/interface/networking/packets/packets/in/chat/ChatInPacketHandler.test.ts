@@ -4,7 +4,7 @@ import ChatInPacketHandler from '@/core/interface/networking/packets/packet/in/c
 import { ChatMessageTypeEnum } from '@/core/enum/ChatMessageTypeEnum';
 
 describe('ChatInPacketHandler', () => {
-    let loggerMock, commandManagerMock, connectionMock, packetMock, playerMock;
+    let loggerMock, commandManagerMock, chatServiceMock, connectionMock, packetMock, playerMock;
     let chatInPacketHandler: ChatInPacketHandler;
 
     beforeEach(() => {
@@ -16,6 +16,11 @@ describe('ChatInPacketHandler', () => {
 
         commandManagerMock = {
             execute: sinon.stub(),
+        };
+
+        chatServiceMock = {
+            talk: sinon.spy(),
+            shout: sinon.spy(),
         };
 
         playerMock = {
@@ -42,6 +47,7 @@ describe('ChatInPacketHandler', () => {
         chatInPacketHandler = new ChatInPacketHandler({
             logger: loggerMock,
             commandManager: commandManagerMock,
+            chatService: chatServiceMock,
         });
     });
 
@@ -96,6 +102,75 @@ describe('ChatInPacketHandler', () => {
         await chatInPacketHandler.execute(connectionMock, packetMock).catch((error) => (rejection = error));
 
         expect(rejection, 'GameServer.onData can only log a rejection the handler awaited').to.equal(failure);
+    });
+
+    it('should broadcast an ordinary message instead of dropping it (issue #56)', async () => {
+        packetMock.getMessage = () => 'hello there';
+
+        await chatInPacketHandler.execute(connectionMock, packetMock);
+
+        expect(chatServiceMock.talk.calledOnceWith(playerMock, 'hello there')).to.be.true;
+        expect(commandManagerMock.execute.called, 'a plain message is not a command').to.be.false;
+    });
+
+    it('should never broadcast a command, which would publish it to the whole map (issue #56)', async () => {
+        await chatInPacketHandler.execute(connectionMock, packetMock);
+
+        expect(commandManagerMock.execute.calledOnce).to.be.true;
+        expect(chatServiceMock.talk.called, 'the command text stays private').to.be.false;
+    });
+
+    it('should treat a lone slash as chat, the way the original does', async () => {
+        packetMock.getMessage = () => '/';
+
+        await chatInPacketHandler.execute(connectionMock, packetMock);
+
+        expect(commandManagerMock.execute.called).to.be.false;
+        expect(chatServiceMock.talk.calledOnceWith(playerMock, '/')).to.be.true;
+    });
+
+    it('should send a shout to the empire once it passes both gates (issue #56)', async () => {
+        packetMock.getMessageType = () => ChatMessageTypeEnum.SHOUT;
+        packetMock.getMessage = () => 'trading here';
+
+        await chatInPacketHandler.execute(connectionMock, packetMock);
+
+        expect(chatServiceMock.shout.calledOnceWith(playerMock, 'trading here')).to.be.true;
+    });
+
+    it('should not shout for a player below the minimum level', async () => {
+        packetMock.getMessageType = () => ChatMessageTypeEnum.SHOUT;
+        playerMock.hasShoutLevel.returns(false);
+
+        await chatInPacketHandler.execute(connectionMock, packetMock);
+
+        expect(chatServiceMock.shout.called).to.be.false;
+    });
+
+    it('should not shout while the cooldown is running', async () => {
+        packetMock.getMessageType = () => ChatMessageTypeEnum.SHOUT;
+        playerMock.isShoutAllowed.returns(false);
+
+        await chatInPacketHandler.execute(connectionMock, packetMock);
+
+        expect(chatServiceMock.shout.called).to.be.false;
+    });
+
+    it('should answer party and guild chat the way the original answers a player in neither', async () => {
+        packetMock.getMessageType = () => ChatMessageTypeEnum.GROUP;
+        await chatInPacketHandler.execute(connectionMock, packetMock);
+
+        packetMock.getMessageType = () => ChatMessageTypeEnum.GUILD;
+        await chatInPacketHandler.execute(connectionMock, packetMock);
+
+        expect(playerMock.chat.getCall(0).args[0]).to.deep.equal({
+            messageType: ChatMessageTypeEnum.INFO,
+            message: '[SYSTEM] You are not in a party',
+        });
+        expect(playerMock.chat.getCall(1).args[0]).to.deep.equal({
+            messageType: ChatMessageTypeEnum.INFO,
+            message: '[SYSTEM] You are not in a guild',
+        });
     });
 
     it('should log an error and close the connection if the packet is invalid', async () => {

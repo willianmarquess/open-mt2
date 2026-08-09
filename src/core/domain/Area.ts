@@ -14,7 +14,7 @@ import { AtlasInfoGoto } from '@/game/infra/config/GameConfig';
 import { EntityManager } from './manager/EntityManager';
 
 const SIZE_QUEUE = 5_000;
-const CHAR_VIEW_SIZE = 8000;
+export const CHAR_VIEW_SIZE = 8000;
 const SPAWN_POSITION_MULTIPLIER = 100;
 
 export default class Area {
