@@ -42,7 +42,7 @@ export default class MonsterBattle {
                 break;
 
             case BattleTypeEnum.MAGIC:
-                //TODO
+                this.magicAttack(victim);
                 break;
         }
     }
@@ -54,6 +54,11 @@ export default class MonsterBattle {
     private rangeAttack(victim: Player) {
         this.attacker.createFlyTargeting(victim);
         this.resolveAttack(victim, DamageTypeEnum.NORMAL_RANGE, victim.getPoint(PointsEnum.RESIST_BOW));
+    }
+
+    private magicAttack(victim: Player) {
+        this.attacker.createFlyTargeting(victim);
+        this.resolveAttack(victim, DamageTypeEnum.MAGIC, victim.getPoint(PointsEnum.RESIST_MAGIC));
     }
 
     private resolveAttack(victim: Player, damageType: DamageTypeEnum, resistance: number) {
@@ -108,6 +113,7 @@ export default class MonsterBattle {
                 break;
             case DamageTypeEnum.NORMAL:
             case DamageTypeEnum.NORMAL_RANGE:
+            case DamageTypeEnum.MAGIC:
                 //TODO: apply terror skill
 
                 if (this.isBlocked(victim, damageType)) {
