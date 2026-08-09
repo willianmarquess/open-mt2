@@ -9,7 +9,7 @@ export default class EmpirePacket extends PacketBidirectional {
         super({
             header: PacketHeaderEnum.EMPIRE,
             name: 'EmpirePacket',
-            size: 3,
+            size: 2,
             validator: EmpirePacketValidator,
         });
         this.empireId = empireId;
@@ -19,13 +19,13 @@ export default class EmpirePacket extends PacketBidirectional {
         return this.empireId;
     }
 
-    // The declared size (3) sizes the outgoing buffer; inbound is header + empire.
+    // The declared size (2) sizes the outgoing buffer; inbound is header + empire + sequence.
     getFrameLength(): number | null {
         return 2 + this.getSequenceLength();
     }
 
     pack() {
-        this.bufferWriter.writeUint8(this.empireId).writeUint8(0);
+        this.bufferWriter.writeUint8(this.empireId);
         return this.bufferWriter.getBuffer();
     }
 

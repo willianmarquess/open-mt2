@@ -192,7 +192,7 @@ export default class GameFlow {
         const authPacket = createAuthPacket(this.#user, this.#token);
         this.#client.sendMessage(authPacket);
 
-        const empirePacket = await this.#client.nextMessage(3);
+        const empirePacket = await this.#client.nextMessage(2);
         const empireId = unpackEmpirePacket(empirePacket).getEmpireId();
 
         assert.deepStrictEqual(empireId, 2);
