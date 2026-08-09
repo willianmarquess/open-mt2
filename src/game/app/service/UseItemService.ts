@@ -448,7 +448,7 @@ export default class UseItemService {
         if (player.learnSkillByBook(skillNum)) {
             await this.removeItemByQuantity(player, item, 1);
             const delay = MathUtil.getRandomInt(SKILLBOOK_DELAY_MIN, SKILLBOOK_DELAY_MAX);
-            player.setSkillNextReadTime(skillNum, performance.now() + delay);
+            player.setSkillNextReadTime(skillNum, Math.floor(Date.now() / 1000) + delay);
         }
     }
 }

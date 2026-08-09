@@ -296,7 +296,7 @@ export class PlayerSkill {
             return false;
         }
 
-        const time = performance.now();
+        const time = Math.floor(Date.now() / 1000);
 
         if (time < this.skills[skillNum].timeToNextRead) {
             //TODO: verify AFFECT_SKILL_NO_BOOK_DELAY caused by Exorcism Scroll (we need to impl PlayerAffect class)

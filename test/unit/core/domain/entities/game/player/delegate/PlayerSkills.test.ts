@@ -21,6 +21,7 @@ const RANK = {
 
 const SKILL_MAX_LEVEL = 40;
 const TEST_SKILL = SkillEnum.THREE_WAY_CUT;
+const NOW_SECONDS = 1_750_000_000;
 
 function createSkillProto(overrides: Record<string, unknown> = {}): Skill {
     return {
@@ -528,7 +529,7 @@ describe('PlayerSkill', () => {
                 readCount: 0,
                 ...overrides.skillState,
             });
-            sandbox.stub(performance, 'now').returns(1000);
+            sandbox.stub(Date, 'now').returns(NOW_SECONDS * 1000);
 
             return { player, skillProto, skillManager, playerSkill };
         }
@@ -605,8 +606,9 @@ describe('PlayerSkill', () => {
         });
 
         it('returns false and chats a wait message when timeToNextRead has not elapsed', () => {
-            const { player, playerSkill } = createHappyPathContext({ skillState: { timeToNextRead: 1100 } });
-            (performance.now as SinonStub).returns(1000);
+            const { player, playerSkill } = createHappyPathContext({
+                skillState: { timeToNextRead: NOW_SECONDS + 100 },
+            });
 
             const result = playerSkill.learnSkillByBook(TEST_SKILL, 50);
 
@@ -618,6 +620,36 @@ describe('PlayerSkill', () => {
                     message: 'I am burning inside, but it is calming down my body. My Chi has to stabilise.',
                 }),
             ).to.be.true;
+        });
+
+        it('allows the read once the stored deadline has passed in wall-clock time', () => {
+            const { player, playerSkill } = createHappyPathContext({
+                skillState: { timeToNextRead: NOW_SECONDS - 1 },
+            });
+            sandbox.stub(MathUtil, 'getRandomInt').returns(10);
+
+            const result = playerSkill.learnSkillByBook(TEST_SKILL, 50);
+
+            expect(result).to.be.true;
+            expect(
+                (player.chat as SinonStub)
+                    .getCalls()
+                    .some((call) => String(call.args[0].message).includes('My Chi has to stabilise')),
+            ).to.be.false;
+        });
+
+        it('picks the wait message from the remaining seconds, not milliseconds', () => {
+            const { player, playerSkill } = createHappyPathContext({
+                skillState: { timeToNextRead: NOW_SECONDS + 4 * 3600 },
+            });
+
+            playerSkill.learnSkillByBook(TEST_SKILL, 50);
+
+            const messages = (player.chat as SinonStub).getCalls().map((call) => call.args[0].message);
+            expect(messages).to.deep.equal([
+                `Only a few more pages and then I'll have read everything.`,
+                'I feel refreshed.',
+            ]);
         });
 
         describe('probability !== 0 path', () => {
