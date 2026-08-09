@@ -843,17 +843,17 @@
 
 **Size:** 9 bytes
 
-**Description:** Answers the client channel status request; the 3 byte channel entry (port, status) repeats once per channel and the declared size of 9 only fits the default single channel.
+**Description:** Answers the client channel status request; the 3 byte channel entry (port, status) repeats once per channel and the total size is 6 + 3 per channel (9 for the default single channel).
 
 **Fields:**
 
 | Name        | Type       | Size (bytes)   | Description               |
 |-------------|------------|----------------|---------------------------|
 | header | `byte` | 1 | Packet header |
-| size | `int` | 4 | Value produced by calcSize(), 6 + 3 per channel. See notes, the client reads this as a channel count |
+| count | `int` | 4 | Number of channel entries that follow, as the client's state checker loop expects |
 | port | `short` | 2 | Channel port. Repeated once per channel entry |
 | status | `byte` | 1 | Channel status flag, 1 means online. Repeated once per channel entry |
-| isSuccess | `byte` | 1 | Trailing success flag written after the channel entries. The client never reads it |
+| isSuccess | `byte` | 1 | Trailing success flag after the entries, as the original sends; the client discards it |
 
 ---
 
