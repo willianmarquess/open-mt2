@@ -10,6 +10,27 @@ class ItemBonus {
     }
 }
 
+/**
+ * @packet
+ * @type Out
+ * @name ItemPacket
+ * @header 0x15
+ * @size 54
+ * @description Sets an item into a client window cell (inventory, equipment, ...). The bonusId/bonusValue pair is repeated 7x, one per item attribute slot.
+ * @fields
+ *   - {byte} header 1 Packet header
+ *   - {byte} window 1 Window the cell belongs to (See WindowTypeEnum)
+ *   - {short} position 2 Cell position inside the window
+ *   - {int} id 4 Item vnum (prototype id)
+ *   - {byte} count 1 Stack size of the item
+ *   - {int} flags 4 Item flags, currently always sent as 0
+ *   - {int} antiFlags 4 Item anti flags, currently always sent as 0
+ *   - {int} highlight 4 Non zero highlights the cell in the client, currently always sent as 0
+ *   - {int[3]} sockets 12 Metin socket values, 3 slots of 4 bytes
+ *   - {byte} bonusId 1 Attribute type of the bonus slot, repeated 7x
+ *   - {short} bonusValue 2 Attribute value of the bonus slot, repeated 7x
+ */
+
 export default class ItemPacket extends PacketOut {
     private readonly window: number;
     private readonly position: number;

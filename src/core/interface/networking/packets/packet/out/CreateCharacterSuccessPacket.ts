@@ -41,6 +41,36 @@ const defaultCharacterInfo: CharacterParams = {
     skillGroup: 0,
 };
 
+/**
+ * @packet
+ * @type Out
+ * @name CreateCharacterSuccessPacket
+ * @header 0x08
+ * @size 65
+ * @description Sent when the character creation succeeds, it carries the slot plus the same character block used by the characters list (one character only, not repeated).
+ * @fields
+ *   - {byte} header 1 Packet header
+ *   - {byte} slot 1 Account character slot the new character was created on (0 to 3).
+ *   - {int} id 4 Character identification in server.
+ *   - {string} name 25 Name of character (ascii).
+ *   - {byte} playerClass 1 Number which indicates the player class (See the number of each class in JobEnum).
+ *   - {byte} level 1 Number which indicates the player level.
+ *   - {int} playTime 4 Time the player played with this character in minutes.
+ *   - {byte} st 1 Number which indicates the st point quantity (strength).
+ *   - {byte} ht 1 Number which indicates the ht point quantity (vitality).
+ *   - {byte} dx 1 Number which indicates the dx point quantity (dexterity).
+ *   - {byte} iq 1 Number which indicates the iq point quantity (intelligence).
+ *   - {short} bodyPart 2 Number which indicates the id of the body part.
+ *   - {byte} nameChange 1 Number which indicates if that character need to change name (0 or 1).
+ *   - {short} hairPart 2 Number which indicates the id of the hair part.
+ *   - {int} unknown 4 filled with 0.
+ *   - {int} positionX 4 Position X of player in game
+ *   - {int} positionY 4 Position Y of player in game
+ *   - {int} ip 4 Ip address of the server which manages the map the player is on.
+ *   - {short} port 2 Port of the server which manages the map the player is on.
+ *   - {byte} skillGroup 1 Number which indicates the skill group of character (to be implemented).
+ */
+
 export default class CreateCharacterSuccessPacket extends PacketOut {
     private readonly slot: number;
     private readonly character: CharacterParams;

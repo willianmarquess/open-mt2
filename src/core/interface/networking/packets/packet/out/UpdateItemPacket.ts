@@ -10,6 +10,23 @@ class ItemBonus {
     }
 }
 
+/**
+ * @packet
+ * @type Out
+ * @name UpdateItemPacket
+ * @header 0x19
+ * @size 38
+ * @description Updates the stack count, sockets and bonuses of an item already set in a client window cell. The bonusId/bonusValue pair is repeated 7x, one per item attribute slot.
+ * @fields
+ *   - {byte} header 1 Packet header
+ *   - {byte} window 1 Window the cell belongs to (See WindowTypeEnum)
+ *   - {short} position 2 Cell position inside the window
+ *   - {byte} count 1 New stack size of the item
+ *   - {int[3]} sockets 12 Metin socket values, 3 slots of 4 bytes
+ *   - {byte} bonusId 1 Attribute type of the bonus slot, repeated 7x
+ *   - {short} bonusValue 2 Attribute value of the bonus slot, repeated 7x
+ */
+
 export default class UpdateItemPacket extends PacketOut {
     private readonly window: number;
     private readonly position: number;
