@@ -121,7 +121,7 @@
 
 **Header:** 0x03
 
-**Size:** 25 bytes
+**Size:** 24 bytes
 
 **Description:** Is used to replicate the movement of a character (player, mobs) to other nearby players.
 
@@ -138,7 +138,6 @@
 | positionY | `int` | 4 | Position Y of character in game |
 | time | `int` | 4 | unknown |
 | duration | `int` | 4 | Number which indicates the duration of movement |
-| unknown | `byte` | 1 | filled with 0 |
 
 ---
 
