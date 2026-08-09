@@ -19,9 +19,10 @@ export default class AuthServer extends Server {
 
         if (!this.isAllowedInPhase(connection, header, packetBuilder)) return;
 
-        const { createPacket, createHandler } = packetBuilder;
+        const { createPacket } = packetBuilder;
         const packet = createPacket({});
-        const handler = createHandler(this.container);
+        const handler = this.createHandlerFor(connection, header, packetBuilder);
+        if (!handler) return;
         this.logger.debug(`[IN][PACKET] name: ${handler.constructor.name}`);
 
         const unpacked = this.unpackPacket(connection, packet, data);
