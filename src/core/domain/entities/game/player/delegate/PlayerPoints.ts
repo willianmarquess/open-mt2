@@ -870,9 +870,6 @@ export class PlayerPoints extends Points {
         this.points.set(PointsEnum.MOUNT, {
             get: () => this.player.getMountVnum(),
         });
-        this.points.set(PointsEnum.HORSE_SKILL, {
-            get: () => this.player.getHorseLevel(),
-        });
     }
 
     private addCommonPoint(value: number, pointName: string) {
