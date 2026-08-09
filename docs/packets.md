@@ -566,7 +566,7 @@
 
 **Header:** 0x15
 
-**Size:** 54 bytes
+**Size:** 51 bytes
 
 **Description:** Sets an item into a client window cell (inventory, equipment, ...). The bonusId/bonusValue pair is repeated 7x, one per item attribute slot.
 
@@ -581,7 +581,7 @@
 | count | `byte` | 1 | Stack size of the item |
 | flags | `int` | 4 | Item flags, currently always sent as 0 |
 | antiFlags | `int` | 4 | Item anti flags, currently always sent as 0 |
-| highlight | `int` | 4 | Non zero highlights the cell in the client, currently always sent as 0 |
+| highlight | `byte` | 1 | Non zero highlights the cell in the client, currently always sent as 0 |
 | sockets | `int[3]` | 12 | Metin socket values, 3 slots of 4 bytes |
 | bonusId | `byte` | 1 | Attribute type of the bonus slot, repeated 7x |
 | bonusValue | `short` | 2 | Attribute value of the bonus slot, repeated 7x |
