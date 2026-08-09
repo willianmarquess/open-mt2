@@ -20,7 +20,7 @@ export default class AuthenticateService {
 
     async execute(key: number, username: string): Promise<Result<Token, ErrorTypesEnum>> {
         const cacheKey = CacheKeyGenerator.createTokenKey(String(key));
-        const rawToken = await this.cacheProvider.take<string>(cacheKey);
+        const rawToken = await this.cacheProvider.get<string>(cacheKey);
 
         if (!rawToken) {
             this.logger.info(`[AuthenticateService] Invalid token for username: ${username}`);
