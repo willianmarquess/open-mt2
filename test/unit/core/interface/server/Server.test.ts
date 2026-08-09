@@ -240,6 +240,78 @@ describe('Sequence byte exemptions', () => {
     });
 });
 
+describe('Unimplemented skill and bow headers (issue #207)', () => {
+    let server: FrameRecorder;
+    let socket: any;
+
+    beforeEach(() => {
+        logged.length = 0;
+        server = new FrameRecorder({ logger, config: {} as any, packets: makePackets() });
+        socket = createFakeSocket();
+        server.onListener(socket);
+    });
+
+    afterEach(() => {
+        server.lastConnection?.stopKeepalive();
+    });
+
+    /** header, client struct size; the wire also carries the trailing sequence byte. */
+    const skipped = [
+        ['CG_FLY_TARGETING', 51, 13],
+        ['CG_USE_SKILL', 52, 9],
+        ['CG_ADD_FLY_TARGETING', 53, 13],
+        ['CG_SHOOT', 54, 2],
+        ['CG_PARTY_USE_SKILL', 76, 6],
+    ] as const;
+
+    const unimplementedPacket = (header: number, structSize: number) => {
+        const buffer = Buffer.alloc(structSize + 1);
+        buffer[0] = header;
+        return buffer;
+    };
+
+    for (const [name, header, structSize] of skipped) {
+        it(`should step over ${name} instead of discarding the packets behind it`, async () => {
+            socket.emit(
+                'data',
+                Buffer.concat([attackPacket(), unimplementedPacket(header, structSize), chatPacket('kept')]),
+            );
+            await settle();
+
+            expect(server.frames, 'the packets around it must survive').to.have.lengthOf(2);
+            expect(server.frames[0]).to.have.lengthOf(9);
+            expect(server.frames[1]).to.deep.equal(chatPacket('kept'));
+            expect(logged.filter((line) => line.message.includes('Unknown header'))).to.have.lengthOf(0);
+            expect(socket.destroy.called).to.be.equal(false);
+        });
+
+        it(`should hold a ${name} split across reads until it is complete`, async () => {
+            const packet = unimplementedPacket(header, structSize);
+            socket.emit('data', Buffer.concat([packet.subarray(0, 1), chatPacket('not yet').subarray(0, 0)]));
+            await settle();
+            expect(server.frames).to.have.lengthOf(0);
+
+            socket.emit('data', Buffer.concat([packet.subarray(1), chatPacket('arrived')]));
+            await settle();
+
+            expect(server.frames).to.have.lengthOf(1);
+            expect(server.frames[0]).to.deep.equal(chatPacket('arrived'));
+        });
+    }
+
+    it('should step over several of them queued back to back', async () => {
+        const stream = Buffer.concat([
+            ...skipped.map(([, header, structSize]) => unimplementedPacket(header, structSize)),
+            chatPacket('survivor'),
+        ]);
+        socket.emit('data', stream);
+        await settle();
+
+        expect(server.frames).to.have.lengthOf(1);
+        expect(server.frames[0]).to.deep.equal(chatPacket('survivor'));
+    });
+});
+
 describe('Variable-length frame sizes', () => {
     it('should size a shop packet by its subheader', () => {
         const frameFor = (subHeader: number) => new ShopPacket().getFrameLength(Buffer.from([0x32, subHeader]));
