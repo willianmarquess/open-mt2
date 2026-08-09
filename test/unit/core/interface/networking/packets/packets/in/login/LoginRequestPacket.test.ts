@@ -25,22 +25,40 @@ describe('LoginRequestPacket', function () {
         expect(loginRequestPacket.getKey()).to.equal(123456);
     });
 
-    it('should unpack data correctly', function () {
-        const buffer = Buffer.alloc(60);
-        buffer.writeUint8(0, 0);
-        buffer.write('testUser\0', 1, 'ascii');
-        buffer.write('testPass\0', 32, 'ascii');
-        buffer.writeUInt32LE(123456, 48);
+    // The wire layout is the client's TPacketCGLogin3 (#pragma pack(1)):
+    // header@0, login[31]@1, passwd[17]@32, adwClientKey[4]@49 = 65 bytes.
+    const clientFrame = ({ username, password, key }: { username: string; password: string; key: number }) => {
+        const buffer = Buffer.alloc(65);
+        buffer.writeUint8(PacketHeaderEnum.LOGIN_REQUEST, 0);
+        buffer.write(username, 1, 'ascii');
+        buffer.write(password, 32, 'ascii');
+        buffer.writeUInt32LE(key, 49);
+        buffer.writeUInt32LE(0xdeadbeef, 53);
+        buffer.writeUInt32LE(0xcafebabe, 57);
+        buffer.writeUInt32LE(0x12345678, 61);
+        return buffer;
+    };
 
-        const unpackedPacket = new LoginRequestPacket({
-            key: 0,
-            password: '',
-            username: '',
-        });
-        unpackedPacket.unpack(buffer);
+    const unpacked = (frame: Buffer) => new LoginRequestPacket({ key: 0, password: '', username: '' }).unpack(frame);
 
-        expect(unpackedPacket.getUsername()).to.equal('testUser');
-        expect(unpackedPacket.getPassword()).to.equal('testPass');
-        expect(unpackedPacket.getKey()).to.equal(123456);
+    it('should unpack the fields at the client struct offsets', function () {
+        const packet = unpacked(clientFrame({ username: 'testUser', password: 'testPass', key: 123456 }));
+
+        expect(packet.getUsername()).to.equal('testUser');
+        expect(packet.getPassword()).to.equal('testPass');
+        expect(packet.getKey()).to.equal(123456);
+    });
+
+    it('should read the client key from adwClientKey[0], not one byte early', function () {
+        const packet = unpacked(clientFrame({ username: 'user', password: 'pass', key: 0x11223344 }));
+
+        expect(packet.getKey()).to.equal(0x11223344);
+    });
+
+    it('should read a maximum-length 16 character password intact', function () {
+        const packet = unpacked(clientFrame({ username: 'user', password: 'abcdefghijklmnop', key: 7 }));
+
+        expect(packet.getPassword()).to.equal('abcdefghijklmnop');
+        expect(packet.getKey()).to.equal(7);
     });
 });
