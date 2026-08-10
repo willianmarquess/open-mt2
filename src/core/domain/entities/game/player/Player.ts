@@ -2188,6 +2188,7 @@ export default class Player extends Character {
 
     setHorseLevel(level: number): void {
         this.horse.setLevel(level);
+        this.skills.setSkillLevel(SkillEnum.HORSE, level);
     }
 
     getHorseHealth(): number {
@@ -2919,12 +2920,12 @@ export default class Player extends Character {
         );
     }
 
-    learnSkillByBook(skillNum: SkillEnum): boolean {
-        return this.skills.learnSkillByBook(skillNum);
+    learnSkillByBook(skillNum: SkillEnum, probability?: number): boolean {
+        return this.skills.learnSkillByBook(skillNum, probability);
     }
 
     setSkillNextReadTime(skillNum: SkillEnum, time: number) {
-        return this.skills.setSkillnextReadTime(skillNum, time);
+        return this.skills.setSkillNextReadTime(skillNum, time);
     }
 
     skillLevelUpByPoint(skillNum: SkillEnum) {
@@ -2933,5 +2934,9 @@ export default class Player extends Character {
 
     clearSkill(): void {
         return this.skills.clearSkill();
+    }
+
+    getSkillLevel(skillNum: SkillEnum): number {
+        return this.skills.getSkillLevel(skillNum);
     }
 }

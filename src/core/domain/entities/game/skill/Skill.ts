@@ -87,4 +87,8 @@ export abstract class ActiveSkill extends Skill {
     public abstract calculateManaCost(context: SkillCalcContext): number;
     public abstract calculateSplashAroundDamageAdjust(context: SkillCalcContext): number;
     public abstract canBeUsedBy(player: Player): boolean;
+
+    public canBeUsedByHorse(): boolean {
+        return false;
+    }
 }

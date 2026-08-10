@@ -48,6 +48,10 @@ export class PlayerSkill {
         return this.skills;
     }
 
+    getSkillLevel(skillNum: SkillEnum): number {
+        return this.skills[skillNum]?.level || 0;
+    }
+
     setSkillLevel(skillNum: SkillEnum, level: number) {
         if (!this.skills[skillNum]) {
             this.skills[skillNum] = {
@@ -149,7 +153,6 @@ export class PlayerSkill {
             }
         }
 
-        //TODO: save player
         this.player.save();
         this.player.sendPoints();
         this.player.sendSkillLevel();
@@ -175,12 +178,88 @@ export class PlayerSkill {
 
         if (skillProto.isPassive() && this.skills[skillNum]?.level >= skillProto.maxLevel) return false;
 
-        //TODO: SKILL HORSE
-
         //TODO ANTI SKILL
 
         return skillProto.canBeUsedBy(this.player);
     }
+
+    //TODO verify if this is used
+    // learnHorseSkillByBook(): boolean {
+    //     if (this.player.isPolymorphed()) {
+    //         this.player.chat({ messageType: ChatMessageTypeEnum.INFO, message: `You can't train your horse while transformed.` });
+    //         return false;
+    //     }
+
+    //     if (this.player.getPoint(PointsEnum.LEVEL) < 50) {
+    //         this.player.chat({ messageType: ChatMessageTypeEnum.INFO, message: `You need to be level 50 to train your horse.` });
+    //         return false;
+    //     }
+
+    //     const skillNum: SkillEnum = SkillEnum.HORSE;
+
+    //     const skillProto = this.skillManager.getSkill(skillNum);
+
+    //     if (!skillProto) return false;
+
+    //     if (!this.isLearnableSkill(skillNum)) {
+    //         this.player.chat({
+    //             messageType: ChatMessageTypeEnum.NORMAL,
+    //             message: 'You cannot train this skill.',
+    //         });
+    //         return false;
+    //     }
+
+    //     const time = performance.now();
+
+    //     if (time < this.skills[skillNum].timeToNextRead) {
+    //         const messages = this.getNeedToWaitMoreTimeMessages(this.skills[skillNum].timeToNextRead - time);
+
+    //         messages.forEach((message) => {
+    //             this.player.chat({
+    //                 messageType: ChatMessageTypeEnum.NORMAL,
+    //                 message,
+    //             });
+    //         });
+
+    //         return false;
+    //     }
+
+    //     if (this.skills[skillNum].level >= 20 || this.player.getPoint(PointsEnum.HORSE_SKILL) >= 20) {
+    //         this.player.chat({
+    //             messageType: ChatMessageTypeEnum.INFO,
+    //             message: 'You cannot read any more Riding Guides.',
+    //         });
+    //         return false;
+    //     }
+
+    //     const percent = 65;
+
+    //     if (MathUtil.getRandomInt(1, 100) <= percent) {
+    //         this.player.chat({
+    //             messageType: ChatMessageTypeEnum.INFO,
+    //             message: 'You read the Horse Riding Manual and received a Riding Point.',
+    //         });
+    //         this.player.chat({
+    //             messageType: ChatMessageTypeEnum.INFO,
+    //             message: 'You can use this point to improve your riding skill!',
+    //         });
+    //         this.player.addPoint(PointsEnum.HORSE_SKILL, 1);
+    //         this.skills[skillNum].level++;
+    //         this.skills[skillNum].readCount = 0;
+    //         const delay = MathUtil.getRandomInt(SKILLBOOK_DELAY_MIN, SKILLBOOK_DELAY_MAX);
+    //         this.setSkillNextReadTime(skillNum, performance.now() + delay);
+    //         this.player.save();
+    //         this.player.sendPoints();
+    //         this.player.sendSkillLevel();
+    //         return true;
+    //     }
+
+    //     this.player.chat({
+    //         messageType: ChatMessageTypeEnum.INFO,
+    //         message: 'You did not understand the riding guide.',
+    //     });
+    //     return false;
+    // }
 
     learnSkillByBook(skillNum: SkillEnum, probability: number = 0) {
         const skillProto = this.skillManager.getSkill(skillNum);
@@ -262,7 +341,6 @@ export class PlayerSkill {
                         messageType: ChatMessageTypeEnum.INFO,
                         message: `You have successfully finished your training with the Book.`,
                     });
-                    return true;
                 } else {
                     this.skills[skillNum].readCount++;
 
@@ -289,9 +367,8 @@ export class PlayerSkill {
                             });
                             break;
                     }
-
-                    return true;
                 }
+                return true;
             }
         }
 
@@ -381,7 +458,7 @@ export class PlayerSkill {
         return messages;
     }
 
-    setSkillnextReadTime(skillNum: SkillEnum, time: number) {
+    setSkillNextReadTime(skillNum: SkillEnum, time: number) {
         this.skills[skillNum].timeToNextRead = time;
     }
 

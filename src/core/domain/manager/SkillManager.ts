@@ -44,6 +44,10 @@ import { LightningClawSkill } from '../entities/game/skill/active/shaman/healer/
 import { LightningThrowSkill } from '../entities/game/skill/active/shaman/healer/LightningThrowSkill';
 import { SummonLightningSkill } from '../entities/game/skill/active/shaman/healer/SummonLightningSkill';
 import { SwiftnessSkill } from '../entities/game/skill/active/shaman/healer/SwiftnessSkill';
+import { ChargeSkill } from '../entities/game/skill/active/horse/ChargeSkill';
+import { EscapeSkill } from '../entities/game/skill/active/horse/EscapeSkill';
+import { WildAttackSkill } from '../entities/game/skill/active/horse/WildAttackSkill';
+import { WildAttackRangeSkill } from '../entities/game/skill/active/horse/WildAttackRangeSkill';
 
 export class SkillManager {
     private readonly skills = new Map<SkillEnum, Skill>();
@@ -100,6 +104,11 @@ export class SkillManager {
         this.skills.set(SkillEnum.LIGHTNING_THROW, new LightningThrowSkill());
         this.skills.set(SkillEnum.SUMMON_LIGHTNING, new SummonLightningSkill());
         this.skills.set(SkillEnum.SWIFTNESS, new SwiftnessSkill());
+
+        this.skills.set(SkillEnum.HORSE_CHARGE, new ChargeSkill());
+        this.skills.set(SkillEnum.HORSE_ESCAPE, new EscapeSkill());
+        this.skills.set(SkillEnum.HORSE_WILDATTACK, new WildAttackSkill());
+        this.skills.set(SkillEnum.HORSE_WILDATTACK_RANGE, new WildAttackRangeSkill());
     }
 
     getSkill(skillNum: SkillEnum): Skill | null {

@@ -69,6 +69,7 @@ const createPlayer = (virtualId: number, name: string): Player =>
                 removeAllTimersFromOwner: () => {},
             } as any,
             mobManager: { getMobProto: () => undefined } as any,
+            skillManager: { getSkillProto: () => undefined } as any,
         },
     );
 
@@ -95,6 +96,8 @@ const createVictim = (virtualId: number) =>
         getVirtualId: () => virtualId,
         getPositionX: () => 0,
         getPositionY: () => 0,
+        wasAttackedRecentlyBy: () => false,
+        recordAttackedBy: () => {},
     }) as unknown as Monster;
 
 const kill = (player: Player) => {

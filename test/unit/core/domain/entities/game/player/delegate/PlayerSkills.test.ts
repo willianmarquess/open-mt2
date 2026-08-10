@@ -85,6 +85,7 @@ describe('PlayerSkill', () => {
             const playerSkill = new PlayerSkill({
                 player: createPlayer(),
                 skillManager: createSkillManager(undefined),
+                skills: [],
             });
 
             const skills = playerSkill.getSkills();
@@ -97,6 +98,7 @@ describe('PlayerSkill', () => {
             const playerSkill = new PlayerSkill({
                 player: createPlayer(),
                 skillManager: createSkillManager(undefined),
+                skills: [],
             });
 
             playerSkill.getSkills()[0].level = 10;
@@ -109,7 +111,11 @@ describe('PlayerSkill', () => {
         let playerSkill: PlayerSkill;
 
         beforeEach(() => {
-            playerSkill = new PlayerSkill({ player: createPlayer(), skillManager: createSkillManager(undefined) });
+            playerSkill = new PlayerSkill({
+                player: createPlayer(),
+                skillManager: createSkillManager(undefined),
+                skills: [],
+            });
         });
 
         it('sets the level as-is when below SKILL_MAX_LEVEL', () => {
@@ -166,7 +172,7 @@ describe('PlayerSkill', () => {
         it('does nothing when the player is polymorphed', () => {
             const player = createPlayer({ isPolymorphed: sinon.stub().returns(true) });
             const skillManager = createSkillManager(createSkillProto());
-            const playerSkill = new PlayerSkill({ player, skillManager });
+            const playerSkill = new PlayerSkill({ player, skillManager, skills: [] });
             setSkillState(playerSkill, TEST_SKILL, { rank: RANK.NORMAL, level: 5 });
 
             playerSkill.skillLevelUp(TEST_SKILL, 'POINT');
@@ -178,7 +184,7 @@ describe('PlayerSkill', () => {
         it('does nothing when the skill is not learnable (skillManager returns no proto)', () => {
             const player = createPlayer();
             const skillManager = createSkillManager(undefined);
-            const playerSkill = new PlayerSkill({ player, skillManager });
+            const playerSkill = new PlayerSkill({ player, skillManager, skills: [] });
             setSkillState(playerSkill, TEST_SKILL, { rank: RANK.NORMAL, level: 5 });
 
             playerSkill.skillLevelUp(TEST_SKILL, 'POINT');
@@ -190,7 +196,7 @@ describe('PlayerSkill', () => {
             const outOfRangeSkill = 300 as unknown as SkillEnum;
             const player = createPlayer();
             const skillManager = createSkillManager(createSkillProto());
-            const playerSkill = new PlayerSkill({ player, skillManager });
+            const playerSkill = new PlayerSkill({ player, skillManager, skills: [] });
 
             playerSkill.skillLevelUp(outOfRangeSkill, 'POINT');
 
@@ -200,7 +206,7 @@ describe('PlayerSkill', () => {
         it('does nothing when the skill is already PERFECT_MASTER', () => {
             const player = createPlayer();
             const skillManager = createSkillManager(createSkillProto());
-            const playerSkill = new PlayerSkill({ player, skillManager });
+            const playerSkill = new PlayerSkill({ player, skillManager, skills: [] });
             setSkillState(playerSkill, TEST_SKILL, { rank: RANK.PERFECT_MASTER, level: 40 });
 
             playerSkill.skillLevelUp(TEST_SKILL, 'POINT');
@@ -212,7 +218,7 @@ describe('PlayerSkill', () => {
         it('rejects BOOK method when rank is not MASTER', () => {
             const player = createPlayer();
             const skillManager = createSkillManager(createSkillProto());
-            const playerSkill = new PlayerSkill({ player, skillManager });
+            const playerSkill = new PlayerSkill({ player, skillManager, skills: [] });
             setSkillState(playerSkill, TEST_SKILL, { rank: RANK.NORMAL, level: 5 });
 
             playerSkill.skillLevelUp(TEST_SKILL, 'BOOK');
@@ -223,7 +229,7 @@ describe('PlayerSkill', () => {
         it('accepts BOOK method when rank is MASTER', () => {
             const player = createPlayer();
             const skillManager = createSkillManager(createSkillProto());
-            const playerSkill = new PlayerSkill({ player, skillManager });
+            const playerSkill = new PlayerSkill({ player, skillManager, skills: [] });
             setSkillState(playerSkill, TEST_SKILL, { rank: RANK.MASTER, level: 25 });
 
             playerSkill.skillLevelUp(TEST_SKILL, 'BOOK');
@@ -234,7 +240,7 @@ describe('PlayerSkill', () => {
         it('rejects POINT method when rank is not NORMAL', () => {
             const player = createPlayer();
             const skillManager = createSkillManager(createSkillProto());
-            const playerSkill = new PlayerSkill({ player, skillManager });
+            const playerSkill = new PlayerSkill({ player, skillManager, skills: [] });
             setSkillState(playerSkill, TEST_SKILL, { rank: RANK.MASTER, level: 25 });
 
             playerSkill.skillLevelUp(TEST_SKILL, 'POINT');
@@ -246,7 +252,7 @@ describe('PlayerSkill', () => {
             const player = createPlayer();
             const skillProto = createSkillProto({ flags: new Set([SkillFlagsEnum.DISABLE_BY_POINT_UP]) });
             const skillManager = createSkillManager(skillProto);
-            const playerSkill = new PlayerSkill({ player, skillManager });
+            const playerSkill = new PlayerSkill({ player, skillManager, skills: [] });
             setSkillState(playerSkill, TEST_SKILL, { rank: RANK.NORMAL, level: 5 });
 
             playerSkill.skillLevelUp(TEST_SKILL, 'POINT');
@@ -260,7 +266,7 @@ describe('PlayerSkill', () => {
             });
             const skillProto = createSkillProto({ levelLimit: 50 });
             const skillManager = createSkillManager(skillProto);
-            const playerSkill = new PlayerSkill({ player, skillManager });
+            const playerSkill = new PlayerSkill({ player, skillManager, skills: [] });
             setSkillState(playerSkill, TEST_SKILL, { rank: RANK.NORMAL, level: 5 });
 
             playerSkill.skillLevelUp(TEST_SKILL, 'POINT');
@@ -271,7 +277,7 @@ describe('PlayerSkill', () => {
         it('does nothing when the player has no skill group', () => {
             const player = createPlayer({ getSkillGroup: sinon.stub().returns(0) });
             const skillManager = createSkillManager(createSkillProto());
-            const playerSkill = new PlayerSkill({ player, skillManager });
+            const playerSkill = new PlayerSkill({ player, skillManager, skills: [] });
             setSkillState(playerSkill, TEST_SKILL, { rank: RANK.NORMAL, level: 5 });
 
             playerSkill.skillLevelUp(TEST_SKILL, 'POINT');
@@ -291,7 +297,7 @@ describe('PlayerSkill', () => {
                     isPassive: sinon.stub().returns(true),
                 });
                 const skillManager = createSkillManager(skillProto);
-                const playerSkill = new PlayerSkill({ player, skillManager });
+                const playerSkill = new PlayerSkill({ player, skillManager, skills: [] });
                 setSkillState(playerSkill, TEST_SKILL, { rank: RANK.NORMAL, level: 5 });
 
                 playerSkill.skillLevelUp(TEST_SKILL, 'POINT');
@@ -308,7 +314,7 @@ describe('PlayerSkill', () => {
                 const player = createPlayer({ getPoint, addPoint });
                 const skillProto = createSkillProto({ type: SkillTypeEnum.HORSE });
                 const skillManager = createSkillManager(skillProto);
-                const playerSkill = new PlayerSkill({ player, skillManager });
+                const playerSkill = new PlayerSkill({ player, skillManager, skills: [] });
                 setSkillState(playerSkill, TEST_SKILL, { rank: RANK.NORMAL, level: 5 });
 
                 playerSkill.skillLevelUp(TEST_SKILL, 'POINT');
@@ -323,7 +329,7 @@ describe('PlayerSkill', () => {
                 const addPoint = sinon.stub();
                 const player = createPlayer({ getPoint, addPoint });
                 const skillManager = createSkillManager(createSkillProto({ type: SkillTypeEnum.ACTIVE }));
-                const playerSkill = new PlayerSkill({ player, skillManager });
+                const playerSkill = new PlayerSkill({ player, skillManager, skills: [] });
                 setSkillState(playerSkill, TEST_SKILL, { rank: RANK.NORMAL, level: 5 });
 
                 playerSkill.skillLevelUp(TEST_SKILL, 'POINT');
@@ -338,7 +344,7 @@ describe('PlayerSkill', () => {
                 const addPoint = sinon.stub();
                 const player = createPlayer({ getPoint, addPoint });
                 const skillManager = createSkillManager(createSkillProto());
-                const playerSkill = new PlayerSkill({ player, skillManager });
+                const playerSkill = new PlayerSkill({ player, skillManager, skills: [] });
                 setSkillState(playerSkill, TEST_SKILL, { rank: RANK.NORMAL, level: 5 });
 
                 playerSkill.skillLevelUp(TEST_SKILL, 'POINT');
@@ -351,7 +357,7 @@ describe('PlayerSkill', () => {
                 const addPoint = sinon.stub();
                 const player = createPlayer({ addPoint });
                 const skillManager = createSkillManager(createSkillProto());
-                const playerSkill = new PlayerSkill({ player, skillManager });
+                const playerSkill = new PlayerSkill({ player, skillManager, skills: [] });
                 setSkillState(playerSkill, TEST_SKILL, { rank: RANK.MASTER, level: 25 });
 
                 playerSkill.skillLevelUp(TEST_SKILL, 'BOOK');
@@ -368,7 +374,7 @@ describe('PlayerSkill', () => {
                 });
                 const player = createPlayer();
                 const skillManager = createSkillManager(skillProto);
-                const playerSkill = new PlayerSkill({ player, skillManager });
+                const playerSkill = new PlayerSkill({ player, skillManager, skills: [] });
                 setSkillState(playerSkill, TEST_SKILL, { rank: RANK.NORMAL, level: 16 });
 
                 playerSkill.skillLevelUp(TEST_SKILL, 'POINT');
@@ -380,7 +386,7 @@ describe('PlayerSkill', () => {
             it('jumps NORMAL rank to level 20 once level reaches 17 (random roll currently disabled)', () => {
                 const player = createPlayer();
                 const skillManager = createSkillManager(createSkillProto());
-                const playerSkill = new PlayerSkill({ player, skillManager });
+                const playerSkill = new PlayerSkill({ player, skillManager, skills: [] });
                 setSkillState(playerSkill, TEST_SKILL, { rank: RANK.NORMAL, level: 16 });
 
                 playerSkill.skillLevelUp(TEST_SKILL, 'POINT');
@@ -392,7 +398,7 @@ describe('PlayerSkill', () => {
             it('does not jump NORMAL rank when level stays below 17', () => {
                 const player = createPlayer();
                 const skillManager = createSkillManager(createSkillProto());
-                const playerSkill = new PlayerSkill({ player, skillManager });
+                const playerSkill = new PlayerSkill({ player, skillManager, skills: [] });
                 setSkillState(playerSkill, TEST_SKILL, { rank: RANK.NORMAL, level: 10 });
 
                 playerSkill.skillLevelUp(TEST_SKILL, 'POINT');
@@ -405,7 +411,7 @@ describe('PlayerSkill', () => {
                 sandbox.stub(MathUtil, 'getRandomInt').returns(1);
                 const player = createPlayer();
                 const skillManager = createSkillManager(createSkillProto());
-                const playerSkill = new PlayerSkill({ player, skillManager });
+                const playerSkill = new PlayerSkill({ player, skillManager, skills: [] });
                 setSkillState(playerSkill, TEST_SKILL, { rank: RANK.MASTER, level: 29 });
 
                 playerSkill.skillLevelUp(TEST_SKILL, 'BOOK');
@@ -418,7 +424,7 @@ describe('PlayerSkill', () => {
                 sandbox.stub(MathUtil, 'getRandomInt').returns(2);
                 const player = createPlayer();
                 const skillManager = createSkillManager(createSkillProto());
-                const playerSkill = new PlayerSkill({ player, skillManager });
+                const playerSkill = new PlayerSkill({ player, skillManager, skills: [] });
                 setSkillState(playerSkill, TEST_SKILL, { rank: RANK.MASTER, level: 29 });
 
                 playerSkill.skillLevelUp(TEST_SKILL, 'BOOK');
@@ -430,7 +436,7 @@ describe('PlayerSkill', () => {
             it('does not promote skill with book when is not a rank master skill', () => {
                 const player = createPlayer();
                 const skillManager = createSkillManager(createSkillProto());
-                const playerSkill = new PlayerSkill({ player, skillManager });
+                const playerSkill = new PlayerSkill({ player, skillManager, skills: [] });
                 setSkillState(playerSkill, TEST_SKILL, { rank: RANK.GRAND_MASTER, level: 35 });
 
                 playerSkill.skillLevelUp(TEST_SKILL, 'BOOK');
@@ -443,7 +449,7 @@ describe('PlayerSkill', () => {
         it('notifies the player (sendPoints/sendSkillLevel) after a successful level up', () => {
             const player = createPlayer();
             const skillManager = createSkillManager(createSkillProto());
-            const playerSkill = new PlayerSkill({ player, skillManager });
+            const playerSkill = new PlayerSkill({ player, skillManager, skills: [] });
             setSkillState(playerSkill, TEST_SKILL, { rank: RANK.MASTER, level: 25 });
 
             playerSkill.skillLevelUp(TEST_SKILL, 'BOOK');
@@ -458,6 +464,7 @@ describe('PlayerSkill', () => {
             const playerSkill = new PlayerSkill({
                 player: createPlayer(),
                 skillManager: createSkillManager(undefined),
+                skills: [],
             });
 
             expect(playerSkill.isLearnableSkill(TEST_SKILL)).to.be.false;
@@ -465,7 +472,7 @@ describe('PlayerSkill', () => {
 
         it('returns false when the skill is already at SKILL_MAX_LEVEL', () => {
             const skillManager = createSkillManager(createSkillProto());
-            const playerSkill = new PlayerSkill({ player: createPlayer(), skillManager });
+            const playerSkill = new PlayerSkill({ player: createPlayer(), skillManager, skills: [] });
             setSkillState(playerSkill, TEST_SKILL, { level: SKILL_MAX_LEVEL });
 
             expect(playerSkill.isLearnableSkill(TEST_SKILL)).to.be.false;
@@ -474,7 +481,7 @@ describe('PlayerSkill', () => {
         it('returns false for passive skills at or above their own maxLevel', () => {
             const skillProto = createSkillProto({ maxLevel: 5, isPassive: sinon.stub().returns(true) });
             const skillManager = createSkillManager(skillProto);
-            const playerSkill = new PlayerSkill({ player: createPlayer(), skillManager });
+            const playerSkill = new PlayerSkill({ player: createPlayer(), skillManager, skills: [] });
             setSkillState(playerSkill, TEST_SKILL, { level: 5 });
 
             expect(playerSkill.isLearnableSkill(TEST_SKILL)).to.be.false;
@@ -483,7 +490,7 @@ describe('PlayerSkill', () => {
         it('ignores skillProto.maxLevel for non-passive (active) skills', () => {
             const skillProto = createSkillProto({ maxLevel: 5, isPassive: sinon.stub().returns(false) });
             const skillManager = createSkillManager(skillProto);
-            const playerSkill = new PlayerSkill({ player: createPlayer(), skillManager });
+            const playerSkill = new PlayerSkill({ player: createPlayer(), skillManager, skills: [] });
             setSkillState(playerSkill, TEST_SKILL, { level: 10 });
 
             expect(playerSkill.isLearnableSkill(TEST_SKILL)).to.be.true;
@@ -494,7 +501,7 @@ describe('PlayerSkill', () => {
             const skillProto = createSkillProto({ canBeUsedBy });
             const skillManager = createSkillManager(skillProto);
             const player = createPlayer();
-            const playerSkill = new PlayerSkill({ player, skillManager });
+            const playerSkill = new PlayerSkill({ player, skillManager, skills: [] });
 
             expect(playerSkill.isLearnableSkill(TEST_SKILL)).to.be.false;
             expect(canBeUsedBy.calledOnceWith(player)).to.be.true;
@@ -512,7 +519,7 @@ describe('PlayerSkill', () => {
             const skillProto = createSkillProto({ isPassive: sinon.stub().returns(false), ...overrides.skillProto });
             const player = createPlayer(overrides.player);
             const skillManager = createSkillManager(skillProto);
-            const playerSkill = new PlayerSkill({ player, skillManager });
+            const playerSkill = new PlayerSkill({ player, skillManager, skills: [] });
 
             setSkillState(playerSkill, TEST_SKILL, {
                 rank: RANK.MASTER,
@@ -528,7 +535,7 @@ describe('PlayerSkill', () => {
 
         it('returns false without chatting when the skill proto does not exist', () => {
             const player = createPlayer();
-            const playerSkill = new PlayerSkill({ player, skillManager: createSkillManager(undefined) });
+            const playerSkill = new PlayerSkill({ player, skillManager: createSkillManager(undefined), skills: [] });
 
             const result = playerSkill.learnSkillByBook(TEST_SKILL, 50);
 
@@ -539,7 +546,7 @@ describe('PlayerSkill', () => {
         it('returns false and chats when the skill is not learnable', () => {
             const player = createPlayer();
             const skillProto = createSkillProto({ canBeUsedBy: sinon.stub().returns(false) });
-            const playerSkill = new PlayerSkill({ player, skillManager: createSkillManager(skillProto) });
+            const playerSkill = new PlayerSkill({ player, skillManager: createSkillManager(skillProto), skills: [] });
 
             const result = playerSkill.learnSkillByBook(TEST_SKILL, 50);
 
@@ -757,7 +764,7 @@ describe('PlayerSkill', () => {
             });
             const setPoint = sinon.stub();
             const player = createPlayer({ getPoint, setPoint });
-            const playerSkill = new PlayerSkill({ player, skillManager: createSkillManager(undefined) });
+            const playerSkill = new PlayerSkill({ player, skillManager: createSkillManager(undefined), skills: [] });
 
             setSkillState(playerSkill, TEST_SKILL, { rank: RANK.MASTER, level: 25, readCount: 4, timeToNextRead: 555 });
 
@@ -776,7 +783,7 @@ describe('PlayerSkill', () => {
 
         it('resets all 255 slots, not just the ones touched previously', () => {
             const player = createPlayer();
-            const playerSkill = new PlayerSkill({ player, skillManager: createSkillManager(undefined) });
+            const playerSkill = new PlayerSkill({ player, skillManager: createSkillManager(undefined), skills: [] });
 
             setSkillState(playerSkill, TEST_SKILL, { level: 10 });
             setSkillState(playerSkill, SkillEnum.DASH, { level: 5, rank: RANK.MASTER });
@@ -790,14 +797,14 @@ describe('PlayerSkill', () => {
     describe('hasSkillGroup', () => {
         it('returns true when getSkillGroup() > 0', () => {
             const player = createPlayer({ getSkillGroup: sinon.stub().returns(1) });
-            const playerSkill = new PlayerSkill({ player, skillManager: createSkillManager(undefined) });
+            const playerSkill = new PlayerSkill({ player, skillManager: createSkillManager(undefined), skills: [] });
 
             expect(playerSkill.hasSkillGroup()).to.be.true;
         });
 
         it('returns false when getSkillGroup() is 0', () => {
             const player = createPlayer({ getSkillGroup: sinon.stub().returns(0) });
-            const playerSkill = new PlayerSkill({ player, skillManager: createSkillManager(undefined) });
+            const playerSkill = new PlayerSkill({ player, skillManager: createSkillManager(undefined), skills: [] });
 
             expect(playerSkill.hasSkillGroup()).to.be.false;
         });
@@ -810,7 +817,7 @@ describe('PlayerSkill', () => {
                 .callsFake((point: PointsEnum) => (point === PointsEnum.CASTING_SPEED ? 42 : 0));
             const player = createPlayer({ getPoint });
             const calcDuration = sandbox.stub(MathUtil, 'calcDuration').returns(7);
-            const playerSkill = new PlayerSkill({ player, skillManager: createSkillManager(undefined) });
+            const playerSkill = new PlayerSkill({ player, skillManager: createSkillManager(undefined), skills: [] });
 
             const result = playerSkill.calculateCooltime(100);
 
@@ -819,14 +826,15 @@ describe('PlayerSkill', () => {
         });
     });
 
-    describe('setSkillnextReadTime', () => {
+    describe('setSkillNextReadTime', () => {
         it('sets timeToNextRead for the given skill', () => {
             const playerSkill = new PlayerSkill({
                 player: createPlayer(),
                 skillManager: createSkillManager(undefined),
+                skills: [],
             });
 
-            playerSkill.setSkillnextReadTime(TEST_SKILL, 123456);
+            playerSkill.setSkillNextReadTime(TEST_SKILL, 123456);
 
             expect(playerSkill.getSkills()[TEST_SKILL].timeToNextRead).to.equal(123456);
         });
@@ -836,7 +844,11 @@ describe('PlayerSkill', () => {
         let playerSkill: PlayerSkill;
 
         beforeEach(() => {
-            playerSkill = new PlayerSkill({ player: createPlayer(), skillManager: createSkillManager(undefined) });
+            playerSkill = new PlayerSkill({
+                player: createPlayer(),
+                skillManager: createSkillManager(undefined),
+                skills: [],
+            });
         });
 
         const cases: Array<{ time: number; expected: string[] }> = [
