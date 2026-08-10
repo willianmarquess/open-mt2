@@ -4,11 +4,13 @@ import ItemManager from '@/core/domain/manager/ItemManager';
 import MobManager from '@/core/domain/manager/MobManager';
 import MathUtil from '@/core/domain/util/MathUtil';
 import { ChatMessageTypeEnum } from '@/core/enum/ChatMessageTypeEnum';
+import { EmpireEnum } from '@/core/enum/EmpireEnum';
 import { ItemTypeEnum } from '@/core/enum/ItemTypeEnum';
 import { ItemUseSubTypeEnum } from '@/core/enum/ItemUseSubTypeEnum';
 import { PointsEnum } from '@/core/enum/PointsEnum';
 import { SkillEnum } from '@/core/enum/SkillEnum';
 import { SpecialEffectTypeEnum } from '@/core/enum/SpecialEffectTypeEnum';
+import { SpecialItemEnum } from '@/core/enum/SpecialItemEnum';
 import { TimedEventsEnum } from '@/core/enum/TimedEventsEnum';
 import { WindowTypeEnum } from '@/core/enum/WindowTypeEnum';
 import Logger from '@/core/infra/logger/Logger';
@@ -54,6 +56,38 @@ const ALL_HORSE_ITEM_VNUMS = new Set([
     ITEM_REVIVE_HORSE_3,
     // SpecialItemEnum.ITEM_HORSE_SKILL_TRAIN_BOOK,
 ]);
+
+const LEADERSHIP_SKILLBOOK_VNUMS = new Set([
+    SpecialItemEnum.SKILL_BOOK_SHUN_ZI,
+    SpecialItemEnum.SKILL_BOOK_WU_ZI,
+    SpecialItemEnum.SKILL_BOOK_WEILIAO_ZI,
+]);
+
+const COMBO_MASTERY_SKILLBOOK_VNUMS = new Set([
+    SpecialItemEnum.SKILL_BOOK_COMBO_MASTERY,
+    SpecialItemEnum.SKILL_BOOK_COMBO_MASTER,
+    SpecialItemEnum.SKILL_BOOK_COMBO_ART,
+]);
+
+const LANGUAGE_SKILLBOOK_VNUMS = new Set([
+    SpecialItemEnum.SKILL_BOOK_SHINSOO_LANGUAGE,
+    SpecialItemEnum.SKILL_BOOK_CHUNJO_LANGUAGE,
+    SpecialItemEnum.SKILL_BOOK_JINNO_LANGUAGE,
+]);
+
+const SkillLanguageMap: Record<SkillEnum.LANGUAGE1 | SkillEnum.LANGUAGE2 | SkillEnum.LANGUAGE3, EmpireEnum> = {
+    [SkillEnum.LANGUAGE1]: EmpireEnum.RED,
+    [SkillEnum.LANGUAGE2]: EmpireEnum.YELLOW,
+    [SkillEnum.LANGUAGE3]: EmpireEnum.BLUE,
+};
+
+const POLYMORPH_SKILLBOOK_VNUMS = new Set([
+    SpecialItemEnum.SKILL_BOOK_POLYMORPH,
+    SpecialItemEnum.SKILL_BOOK_POLYMORPH_ADVANCED,
+    SpecialItemEnum.SKILL_BOOK_POLYMORPH_MASTER,
+]);
+
+const MINING_SKILLBOOK_VNUMS = new Set([SpecialItemEnum.SKILL_BOOK_MINING]);
 
 export default class UseItemService {
     private readonly logger: Logger;
@@ -250,6 +284,26 @@ export default class UseItemService {
 
         if (ALL_HORSE_ITEM_VNUMS.has(item.getId())) {
             return this.useHorseItem(player, item);
+        }
+
+        if (LEADERSHIP_SKILLBOOK_VNUMS.has(item.getId())) {
+            return this.useLeadershipBook(player, item);
+        }
+
+        if (COMBO_MASTERY_SKILLBOOK_VNUMS.has(item.getId())) {
+            return this.useComboBook(player, item);
+        }
+
+        if (LANGUAGE_SKILLBOOK_VNUMS.has(item.getId())) {
+            return this.useLanguageBook(player, item);
+        }
+
+        if (POLYMORPH_SKILLBOOK_VNUMS.has(item.getId())) {
+            return this.usePolymorphBook(player, item);
+        }
+
+        if (MINING_SKILLBOOK_VNUMS.has(item.getId())) {
+            return this.useMiningBook(player, item);
         }
     }
 
@@ -449,6 +503,185 @@ export default class UseItemService {
             await this.removeItemByQuantity(player, item, 1);
             const delay = MathUtil.getRandomInt(SKILLBOOK_DELAY_MIN, SKILLBOOK_DELAY_MAX);
             player.setSkillNextReadTime(skillNum, performance.now() + delay);
+        }
+    }
+
+    private async useLeadershipBook(player: Player, item: Item) {
+        if (player.isPolymorphed()) {
+            player.chat({
+                messageType: ChatMessageTypeEnum.INFO,
+                message: `You can't read while transformed.`,
+            });
+            return;
+        }
+
+        const skillLevel = player.getSkillLevel(SkillEnum.LEADERSHIP);
+
+        if (skillLevel < item.getValues()[0]) {
+            player.chat({
+                messageType: ChatMessageTypeEnum.INFO,
+                message: `It isn't easy to understand this book.`,
+            });
+            return;
+        }
+
+        if (skillLevel >= item.getValues()[1]) {
+            player.chat({
+                messageType: ChatMessageTypeEnum.INFO,
+                message: `This book will not help you.`,
+            });
+            return;
+        }
+
+        if (player.learnSkillByBook(SkillEnum.LEADERSHIP)) {
+            await this.removeItemByQuantity(player, item, 1);
+            const delay = MathUtil.getRandomInt(SKILLBOOK_DELAY_MIN, SKILLBOOK_DELAY_MAX);
+            player.setSkillNextReadTime(SkillEnum.LEADERSHIP, performance.now() + delay);
+        }
+    }
+
+    private async useComboBook(player: Player, item: Item) {
+        if (player.isPolymorphed()) {
+            player.chat({
+                messageType: ChatMessageTypeEnum.INFO,
+                message: `You can't read while transformed.`,
+            });
+            return;
+        }
+
+        const skillLevel = player.getSkillLevel(SkillEnum.COMBO);
+
+        if (skillLevel === 0 && player.getPoint(PointsEnum.LEVEL) < 30) {
+            player.chat({
+                messageType: ChatMessageTypeEnum.INFO,
+                message: `You need to have a minimum level of 30 to understand this book.`,
+            });
+            return;
+        }
+
+        if (skillLevel === 1 && player.getPoint(PointsEnum.LEVEL) < 50) {
+            player.chat({
+                messageType: ChatMessageTypeEnum.INFO,
+                message: `You need to have a minimum level of 50 to understand this book.`,
+            });
+            return;
+        }
+
+        if (skillLevel >= 2) {
+            player.chat({
+                messageType: ChatMessageTypeEnum.INFO,
+                message: `This book will not help you.`,
+            });
+            return;
+        }
+
+        const percent = item.getValues()[0];
+        if (player.learnSkillByBook(SkillEnum.COMBO, percent)) {
+            await this.removeItemByQuantity(player, item, 1);
+            const delay = MathUtil.getRandomInt(SKILLBOOK_DELAY_MIN, SKILLBOOK_DELAY_MAX);
+            player.setSkillNextReadTime(SkillEnum.COMBO, performance.now() + delay);
+        }
+    }
+
+    private async useLanguageBook(player: Player, item: Item) {
+        if (player.isPolymorphed()) {
+            player.chat({
+                messageType: ChatMessageTypeEnum.INFO,
+                message: `You can't read while transformed.`,
+            });
+            return;
+        }
+
+        const skillNum = item.getValues()[0] as SkillEnum;
+        const percent = MathUtil.minMax(0, item.getValues()[1], 100);
+        const skillLevel = player.getSkillLevel(skillNum);
+
+        const isFromEmpire = SkillLanguageMap[skillNum] === player.getEmpire();
+
+        if (skillLevel >= 20 || isFromEmpire) {
+            player.chat({
+                messageType: ChatMessageTypeEnum.INFO,
+                message: `You already understand this language.`,
+            });
+            return;
+        }
+
+        if (player.learnSkillByBook(skillNum, percent)) {
+            await this.removeItemByQuantity(player, item, 1);
+            const delay = MathUtil.getRandomInt(SKILLBOOK_DELAY_MIN, SKILLBOOK_DELAY_MAX);
+            player.setSkillNextReadTime(SkillEnum.COMBO, performance.now() + delay);
+        }
+    }
+
+    private async usePolymorphBook(player: Player, item: Item) {
+        if (player.isPolymorphed()) {
+            player.chat({
+                messageType: ChatMessageTypeEnum.INFO,
+                message: `You can't read while transformed.`,
+            });
+            return;
+        }
+
+        const skillLevel = player.getSkillLevel(SkillEnum.POLYMORPH);
+
+        if (skillLevel >= 40) {
+            player.chat({
+                messageType: ChatMessageTypeEnum.INFO,
+                message: `You have already mastered this skill.`,
+            });
+            return;
+        }
+
+        if (skillLevel < item.getValues()[0]) {
+            player.chat({
+                messageType: ChatMessageTypeEnum.INFO,
+                message: `It isn't easy to understand this book.`,
+            });
+            return;
+        }
+
+        if (skillLevel >= item.getValues()[1]) {
+            player.chat({
+                messageType: ChatMessageTypeEnum.INFO,
+                message: `This book will not help you.`,
+            });
+            return;
+        }
+
+        const percent = MathUtil.minMax(0, item.getValues()[2], 100);
+
+        if (player.learnSkillByBook(SkillEnum.POLYMORPH, percent)) {
+            await this.removeItemByQuantity(player, item, 1);
+            const delay = MathUtil.getRandomInt(SKILLBOOK_DELAY_MIN, SKILLBOOK_DELAY_MAX);
+            player.setSkillNextReadTime(SkillEnum.POLYMORPH, performance.now() + delay);
+        }
+    }
+
+    private async useMiningBook(player: Player, item: Item) {
+        if (player.isPolymorphed()) {
+            player.chat({
+                messageType: ChatMessageTypeEnum.INFO,
+                message: `You can't read while transformed.`,
+            });
+            return;
+        }
+
+        const skillLevel = player.getSkillLevel(SkillEnum.MINING);
+
+        if (skillLevel >= 40) {
+            player.chat({
+                messageType: ChatMessageTypeEnum.INFO,
+                message: `You have already mastered this skill.`,
+            });
+            return;
+        }
+
+        const percent = MathUtil.minMax(0, item.getValues()[1], 100);
+
+        if (player.learnSkillByBook(SkillEnum.MINING, percent)) {
+            await this.removeItemByQuantity(player, item, 1);
+            const delay = MathUtil.getRandomInt(SKILLBOOK_DELAY_MIN, SKILLBOOK_DELAY_MAX);
+            player.setSkillNextReadTime(SkillEnum.MINING, performance.now() + delay);
         }
     }
 }
