@@ -1224,7 +1224,7 @@ export default class Player extends Character {
         }
     }
 
-    private createTimedEvent(command: 'QUIT' | 'SELECT' | 'LOGOUT', prefix: string) {
+    private createTimedEvent(command: 'QUIT' | 'SELECT' | 'LOGOUT', prefix: string, onComplete?: () => void) {
         if (this.isEventTimerActive(TimedEventsEnum.COUNTDOWN)) {
             this.removeEventTimer(TimedEventsEnum.COUNTDOWN);
             this.chat({
@@ -1272,7 +1272,7 @@ export default class Player extends Character {
                             this.connection?.setState(ConnectionStateEnum.CLOSE);
                             break;
                         case 'SELECT':
-                            this.area?.despawn(this);
+                            onComplete?.();
                             this.connection?.setState(ConnectionStateEnum.SELECT);
                             break;
                     }
@@ -1300,8 +1300,8 @@ export default class Player extends Character {
         return this.createTimedEvent('LOGOUT', 'Logout');
     }
 
-    backToSelect() {
-        return this.createTimedEvent('SELECT', 'Back to Select');
+    backToSelect(onComplete?: () => void) {
+        return this.createTimedEvent('SELECT', 'Back to Select', onComplete);
     }
 
     chat({
