@@ -34,6 +34,7 @@ describe('AuthenticateService token redemption', () => {
         }),
         get: sinon.stub().callsFake(async (key: string) => entries[key] ?? null),
         exists: sinon.stub().callsFake(async (key: string) => key in entries),
+        persist: sinon.stub().resolves(),
     });
 
     beforeEach(() => {

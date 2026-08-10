@@ -52,6 +52,14 @@ export default class RedisCacheProvider implements CacheProvider {
         await this.client.del(key);
     }
 
+    async expire(key: string, expirationInSec: number) {
+        await this.client.expire(key, expirationInSec);
+    }
+
+    async persist(key: string) {
+        await this.client.persist(key);
+    }
+
     async close() {
         this.logger.info('[CACHE] Closing connection');
         await this.client.quit();

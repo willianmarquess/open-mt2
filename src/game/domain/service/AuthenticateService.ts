@@ -34,6 +34,9 @@ export default class AuthenticateService {
             return Result.error(ErrorTypesEnum.INVALID_TOKEN);
         }
 
+        // Clears any grace period armed by the previous connection closing.
+        await this.cacheProvider.persist(cacheKey);
+
         return Result.ok(token as Token);
     }
 }
