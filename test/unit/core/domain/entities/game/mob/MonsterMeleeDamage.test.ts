@@ -44,6 +44,27 @@ describe('Monster melee damage', () => {
         });
     });
 
+    describe('MobPoints defense grade', () => {
+        // Chief Orc (vnum 691): level 50, ht 63, def 57 in mobs.json.
+        const chiefOrcProto: any = { ...wildDogProto, level: 50, ht: 63, st: 40, def: 57, max_hp: 5000 };
+
+        it('should be level + ht + def, matching the original ComputeBattlePoints', () => {
+            const points = new MobPoints(wildDogProto);
+            points.calcPoints();
+
+            // 1 + 3 + 4 = 8. The old formula was level*3 + ht*4 + def = 19.
+            expect(points.getPoint(PointsEnum.DEFENSE)).to.equal(8);
+        });
+
+        it('should not scale the level and ht terms, which suppressed player damage on real mobs', () => {
+            const points = new MobPoints(chiefOrcProto);
+            points.calcPoints();
+
+            // 50 + 63 + 57 = 170, against 50*3 + 63*4 + 57 = 459 before.
+            expect(points.getPoint(PointsEnum.DEFENSE)).to.equal(170);
+        });
+    });
+
     describe('MonsterBattle.meleeAttack', () => {
         // attackRating 90 on both sides gives a clean fAR of exactly 0.7:
         // (90+210)/300 - ((90*2+5)/(90+95))*0.3 = 1 - 0.3 = 0.7

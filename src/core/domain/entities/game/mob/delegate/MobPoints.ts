@@ -64,9 +64,7 @@ export class MobPoints extends Points {
     }
 
     private calcDefense() {
-        this.defense = Math.floor(
-            this.getPoint(PointsEnum.LEVEL) * 3 + this.getPoint(PointsEnum.HT) * 4 + Number(this.mobProto.def),
-        );
+        this.defense = this.getPoint(PointsEnum.LEVEL) + this.getPoint(PointsEnum.HT) + Number(this.mobProto.def);
     }
 
     private calcAttack() {
