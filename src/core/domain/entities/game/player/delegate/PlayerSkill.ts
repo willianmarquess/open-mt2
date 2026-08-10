@@ -97,7 +97,7 @@ export class PlayerSkill {
 
         switch (method) {
             case 'BOOK':
-                if (!this.canLevelUpByBook(skillNum)) return;
+                if (!this.canLevelUpByBook(skillNum, skillProto)) return;
                 break;
             case 'POINT':
                 if (!this.canLevelUpByPoint(skillNum, skillProto)) return;
@@ -158,7 +158,10 @@ export class PlayerSkill {
         this.player.sendSkillLevel();
     }
 
-    private canLevelUpByBook(skillNum: SkillEnum): boolean {
+    private canLevelUpByBook(skillNum: SkillEnum, skillProto: Skill): boolean {
+        // A passive never leaves NORMAL rank, so the MASTER gate can only apply
+        // to active skills.
+        if (skillProto.isPassive()) return true;
         return this.skills[skillNum]?.rank === SkillRankEnum.MASTER;
     }
 

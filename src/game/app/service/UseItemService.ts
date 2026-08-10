@@ -536,7 +536,7 @@ export default class UseItemService {
         if (player.learnSkillByBook(SkillEnum.LEADERSHIP)) {
             await this.removeItemByQuantity(player, item, 1);
             const delay = MathUtil.getRandomInt(SKILLBOOK_DELAY_MIN, SKILLBOOK_DELAY_MAX);
-            player.setSkillNextReadTime(SkillEnum.LEADERSHIP, performance.now() + delay);
+            player.setSkillNextReadTime(SkillEnum.LEADERSHIP, Math.floor(Date.now() / 1000) + delay);
         }
     }
 
@@ -579,7 +579,7 @@ export default class UseItemService {
         if (player.learnSkillByBook(SkillEnum.COMBO, percent)) {
             await this.removeItemByQuantity(player, item, 1);
             const delay = MathUtil.getRandomInt(SKILLBOOK_DELAY_MIN, SKILLBOOK_DELAY_MAX);
-            player.setSkillNextReadTime(SkillEnum.COMBO, performance.now() + delay);
+            player.setSkillNextReadTime(SkillEnum.COMBO, Math.floor(Date.now() / 1000) + delay);
         }
     }
 
@@ -609,7 +609,7 @@ export default class UseItemService {
         if (player.learnSkillByBook(skillNum, percent)) {
             await this.removeItemByQuantity(player, item, 1);
             const delay = MathUtil.getRandomInt(SKILLBOOK_DELAY_MIN, SKILLBOOK_DELAY_MAX);
-            player.setSkillNextReadTime(SkillEnum.COMBO, performance.now() + delay);
+            player.setSkillNextReadTime(skillNum, Math.floor(Date.now() / 1000) + delay);
         }
     }
 
@@ -653,7 +653,7 @@ export default class UseItemService {
         if (player.learnSkillByBook(SkillEnum.POLYMORPH, percent)) {
             await this.removeItemByQuantity(player, item, 1);
             const delay = MathUtil.getRandomInt(SKILLBOOK_DELAY_MIN, SKILLBOOK_DELAY_MAX);
-            player.setSkillNextReadTime(SkillEnum.POLYMORPH, performance.now() + delay);
+            player.setSkillNextReadTime(SkillEnum.POLYMORPH, Math.floor(Date.now() / 1000) + delay);
         }
     }
 
@@ -681,7 +681,7 @@ export default class UseItemService {
         if (player.learnSkillByBook(SkillEnum.MINING, percent)) {
             await this.removeItemByQuantity(player, item, 1);
             const delay = MathUtil.getRandomInt(SKILLBOOK_DELAY_MIN, SKILLBOOK_DELAY_MAX);
-            player.setSkillNextReadTime(SkillEnum.MINING, performance.now() + delay);
+            player.setSkillNextReadTime(SkillEnum.MINING, Math.floor(Date.now() / 1000) + delay);
         }
     }
 }
