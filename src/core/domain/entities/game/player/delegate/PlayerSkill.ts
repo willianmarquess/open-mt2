@@ -48,6 +48,10 @@ export class PlayerSkill {
         return this.skills;
     }
 
+    getSkillLevel(skillNum: SkillEnum): number {
+        return this.skills[skillNum]?.level || 0;
+    }
+
     setSkillLevel(skillNum: SkillEnum, level: number) {
         if (!this.skills[skillNum]) {
             this.skills[skillNum] = {

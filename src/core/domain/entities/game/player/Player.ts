@@ -2920,8 +2920,8 @@ export default class Player extends Character {
         );
     }
 
-    learnSkillByBook(skillNum: SkillEnum): boolean {
-        return this.skills.learnSkillByBook(skillNum);
+    learnSkillByBook(skillNum: SkillEnum, probability?: number): boolean {
+        return this.skills.learnSkillByBook(skillNum, probability);
     }
 
     setSkillNextReadTime(skillNum: SkillEnum, time: number) {
@@ -2934,5 +2934,9 @@ export default class Player extends Character {
 
     clearSkill(): void {
         return this.skills.clearSkill();
+    }
+
+    getSkillLevel(skillNum: SkillEnum): number {
+        return this.skills.getSkillLevel(skillNum);
     }
 }
