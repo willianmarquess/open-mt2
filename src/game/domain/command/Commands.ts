@@ -214,7 +214,7 @@ export default function createCommands() {
             UserHorseRideCommand.getName(),
             {
                 command: UserHorseRideCommand,
-                createHandler: (params) => new UserHorseRideCommandHandler(params),
+                createHandler: () => new UserHorseRideCommandHandler(),
             },
         ],
         [

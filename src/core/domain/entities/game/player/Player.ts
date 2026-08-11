@@ -2248,6 +2248,8 @@ export default class Player extends Character {
     }
 
     toggleRiding() {
+        if (this.isDead() || this.isAffectByFlag(AffectBitsTypeEnum.STUN)) return;
+
         if (this.isHorseRiding()) {
             this.stopRiding();
         } else {
