@@ -70,7 +70,14 @@ describe('login token lifetime (issue #237)', () => {
             cacheProvider: minted,
             encryptionProvider: { compare: async () => true },
             accountRepository: {
-                findByUsername: async () => ({ id: 1, getPassword: () => 'hashed' }),
+                findByUsername: async () => ({
+                    id: 1,
+                    getPassword: () => 'hashed',
+                    getAccountStatus: () => ({
+                        getAllowLogin: () => true,
+                        getClientStatus: () => 'OK',
+                    }),
+                }),
             },
         } as never);
 
