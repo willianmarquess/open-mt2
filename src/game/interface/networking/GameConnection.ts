@@ -63,7 +63,8 @@ export default class GameConnection extends Connection {
         this.setState(ConnectionStateEnum.LOGIN);
     }
 
-    send<T>(packet: T & { pack: () => Buffer }) {
+    send<T>(packet: T & { pack: () => Buffer; getName: () => string }) {
+        this.logger.debug(`[OUT][PACKET] name: ${packet.getName()}`);
         this.socket.write(packet.pack());
     }
 }
