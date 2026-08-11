@@ -32,7 +32,7 @@ export default class ItemDropPacketHandler extends PacketHandler<ItemDropPacket>
             return;
         }
 
-        this.dropItemService.execute({
+        await this.dropItemService.execute({
             player,
             window: packet.getWindow(),
             position: packet.getPosition(),
