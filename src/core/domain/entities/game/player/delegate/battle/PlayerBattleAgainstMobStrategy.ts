@@ -177,7 +177,12 @@ export default class PlayerBattleAgainstMobStrategy extends PlayerBattleStrategy
 
         const weapon = this.attacker.getWeapon();
 
-        if (weapon?.getType() === ItemTypeEnum.ITEM_WEAPON) {
+        if (weapon && weapon.getType() !== ItemTypeEnum.ITEM_WEAPON) {
+            this.logger.info(`[PlayerBattle] Melee attack cant handle item type: ${weapon.getType()}.`);
+            return;
+        }
+
+        if (weapon) {
             switch (weapon.getSubType()) {
                 case ItemSubTypeEnum.WEAPON_SWORD:
                 case ItemSubTypeEnum.WEAPON_DAGGER:

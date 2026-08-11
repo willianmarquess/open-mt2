@@ -4,12 +4,14 @@ import Equipment from '@/core/domain/entities/game/inventory/Equipment';
 import Item from '@/core/domain/entities/game/item/Item';
 import { WindowTypeEnum } from '@/core/enum/WindowTypeEnum';
 import { ItemEquipmentSlotEnum } from '@/core/enum/ItemEquipmentSlotEnum';
+import { ItemTypeEnum } from '@/core/enum/ItemTypeEnum';
 import ItemEquippedEvent from '@/core/domain/entities/game/inventory/events/ItemEquippedEvent';
 import ItemUnequippedEvent from '@/core/domain/entities/game/inventory/events/ItemUnequippedEvent';
 import { GameConfig } from '@/game/infra/config/GameConfig';
 
 const DEFAULT_INVENTORY_WIDTH = 5;
 const DEFAULT_INVENTORY_HEIGHT = 9;
+const NON_WEAPON_DAMAGE_MAX = 1;
 
 export default class Inventory {
     private readonly pages: Array<Page> = [];
@@ -211,6 +213,19 @@ export default class Inventory {
         ];
     }
 
+    private getWeaponPhysicalDamage() {
+        const weapon = this.equipment.getWeapon();
+
+        if (!weapon || weapon.getType() === ItemTypeEnum.ITEM_ROD || weapon.getType() === ItemTypeEnum.ITEM_PICK) {
+            return { min: 0, max: NON_WEAPON_DAMAGE_MAX };
+        }
+
+        return {
+            min: weapon.getValues()[3] ?? 0,
+            max: weapon.getValues()[4] ?? 0,
+        };
+    }
+
     getWeaponValues() {
         return {
             magic: {
@@ -219,8 +234,7 @@ export default class Inventory {
                 bonus: this.equipment.getWeapon()?.getValues()[5] ?? 0,
             },
             physic: {
-                min: this.equipment.getWeapon()?.getValues()[3] ?? 0,
-                max: this.equipment.getWeapon()?.getValues()[4] ?? 0,
+                ...this.getWeaponPhysicalDamage(),
                 bonus: this.equipment.getWeapon()?.getValues()[5] ?? 0,
             },
         };
