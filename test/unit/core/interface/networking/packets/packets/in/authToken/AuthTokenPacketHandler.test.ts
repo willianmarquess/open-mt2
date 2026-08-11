@@ -27,6 +27,11 @@ describe('AuthTokenPacketHandler', () => {
                 connectionMock.state = value;
             },
             setAccountId: () => {},
+            tokenKey: null,
+            setTokenKey: (value) => {
+                connectionMock.tokenKey = value;
+            },
+            getTokenKey: () => connectionMock.tokenKey,
         };
 
         packetMock = {

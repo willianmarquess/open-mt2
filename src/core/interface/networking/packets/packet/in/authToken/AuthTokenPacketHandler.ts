@@ -10,6 +10,7 @@ import CharactersInfoPacket from '../../out/CharactersInfoPacket';
 import Ip from '@/core/util/Ip';
 import { ConnectionStateEnum } from '@/core/enum/ConnectionStateEnum';
 import SessionManager from '@/game/domain/manager/SessionManager';
+import CacheKeyGenerator from '@/core/util/CacheKeyGenerator';
 import LoginFailedPacket from '../../out/LoginFailedPacket';
 import LoginStatusEnum from '@/core/enum/LoginStatusEnum';
 
@@ -79,6 +80,7 @@ export default class AuthTokenPacketHandler extends PacketHandler<AuthTokenPacke
         }
 
         connection.setAccountId(token.accountId);
+        connection.setTokenKey(CacheKeyGenerator.createTokenKey(String(key)));
         this.sessionManager.set(token.accountId, connection);
 
         const charactersResult = await this.loadCharactersService.execute({ accountId: token.accountId });

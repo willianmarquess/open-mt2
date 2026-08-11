@@ -4,6 +4,8 @@ export default interface CacheProvider {
     get<T>(key: string): Promise<T>;
     take<T>(key: string): Promise<T | null>;
     delete(key: string): Promise<void>;
+    expire(key: string, expirationInSec: number): Promise<void>;
+    persist(key: string): Promise<void>;
     close(): Promise<void>;
     exists(key: string): Promise<boolean>;
 }
