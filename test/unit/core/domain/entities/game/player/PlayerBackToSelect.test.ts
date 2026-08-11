@@ -26,6 +26,7 @@ describe('Player.backToSelect (World.players cleanup)', () => {
         const leaveGameService = new LeaveGameService({
             world,
             privateShopService: { closePrivateShop: sinon.stub().resolves() },
+            questManager: { onLogout: sinon.stub().resolves() },
         } as never);
 
         const player: Record<string, unknown> = {
