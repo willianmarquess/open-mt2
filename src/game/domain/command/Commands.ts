@@ -165,7 +165,7 @@ export default function createCommands() {
             SelectCommand.getName(),
             {
                 command: SelectCommand,
-                createHandler: () => new SelectCommandHandler(),
+                createHandler: (params) => new SelectCommandHandler(params),
             },
         ],
         [
