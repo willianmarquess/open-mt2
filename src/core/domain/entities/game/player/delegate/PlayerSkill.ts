@@ -97,7 +97,7 @@ export class PlayerSkill {
 
         switch (method) {
             case 'BOOK':
-                if (!this.canLevelUpByBook(skillNum)) return;
+                if (!this.canLevelUpByBook(skillNum, skillProto)) return;
                 break;
             case 'POINT':
                 if (!this.canLevelUpByPoint(skillNum, skillProto)) return;
@@ -158,7 +158,10 @@ export class PlayerSkill {
         this.player.sendSkillLevel();
     }
 
-    private canLevelUpByBook(skillNum: SkillEnum): boolean {
+    private canLevelUpByBook(skillNum: SkillEnum, skillProto: Skill): boolean {
+        // A passive never leaves NORMAL rank, so the MASTER gate can only apply
+        // to active skills.
+        if (skillProto.isPassive()) return true;
         return this.skills[skillNum]?.rank === SkillRankEnum.MASTER;
     }
 
@@ -300,7 +303,7 @@ export class PlayerSkill {
             return false;
         }
 
-        const time = performance.now();
+        const time = Math.floor(Date.now() / 1000);
 
         if (time < this.skills[skillNum].timeToNextRead) {
             //TODO: verify AFFECT_SKILL_NO_BOOK_DELAY caused by Exorcism Scroll (we need to impl PlayerAffect class)

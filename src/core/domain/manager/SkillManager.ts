@@ -48,6 +48,13 @@ import { ChargeSkill } from '../entities/game/skill/active/horse/ChargeSkill';
 import { EscapeSkill } from '../entities/game/skill/active/horse/EscapeSkill';
 import { WildAttackSkill } from '../entities/game/skill/active/horse/WildAttackSkill';
 import { WildAttackRangeSkill } from '../entities/game/skill/active/horse/WildAttackRangeSkill';
+import { ComboSkill } from '../entities/game/skill/passive/ComboSkill';
+import { LeadershipSkill } from '../entities/game/skill/passive/LeadershipSkill';
+import { MiningSkill } from '../entities/game/skill/passive/MiningSkill';
+import { PolymorphSkill } from '../entities/game/skill/passive/PolymorphSkill';
+import { LanguageShinsooSkill } from '../entities/game/skill/passive/LanguageShinsooSkill';
+import { LanguageChunjoSkill } from '../entities/game/skill/passive/LanguageChunjoSkill';
+import { LanguageJinnoSkill } from '../entities/game/skill/passive/LanguageJinnoSkill';
 
 export class SkillManager {
     private readonly skills = new Map<SkillEnum, Skill>();
@@ -109,6 +116,14 @@ export class SkillManager {
         this.skills.set(SkillEnum.HORSE_ESCAPE, new EscapeSkill());
         this.skills.set(SkillEnum.HORSE_WILDATTACK, new WildAttackSkill());
         this.skills.set(SkillEnum.HORSE_WILDATTACK_RANGE, new WildAttackRangeSkill());
+
+        this.skills.set(SkillEnum.LEADERSHIP, new LeadershipSkill());
+        this.skills.set(SkillEnum.COMBO, new ComboSkill());
+        this.skills.set(SkillEnum.MINING, new MiningSkill());
+        this.skills.set(SkillEnum.LANGUAGE1, new LanguageShinsooSkill());
+        this.skills.set(SkillEnum.LANGUAGE2, new LanguageChunjoSkill());
+        this.skills.set(SkillEnum.LANGUAGE3, new LanguageJinnoSkill());
+        this.skills.set(SkillEnum.POLYMORPH, new PolymorphSkill());
     }
 
     getSkill(skillNum: SkillEnum): Skill | null {

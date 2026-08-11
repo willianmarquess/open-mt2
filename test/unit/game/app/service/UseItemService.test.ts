@@ -1,6 +1,8 @@
 import { expect } from 'chai';
 import sinon from 'sinon';
 import { ChatMessageTypeEnum } from '@/core/enum/ChatMessageTypeEnum';
+import { ItemTypeEnum } from '@/core/enum/ItemTypeEnum';
+import { SkillEnum } from '@/core/enum/SkillEnum';
 import { WindowTypeEnum } from '@/core/enum/WindowTypeEnum';
 import WinstonLoggerAdapter from '@/core/infra/logger/WinstonLoggerAdapter';
 import UseItemService from '@/game/app/service/UseItemService';
@@ -246,5 +248,37 @@ describe('UseItemService', () => {
                 expect(playerStub.getItem.calledOnceWith(2)).to.be.true;
             });
         }
+    });
+
+    describe('skill book read delay (issue #204)', () => {
+        const NOW_SECONDS = 1_750_000_000;
+        const EIGHTEEN_HOURS = 18 * 3600;
+        const THIRTY_HOURS = 30 * 3600;
+
+        it('should schedule the next read 18 to 30 hours ahead on the wall clock', async () => {
+            sinon.stub(Date, 'now').returns(NOW_SECONDS * 1000);
+            const mockItem = {
+                getType: sinon.stub().returns(ItemTypeEnum.ITEM_SKILLBOOK),
+                getValues: sinon.stub().returns([SkillEnum.THREE_WAY_CUT]),
+                getCount: sinon.stub().returns(1),
+                getPosition: sinon.stub().returns(2),
+                getSize: sinon.stub().returns(1),
+            };
+            playerStub.getItem.returns(mockItem);
+            playerStub.isWearable.returns(false);
+            playerStub.isPolymorphed = sinon.stub().returns(false);
+            playerStub.learnSkillByBook = sinon.stub().returns(true);
+            playerStub.setSkillNextReadTime = sinon.stub();
+            playerStub.getInventory.returns({ removeItem: sinon.stub() });
+            itemManagerStub.delete = sinon.stub().resolves();
+
+            await service.execute(playerStub, WindowTypeEnum.INVENTORY, 2);
+
+            expect(playerStub.setSkillNextReadTime.calledOnce).to.be.true;
+            const [skillNum, deadline] = playerStub.setSkillNextReadTime.firstCall.args;
+            expect(skillNum).to.equal(SkillEnum.THREE_WAY_CUT);
+            expect(deadline).to.be.at.least(NOW_SECONDS + EIGHTEEN_HOURS);
+            expect(deadline).to.be.at.most(NOW_SECONDS + THIRTY_HOURS);
+        });
     });
 });
