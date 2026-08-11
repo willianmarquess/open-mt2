@@ -12,14 +12,6 @@ export interface IHorseStats {
 }
 
 export default class NPC extends Mob {
-    /**
-     * When set, every viewer except this virtualId renders the NPC as a dead
-     * body while the entity stays alive server-side. The client filters dead
-     * actors out of mouse picking, so this is the only way to keep a "corpse"
-     * clickable for its owner (used by the dead horse, issue #42).
-     */
-    private corpseOwnerVirtualId: number | null = null;
-
     /** Set while this NPC is a player's summoned horse, so TARGET reports the rider's horse health. */
     private horseStats: IHorseStats | null = null;
 
@@ -59,14 +51,6 @@ export default class NPC extends Mob {
     onDespawn(): void {}
 
     onSpawn(): void {}
-
-    setCorpseOwnerVirtualId(virtualId: number | null): void {
-        this.corpseOwnerVirtualId = virtualId;
-    }
-
-    getCorpseOwnerVirtualId(): number | null {
-        return this.corpseOwnerVirtualId;
-    }
 
     setHorseStats(horseStats: IHorseStats | null): void {
         this.horseStats = horseStats;
