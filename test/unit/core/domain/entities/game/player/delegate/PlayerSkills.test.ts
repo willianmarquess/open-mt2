@@ -788,21 +788,57 @@ describe('PlayerSkill', () => {
     });
 
     describe('clearSkill', () => {
+        function createPlayerWithSkillPool(level: number, initialPool: number) {
+            const pool = { value: initialPool };
+            const player = createPlayer({
+                getPoint: sinon.stub().callsFake((point: PointsEnum) => {
+                    if (point === PointsEnum.LEVEL) return level;
+                    if (point === PointsEnum.SKILL) return pool.value;
+                    return 0;
+                }),
+                addPoint: sinon.stub().callsFake((point: PointsEnum, value: number) => {
+                    if (point === PointsEnum.SKILL) pool.value = Math.max(0, pool.value + value);
+                }),
+                setPoint: sinon.stub().callsFake((point: PointsEnum, value: number) => {
+                    if (point === PointsEnum.SKILL) pool.value = value;
+                }),
+            });
+            return { player, pool };
+        }
+
+        it('leaves the player with level - 1 points, keeping the ones already unspent', () => {
+            const { player, pool } = createPlayerWithSkillPool(30, 12);
+            const playerSkill = new PlayerSkill({ player, skillManager: createSkillManager(undefined), skills: [] });
+
+            playerSkill.clearSkill();
+
+            expect(pool.value).to.equal(29);
+        });
+
+        it('does not consume the pool of a player who never spent a point', () => {
+            const { player, pool } = createPlayerWithSkillPool(30, 29);
+            const playerSkill = new PlayerSkill({ player, skillManager: createSkillManager(undefined), skills: [] });
+
+            playerSkill.clearSkill();
+
+            expect(pool.value).to.equal(29);
+        });
+
         it('recalculates the SKILL point pool and resets every skill slot', () => {
             const getPoint = sinon.stub().callsFake((point: PointsEnum) => {
                 if (point === PointsEnum.LEVEL) return 30;
                 if (point === PointsEnum.SKILL) return 3;
                 return 0;
             });
-            const setPoint = sinon.stub();
-            const player = createPlayer({ getPoint, setPoint });
+            const addPoint = sinon.stub();
+            const player = createPlayer({ getPoint, addPoint });
             const playerSkill = new PlayerSkill({ player, skillManager: createSkillManager(undefined), skills: [] });
 
             setSkillState(playerSkill, TEST_SKILL, { rank: RANK.MASTER, level: 25, readCount: 4, timeToNextRead: 555 });
 
             playerSkill.clearSkill();
 
-            expect(setPoint.calledOnceWith(PointsEnum.SKILL, 26)).to.be.true;
+            expect(addPoint.calledOnceWith(PointsEnum.SKILL, 26)).to.be.true;
             expect(playerSkill.getSkills()[TEST_SKILL]).to.deep.equal({
                 rank: RANK.NORMAL,
                 level: 0,
