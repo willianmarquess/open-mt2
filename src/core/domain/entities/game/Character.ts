@@ -17,6 +17,7 @@ import { QuestManager } from '../../quests/QuestManager';
 import { EntityTypeEnum } from '@/core/enum/EntityTypeEnum';
 import { MovementTypeEnum } from '@/core/enum/MovementTypeEnum';
 import GlobalEventTimerManager from '../../manager/GlobalEventTimeManager';
+import { SLOW_AFFECT_MOVE_SPEED_PENALTY } from './shared/AffectConstants';
 
 type MovementNodeProvider = () => { x: number; y: number } | null;
 
@@ -160,7 +161,18 @@ export default abstract class Character extends GameEntity {
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     die(_killer?: Character) {
         this.pos = PositionEnum.DEAD;
+        this.clearBattleAffects();
         this.removeTimers();
+    }
+
+    protected clearBattleAffects() {
+        if (this.isAffectByFlag(AffectBitsTypeEnum.SLOW)) {
+            this.addPoint(PointsEnum.MOVE_SPEED, SLOW_AFFECT_MOVE_SPEED_PENALTY);
+        }
+
+        this.removeAffectFlag(AffectBitsTypeEnum.POISON);
+        this.removeAffectFlag(AffectBitsTypeEnum.SLOW);
+        this.removeAffectFlag(AffectBitsTypeEnum.STUN);
     }
 
     isDead(): boolean {
