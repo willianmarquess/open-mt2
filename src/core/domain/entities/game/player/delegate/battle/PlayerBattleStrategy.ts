@@ -23,7 +23,8 @@ export default abstract class PlayerBattleStrategy<Victim extends Character = Ch
 
     protected calcAttackRating(victim: Victim) {
         const attackerRating = this.attacker.getAttackRating();
-        const victimRating = victim.getAttackRating();
+        // CalcAttackRating feeds the ATTACKER's level into the victim-side term (battle.cpp:227)
+        const victimRating = victim.getAttackRating(this.attacker.getLevel());
         const attackRating =
             (attackerRating + 210.0) / 300.0 - (((victimRating * 2 + 5) / (victimRating + 95)) * 3.0) / 10.0;
         return attackRating;
