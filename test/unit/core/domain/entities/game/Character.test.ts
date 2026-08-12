@@ -73,5 +73,16 @@ describe('Character', () => {
             const character = createCharacter({ dx: 0, level: 0 });
             expect(character.getAttackRating()).to.be.equal(0);
         });
+
+        it('should truncate the division like the original integer /6', () => {
+            const character = createCharacter({ dx: 5, level: 0 });
+            expect(character.getAttackRating()).to.be.equal(3);
+        });
+
+        it('should use the level it is given instead of its own', () => {
+            const character = createCharacter({ dx: 30, level: 1 });
+            expect(character.getAttackRating(70)).to.be.equal(Math.floor((30 * 4 + 70 * 2) / 6));
+            expect(character.getAttackRating()).to.be.equal(Math.floor((30 * 4 + 1 * 2) / 6));
+        });
     });
 });
