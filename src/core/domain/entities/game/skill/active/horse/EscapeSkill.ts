@@ -1,4 +1,5 @@
 import { SkillEnum } from '@/core/enum/SkillEnum';
+import { SkillTypeEnum } from '@/core/enum/SkillTypeEnum';
 import { SkillDamageTypeEnum } from '@/core/enum/SkillDamageTypeEnum';
 import { SkillFlagsEnum } from '@/core/enum/SkillFlagsEnum';
 import { PointsEnum } from '@/core/enum/PointsEnum';
@@ -9,6 +10,8 @@ import { ActiveSkill, SkillApplies, SkillCalcContext } from '../../Skill';
 
 export class EscapeSkill extends ActiveSkill {
     public readonly id: number = SkillEnum.HORSE_ESCAPE;
+
+    public readonly type: SkillTypeEnum = SkillTypeEnum.HORSE;
 
     public readonly levelStep: number = 1;
     public readonly maxLevel: number = 1;

@@ -69,7 +69,7 @@ export abstract class Skill {
     }
 
     isActive(): this is ActiveSkill {
-        return this.type === SkillTypeEnum.ACTIVE;
+        return this instanceof ActiveSkill;
     }
 }
 
@@ -78,7 +78,7 @@ export abstract class PassiveSkill extends Skill {
 }
 
 export abstract class ActiveSkill extends Skill {
-    public readonly type = SkillTypeEnum.ACTIVE;
+    public readonly type: SkillTypeEnum = SkillTypeEnum.ACTIVE;
     public abstract readonly splashRange: number;
     public abstract readonly maxHit: number;
     public abstract readonly damageType: SkillDamageTypeEnum;
