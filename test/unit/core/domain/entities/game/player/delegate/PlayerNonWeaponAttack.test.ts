@@ -41,6 +41,7 @@ const createAttacker = (weapon: unknown) => ({
     getAttackRating: () => 0,
     getAttack: () => 1000,
     getPoint: () => 0,
+    getLevel: () => 1,
     debugChat: () => {},
     sendDamageCaused: () => {},
 });
