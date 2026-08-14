@@ -51,7 +51,7 @@ export class ChargeSkill extends ActiveSkill {
     }
 
     canBeUsedBy(player: Player): boolean {
-        return player.isPlayer();
+        return player.isPlayer() && player.isHorseRiding();
     }
 
     canBeUsedByHorse(): boolean {

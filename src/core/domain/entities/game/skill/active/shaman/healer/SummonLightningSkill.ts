@@ -45,7 +45,7 @@ export class SummonLightningSkill extends ActiveSkill {
             kind: SkillApplyKindEnum.STATUS,
             effect: SkillStatusEffectEnum.STUN,
             calculateChance: (context: SkillCalcContext): number => 50 + (1000 * context.skillLevel) / 6,
-            calculateDuration: (): number => 5, // szDurationPoly2 fixo "5", sem variável de skillLevel
+            calculateDuration: (): number => 5,
         },
     ]);
 

@@ -50,7 +50,7 @@ export class WildAttackRangeSkill extends ActiveSkill {
     }
 
     canBeUsedBy(player: Player): boolean {
-        return player.isAssassin();
+        return player.isAssassin() && player.isHorseRiding();
     }
 
     canBeUsedByHorse(): boolean {
