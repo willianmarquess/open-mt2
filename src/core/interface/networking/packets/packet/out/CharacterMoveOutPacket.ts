@@ -6,7 +6,7 @@ import PacketOut from '@/core/interface/networking/packets/packet/out/PacketOut'
  * @type Out
  * @name CharacterMoveOutPacket
  * @header 0x03
- * @size 25
+ * @size 24
  * @description Is used to replicate the movement of a character (player, mobs) to other nearby players.
  * @fields
  *   - {byte} header 1 Packet header
@@ -18,7 +18,6 @@ import PacketOut from '@/core/interface/networking/packets/packet/out/PacketOut'
  *   - {int} positionY 4 Position Y of character in game
  *   - {int} time 4 unknown
  *   - {int} duration 4 Number which indicates the duration of movement
- *   - {byte} unknown 1 filled with 0
  */
 
 export default class CharacterMoveOutPacket extends PacketOut {
@@ -53,7 +52,7 @@ export default class CharacterMoveOutPacket extends PacketOut {
         super({
             header: PacketHeaderEnum.CHARACTER_MOVE_OUT,
             name: 'CharacterMoveOutPacket',
-            size: 25,
+            size: 24,
         });
         this.vid = vid;
         this.movementType = movementType;
@@ -74,7 +73,6 @@ export default class CharacterMoveOutPacket extends PacketOut {
         this.bufferWriter.writeUint32LE(this.positionY);
         this.bufferWriter.writeUint32LE(this.time);
         this.bufferWriter.writeUint32LE(this.duration);
-        this.bufferWriter.writeUint8(0);
 
         return this.bufferWriter.getBuffer();
     }

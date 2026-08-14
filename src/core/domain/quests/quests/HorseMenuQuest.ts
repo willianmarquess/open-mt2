@@ -1,7 +1,6 @@
 import { QuestEventEnum } from '@/core/enum/QuestEventEnum';
 import { AbstractQuest } from '../AbstractQuest';
 import { ClickExecutionContext, Quest, Task } from '../decorators/QuestDecorator';
-import { REVIVE_HERB_BY_GRADE } from './HorseReviveQuest';
 
 enum HorseMenuQuestState {
     START = 'START',
@@ -9,12 +8,6 @@ enum HorseMenuQuestState {
 
 const HORSE_VNUMS = [20030, 20101, 20102, 20103, 20104, 20105, 20106, 20107, 20108, 20109];
 const RENAME_SUGAR_VNUM = 71110;
-
-const DeadMenuOption = {
-    REVIVE: 0,
-    SEND_AWAY: 1,
-    NOTHING: 2,
-} as const;
 
 const MainMenuOption = {
     FEED: 0,
@@ -47,64 +40,43 @@ export class HorseMenuQuest extends AbstractQuest {
     async onClick({ npc }: ClickExecutionContext) {
         if (!HORSE_VNUMS.includes(npc.getId())) return;
         if (!npc.isMine()) return;
+        // A stock client cannot click a corpse; drop the click a modified one
+        // sends anyway.
+        if (this.player.getHorseHealth() <= 0) return;
 
         const playerInstance = this.player;
 
         this.text('What would you like to do with your horse?');
         this.text('');
 
-        const isDead = playerInstance.getHorseHealth() <= 0;
-        if (isDead) {
-            const selection = await this.select(['Revive Horse', 'Send Away', 'Nothing (close window)']);
+        const selection = await this.select([
+            'Feed',
+            'Mount',
+            'Send Away',
+            'Check Horse Stats',
+            'Rename Horse',
+            'Nothing (close window)',
+        ]);
 
-            const grade = playerInstance.getHorseGrade();
-            const herb = REVIVE_HERB_BY_GRADE[grade];
-
-            switch (selection) {
-                case DeadMenuOption.REVIVE:
-                    if (!herb) return;
-
-                    if (this.countItem(herb) > 0 && playerInstance.reviveHorse()) {
-                        await this.removeItem(herb, 1);
-                    }
-                    break;
-                case DeadMenuOption.SEND_AWAY:
-                    playerInstance.sendHorseAway();
-                    break;
-                case DeadMenuOption.NOTHING:
-                default:
-                    break;
-            }
-        } else {
-            const selection = await this.select([
-                'Feed',
-                'Mount',
-                'Send Away',
-                'Check Horse Stats',
-                'Rename Horse',
-                'Nothing (close window)',
-            ]);
-
-            switch (selection) {
-                case MainMenuOption.FEED:
-                    await this.handleFeed();
-                    break;
-                case MainMenuOption.MOUNT:
-                    playerInstance.startRiding();
-                    break;
-                case MainMenuOption.SEND_AWAY:
-                    playerInstance.sendHorseAway();
-                    break;
-                case MainMenuOption.STATS:
-                    this.handleStats();
-                    break;
-                case MainMenuOption.RENAME:
-                    await this.handleRename();
-                    break;
-                case MainMenuOption.NOTHING:
-                default:
-                    break;
-            }
+        switch (selection) {
+            case MainMenuOption.FEED:
+                await this.handleFeed();
+                break;
+            case MainMenuOption.MOUNT:
+                playerInstance.startRiding();
+                break;
+            case MainMenuOption.SEND_AWAY:
+                playerInstance.sendHorseAway();
+                break;
+            case MainMenuOption.STATS:
+                this.handleStats();
+                break;
+            case MainMenuOption.RENAME:
+                await this.handleRename();
+                break;
+            case MainMenuOption.NOTHING:
+            default:
+                break;
         }
     }
 

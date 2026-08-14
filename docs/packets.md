@@ -121,7 +121,7 @@
 
 **Header:** 0x03
 
-**Size:** 25 bytes
+**Size:** 24 bytes
 
 **Description:** Is used to replicate the movement of a character (player, mobs) to other nearby players.
 
@@ -138,7 +138,6 @@
 | positionY | `int` | 4 | Position Y of character in game |
 | time | `int` | 4 | unknown |
 | duration | `int` | 4 | Number which indicates the duration of movement |
-| unknown | `byte` | 1 | filled with 0 |
 
 ---
 
@@ -566,7 +565,7 @@
 
 **Header:** 0x15
 
-**Size:** 54 bytes
+**Size:** 51 bytes
 
 **Description:** Sets an item into a client window cell (inventory, equipment, ...). The bonusId/bonusValue pair is repeated 7x, one per item attribute slot.
 
@@ -581,7 +580,7 @@
 | count | `byte` | 1 | Stack size of the item |
 | flags | `int` | 4 | Item flags, currently always sent as 0 |
 | antiFlags | `int` | 4 | Item anti flags, currently always sent as 0 |
-| highlight | `int` | 4 | Non zero highlights the cell in the client, currently always sent as 0 |
+| highlight | `byte` | 1 | Non zero highlights the cell in the client, currently always sent as 0 |
 | sockets | `int[3]` | 12 | Metin socket values, 3 slots of 4 bytes |
 | bonusId | `byte` | 1 | Attribute type of the bonus slot, repeated 7x |
 | bonusValue | `short` | 2 | Attribute value of the bonus slot, repeated 7x |
@@ -843,17 +842,17 @@
 
 **Size:** 9 bytes
 
-**Description:** Answers the client channel status request; the 3 byte channel entry (port, status) repeats once per channel and the declared size of 9 only fits the default single channel.
+**Description:** Answers the client channel status request; the 3 byte channel entry (port, status) repeats once per channel and the total size is 6 + 3 per channel (9 for the default single channel).
 
 **Fields:**
 
 | Name        | Type       | Size (bytes)   | Description               |
 |-------------|------------|----------------|---------------------------|
 | header | `byte` | 1 | Packet header |
-| size | `int` | 4 | Value produced by calcSize(), 6 + 3 per channel. See notes, the client reads this as a channel count |
+| count | `int` | 4 | Number of channel entries that follow, as the client's state checker loop expects |
 | port | `short` | 2 | Channel port. Repeated once per channel entry |
 | status | `byte` | 1 | Channel status flag, 1 means online. Repeated once per channel entry |
-| isSuccess | `byte` | 1 | Trailing success flag written after the channel entries. The client never reads it |
+| isSuccess | `byte` | 1 | Trailing success flag after the entries, as the original sends; the client discards it |
 
 ---
 
@@ -1048,25 +1047,6 @@
 | header | `byte` | 1 | Packet header |
 | type | `byte` | 1 | Describe the special effect. See in SpecialEffectTypeEnum |
 | virtual | `int` | 4 | Virtual id of the player to be effected |
-
----
-
-### StunPacket
-
-**Type:** Out
-
-**Header:** 0x0d
-
-**Size:** 5 bytes
-
-**Description:** Marks a character as stunned. For a non-main vid the client stops the actor and attaches the stun effect without playing any motion and without marking it dead, so the actor stays clickable.
-
-**Fields:**
-
-| Name        | Type       | Size (bytes)   | Description               |
-|-------------|------------|----------------|---------------------------|
-| header | `byte` | 1 | Packet header. |
-| vid | `int` | 4 | Character identification in game. |
 
 ---
 

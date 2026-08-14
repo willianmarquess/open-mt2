@@ -34,7 +34,7 @@ export default class LoginRequestPacket extends PacketIn {
     unpack(buffer: Buffer) {
         this.bufferReader.setBuffer(buffer);
         this.username = this.bufferReader.readString(31);
-        this.password = this.bufferReader.readString(16);
+        this.password = this.bufferReader.readString(17);
         this.key = this.bufferReader.readUInt32LE();
         this.validate();
         return this;

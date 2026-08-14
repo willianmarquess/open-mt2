@@ -15,6 +15,7 @@ import Logger from '@/core/infra/logger/Logger';
 export default class GameConnection extends Connection {
     private accountId: number | null = null;
     private player: Player | null = null;
+    private tokenKey: string | null = null;
 
     constructor({ logger, socket }: { logger: Logger; socket: Socket }) {
         super({ logger, socket });
@@ -36,6 +37,14 @@ export default class GameConnection extends Connection {
         return this.accountId;
     }
 
+    setTokenKey(value: string) {
+        this.tokenKey = value;
+    }
+
+    getTokenKey() {
+        return this.tokenKey;
+    }
+
     setPlayer(newPlayer: Player) {
         this.player = newPlayer;
         this.player.setConnection(this);
@@ -54,7 +63,8 @@ export default class GameConnection extends Connection {
         this.setState(ConnectionStateEnum.LOGIN);
     }
 
-    send<T>(packet: T & { pack: () => Buffer }) {
+    send<T>(packet: T & { pack: () => Buffer; getName: () => string }) {
+        this.logger.debug(`[OUT][PACKET] name: ${packet.getName()}`);
         this.socket.write(packet.pack());
     }
 }

@@ -24,6 +24,7 @@ const createConnection = (player: unknown) =>
         getAccountId: () => 1,
         clearPlayer: sinon.stub(),
         stopKeepalive: sinon.stub(),
+        getTokenKey: () => null,
     }) as any;
 
 describe('GameServer', () => {

@@ -20,7 +20,7 @@ export default class AuthenticateService {
 
     async execute(key: number, username: string): Promise<Result<Token, ErrorTypesEnum>> {
         const cacheKey = CacheKeyGenerator.createTokenKey(String(key));
-        const rawToken = await this.cacheProvider.take<string>(cacheKey);
+        const rawToken = await this.cacheProvider.get<string>(cacheKey);
 
         if (!rawToken) {
             this.logger.info(`[AuthenticateService] Invalid token for username: ${username}`);
@@ -33,6 +33,9 @@ export default class AuthenticateService {
             this.logger.info(`[AuthenticateService] Invalid token for username: ${username}`);
             return Result.error(ErrorTypesEnum.INVALID_TOKEN);
         }
+
+        // Clears any grace period armed by the previous connection closing.
+        await this.cacheProvider.persist(cacheKey);
 
         return Result.ok(token as Token);
     }

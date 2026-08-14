@@ -303,7 +303,7 @@ export class AttackSession {
             .writeUint32LE(0);
         this.sendSequenced(auth.getBuffer());
 
-        await this.next(3); // empire
+        await this.next(2); // empire
         await this.next(331); // player list
         const select = new BufferWriter(PacketHeaderEnum.SELECT_CHARACTER, 2);
         this.sendSequenced(select.writeUint8(0).getBuffer());

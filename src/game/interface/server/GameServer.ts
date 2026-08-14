@@ -7,11 +7,15 @@ import { GameConfig } from '@/game/infra/config/GameConfig';
 import { PacketMapValue } from '@/core/interface/networking/packets/Packets';
 import LogoutService from '@/game/app/service/LogoutService';
 import SessionManager from '@/game/domain/manager/SessionManager';
+import CacheProvider from '@/core/infra/cache/CacheProvider';
+
+const TOKEN_GRACE_SECS = 60;
 
 export default class GameServer extends Server {
     private readonly world: World;
     private readonly logoutService: LogoutService;
     private readonly sessionManager: SessionManager;
+    private readonly cacheProvider: CacheProvider;
 
     constructor(container: {
         logger: Logger;
@@ -20,15 +24,18 @@ export default class GameServer extends Server {
         world: World;
         logoutService: LogoutService;
         sessionManager: SessionManager;
+        cacheProvider: CacheProvider;
     }) {
         super(container);
         this.world = container.world;
         this.logoutService = container.logoutService;
         this.sessionManager = container.sessionManager;
+        this.cacheProvider = container.cacheProvider;
     }
 
     async onClose(connection: GameConnection) {
         this.sessionManager.remove(connection);
+        await this.startTokenGracePeriod(connection);
 
         const player = connection.getPlayer();
 
@@ -40,6 +47,20 @@ export default class GameServer extends Server {
         }
 
         await super.onClose(connection);
+    }
+
+    // The stock client authenticates on two connections in a row, so the key may
+    // only start counting down once the account has no live connection left.
+    private async startTokenGracePeriod(connection: GameConnection) {
+        const tokenKey = connection.getTokenKey();
+        const accountId = connection.getAccountId();
+
+        if (!tokenKey || accountId === null) return;
+        if (this.sessionManager.get(accountId)) return;
+
+        await this.cacheProvider
+            .expire(tokenKey, TOKEN_GRACE_SECS)
+            .catch((err) => this.logger.error(`[GameServer] Error expiring the login token: ${err}`));
     }
 
     async onData(connection: GameConnection, data: Buffer) {

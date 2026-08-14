@@ -15,13 +15,13 @@ type ServerStatusPacketParams = {
  * @name ServerStatusPacket
  * @header 0xd2
  * @size 9
- * @description Answers the client channel status request; the 3 byte channel entry (port, status) repeats once per channel and the declared size of 9 only fits the default single channel.
+ * @description Answers the client channel status request; the 3 byte channel entry (port, status) repeats once per channel and the total size is 6 + 3 per channel (9 for the default single channel).
  * @fields
  *   - {byte} header 1 Packet header
- *   - {int} size 4 Value produced by calcSize(), 6 + 3 per channel. See notes, the client reads this as a channel count
+ *   - {int} count 4 Number of channel entries that follow, as the client's state checker loop expects
  *   - {short} port 2 Channel port. Repeated once per channel entry
  *   - {byte} status 1 Channel status flag, 1 means online. Repeated once per channel entry
- *   - {byte} isSuccess 1 Trailing success flag written after the channel entries. The client never reads it
+ *   - {byte} isSuccess 1 Trailing success flag after the entries, as the original sends; the client discards it
  */
 
 export default class ServerStatusPacket extends PacketOut {
@@ -43,18 +43,14 @@ export default class ServerStatusPacket extends PacketOut {
         super({
             header: PacketHeaderEnum.SERVER_STATUS,
             name: 'ServerStatusPacket',
-            size: 9, //fixed for now
+            size: 6 + status.length * 3,
         });
         this.status = status;
         this.isSuccess = isSuccess ? 1 : 0;
     }
 
-    calcSize() {
-        return 6 + this.status.length * 3;
-    }
-
     pack() {
-        this.bufferWriter.writeUint32LE(this.calcSize());
+        this.bufferWriter.writeUint32LE(this.status.length);
         this.status.forEach((s) => {
             this.bufferWriter.writeUint16LE(s.port).writeUint8(s.status);
         });

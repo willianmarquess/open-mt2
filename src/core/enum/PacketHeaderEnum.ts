@@ -48,8 +48,6 @@ export default {
     TARGET: 0x3d,
     TARGET_UPDATED: 0x3f,
     CHARACTER_DIED: 0x0e,
-    // GC direction — shares the value with ITEM_MOVE (CG); directions have separate header spaces.
-    STUN: 0x0d,
     FLY: 0x46,
     FLY_TARGETING: 0x47,
     AFFECT_ADD: 0x7e,

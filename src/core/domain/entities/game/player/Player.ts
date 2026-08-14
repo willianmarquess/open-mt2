@@ -25,7 +25,6 @@ import CharacterUpdatePacket from '@/core/interface/networking/packets/packet/ou
 import CharacterPointsPacket from '@/core/interface/networking/packets/packet/out/CharacterPointsPacket';
 import CharacterDetailsPacket from '@/core/interface/networking/packets/packet/out/CharacterDetailsPacket';
 import CharacterDiedPacket from '@/core/interface/networking/packets/packet/out/CharacterDiedPacket';
-import StunPacket from '@/core/interface/networking/packets/packet/out/StunPacket';
 import SyncPositionPacket from '@/core/interface/networking/packets/packet/out/SyncPositionPacket';
 import TeleportPacket from '@/core/interface/networking/packets/packet/out/TeleportPacket';
 import Ip from '@/core/util/Ip';
@@ -359,7 +358,7 @@ export default class Player extends Character {
             addEventTimer: (opts) => this.addEventTimer(opts),
             removeEventTimer: (id) => this.removeEventTimer(id),
             broadcastMountChange: () => this.broadcastMountChange(),
-            showHorseCorpse: (entity) => this.showHorseCorpse(entity),
+            broadcastEntityDeath: (entity) => this.broadcastEntityDeath(entity),
             isRunningPrivateShop: () => this.isRunningPrivateShop(),
             getPositionX: () => this.positionX,
             getPositionY: () => this.positionY,
@@ -1224,7 +1223,7 @@ export default class Player extends Character {
         }
     }
 
-    private createTimedEvent(command: 'QUIT' | 'SELECT' | 'LOGOUT', prefix: string) {
+    private createTimedEvent(command: 'QUIT' | 'SELECT' | 'LOGOUT', prefix: string, onComplete?: () => void) {
         if (this.isEventTimerActive(TimedEventsEnum.COUNTDOWN)) {
             this.removeEventTimer(TimedEventsEnum.COUNTDOWN);
             this.chat({
@@ -1272,7 +1271,7 @@ export default class Player extends Character {
                             this.connection?.setState(ConnectionStateEnum.CLOSE);
                             break;
                         case 'SELECT':
-                            this.area?.despawn(this);
+                            onComplete?.();
                             this.connection?.setState(ConnectionStateEnum.SELECT);
                             break;
                     }
@@ -1300,8 +1299,8 @@ export default class Player extends Character {
         return this.createTimedEvent('LOGOUT', 'Logout');
     }
 
-    backToSelect() {
-        return this.createTimedEvent('SELECT', 'Back to Select');
+    backToSelect(onComplete?: () => void) {
+        return this.createTimedEvent('SELECT', 'Back to Select', onComplete);
     }
 
     chat({
@@ -1885,14 +1884,6 @@ export default class Player extends Character {
 
     onNearbyEntityAdded(otherEntity: GameEntity) {
         if (otherEntity instanceof Character) {
-            // A corpse-flagged NPC (dead horse) is alive server-side but must
-            // look dead to everyone except its owner — the owner needs it
-            // alive client-side to be able to click it (picking filters dead
-            // actors), so the owner sees it standing with a stun marker.
-            const corpseOwnerVid = otherEntity instanceof NPC ? otherEntity.getCorpseOwnerVirtualId() : null;
-            const displayAsDead =
-                otherEntity.isDead() || (corpseOwnerVid !== null && corpseOwnerVid !== this.virtualId);
-
             this.showOtherEntity({
                 virtualId: otherEntity.getVirtualId(),
                 playerClass: otherEntity.getClassId(),
@@ -1906,15 +1897,13 @@ export default class Player extends Character {
                 name: otherEntity.getName(),
                 rotation: otherEntity.getRotation(),
                 mountId: otherEntity instanceof Player ? otherEntity.getMountVnum() : 0,
-                state: displayAsDead ? 1 : 0,
+                state: otherEntity.isDead() ? 1 : 0,
             });
 
             // Entities that are already dead (e.g. a summoned dead horse) must
             // be rendered lying on the ground, not standing idle.
-            if (displayAsDead) {
+            if (otherEntity.isDead()) {
                 this.otherEntityDied(otherEntity);
-            } else if (corpseOwnerVid === this.virtualId) {
-                this.sendStun(otherEntity.getVirtualId());
             }
 
             if (otherEntity instanceof Player) {
@@ -2248,6 +2237,8 @@ export default class Player extends Character {
     }
 
     toggleRiding() {
+        if (this.isDead() || this.isAffectByFlag(AffectBitsTypeEnum.STUN)) return;
+
         if (this.isHorseRiding()) {
             this.stopRiding();
         } else {
@@ -2287,24 +2278,12 @@ export default class Player extends Character {
         return this.horse.setName(name);
     }
 
-    private sendStun(vid: number): void {
-        this.connection?.send(new StunPacket({ vid }));
-    }
-
-    /**
-     * Turn an alive NPC into a corpse for everyone but this player: others
-     * render it lying dead, the owner keeps it clickable (standing, stunned).
-     */
-    private showHorseCorpse(entity: NPC): void {
-        entity.setCorpseOwnerVirtualId(this.virtualId);
-
+    private broadcastEntityDeath(entity: Character): void {
         for (const other of entity.getNearbyEntities().values()) {
-            if (other instanceof Player && other.getVirtualId() !== this.virtualId) {
+            if (other instanceof Player) {
                 other.otherEntityDied(entity);
             }
         }
-
-        this.sendStun(entity.getVirtualId());
     }
 
     private broadcastMountChange(): void {

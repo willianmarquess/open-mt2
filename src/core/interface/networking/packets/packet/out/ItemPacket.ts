@@ -15,7 +15,7 @@ class ItemBonus {
  * @type Out
  * @name ItemPacket
  * @header 0x15
- * @size 54
+ * @size 51
  * @description Sets an item into a client window cell (inventory, equipment, ...). The bonusId/bonusValue pair is repeated 7x, one per item attribute slot.
  * @fields
  *   - {byte} header 1 Packet header
@@ -25,7 +25,7 @@ class ItemBonus {
  *   - {byte} count 1 Stack size of the item
  *   - {int} flags 4 Item flags, currently always sent as 0
  *   - {int} antiFlags 4 Item anti flags, currently always sent as 0
- *   - {int} highlight 4 Non zero highlights the cell in the client, currently always sent as 0
+ *   - {byte} highlight 1 Non zero highlights the cell in the client, currently always sent as 0
  *   - {int[3]} sockets 12 Metin socket values, 3 slots of 4 bytes
  *   - {byte} bonusId 1 Attribute type of the bonus slot, repeated 7x
  *   - {short} bonusValue 2 Attribute value of the bonus slot, repeated 7x
@@ -74,7 +74,7 @@ export default class ItemPacket extends PacketOut {
         super({
             header: PacketHeaderEnum.ITEM,
             name: 'ItemPacket',
-            size: 54,
+            size: 51,
         });
         this.window = window;
         this.position = position;
@@ -105,7 +105,7 @@ export default class ItemPacket extends PacketOut {
         this.bufferWriter.writeUint8(this.count);
         this.bufferWriter.writeUint32LE(this.flags);
         this.bufferWriter.writeUint32LE(this.antiFlags);
-        this.bufferWriter.writeUint32LE(this.highlight);
+        this.bufferWriter.writeUint8(this.highlight);
         this.sockets.forEach((socket) => this.bufferWriter.writeUint32LE(socket));
         this.bonuses.forEach(({ id, value }) => {
             this.bufferWriter.writeUint8(id);
