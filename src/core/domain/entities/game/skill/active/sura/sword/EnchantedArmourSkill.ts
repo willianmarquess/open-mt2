@@ -19,7 +19,7 @@ export class EnchantedArmourSkill extends ActiveSkill {
     public readonly maxHit: number = 1;
     public readonly damageType: SkillDamageTypeEnum = SkillDamageTypeEnum.NORMAL;
     public readonly flags: Set<SkillFlagsEnum> = new Set([SkillFlagsEnum.SELFONLY, SkillFlagsEnum.TOGGLE]);
-    public readonly affects: Set<SkillAffectEnum> = new Set([SkillAffectEnum.JUMAGAP]);
+    public readonly affects: Set<SkillAffectEnum> = new Set([SkillAffectEnum.ENCHANTED_ARMOUR]);
     public readonly applies: Set<SkillApplies> = new Set([
         {
             kind: SkillApplyKindEnum.POINT,

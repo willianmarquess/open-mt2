@@ -4,7 +4,8 @@ import { fileURLToPath } from 'url';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
-const inputFilePath = path.join(__dirname, '..', '..', 'src', 'core', 'interface', 'networking', 'packets', 'packet', 'out'); 
+const packetsRoot = path.join(__dirname, '..', '..', 'src', 'core', 'interface', 'networking', 'packets', 'packet');
+const inputFilePaths = [path.join(packetsRoot, 'out'), path.join(packetsRoot, 'in')];
 
 function findPacketFiles(dir) {
     let results = [];
@@ -70,8 +71,8 @@ function processFile(filePath) {
     return md;
 }
 
-function generateDocumentation(dir) {
-    const packetFiles = findPacketFiles(dir);
+function generateDocumentation(dirs) {
+    const packetFiles = dirs.flatMap(findPacketFiles);
     let documentationContent = `# Packet Documentation\n\n`;
 
     packetFiles.forEach(filePath => {
@@ -87,5 +88,4 @@ function generateDocumentation(dir) {
     console.log(`\nComplete documentation generated at ${outputPath}`);
 }
 
-path.join('src');
-generateDocumentation(inputFilePath);
+generateDocumentation(inputFilePaths);

@@ -9,8 +9,8 @@ import { ActiveSkill, SkillApplies, SkillCalcContext } from '../../../Skill';
 import Player from '../../../../player/Player';
 import { SkillApplyKindEnum } from '@/core/enum/SkillApplyKindEnum';
 
-export class FlameExplosionSkill extends ActiveSkill {
-    public readonly id: number = SkillEnum.FLAME_EXPLOSION;
+export class FlameSpiritSkill extends ActiveSkill {
+    public readonly id: number = SkillEnum.FLAME_SPIRIT;
 
     public readonly levelStep: number = 1;
     public readonly maxLevel: number = 1;
@@ -21,11 +21,12 @@ export class FlameExplosionSkill extends ActiveSkill {
     public readonly damageType: SkillDamageTypeEnum = SkillDamageTypeEnum.MAGIC;
     public readonly flags: Set<SkillFlagsEnum> = new Set([
         SkillFlagsEnum.ATTACK,
+        SkillFlagsEnum.SELFONLY,
         SkillFlagsEnum.COMPUTE_MAGIC_DAMAGE,
         SkillFlagsEnum.SPLASH,
         SkillFlagsEnum.TOGGLE,
     ]);
-    public readonly affects: Set<SkillAffectEnum> = new Set();
+    public readonly affects: Set<SkillAffectEnum> = new Set([SkillAffectEnum.FLAME_SPIRIT]);
     public readonly applies: Set<SkillApplies> = new Set([
         {
             kind: SkillApplyKindEnum.POINT,
@@ -42,6 +43,10 @@ export class FlameExplosionSkill extends ActiveSkill {
             calculateDuration: (context: SkillCalcContext): number => 40 + 30 * context.skillLevel,
         },
     ]);
+
+    isPeriodicAreaSkill(): boolean {
+        return true;
+    }
 
     calculateSplashAroundDamageAdjust(): number {
         return 1;

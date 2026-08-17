@@ -18,7 +18,7 @@ export class DragonStrengthSkill extends ActiveSkill {
     public readonly maxHit: number = 1;
     public readonly damageType: SkillDamageTypeEnum = SkillDamageTypeEnum.NORMAL;
     public readonly flags: Set<SkillFlagsEnum> = new Set();
-    public readonly affects: Set<SkillAffectEnum> = new Set([SkillAffectEnum.GICHEON]);
+    public readonly affects: Set<SkillAffectEnum> = new Set([SkillAffectEnum.DRAGON_STRENGTH]);
     public readonly applies: Set<SkillApplies> = new Set([
         {
             kind: SkillApplyKindEnum.POINT,

@@ -18,7 +18,7 @@ export class FeatherWalkSkill extends ActiveSkill {
     public readonly maxHit: number = 1;
     public readonly damageType: SkillDamageTypeEnum = SkillDamageTypeEnum.NORMAL;
     public readonly flags: Set<SkillFlagsEnum> = new Set([SkillFlagsEnum.SELFONLY, SkillFlagsEnum.TOGGLE]);
-    public readonly affects: Set<SkillAffectEnum> = new Set([SkillAffectEnum.GYEONGGONG]);
+    public readonly affects: Set<SkillAffectEnum> = new Set([SkillAffectEnum.FEATHER_WALK]);
     public readonly applies: Set<SkillApplies> = new Set([
         {
             kind: SkillApplyKindEnum.POINT,

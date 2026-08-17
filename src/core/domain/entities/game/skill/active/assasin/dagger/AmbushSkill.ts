@@ -25,12 +25,22 @@ export class AmbushSkill extends ActiveSkill {
         {
             kind: SkillApplyKindEnum.POINT,
             pointOn: PointsEnum.HEALTH,
-            calculateAmount: (context: SkillCalcContext): number =>
-                -(
-                    context.attack +
-                    (1.2 * context.attack + MathUtil.getRandomInt(500, 700) + context.dex * 4 + context.str * 4) *
-                        context.skillLevel
-                ),
+            // Backstab: 1.5x when struck from behind (facing the same way as the target) vs 1.0x
+            // otherwise, +0.5x while invisible, +0.5x with a dagger equipped - mirrors SKILL_AMSEOP's
+            // adjust factor in the original's FuncSplashDamage.
+            calculateAmount: (context: SkillCalcContext): number => {
+                let adjust = context.isBehindTarget ? 1.5 : 1.0;
+                if (context.isInvisible) adjust += 0.5;
+                if (context.hasDagger) adjust += 0.5;
+
+                return (
+                    -(
+                        context.attack +
+                        (1.2 * context.attack + MathUtil.getRandomInt(500, 700) + context.dex * 4 + context.str * 4) *
+                            context.skillLevel
+                    ) * adjust
+                );
+            },
             calculateDuration: (): number => 0,
         },
     ]);

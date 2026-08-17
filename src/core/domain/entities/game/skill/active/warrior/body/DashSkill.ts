@@ -24,9 +24,10 @@ export class DashSkill extends ActiveSkill {
         SkillFlagsEnum.SPLASH,
         SkillFlagsEnum.CRUSH,
     ]);
-    public readonly affects: Set<SkillAffectEnum> = new Set();
+    public readonly affects: Set<SkillAffectEnum> = new Set([SkillAffectEnum.TANHWAN_DASH]);
     public readonly applies: Set<SkillApplies> = new Set([
         {
+            // primary apply (bPointOn): the strike's damage, dealt once the charge is released on a target
             kind: SkillApplyKindEnum.POINT,
             pointOn: PointsEnum.HEALTH,
             calculateAmount: (context: SkillCalcContext): number =>
@@ -37,10 +38,12 @@ export class DashSkill extends ActiveSkill {
             calculateDuration: (): number => 0,
         },
         {
+            // secondary apply (bPointOn2): the dash buff granted while charging (AFF_TANHWAN_DASH, see affects above)
             kind: SkillApplyKindEnum.POINT,
             pointOn: PointsEnum.MOVE_SPEED,
             calculateAmount: (): number => 150,
-            calculateDuration: (): number => 0,
+            //TODO: replace with the real duration formula (kDurationPoly2) once skill proto data is ported
+            calculateDuration: (): number => 3,
         },
     ]);
 
@@ -62,5 +65,9 @@ export class DashSkill extends ActiveSkill {
 
     canBeUsedBy(player: Player): boolean {
         return player.isWarrior() && player.getSkillGroup() === WarriorSubJobEnum.BODY;
+    }
+
+    isChargeSkill(): boolean {
+        return true;
     }
 }

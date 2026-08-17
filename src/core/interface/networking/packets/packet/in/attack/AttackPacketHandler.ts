@@ -36,6 +36,6 @@ export default class AttackPacketHandler extends PacketHandler<AttackPacket> {
             return;
         }
 
-        await this.characterAttackService.execute(player, packet.getAttackType(), packet.getVictimVirtualId());
+        await this.characterAttackService.execute(player, packet.getSkillVnum(), packet.getVictimVirtualId());
     }
 }

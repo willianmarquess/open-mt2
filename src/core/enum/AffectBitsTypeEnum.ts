@@ -16,7 +16,7 @@ export enum AffectBitsTypeEnum {
     MOV_SPEED_POTION,
     ATT_SPEED_POTION,
     FISH_MIND,
-    JEONGWIHON, //unknown
+    BERSERK,
     AURA_OF_SWORD,
     STRONG_BODY,
     FEATHER_WALK,
@@ -28,6 +28,8 @@ export enum AffectBitsTypeEnum {
     REFLECT,
     SWIFTNESS,
     MANASHIELD,
+    // AFF_MUYEONG (char_affect.h) - the toggle behind SKILL_MUYEONG/FlameSpiritSkill's orbiting
+    // fireball; keep this ordinal (27) exactly where it is, it's the actual wire bit position.
     FLAME_SPIRIT,
     REVIVE_INVISIBLE,
     FIRE,
@@ -43,4 +45,6 @@ export enum AffectBitsTypeEnum {
     CHINA_FIREWORK,
     HAIR,
     GERMANY,
+    DRAGON_STRENGTH,
+    LEADERSHIP,
 }

@@ -15,5 +15,5 @@ export enum FlyEnum {
     FIREWORK_CHRISTMAS,
     CHAIN_LIGHTNING,
     HEALTH_SMALL,
-    SKILL_MUYEONG,
+    FLAME_SPIRIT,
 }

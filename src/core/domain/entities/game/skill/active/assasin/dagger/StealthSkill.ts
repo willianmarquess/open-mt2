@@ -17,7 +17,7 @@ export class StealthSkill extends ActiveSkill {
     public readonly maxHit: number = 1;
     public readonly damageType: SkillDamageTypeEnum = SkillDamageTypeEnum.NORMAL;
     public readonly flags: Set<SkillFlagsEnum> = new Set([SkillFlagsEnum.SELFONLY, SkillFlagsEnum.TOGGLE]);
-    public readonly affects: Set<SkillAffectEnum> = new Set([SkillAffectEnum.EUNHYUNG]);
+    public readonly affects: Set<SkillAffectEnum> = new Set([SkillAffectEnum.STEALTH]);
     public readonly applies: Set<SkillApplies> = new Set([
         {
             kind: SkillApplyKindEnum.SPECIAL,

@@ -5,6 +5,9 @@ import { PointsEnum } from '@/core/enum/PointsEnum';
 import { SkillEnum } from '@/core/enum/SkillEnum';
 import { SkillTypeEnum } from '@/core/enum/SkillTypeEnum';
 import { SkillFlagsEnum } from '@/core/enum/SkillFlagsEnum';
+import { SkillApplyKindEnum } from '@/core/enum/SkillApplyKindEnum';
+import { SkillDamageTypeEnum } from '@/core/enum/SkillDamageTypeEnum';
+import { AffectBitsTypeEnum } from '@/core/enum/AffectBitsTypeEnum';
 import { ChatMessageTypeEnum } from '@/core/enum/ChatMessageTypeEnum';
 import { SkillManager } from '@/core/domain/manager/SkillManager';
 import MathUtil from '@/core/domain/util/MathUtil';
@@ -952,6 +955,192 @@ describe('PlayerSkill', () => {
             it(`returns the correct message(s) for time=${time}`, () => {
                 expect(playerSkill.getNeedToWaitMoreTimeMessages(time)).to.deep.equal(expected);
             });
+        });
+    });
+
+    describe('useSkill - self-centered ATTACK skills (FlameStrike/Stump/DragonRoar)', () => {
+        function createBattlePlayer(overrides: Record<string, unknown> = {}): Player {
+            return createPlayer({
+                isDead: sinon.stub().returns(false),
+                getPrivateShop: sinon.stub().returns(undefined),
+                isAffectByFlag: sinon.stub().returns(false),
+                getWeaponValues: sinon.stub().returns({
+                    physic: { min: 0, max: 0, bonus: 0 },
+                    magic: { min: 0, max: 0, bonus: 0 },
+                }),
+                getLevel: sinon.stub().returns(1),
+                getAttack: sinon.stub().returns(0),
+                getHorseLevel: sinon.stub().returns(0),
+                getVirtualId: sinon.stub().returns(1),
+                getAttackRating: sinon.stub().returns(0),
+                getDefense: sinon.stub().returns(0),
+                getRotation: sinon.stub().returns(0),
+                getWeapon: sinon.stub().returns(undefined),
+                getPositionX: sinon.stub().returns(0),
+                getPositionY: sinon.stub().returns(0),
+                getNearbyEntities: sinon.stub().returns(new Map()),
+                applySkillDamage: sinon.stub(),
+                addAffect: sinon.stub(),
+                ...overrides,
+            });
+        }
+
+        function createMonster(virtualId: number, positionX: number, positionY: number) {
+            return {
+                isMonster: () => true,
+                isPlayer: () => false,
+                getEntityType: () => 'MONSTER',
+                getVirtualId: () => virtualId,
+                getPositionX: () => positionX,
+                getPositionY: () => positionY,
+                isDead: () => false,
+                isAffectByFlag: () => false,
+                getRotation: () => 0,
+                addPoint: sinon.stub(),
+            };
+        }
+
+        it('deals splash damage to a nearby monster instead of the caster (issue: selfonly skills did no damage)', () => {
+            const monster = createMonster(42, 100, 100);
+            const player = createBattlePlayer({ getNearbyEntities: sinon.stub().returns(new Map([[42, monster]])) });
+
+            const skillProto = createSkillProto({
+                flags: new Set([SkillFlagsEnum.ATTACK, SkillFlagsEnum.SELFONLY, SkillFlagsEnum.SPLASH]),
+                splashRange: 1000,
+                maxHit: 5,
+                damageType: SkillDamageTypeEnum.MAGIC,
+                calculateCooldown: sinon.stub().returns(0),
+                calculateManaCost: sinon.stub().returns(0),
+                calculateDurationManaCost: sinon.stub().returns(0),
+                calculateSplashAroundDamageAdjust: sinon.stub().returns(1),
+                isChargeSkill: sinon.stub().returns(false),
+                isPeriodicAreaSkill: sinon.stub().returns(false),
+                getAffectFlag: sinon.stub().returns(undefined),
+                applies: new Set([
+                    {
+                        kind: SkillApplyKindEnum.POINT,
+                        pointOn: PointsEnum.HEALTH,
+                        calculateAmount: () => -50,
+                        calculateDuration: () => 0,
+                    },
+                ]),
+            });
+
+            const playerSkill = new PlayerSkill({ player, skillManager: createSkillManager(skillProto), skills: [] });
+            setSkillState(playerSkill, TEST_SKILL, { level: 1 });
+
+            const used = playerSkill.useSkill(TEST_SKILL);
+
+            expect(used).to.be.true;
+
+            const applySkillDamage = player.applySkillDamage as SinonStub;
+            expect(applySkillDamage.calledOnce, 'damage should land on the nearby monster').to.be.true;
+            expect(applySkillDamage.firstCall.args[0]).to.equal(50);
+            expect(applySkillDamage.firstCall.args[2]).to.equal(monster);
+
+            const selfHealthChange = (player.addPoint as SinonStub)
+                .getCalls()
+                .some((call) => call.args[0] === PointsEnum.HEALTH && call.args[1] < 0);
+            expect(selfHealthChange, 'the caster must never take their own splash damage').to.be.false;
+        });
+
+        it('does nothing when no monster is nearby, instead of falling back to damaging the caster', () => {
+            const player = createBattlePlayer();
+
+            const skillProto = createSkillProto({
+                flags: new Set([SkillFlagsEnum.ATTACK, SkillFlagsEnum.SELFONLY, SkillFlagsEnum.SPLASH]),
+                splashRange: 1000,
+                maxHit: 5,
+                damageType: SkillDamageTypeEnum.MAGIC,
+                calculateCooldown: sinon.stub().returns(0),
+                calculateManaCost: sinon.stub().returns(0),
+                calculateDurationManaCost: sinon.stub().returns(0),
+                calculateSplashAroundDamageAdjust: sinon.stub().returns(1),
+                isChargeSkill: sinon.stub().returns(false),
+                isPeriodicAreaSkill: sinon.stub().returns(false),
+                getAffectFlag: sinon.stub().returns(undefined),
+                applies: new Set([
+                    {
+                        kind: SkillApplyKindEnum.POINT,
+                        pointOn: PointsEnum.HEALTH,
+                        calculateAmount: () => -50,
+                        calculateDuration: () => 0,
+                    },
+                ]),
+            });
+
+            const playerSkill = new PlayerSkill({ player, skillManager: createSkillManager(skillProto), skills: [] });
+            setSkillState(playerSkill, TEST_SKILL, { level: 1 });
+
+            playerSkill.useSkill(TEST_SKILL);
+
+            expect((player.applySkillDamage as SinonStub).called).to.be.false;
+            const selfHealthChange = (player.addPoint as SinonStub)
+                .getCalls()
+                .some((call) => call.args[0] === PointsEnum.HEALTH && call.args[1] < 0);
+            expect(selfHealthChange, 'the caster must never take their own splash damage').to.be.false;
+        });
+    });
+
+    describe('useSkill - periodic area skill (SKILL_MUYEONG/FlameSpirit)', () => {
+        it('only starts the toggle affect on self-cast, without dealing any damage to the caster', () => {
+            const player = createPlayer({
+                isDead: sinon.stub().returns(false),
+                getPrivateShop: sinon.stub().returns(undefined),
+                isAffectByFlag: sinon.stub().returns(false),
+                getWeaponValues: sinon.stub().returns({
+                    physic: { min: 0, max: 0, bonus: 0 },
+                    magic: { min: 0, max: 0, bonus: 0 },
+                }),
+                getLevel: sinon.stub().returns(1),
+                getAttack: sinon.stub().returns(0),
+                getHorseLevel: sinon.stub().returns(0),
+                getVirtualId: sinon.stub().returns(1),
+                getAttackRating: sinon.stub().returns(0),
+                getDefense: sinon.stub().returns(0),
+                getNearbyEntities: sinon.stub().returns(new Map()),
+                applySkillDamage: sinon.stub(),
+                addAffect: sinon.stub(),
+            });
+
+            const skillProto = createSkillProto({
+                flags: new Set([SkillFlagsEnum.ATTACK, SkillFlagsEnum.SELFONLY, SkillFlagsEnum.TOGGLE]),
+                splashRange: 0,
+                maxHit: 1,
+                damageType: SkillDamageTypeEnum.MAGIC,
+                calculateCooldown: sinon.stub().returns(0),
+                calculateManaCost: sinon.stub().returns(0),
+                calculateDurationManaCost: sinon.stub().returns(0),
+                calculateSplashAroundDamageAdjust: sinon.stub().returns(1),
+                isChargeSkill: sinon.stub().returns(false),
+                isPeriodicAreaSkill: sinon.stub().returns(true),
+                getAffectFlag: sinon.stub().returns(AffectBitsTypeEnum.FLAME_SPIRIT),
+                applies: new Set([
+                    {
+                        kind: SkillApplyKindEnum.POINT,
+                        pointOn: PointsEnum.HEALTH,
+                        calculateAmount: () => -9999,
+                        calculateDuration: () => 70,
+                    },
+                ]),
+            });
+
+            const playerSkill = new PlayerSkill({ player, skillManager: createSkillManager(skillProto), skills: [] });
+            setSkillState(playerSkill, TEST_SKILL, { level: 1 });
+
+            const used = playerSkill.useSkill(TEST_SKILL);
+
+            expect(used).to.be.true;
+
+            const addAffect = player.addAffect as SinonStub;
+            expect(addAffect.calledOnce, 'the self-cast should only toggle the affect on').to.be.true;
+            expect(addAffect.firstCall.args[0]).to.deep.equal({ flag: AffectBitsTypeEnum.FLAME_SPIRIT, duration: 70 });
+
+            expect((player.applySkillDamage as SinonStub).called, 'no damage on self-cast').to.be.false;
+            const selfHealthChange = (player.addPoint as SinonStub)
+                .getCalls()
+                .some((call) => call.args[0] === PointsEnum.HEALTH && call.args[1] < 0);
+            expect(selfHealthChange, 'the caster must never take Flame Explosion damage from casting it').to.be.false;
         });
     });
 });

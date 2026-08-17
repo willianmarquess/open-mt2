@@ -49,6 +49,10 @@ export class SummonLightningSkill extends ActiveSkill {
         },
     ]);
 
+    resolvesInstantlyOnCast(): boolean {
+        return true;
+    }
+
     calculateSplashAroundDamageAdjust(): number {
         return 0.8;
     }

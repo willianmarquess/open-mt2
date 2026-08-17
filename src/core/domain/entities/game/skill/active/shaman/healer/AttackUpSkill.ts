@@ -18,7 +18,7 @@ export class AttackUpSkill extends ActiveSkill {
     public readonly maxHit: number = 1;
     public readonly damageType: SkillDamageTypeEnum = SkillDamageTypeEnum.NORMAL;
     public readonly flags: Set<SkillFlagsEnum> = new Set();
-    public readonly affects: Set<SkillAffectEnum> = new Set([SkillAffectEnum.JEUNGRYEOK]);
+    public readonly affects: Set<SkillAffectEnum> = new Set([SkillAffectEnum.ATTACK_UP]);
     public readonly applies: Set<SkillApplies> = new Set([
         {
             kind: SkillApplyKindEnum.POINT,

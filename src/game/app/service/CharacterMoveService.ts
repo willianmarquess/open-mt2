@@ -29,6 +29,11 @@ export default class CharacterMoveService {
             return;
         }
 
+        if (movementType & MovementTypeEnum.SKILL) {
+            player.sync({ positionX, positionY, arg, rotation, time, movementType });
+            return;
+        }
+
         switch (movementType) {
             case MovementTypeEnum.MOVE:
                 player.goto({ positionX, positionY, arg, rotation, time, movementType });

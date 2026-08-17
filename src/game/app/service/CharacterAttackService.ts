@@ -13,7 +13,12 @@ export default class CharacterAttackService {
         this.entityManager = entityManager;
     }
 
-    async execute(player: Player, attackType: AttackTypeEnum, victimVirtualId: number) {
+    /**
+     * `skillVnum` is the Attack packet's original bType (TPacketCGAttack): 0 for a plain attack, or
+     * the vnum of the ATTACK skill whose hit is landing now (CHARACTER::Attack, char_battle.cpp) -
+     * the skill's cost/cooldown were already paid separately when it was cast (PlayerSkill.useSkill).
+     */
+    async execute(player: Player, skillVnum: number, victimVirtualId: number) {
         const victim = this.entityManager.getEntity(victimVirtualId);
 
         // Only players and monsters can be attacked. A client can send any VID
@@ -27,6 +32,15 @@ export default class CharacterAttackService {
             return;
         }
 
-        player.attack(attackType, victim);
+        if (skillVnum === 0) {
+            player.attack(AttackTypeEnum.NORMAL, victim);
+            return;
+        }
+
+        if (!player.useSkillAttack(skillVnum, victim)) {
+            this.logger.info(
+                `[CharacterAttackService] Rejected skill attack (vnum ${skillVnum}) from ${player.getName()} against ${victimVirtualId}`,
+            );
+        }
     }
 }

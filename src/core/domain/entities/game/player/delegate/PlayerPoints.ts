@@ -679,6 +679,8 @@ export class PlayerPoints extends Points {
             afterAddHooks: () => [this.calcPointsAndResetValues],
         });
         this.points.set(PointsEnum.ATTACK_GRADE, {
+            add: (value) => this.addCommonPoint(value, 'attackGrade'),
+            afterAddHooks: () => [this.calcAttack],
             get: () => this.attackGrade,
         });
         this.points.set(PointsEnum.ATTACK_BONUS, {
@@ -723,11 +725,11 @@ export class PlayerPoints extends Points {
         });
         this.points.set(PointsEnum.ATTACK_SPEED, {
             get: () => this.attackSpeed,
-            add: (value) => this.addCommonPoint(value, 'attackSpeed'),
+            add: (value) => this.addCommonPoint(value, 'attackSpeed', MathUtil.MAX_TINY),
         });
         this.points.set(PointsEnum.MOVE_SPEED, {
             get: () => this.moveSpeed,
-            add: (value) => this.addCommonPoint(value, 'moveSpeed'),
+            add: (value) => this.addCommonPoint(value, 'moveSpeed', MathUtil.MAX_TINY),
         });
         this.points.set(PointsEnum.NEEDED_EXPERIENCE, {
             get: () => this.experienceManager.getNeededExperience(this.level),
@@ -875,12 +877,16 @@ export class PlayerPoints extends Points {
         });
     }
 
-    private addCommonPoint(value: number, pointName: string) {
+    private addCommonPoint(value: number, pointName: string, maxValue?: number) {
         const currentValue = (this as Record<string, any>)[pointName];
         if (currentValue === undefined || currentValue === null || typeof currentValue !== 'number')
             throw new Error(`The field ${pointName} is invalid on Points`);
 
-        (this as Record<string, any>)[pointName] = Math.max(0, currentValue + value);
+        (this as Record<string, any>)[pointName] = MathUtil.minMax(
+            0,
+            currentValue + value,
+            maxValue || MathUtil.MAX_UINT,
+        );
     }
 
     calcPolymorphPoint(pointName: 'ht' | 'st' | 'dx' | 'iq'): number {

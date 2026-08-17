@@ -24,6 +24,26 @@
 
 ---
 
+### AffectRemovePacket
+
+**Type:** Out
+
+**Header:** 0x7F
+
+**Size:** 6 bytes
+
+**Description:** Used to remove a previously sent affect (hides its icon on the client).
+
+**Fields:**
+
+| Name        | Type       | Size (bytes)   | Description               |
+|-------------|------------|----------------|---------------------------|
+| header | `byte` | 1 | Packet header |
+| type | `int` | 4 | Apply type number, must match the type used when the affect was added. See in AffectTypeEnum |
+| apply | `byte` | 1 | Describe which point the affect was on. See in PointEnum |
+
+---
+
 ### ChannelPacket
 
 **Type:** Out
@@ -465,13 +485,13 @@
 
 **Size:** 17 bytes
 
-**Description:** Draws a projectile flying from a shooter to a target. The client homes it on the target when the target is in view, otherwise it flies to the given position.
+**Description:** Draws a projectile flying from a shooter to a target. The client homes it on the target when the target is in view, otherwise it flies to the given position. Mirrors CHARACTER::FlyTarget (char_battle.cpp:3008): sent with header 0x45 (ADD_FLY_TARGETING) instead of 0x47 when it echoes a HEADER_CG_ADD_FLY_TARGETING request (multi-shot skill queuing another target rather than replacing the pending one).
 
 **Fields:**
 
 | Name        | Type       | Size (bytes)   | Description               |
 |-------------|------------|----------------|---------------------------|
-| header | `byte` | 1 | Packet header |
+| header | `byte` | 1 | Packet header (0x47, or 0x45 when isAdd) |
 | shooterVirtualId | `number` | 4 | Entity the projectile starts from |
 | targetVirtualId | `number` | 4 | Entity the projectile homes on |
 | positionX | `number` | 4 | Fallback target position X |
@@ -1135,6 +1155,67 @@
 | sockets | `int[3]` | 12 | Metin socket values, 3 slots of 4 bytes |
 | bonusId | `byte` | 1 | Attribute type of the bonus slot, repeated 7x |
 | bonusValue | `short` | 2 | Attribute value of the bonus slot, repeated 7x |
+
+---
+
+### AddFlyTargetingRequestPacket
+
+**Type:** In
+
+**Header:** 0x35
+
+**Size:** 13 bytes
+
+**Description:** Mirrors TPacketCGFlyTargeting sent with header HEADER_CG_ADD_FLY_TARGETING (packet.h): same layout as FlyTargetingRequestPacket, but appends another target to the pending Shoot queue instead of replacing it - used by multi-shot skills that hit several targets from one release (see CHARACTER::FlyTarget pushing into m_vec_dwFlyTargets, char_battle.cpp:3008).
+
+**Fields:**
+
+| Name        | Type       | Size (bytes)   | Description               |
+|-------------|------------|----------------|---------------------------|
+| header | `byte` | 1 | Packet header |
+| targetVirtualId | `number` | 4 | Entity being added to the shot queue, or 0 for a ground-targeted aim point |
+| positionX | `number` | 4 | Aim point X, used when targetVirtualId is 0 |
+| positionY | `number` | 4 | Aim point Y, used when targetVirtualId is 0 |
+
+---
+
+### FlyTargetingRequestPacket
+
+**Type:** In
+
+**Header:** 0x33
+
+**Size:** 13 bytes
+
+**Description:** Mirrors TPacketCGFlyTargeting (packet.h): the client declares (or replaces) the single target it is currently aiming a ranged skill at, ahead of the Shoot packet that fires it. `targetVirtualId` is 0 when the client is aiming at bare ground rather than an entity, in which case `positionX`/`positionY` carry the aim point instead (see CHARACTER::FlyTarget, char_battle.cpp:3008).
+
+**Fields:**
+
+| Name        | Type       | Size (bytes)   | Description               |
+|-------------|------------|----------------|---------------------------|
+| header | `byte` | 1 | Packet header |
+| targetVirtualId | `number` | 4 | Entity being aimed at, or 0 for a ground-targeted aim point |
+| positionX | `number` | 4 | Aim point X, used when targetVirtualId is 0 |
+| positionY | `number` | 4 | Aim point Y, used when targetVirtualId is 0 |
+
+---
+
+### ShootPacket
+
+**Type:** In
+
+**Header:** 0x36
+
+**Size:** 2 bytes
+
+**Description:** Mirrors TPacketCGShoot (packet.h): fired when the client releases a ranged attack. `type` is the original's bType - 0 for a plain bow shot, or the vnum of the ranged skill landing now - resolved against whichever target(s) were staged by the preceding FlyTargeting/AddFlyTargeting packets (see CHARACTER::Shoot, char_battle.cpp:2985).
+
+**Fields:**
+
+| Name        | Type       | Size (bytes)   | Description               |
+|-------------|------------|----------------|---------------------------|
+| header | `byte` | 1 | Packet header |
+| type | `byte` | 1 | 0 for a plain bow shot, or the vnum of the ranged skill being fired |
 
 ---
 

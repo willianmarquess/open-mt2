@@ -26,6 +26,10 @@ export default class BitFlag {
     }
 
     getFlag() {
-        return this.flag;
+        // JS bitwise ops always produce a signed int32, so bit 31 (e.g. flag ordinal 32, like
+        // AffectBitsTypeEnum.DISPEL) makes `flag` negative even though the bit pattern is the
+        // unsigned DWORD the wire protocol expects. `>>> 0` reinterprets the same bits as unsigned
+        // without changing which bits are set.
+        return this.flag >>> 0;
     }
 }

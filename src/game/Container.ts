@@ -11,6 +11,8 @@ import { makePackets } from '@/core/interface/networking/packets/Packets';
 import { asClass, asFunction, asValue, createContainer } from 'awilix';
 import CommandManager from './app/command/CommandManager';
 import CharacterAttackService from './app/service/CharacterAttackService';
+import CharacterFlyTargetingService from './app/service/CharacterFlyTargetingService';
+import CharacterShootService from './app/service/CharacterShootService';
 import CharacterMoveService from './app/service/CharacterMoveService';
 import CharacterUpdateTargetService from './app/service/CharacterUpdateTargetService';
 import ChatService from './app/service/ChatService';
@@ -86,6 +88,8 @@ container.register({
     itemCache: asClass(ItemCache).singleton(),
     spawnManager: asClass(SpawnManager).singleton(),
     characterAttackService: asClass(CharacterAttackService).singleton(),
+    characterFlyTargetingService: asClass(CharacterFlyTargetingService).singleton(),
+    characterShootService: asClass(CharacterShootService).singleton(),
     characterUpdateTargetService: asClass(CharacterUpdateTargetService).singleton(),
     chatService: asClass(ChatService).singleton(),
     dropManager: asClass(DropManager).singleton(),

@@ -40,12 +40,15 @@ import FlyPacket from '@/core/interface/networking/packets/packet/out/FlyPacket'
 import FlyTargetingPacket from '@/core/interface/networking/packets/packet/out/FlyTargetingPacket';
 import CharacterMoveOutPacket from '@/core/interface/networking/packets/packet/out/CharacterMoveOutPacket';
 import AffectAddPacket from '@/core/interface/networking/packets/packet/out/AffectAddPacket';
+import AffectRemovePacket from '@/core/interface/networking/packets/packet/out/AffectRemovePacket';
 import ItemEquippedEvent from '../inventory/events/ItemEquippedEvent';
 import ItemUnequippedEvent from '../inventory/events/ItemUnequippedEvent';
 import { PlayerPoints } from './delegate/PlayerPoints';
 import { PositionEnum } from '@/core/enum/PositionEnum';
 import { PlayerBattle } from './delegate/battle/PlayerBattle';
 import { AttackTypeEnum } from '@/core/enum/AttackTypeEnum';
+import { DamageTypeEnum } from '@/core/enum/DamageTypeEnum';
+import { SkillStatusEffectEnum } from '@/core/enum/SkillStatusEffectEnum';
 import type Monster from '../mob/Monster';
 import { AffectBitsTypeEnum } from '@/core/enum/AffectBitsTypeEnum';
 import { AffectTypeEnum } from '@/core/enum/AffectTypeEnum';
@@ -177,6 +180,8 @@ export default class Player extends Character {
     private lastTimeInBattle: number = 0;
     private lastAttackTime: number = 0;
     private lastAttackVictimVid: number = 0;
+    private flyTargetId: number | null = null;
+    private readonly flyTargets: number[] = [];
     /** Last client-reported position accepted by the anti-teleport check. */
     private lastReportedPosition: { x: number; y: number } | null = null;
     private recentMoves: Array<{ time: number; distance: number }> = [];
@@ -494,15 +499,6 @@ export default class Player extends Character {
         if (this.isAffectByFlag(AffectBitsTypeEnum.REVIVE_INVISIBLE)) return;
         this.setAffectFlag(AffectBitsTypeEnum.REVIVE_INVISIBLE);
         this.updateView();
-        //TODO: add removeaffect, create and demore affect are used to show the icon on the client
-        // this.sendAffect({
-        //     type: AffectTypeEnum.EXP_BONUS,
-        //     apply: PointsEnum.NONE,
-        //     duration: 500,
-        //     flag: AffectBitsTypeEnum.NONE,
-        //     manaCost: 0,
-        //     value: 200
-        // });
         this.addEventTimer({
             id: TimedEventsEnum.INVISIBILITY,
             eventFunction: () => {
@@ -630,6 +626,15 @@ export default class Player extends Character {
         this.updateView();
     }
 
+    useSkill(skillId: SkillEnum, target: Player | Monster) {
+        return this.skills.useSkill(skillId, target);
+    }
+
+    /** The "hit" half of a plain ATTACK skill, triggered by the Attack packet's skill vnum (see PlayerSkill.useSkillAttack). */
+    useSkillAttack(skillId: SkillEnum, target: Player | Monster) {
+        return this.skills.useSkillAttack(skillId, target);
+    }
+
     attack(attackType: AttackTypeEnum, victim: Player | Monster) {
         if (this.horse.isTemporaryRiding()) {
             this.chat({
@@ -667,6 +672,36 @@ export default class Player extends Character {
         this.lastTimeInBattle = now;
         this.onMove();
         this.battle.attack(attackType, victim);
+    }
+
+    /** Used by the skill engine (PlayerSkill.computeSkill) to deal skill damage through the same pipeline as normal attacks. */
+    applySkillDamage(
+        damage: number,
+        damageType: DamageTypeEnum,
+        victim: Monster | Player,
+        ignoreDefense: boolean = false,
+    ) {
+        this.battle.applySkillDamage(damage, damageType, victim, ignoreDefense);
+    }
+
+    /** Used by the skill engine (PlayerSkill.computeSkill) to trigger skill-declared STUN/SLOW/POISON/FIRE effects. */
+    applySkillStatusEffect(
+        effect: SkillStatusEffectEnum,
+        victim: Monster | Player,
+        durationSeconds?: number,
+        amount?: number,
+    ) {
+        this.battle.applySkillStatusEffect(effect, victim, durationSeconds, amount);
+    }
+
+    /** Used by the skill engine to evaluate a USE_MELEE_DAMAGE skill's formula against a specific target. */
+    calculateMeleeAttack(victim: Monster | Player, ignoreTargetRating: boolean): number {
+        return this.battle.calculateMeleeAttack(victim, ignoreTargetRating);
+    }
+
+    /** Used by the skill engine to evaluate a USE_ARROW_DAMAGE skill's formula against a specific target. */
+    calculateArrowAttack(victim: Monster | Player): number {
+        return this.battle.calculateArrowAttack(victim);
     }
 
     /** Minimum milliseconds between two hits on the same victim. */
@@ -1405,6 +1440,88 @@ export default class Player extends Character {
                 manaCost,
             }),
         );
+        this.updateView();
+    }
+
+    sendAffectRemove({ type, apply }: { type: number; apply: number }) {
+        this.connection?.send(new AffectRemovePacket({ type, apply }));
+        this.updateView();
+    }
+
+    /** Which point a timed affect maps to on the wire (AffectAddPacket/AffectRemovePacket's `type`). Points with no client-side affect type fall back to NONE - the buff/duration still applies, it just won't render its own icon. */
+    private static readonly POINT_TO_AFFECT_TYPE: Partial<Record<PointsEnum, AffectTypeEnum>> = {
+        [PointsEnum.MOVE_SPEED]: AffectTypeEnum.MOV_SPEED,
+        [PointsEnum.ATTACK_SPEED]: AffectTypeEnum.ATT_SPEED,
+        [PointsEnum.ATTACK_GRADE]: AffectTypeEnum.ATT_GRADE,
+        [PointsEnum.DEFENSE_GRADE]: AffectTypeEnum.DEF_GRADE,
+        [PointsEnum.CASTING_SPEED]: AffectTypeEnum.CAST_SPEED,
+        [PointsEnum.ST]: AffectTypeEnum.STR,
+        [PointsEnum.DX]: AffectTypeEnum.DEX,
+        [PointsEnum.HT]: AffectTypeEnum.CON,
+        [PointsEnum.IQ]: AffectTypeEnum.INT,
+    };
+
+    /** Fallback for affects with no backing point (e.g. Stealth, Dispel's curse), keyed by the internal AffectBitsTypeEnum flag instead. */
+    private static readonly FLAG_TO_AFFECT_TYPE: Partial<Record<AffectBitsTypeEnum, AffectTypeEnum>> = {
+        [AffectBitsTypeEnum.STEALTH]: AffectTypeEnum.INVISIBILITY,
+        [AffectBitsTypeEnum.POISON]: AffectTypeEnum.POISON,
+        [AffectBitsTypeEnum.STUN]: AffectTypeEnum.STUN,
+        [AffectBitsTypeEnum.SLOW]: AffectTypeEnum.SLOW,
+        [AffectBitsTypeEnum.FIRE]: AffectTypeEnum.FIRE,
+    };
+
+    private resolveAffectType(flag: AffectBitsTypeEnum, point: PointsEnum | undefined): AffectTypeEnum {
+        return (
+            (point !== undefined ? Player.POINT_TO_AFFECT_TYPE[point] : undefined) ??
+            Player.FLAG_TO_AFFECT_TYPE[flag] ??
+            AffectTypeEnum.NONE
+        );
+    }
+
+    /**
+     * Mirrors CHARACTER::AddAffect (char_affect.cpp): the buff icon (AffectAddPacket) only makes
+     * sense for a timed affect, but the view broadcast (UpdatePacket) must go out regardless - the
+     * original fires it whenever the affect's flag is set, which in our model is every addAffect
+     * call. sendAffect already triggers updateView() for the timed case, so only the untimed
+     * (duration <= 0) branch needs to call it directly here.
+     */
+    protected onAffectAdded(
+        flag: AffectBitsTypeEnum,
+        point: PointsEnum | undefined,
+        value: number,
+        duration: number,
+    ): void {
+        // Mirrors ComputeAffect's own dwType==SKILL_MUYEONG special case (char_affect.cpp:646-652):
+        // starting the periodic "find nearest enemy and burst it" tick lives here, next to every
+        // other affect side effect, rather than inside the skill-use call that created it.
+        if (flag === AffectBitsTypeEnum.FLAME_SPIRIT) {
+            this.skills.startFlameSpiritTick();
+        }
+
+        if (duration <= 0) {
+            this.updateView();
+            return;
+        }
+
+        this.sendAffect({
+            type: this.resolveAffectType(flag, point),
+            apply: point ?? PointsEnum.NONE,
+            value,
+            flag,
+            duration,
+            manaCost: 0,
+        });
+    }
+
+    protected onAffectRemoved(flag: AffectBitsTypeEnum, point: PointsEnum | undefined): void {
+        if (flag === AffectBitsTypeEnum.FLAME_SPIRIT) {
+            this.skills.stopFlameSpiritTick();
+        }
+
+        this.sendAffectRemove({
+            type: this.resolveAffectType(flag, point),
+            apply: point ?? PointsEnum.NONE,
+        });
     }
 
     sendSpecialEffect(type: SpecialEffectTypeEnum) {
@@ -1856,6 +1973,10 @@ export default class Player extends Character {
         return this.inventory.getItemFromSlot(ItemEquipmentSlotEnum.WEAPON);
     }
 
+    getArrow() {
+        return this.inventory.getItemFromSlot(ItemEquipmentSlotEnum.ARROW);
+    }
+
     getWeaponId() {
         return this.inventory.getItemFromSlot(ItemEquipmentSlotEnum.WEAPON)?.getId();
     }
@@ -1988,11 +2109,13 @@ export default class Player extends Character {
         targetVirtualId,
         positionX,
         positionY,
+        isAdd = false,
     }: {
         shooterVirtualId: number;
         targetVirtualId: number;
         positionX: number;
         positionY: number;
+        isAdd?: boolean;
     }) {
         this.connection?.send(
             new FlyTargetingPacket({
@@ -2000,8 +2123,43 @@ export default class Player extends Character {
                 targetVirtualId,
                 positionX,
                 positionY,
+                isAdd,
             }),
         );
+    }
+
+    /**
+     * Mirrors CHARACTER::FlyTarget (char_battle.cpp:3008): stages a resolved victim to be hit by the
+     * next Shoot packet - HEADER_CG_FLY_TARGETING (isAdd=false) replaces the single pending target,
+     * HEADER_CG_ADD_FLY_TARGETING (isAdd=true) appends another one for a multi-shot skill. When the
+     * client-picked VID doesn't resolve to an attackable entity, nothing is queued - only the
+     * projectile visual (with the raw fallback position) is still broadcast, exactly like the original.
+     */
+    flyTargeting(target: Player | Monster | undefined, positionX: number, positionY: number, isAdd: boolean) {
+        if (target) {
+            if (isAdd) {
+                this.flyTargets.push(target.getVirtualId());
+            } else {
+                this.flyTargetId = target.getVirtualId();
+            }
+        }
+
+        this.createFlyTargeting({ target, positionX, positionY, isAdd });
+    }
+
+    /** Drains the queued Shoot targets, mirroring CHARACTER::Shoot's use-then-clear of m_dwFlyTargetID/m_vec_dwFlyTargets. */
+    consumeFlyTargets(): number[] {
+        const targets: number[] = [];
+
+        if (this.flyTargetId !== null) {
+            targets.push(this.flyTargetId);
+            this.flyTargetId = null;
+        }
+
+        targets.push(...this.flyTargets);
+        this.flyTargets.length = 0;
+
+        return targets;
     }
 
     getPos() {

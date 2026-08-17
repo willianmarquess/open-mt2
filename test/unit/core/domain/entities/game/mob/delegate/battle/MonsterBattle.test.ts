@@ -45,7 +45,7 @@ const createAttacker = (battleType: BattleTypeEnum, reflected: Array<number>, pr
     getPositionY: () => 0,
     isDeathBlower: () => false,
     isImmuneByFlag: () => false,
-    createFlyTargeting: (target: unknown) => projectiles.push(target),
+    createFlyTargeting: ({ target }: { target: unknown }) => projectiles.push(target),
     takeDamage: (_victim: unknown, damage: number) => reflected.push(damage),
 });
 

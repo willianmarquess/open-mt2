@@ -18,7 +18,7 @@ export class SwiftnessSkill extends ActiveSkill {
     public readonly maxHit: number = 1;
     public readonly damageType: SkillDamageTypeEnum = SkillDamageTypeEnum.NORMAL;
     public readonly flags: Set<SkillFlagsEnum> = new Set();
-    public readonly affects: Set<SkillAffectEnum> = new Set([SkillAffectEnum.KWAESOK]);
+    public readonly affects: Set<SkillAffectEnum> = new Set([SkillAffectEnum.SWIFTNESS]);
     public readonly applies: Set<SkillApplies> = new Set([
         {
             kind: SkillApplyKindEnum.POINT,

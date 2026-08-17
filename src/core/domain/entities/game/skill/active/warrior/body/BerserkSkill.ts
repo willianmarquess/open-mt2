@@ -19,7 +19,7 @@ export class BerserkSkill extends ActiveSkill {
     public readonly maxHit: number = 1;
     public readonly damageType: SkillDamageTypeEnum = SkillDamageTypeEnum.NORMAL;
     public readonly flags: Set<SkillFlagsEnum> = new Set([SkillFlagsEnum.SELFONLY, SkillFlagsEnum.TOGGLE]);
-    public readonly affects: Set<SkillAffectEnum> = new Set([SkillAffectEnum.JEONGWIHON]);
+    public readonly affects: Set<SkillAffectEnum> = new Set([SkillAffectEnum.BERSERK]);
     public readonly applies: Set<SkillApplies> = new Set([
         {
             kind: SkillApplyKindEnum.POINT,

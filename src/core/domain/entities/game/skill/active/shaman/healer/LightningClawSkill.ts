@@ -56,4 +56,8 @@ export class LightningClawSkill extends ActiveSkill {
     canBeUsedBy(player: Player): boolean {
         return player.isShaman() && player.getSkillGroup() === ShamanSubJobEnum.HEALER;
     }
+
+    isChainSkill(): boolean {
+        return true;
+    }
 }

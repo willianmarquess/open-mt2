@@ -60,6 +60,14 @@ import QuickSlotRemoveRequestPacket from './packet/in/quickSlotRemove/QuickSlotR
 import QuickSlotRemoveRequestPacketHandler from './packet/in/quickSlotRemove/QuickSlotRemoveRequestPacketHandler';
 import MarkLoginPacket from './packet/in/markLogin/MarkLoginPacket';
 import MarkLoginPacketHandler from './packet/in/markLogin/MarkLoginPacketHandler';
+import SkillUsePacket from './packet/in/skillUse/SkillUsePacket';
+import SkillUsePacketHandler from './packet/in/skillUse/SkillUsePacketHandler';
+import FlyTargetingRequestPacket from './packet/in/flyTargeting/FlyTargetingRequestPacket';
+import FlyTargetingRequestPacketHandler from './packet/in/flyTargeting/FlyTargetingRequestPacketHandler';
+import AddFlyTargetingRequestPacket from './packet/in/addFlyTargeting/AddFlyTargetingRequestPacket';
+import AddFlyTargetingRequestPacketHandler from './packet/in/addFlyTargeting/AddFlyTargetingRequestPacketHandler';
+import ShootPacket from './packet/in/shoot/ShootPacket';
+import ShootPacketHandler from './packet/in/shoot/ShootPacketHandler';
 
 const LOGIN_PHASES: ReadonlySet<ConnectionStateEnum> = new Set([
     ConnectionStateEnum.HANDSHAKE,
@@ -310,6 +318,38 @@ const packets: Map<number, PacketMapValue<any>> = new Map<number, PacketMapValue
             createPacket: () => new MarkLoginPacket(),
             createHandler: (params) => new MarkLoginPacketHandler(params),
             phases: LOGIN_PHASES,
+        },
+    ],
+    [
+        PacketHeaderEnum.SKILL_USE,
+        {
+            createPacket: (params = {}) => new SkillUsePacket(params),
+            createHandler: (params) => new SkillUsePacketHandler(params),
+            phases: GAME_PHASES,
+        },
+    ],
+    [
+        PacketHeaderEnum.FLY_TARGETING_REQUEST,
+        {
+            createPacket: (params = {}) => new FlyTargetingRequestPacket(params),
+            createHandler: (params) => new FlyTargetingRequestPacketHandler(params),
+            phases: GAME_PHASES,
+        },
+    ],
+    [
+        PacketHeaderEnum.ADD_FLY_TARGETING_REQUEST,
+        {
+            createPacket: (params = {}) => new AddFlyTargetingRequestPacket(params),
+            createHandler: (params) => new AddFlyTargetingRequestPacketHandler(params),
+            phases: GAME_PHASES,
+        },
+    ],
+    [
+        PacketHeaderEnum.SHOOT,
+        {
+            createPacket: (params = {}) => new ShootPacket(params),
+            createHandler: (params) => new ShootPacketHandler(params),
+            phases: GAME_PHASES,
         },
     ],
 ]);

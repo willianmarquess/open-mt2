@@ -21,12 +21,16 @@ export default abstract class PlayerBattleStrategy<Victim extends Character = Ch
         return damage - damage * (resistance / 100);
     }
 
-    protected calcAttackRating(victim: Victim) {
+    /** ignoreTargetRating drops the victim's rating term entirely, mirroring CalcAttackRating's bIgnoreTargetRating. */
+    protected calcAttackRating(victim: Victim, ignoreTargetRating: boolean = false) {
         const attackerRating = this.attacker.getAttackRating();
+        const fAR = (attackerRating + 210.0) / 300.0;
+
+        if (ignoreTargetRating) return fAR;
+
         const victimRating = victim.getAttackRating();
-        const attackRating =
-            (attackerRating + 210.0) / 300.0 - (((victimRating * 2 + 5) / (victimRating + 95)) * 3.0) / 10.0;
-        return attackRating;
+        const fER = (((victimRating * 2 + 5) / (victimRating + 95)) * 3.0) / 10.0;
+        return fAR - fER;
     }
 
     protected applyAttackEffect(victim: Victim) {

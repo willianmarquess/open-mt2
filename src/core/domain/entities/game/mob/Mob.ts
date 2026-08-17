@@ -377,6 +377,10 @@ export abstract class Mob extends Character {
         return this.aiFlag.is(MobAIFlagEnum.DEATHBLOW);
     }
 
+    isImmovable() {
+        return this.aiFlag.is(MobAIFlagEnum.NOMOVE);
+    }
+
     getDeathBlowChance() {
         return this.percentToGetDeathblow ?? 0;
     }

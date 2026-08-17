@@ -7,7 +7,7 @@ export default class AttackPacketValidator extends PacketValidator<AttackPacket>
     }
 
     build() {
-        this.createRule(this.packet.getAttackType(), 'attackType')
+        this.createRule(this.packet.getSkillVnum(), 'skillVnum')
             .isRequired()
             .isNumber()
             .isGreaterThanOrEqual(0)

@@ -50,11 +50,17 @@ export default class PlayerBattleAgainstMobStrategy extends PlayerBattleStrategy
         }
     }
 
+    /**
+     * ignoreDefense is the result of a skill's own PENETRATE roll (SkillFlagsEnum.PENETRATE). Mirrors
+     * the original's `if (!bIgnoreDefense) iDam -= pkChrVictim->GetPoint(POINT_DEF_GRADE)` - only
+     * applied for MELEE, since the original never subtracts raw defense for RANGE/MAGIC skill damage.
+     */
     private calculateSkillDamage(
         damage: number,
         damageType: DamageTypeEnum,
         damageFlags: BitFlag,
         victim: Monster,
+        ignoreDefense: boolean = false,
     ): number {
         const isSkillDamage = [
             DamageTypeEnum.MELEE,
@@ -65,6 +71,10 @@ export default class PlayerBattleAgainstMobStrategy extends PlayerBattleStrategy
             DamageTypeEnum.MAGIC,
         ].includes(damageType);
         if (!isSkillDamage) return damage;
+
+        if (damageType === DamageTypeEnum.MELEE && !ignoreDefense) {
+            damage -= victim.getDefense();
+        }
 
         damage = this.calculateMagicAttackBonus(damage, damageType);
         damage = this.calculateCriticalDamage(damage, damageFlags);
@@ -123,7 +133,8 @@ export default class PlayerBattleAgainstMobStrategy extends PlayerBattleStrategy
         return damage;
     }
 
-    private applyDamage(damage: number, damageType: DamageTypeEnum, victim: Monster) {
+    /** Public so the skill engine (PlayerSkill.computeSkill) can deal skill damage through the same pipeline as normal attacks. */
+    applyDamage(damage: number, damageType: DamageTypeEnum, victim: Monster, ignoreDefense: boolean = false) {
         const damageFlags = new BitFlag();
 
         switch (damageType) {
@@ -140,7 +151,7 @@ export default class PlayerBattleAgainstMobStrategy extends PlayerBattleStrategy
             case DamageTypeEnum.ICE:
             case DamageTypeEnum.ELEC:
             case DamageTypeEnum.MAGIC:
-                damage = this.calculateSkillDamage(damage, damageType, damageFlags, victim);
+                damage = this.calculateSkillDamage(damage, damageType, damageFlags, victim, ignoreDefense);
                 break;
         }
 
@@ -212,6 +223,86 @@ export default class PlayerBattleAgainstMobStrategy extends PlayerBattleStrategy
         const damage = Math.max(0, attack - defense);
 
         this.applyDamage(damage, DamageTypeEnum.NORMAL, victim);
+    }
+
+    /**
+     * The "atk" variable a USE_MELEE_DAMAGE skill's own formula is evaluated with - mirrors
+     * CalcMeleeDamage's `iAtk` (weapon roll + refine bonus + attack rating + race bonus). Always
+     * computed with defense ignored, matching the original's hardcoded `bIgnoreDefense=true` when
+     * this is used to feed a skill formula (defense is subtracted later, once, in
+     * calculateSkillDamage, gated by the skill's own PENETRATE roll instead).
+     */
+    calculateMeleeAttack(victim: Monster, ignoreTargetRating: boolean): number {
+        const weapon = this.attacker.getWeapon();
+        const weaponValues = this.attacker.getWeaponValues();
+
+        const fAR = this.calcAttackRating(victim, ignoreTargetRating);
+        const weaponRoll = MathUtil.getRandomInt(weaponValues.physic.min, weaponValues.physic.max) * 2;
+
+        const levelAttack = this.attacker.getLevel() * 2;
+        let atk = this.attacker.getAttack() + weaponRoll - levelAttack;
+        atk = atk * fAR;
+        atk += levelAttack;
+
+        if (weapon) {
+            atk += weaponValues.physic.bonus * 2;
+        }
+
+        atk += this.attacker.getPoint(PointsEnum.PARTY_ATTACKER_BONUS);
+        atk =
+            (atk *
+                (100 +
+                    this.attacker.getPoint(PointsEnum.ATTACK_BONUS) +
+                    this.attacker.getPoint(PointsEnum.MELEE_MAGIC_ATT_BONUS_PER))) /
+            100;
+
+        atk = this.calculateRaceAttackBonus(atk, victim);
+
+        return Math.max(0, Math.round(atk));
+    }
+
+    /**
+     * The "atk" variable a USE_ARROW_DAMAGE skill's own formula is evaluated with - mirrors
+     * CalcArrowDamage, including its distance-based falloff (`iPercent`). Unlike melee, the original
+     * never lets a skill ignore the target's rating here (CalcAttackRating is always called with
+     * bIgnoreTargetRating=false for arrows), so IGNORE_TARGET_RATING has no effect on arrow skills.
+     */
+    calculateArrowAttack(victim: Monster): number {
+        const bow = this.attacker.getWeapon();
+        const arrow = this.attacker.getArrow();
+        if (!bow || bow.getSubType() !== ItemSubTypeEnum.WEAPON_BOW || !arrow) return 0;
+
+        const distance = MathUtil.calcDistance(
+            this.attacker.getPositionX(),
+            this.attacker.getPositionY(),
+            victim.getPositionX(),
+            victim.getPositionY(),
+        );
+        const gap = distance / 100 - 5 - this.attacker.getPoint(PointsEnum.BOW_DISTANCE);
+        const percent = MathUtil.minMax(0, 100 - gap * 5, 100);
+        if (percent <= 0) return 0;
+
+        const bowValues = this.attacker.getWeaponValues();
+        const arrowRoll = MathUtil.getRandomInt(bowValues.physic.min, bowValues.physic.max) * 2 + arrow.getValues()[3];
+
+        const fAR = this.calcAttackRating(victim, false);
+        const levelAttack = this.attacker.getLevel() * 2;
+        let atk = this.attacker.getAttack() + arrowRoll - levelAttack;
+        atk = atk * fAR;
+        atk += levelAttack;
+        atk += bowValues.physic.bonus * 2;
+
+        atk += this.attacker.getPoint(PointsEnum.PARTY_ATTACKER_BONUS);
+        atk =
+            (atk *
+                (100 +
+                    this.attacker.getPoint(PointsEnum.ATTACK_BONUS) +
+                    this.attacker.getPoint(PointsEnum.MELEE_MAGIC_ATT_BONUS_PER))) /
+            100;
+
+        atk = this.calculateRaceAttackBonus(atk, victim);
+
+        return Math.round((Math.max(0, atk) * percent) / 100);
     }
 
     private calculateSkillDamageBonus(damage: number, victim: Monster): number {
@@ -349,7 +440,13 @@ export default class PlayerBattleAgainstMobStrategy extends PlayerBattleStrategy
         return Math.floor(attack);
     }
 
-    protected applyFire(victim: Monster) {
+    /** Public so the skill engine (PlayerSkill.computeSkill) can trigger the same on-hit status effects skills declare via a STATUS apply. */
+    /**
+     * damagePerTick/durationMs are overridable because skill-triggered fire (e.g. Shooting Dragon,
+     * Dragon Roar) carries its own damage and duration formula, unlike the fixed 5%-of-max-health
+     * used by on-hit equipment procs.
+     */
+    applyFire(victim: Monster, damagePerTick?: number, durationMs: number = 10_000) {
         if (victim.isAffectByFlag(AffectBitsTypeEnum.FIRE)) return;
 
         victim.setAffectFlag(AffectBitsTypeEnum.FIRE);
@@ -358,12 +455,12 @@ export default class PlayerBattleAgainstMobStrategy extends PlayerBattleStrategy
         victim.addEventTimer({
             id: TimedEventsEnum.FIRE,
             eventFunction: () => {
-                const damage = victim.getPoint(PointsEnum.MAX_HEALTH) * 0.05;
+                const damage = damagePerTick ?? victim.getPoint(PointsEnum.MAX_HEALTH) * 0.05;
                 this.applyDamage(damage, DamageTypeEnum.FIRE, victim);
             },
             options: {
                 interval: 1_000,
-                duration: 10_000,
+                duration: durationMs,
             },
             onEndEventFunction: () => {
                 victim.removeAffectFlag(AffectBitsTypeEnum.FIRE);
@@ -372,7 +469,7 @@ export default class PlayerBattleAgainstMobStrategy extends PlayerBattleStrategy
         });
     }
 
-    protected applyPoison(victim: Monster) {
+    applyPoison(victim: Monster) {
         if (victim.isImmuneByFlag(MobImmuneFlagEnum.POISON)) return;
         if (victim.isAffectByFlag(AffectBitsTypeEnum.POISON)) return;
 
@@ -396,7 +493,12 @@ export default class PlayerBattleAgainstMobStrategy extends PlayerBattleStrategy
         });
     }
 
-    protected applyStun(victim: Monster) {
+    /**
+     * Public so the skill engine (PlayerSkill.computeSkill) can trigger this. durationMs is
+     * overridable because skill-triggered stuns (e.g. Stump) carry their own duration formula,
+     * unlike the fixed one used by on-hit equipment procs.
+     */
+    applyStun(victim: Monster, durationMs: number = 5_000) {
         if (victim.isImmuneByFlag(MobImmuneFlagEnum.STUN)) return;
         if (victim.isAffectByFlag(AffectBitsTypeEnum.STUN)) return;
 
@@ -408,14 +510,19 @@ export default class PlayerBattleAgainstMobStrategy extends PlayerBattleStrategy
                 victim.removeStun();
             },
             options: {
-                interval: 5_000,
-                duration: 5_000,
+                interval: durationMs,
+                duration: durationMs,
                 repeatCount: 1,
             },
         });
     }
 
-    protected applySlow(victim: Monster) {
+    /**
+     * Public so the skill engine (PlayerSkill.computeSkill) can trigger this. durationMs is
+     * overridable because skill-triggered slows (e.g. Shockwave) carry their own duration formula,
+     * unlike the fixed one used by on-hit equipment procs.
+     */
+    applySlow(victim: Monster, durationMs: number = 10_000) {
         if (victim.isImmuneByFlag(MobImmuneFlagEnum.SLOW)) return;
         if (victim.isAffectByFlag(AffectBitsTypeEnum.SLOW)) return;
         const SLOW_VALUE = 30;
@@ -432,8 +539,8 @@ export default class PlayerBattleAgainstMobStrategy extends PlayerBattleStrategy
                 victim.sendUpdateEvent();
             },
             options: {
-                interval: 10_000,
-                duration: 10_000,
+                interval: durationMs,
+                duration: durationMs,
                 repeatCount: 1,
             },
         });

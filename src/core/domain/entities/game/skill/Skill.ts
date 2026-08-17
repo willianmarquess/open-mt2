@@ -1,5 +1,6 @@
 import { PointsEnum } from '@/core/enum/PointsEnum';
-import { SkillAffectEnum } from '@/core/enum/SkillAffectEnum';
+import { AffectBitsTypeEnum } from '@/core/enum/AffectBitsTypeEnum';
+import { SkillAffectEnum, SKILL_AFFECT_TO_AFFECT_BITS_TYPE } from '@/core/enum/SkillAffectEnum';
 import { SkillDamageTypeEnum } from '@/core/enum/SkillDamageTypeEnum';
 import { SkillFlagsEnum } from '@/core/enum/SkillFlagsEnum';
 import { SkillApplyKindEnum } from '@/core/enum/SkillApplyKindEnum';
@@ -26,6 +27,10 @@ export interface SkillCalcContext {
     readonly maxMana: number;
     readonly chain: number;
     readonly ek?: number; //invisible
+    /** Target-relative fields, only meaningful while attacking a specific victim (e.g. Ambush's backstab bonus). Absent outside of an attack computation. */
+    readonly isBehindTarget?: boolean;
+    readonly isInvisible?: boolean;
+    readonly hasDagger?: boolean;
 }
 
 type SkillAppliesKindSpecial = {
@@ -70,6 +75,50 @@ export abstract class Skill {
 
     isActive(): this is ActiveSkill {
         return this.type === SkillTypeEnum.ACTIVE;
+    }
+
+    isChargeSkill(): boolean {
+        return false;
+    }
+
+    /** Hardcoded by vnum in the original too (SKILL_CHAIN), not a flag - only Lightning Claw uses this. */
+    isChainSkill(): boolean {
+        return false;
+    }
+
+    /**
+     * Hardcoded by vnum in the original too (SKILL_MUYEONG, char_skill.cpp:2137-2154 and
+     * char_affect.cpp:646-652): a self-cast that only starts a toggle affect and its own periodic
+     * "find the nearest enemy and burst it" tick, bypassing the generic apply-on-self flow entirely
+     * - only FlameSpiritSkill uses this.
+     */
+    isPeriodicAreaSkill(): boolean {
+        return false;
+    }
+
+    /**
+     * Hardcoded by vnum in the original too (SKILL_BYEURAK, char_skill.cpp:2508-2515): every plain
+     * (non-selfonly) ATTACK skill normally only computes its damage later, off the Attack/Shoot
+     * packet's hit phase (see PlayerSkill.useSkillAttack) - this is the one exception the original
+     * still resolves immediately against the cast's own target, at UseSkill time. Only Summon
+     * Lightning uses this.
+     */
+    resolvesInstantlyOnCast(): boolean {
+        return false;
+    }
+
+    /**
+     * The runtime AffectBitsTypeEnum flag this skill's own buff/toggle is tracked under, derived
+     * from the first entry of `affects` that has a known mapping. Single source of truth: skill
+     * classes declare `affects` once and every apply/toggle-off check shares this same resolution,
+     * instead of repeating the flag on each apply and again in a separate field.
+     */
+    getAffectFlag(): AffectBitsTypeEnum | undefined {
+        for (const affect of this.affects) {
+            const flag = SKILL_AFFECT_TO_AFFECT_BITS_TYPE[affect];
+            if (flag !== undefined) return flag;
+        }
+        return undefined;
     }
 }
 

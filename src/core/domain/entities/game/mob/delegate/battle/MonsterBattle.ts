@@ -52,12 +52,12 @@ export default class MonsterBattle {
     }
 
     private rangeAttack(victim: Player) {
-        this.attacker.createFlyTargeting(victim);
+        this.attacker.createFlyTargeting({ target: victim });
         this.resolveAttack(victim, DamageTypeEnum.NORMAL_RANGE, victim.getPoint(PointsEnum.RESIST_BOW));
     }
 
     private magicAttack(victim: Player) {
-        this.attacker.createFlyTargeting(victim);
+        this.attacker.createFlyTargeting({ target: victim });
         this.resolveAttack(victim, DamageTypeEnum.MAGIC, victim.getPoint(PointsEnum.RESIST_MAGIC));
     }
 

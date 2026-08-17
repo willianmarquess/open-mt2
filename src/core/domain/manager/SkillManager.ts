@@ -28,7 +28,7 @@ import { FingerStrikeSkill } from '../entities/game/skill/active/sura/sword/Fing
 import { DarkOrbSkill } from '../entities/game/skill/active/sura/magic/DarkOrbSkill';
 import { DarkProtectionSkill } from '../entities/game/skill/active/sura/magic/DarkProtectionSkill';
 import { DarkStrikeSkill } from '../entities/game/skill/active/sura/magic/DarkStrikeSkill';
-import { FlameExplosionSkill } from '../entities/game/skill/active/sura/magic/FlameExplosionSkill';
+import { FlameSpiritSkill } from '../entities/game/skill/active/sura/magic/FlameSpiritSkill';
 import { FlameStrikeSkill } from '../entities/game/skill/active/sura/magic/FlameStrikeSkill';
 import { ShockwaveSkill } from '../entities/game/skill/active/sura/magic/ShockwaveSkill';
 import { BlessingSkill } from '../entities/game/skill/active/shaman/buffer/BlessingSkill';
@@ -94,7 +94,7 @@ export class SkillManager {
         this.skills.set(SkillEnum.DARK_ORB, new DarkOrbSkill());
         this.skills.set(SkillEnum.DARK_PROTECTION, new DarkProtectionSkill());
         this.skills.set(SkillEnum.DARK_STRIKE, new DarkStrikeSkill());
-        this.skills.set(SkillEnum.FLAME_EXPLOSION, new FlameExplosionSkill());
+        this.skills.set(SkillEnum.FLAME_SPIRIT, new FlameSpiritSkill());
         this.skills.set(SkillEnum.FLAME_STRIKE, new FlameStrikeSkill());
         this.skills.set(SkillEnum.SHOCKWAVE, new ShockwaveSkill());
 

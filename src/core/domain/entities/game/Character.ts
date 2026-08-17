@@ -17,6 +17,7 @@ import { QuestManager } from '../../quests/QuestManager';
 import { EntityTypeEnum } from '@/core/enum/EntityTypeEnum';
 import { MovementTypeEnum } from '@/core/enum/MovementTypeEnum';
 import GlobalEventTimerManager from '../../manager/GlobalEventTimeManager';
+import { TimedEventsEnum } from '@/core/enum/TimedEventsEnum';
 
 type MovementNodeProvider = () => { x: number; y: number } | null;
 
@@ -46,6 +47,7 @@ export default abstract class Character extends GameEntity {
     private lastAttackedTime: number = 0;
 
     protected readonly affectBitFlag = new AffectBitFlag();
+    private readonly activeAffects = new Map<string, { flag: AffectBitsTypeEnum; point?: PointsEnum; value: number }>();
     protected readonly animationManager: AnimationManager;
 
     protected readonly stateMachine: StateMachine = new StateMachine();
@@ -124,6 +126,159 @@ export default abstract class Character extends GameEntity {
         this.affectBitFlag.reset(value);
     }
 
+    private static affectEventId(flag: AffectBitsTypeEnum, point?: PointsEnum): string {
+        return point !== undefined
+            ? `AFFECT_${AffectBitsTypeEnum[flag]}_${PointsEnum[point]}`
+            : `AFFECT_${AffectBitsTypeEnum[flag]}`;
+    }
+
+    /**
+     * Generic timed affect: sets the flag, optionally bumps a point, and schedules its own removal
+     * after `duration` seconds. Reusable by any system (skills, items, quests) that needs a flagged,
+     * timed buff/debuff without hand-rolling the addEventTimer/removeAffectFlag dance (see the manual
+     * pattern in PlayerBattleAgainstMobStrategy.applyPoison/applyStun/applySlow).
+     *
+     * A single flag can carry several independent sub-effects at once (e.g. Strong Body raises both
+     * DEFENSE_GRADE and MOVE_SPEED under AffectBitsTypeEnum.STRONG_BODY) - each is tracked by its own
+     * flag+point key, so adding one never reverts another already active under the same flag. Calling
+     * this again for the *same* flag+point refreshes that one sub-effect (removes then reapplies).
+     */
+    addAffect({
+        flag,
+        point,
+        value = 0,
+        duration,
+        eventId = Character.affectEventId(flag, point),
+    }: {
+        flag: AffectBitsTypeEnum;
+        point?: PointsEnum;
+        value?: number;
+        duration: number;
+        eventId?: string;
+    }) {
+        if (this.activeAffects.has(eventId)) {
+            this.removeAffectEntry(eventId);
+        }
+
+        this.setAffectFlag(flag);
+        this.activeAffects.set(eventId, { flag, point, value });
+
+        // Entering stealth drops whoever was actively locked onto me - they can't keep fighting a
+        // target they can no longer see. Mirrors GetNearestVictim/battle_is_attackable treating an
+        // invisible character as unpickable (char_battle.cpp:3060-3063), generalized to also clear
+        // locks that already existed before I vanished.
+        if (flag === AffectBitsTypeEnum.STEALTH) {
+            this.clearTargetedBy();
+        }
+
+        if (point !== undefined && value !== 0) {
+            this.addPoint(point, value);
+        }
+
+        if (duration > 0) {
+            this.addEventTimer({
+                id: eventId,
+                eventFunction: () => {
+                    // intentional no-op: this affect only reacts to its own expiration
+                },
+                options: { interval: duration * 1000, duration: duration * 1000, repeatCount: 1 },
+                onEndEventFunction: () => this.removeAffectEntry(eventId),
+            });
+        }
+
+        this.onAffectAdded(flag, point, value, duration);
+    }
+
+    removeAffect(flag: AffectBitsTypeEnum, eventId?: string) {
+        if (eventId !== undefined) {
+            this.removeAffectEntry(eventId);
+            return;
+        }
+
+        if (!this.isAffectByFlag(flag)) return;
+
+        for (const [id, entry] of [...this.activeAffects.entries()]) {
+            if (entry.flag === flag) this.removeAffectEntry(id);
+        }
+    }
+
+    private removeAffectEntry(eventId: string) {
+        const entry = this.activeAffects.get(eventId);
+        if (!entry) return;
+
+        this.activeAffects.delete(eventId);
+        this.removeEventTimer(eventId);
+
+        if (entry.point !== undefined && entry.value !== 0) {
+            this.addPoint(entry.point, -entry.value);
+        }
+
+        const stillActive = [...this.activeAffects.values()].some((other) => other.flag === entry.flag);
+        if (!stillActive) {
+            this.removeAffectFlag(entry.flag);
+        }
+
+        this.onAffectRemoved(entry.flag, entry.point);
+    }
+
+    /** Hook for subclasses that can notify a client (Player) when a timed affect starts/ends. No-op by default (e.g. Monster has no UI to update here). */
+
+     
+    protected onAffectAdded(
+        _flag: AffectBitsTypeEnum,
+        _point: PointsEnum | undefined,
+        _value: number,
+        _duration: number,
+    ): void {
+        // intentional no-op
+    }
+
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    protected onAffectRemoved(_flag: AffectBitsTypeEnum, _point: PointsEnum | undefined): void {
+        // intentional no-op
+    }
+
+    removeBadAffects() {
+        if (this.isAffectByFlag(AffectBitsTypeEnum.POISON)) {
+            this.removeAffectFlag(AffectBitsTypeEnum.POISON);
+            this.removeEventTimer(TimedEventsEnum.POISON);
+        }
+
+        if (this.isAffectByFlag(AffectBitsTypeEnum.STUN)) {
+            this.removeStun();
+            this.removeEventTimer(TimedEventsEnum.STUN);
+        }
+
+        if (this.isAffectByFlag(AffectBitsTypeEnum.FIRE)) {
+            this.removeAffectFlag(AffectBitsTypeEnum.FIRE);
+            this.removeEventTimer(TimedEventsEnum.FIRE);
+        }
+    }
+
+    private static readonly GOOD_AFFECT_FLAGS: readonly AffectBitsTypeEnum[] = [
+        AffectBitsTypeEnum.MOV_SPEED_POTION,
+        AffectBitsTypeEnum.ATT_SPEED_POTION,
+        AffectBitsTypeEnum.CHINA_FIREWORK,
+        AffectBitsTypeEnum.BERSERK,
+        AffectBitsTypeEnum.AURA_OF_SWORD,
+        AffectBitsTypeEnum.STRONG_BODY,
+        AffectBitsTypeEnum.STRONG_BODY_WITH_FALL,
+        AffectBitsTypeEnum.FEATHER_WALK,
+        AffectBitsTypeEnum.STEALTH,
+        AffectBitsTypeEnum.ENCHANTED_BLADE,
+        AffectBitsTypeEnum.ENCHANTED_ARMOUR,
+        AffectBitsTypeEnum.MANASHIELD,
+        AffectBitsTypeEnum.REFLECT,
+        AffectBitsTypeEnum.SWIFTNESS,
+        AffectBitsTypeEnum.TERROR,
+    ];
+
+    removeGoodAffects() {
+        for (const flag of Character.GOOD_AFFECT_FLAGS) {
+            this.removeAffect(flag);
+        }
+    }
+
     getAttackRating() {
         return Math.min(90, (this.getPoint(PointsEnum.DX) * 4 + this.getPoint(PointsEnum.LEVEL) * 2) / 6);
     }
@@ -133,6 +288,10 @@ export default abstract class Character extends GameEntity {
     abstract getDefense(): number;
 
     public createFlyEffect(toVirtualId: number, type: FlyEnum) {
+        if (this.isPlayer()) {
+            this.showFlyEffect(type, this.virtualId, toVirtualId);
+        }
+
         for (const otherEntity of this.nearbyEntities.values()) {
             if (otherEntity.isPlayer()) {
                 (otherEntity as Player).showFlyEffect(type, this.virtualId, toVirtualId);
@@ -140,14 +299,25 @@ export default abstract class Character extends GameEntity {
         }
     }
 
-    public createFlyTargeting(target: Character) {
+    public createFlyTargeting({
+        target,
+        positionX = 0,
+        positionY = 0,
+        isAdd = false,
+    }: {
+        target?: Character;
+        positionX?: number;
+        positionY?: number;
+        isAdd?: boolean;
+    }) {
         for (const otherEntity of this.nearbyEntities.values()) {
             if (otherEntity.isPlayer()) {
                 (otherEntity as Player).showFlyTargeting({
                     shooterVirtualId: this.virtualId,
-                    targetVirtualId: target.getVirtualId(),
-                    positionX: target.getPositionX(),
-                    positionY: target.getPositionY(),
+                    targetVirtualId: target?.getVirtualId() ?? 0,
+                    positionX: target ? target.getPositionX() : positionX,
+                    positionY: target ? target.getPositionY() : positionY,
+                    isAdd,
                 });
             }
         }
@@ -185,6 +355,13 @@ export default abstract class Character extends GameEntity {
 
     removeTargetedBy(entity: Character) {
         this.targetedBy.delete(entity.virtualId);
+    }
+
+    clearTargetedBy() {
+        for (const attacker of this.targetedBy.values()) {
+            attacker.removeTarget();
+        }
+        this.targetedBy.clear();
     }
 
     addTargetedBy(entity: Character) {

@@ -23,14 +23,23 @@ export class ChargeSkill extends ActiveSkill {
         SkillFlagsEnum.CRUSH_LONG,
         SkillFlagsEnum.SPLASH,
     ]);
-    public readonly affects: Set<SkillAffectEnum> = new Set();
+    public readonly affects: Set<SkillAffectEnum> = new Set([SkillAffectEnum.TANHWAN_DASH]);
     public readonly applies: Set<SkillApplies> = new Set([
         {
+            // primary apply (bPointOn): the strike's damage, dealt once the charge is released on a target
             kind: SkillApplyKindEnum.POINT,
             pointOn: PointsEnum.HEALTH,
             calculateAmount: (context: SkillCalcContext): number =>
                 -(2.4 * (200 + 1.5 * context.casterLevel) + 3 * 200 * context.skillLevel),
             calculateDuration: (): number => 0,
+        },
+        {
+            // secondary apply (bPointOn2): the dash buff granted while charging (AFF_TANHWAN_DASH, see affects above)
+            kind: SkillApplyKindEnum.POINT,
+            pointOn: PointsEnum.MOVE_SPEED,
+            calculateAmount: (): number => 150,
+            //TODO: replace with the real duration formula (kDurationPoly2) once skill proto data is ported
+            calculateDuration: (): number => 3,
         },
     ]);
 
@@ -55,6 +64,10 @@ export class ChargeSkill extends ActiveSkill {
     }
 
     canBeUsedByHorse(): boolean {
+        return true;
+    }
+
+    isChargeSkill(): boolean {
         return true;
     }
 }

@@ -43,7 +43,7 @@ export enum SkillEnum {
     // MAGIC
     DARK_STRIKE = 76,
     FLAME_STRIKE = 77,
-    FLAME_EXPLOSION = 78,
+    FLAME_SPIRIT = 78,
     DARK_PROTECTION = 79,
     SHOCKWAVE = 80,
     DARK_ORB = 81,
