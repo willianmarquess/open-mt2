@@ -141,6 +141,7 @@ export default class World {
                 {
                     spawnManager: this.spawnManager,
                     entityManager: this.entityManager,
+                    logger: this.logger,
                 },
             );
             await area.load();
