@@ -542,6 +542,8 @@ export default class Player extends Character {
     }
 
     die(killer: Character) {
+        this.stopRiding(true);
+
         super.die(killer);
 
         //TODO: death penalty
