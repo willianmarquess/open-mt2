@@ -520,7 +520,7 @@ export default class Player extends Character {
         //TODO: logout from party
         //TODO: logout from guild
         //TODO: save affect
-        //TODO: call quest disconnect callback
+        this.questManager.onDespawn(this);
         //TODO: close safebox, close mall
         //TODO: remove from pvp instance
         if (!this.skipSave) {
