@@ -628,21 +628,13 @@ export class PlayerSkill {
         return true;
     }
 
-    /**
-     * Self-centered AoE targets (FlameStrike/Stump/DragonRoar/...): mirrors FuncSplashDamage
-     * centered on the caster's own position (char_skill.cpp:990-1162) - every attackable monster in
-     * range gets hit, the caster never does (matches battle_is_attackable always excluding the
-     * attacker from their own splash). None of these hits count as the "main" target (the original
-     * only marks one via SetMainTargetVID from the Attack/Shoot packets, never from a plain
-     * self-cast), so every hit goes through the splash-around damage adjust.
-     * PvP is out of scope here (like getSplashTargets), so only monsters and stones are considered.
-     */
     private getSplashTargetsAroundSelf(skillProto: ActiveSkill): Array<Monster | Stone> {
         if (skillProto.splashRange <= 0) return [];
 
         const targets: Array<Monster | Stone> = [];
 
         for (const entity of this.player.getNearbyEntities().values()) {
+            if (entity.getVirtualId() === this.player.getVirtualId()) continue;
             if (targets.length >= skillProto.maxHit) break;
             if (!entity.isMonster() && !entity.isStone()) continue;
 
@@ -659,17 +651,8 @@ export class PlayerSkill {
     }
 
     private static readonly FLAME_SPIRIT_TICK_ID = 'FLAME_SPIRIT_TICK';
-    // The original reschedules skill_muyoung_event every PASSES_PER_SEC(3) after its first (1s) run
-    // (char_skill.cpp:2629,2640); this timer API only supports one fixed cadence, so it just ticks
-    // steadily every 3s from the start.
     private static readonly FLAME_SPIRIT_TICK_INTERVAL_MS = 3000;
 
-    /**
-     * Mirrors StartMuyeongEvent (char_skill.cpp:2632-2641): begins the periodic "find the nearest
-     * enemy and burst it" tick tied to the AFF_MUYEONG toggle. Started/stopped from
-     * Player.onAffectAdded/onAffectRemoved whenever that flag changes (mirroring ComputeAffect's
-     * own dwType==SKILL_MUYEONG check, char_affect.cpp:646-652).
-     */
     startFlameSpiritTick(): void {
         if (this.player.isEventTimerActive(PlayerSkill.FLAME_SPIRIT_TICK_ID)) return;
 
@@ -685,12 +668,6 @@ export class PlayerSkill {
         this.player.removeEventTimer(PlayerSkill.FLAME_SPIRIT_TICK_ID);
     }
 
-    /**
-     * Mirrors skill_muyoung_event (char_skill.cpp:2594-2630): every tick, pick one random
-     * attackable mob nearby, show the fireball flying to it (the client renders the actual
-     * orbiting-fireball visual off the AFF_MUYEONG affect bit itself, not off this fly effect - this
-     * is only the "shot fired" projectile), and burst it with the skill's own damage formula.
-     */
     private tickFlameSpirit(): void {
         if (!this.player.isAffectByFlag(AffectBitsTypeEnum.FLAME_SPIRIT)) {
             this.stopFlameSpiritTick();
@@ -709,12 +686,6 @@ export class PlayerSkill {
         this.computeSkill(skillProto, victim, context, false);
     }
 
-    /**
-     * Mirrors FFindNearVictim (char_skill.cpp:835-892): picks a uniformly random attackable mob
-     * within range via reservoir sampling, so every equally-near candidate has the same odds instead
-     * of always picking the first one found. FFindNearVictim itself has no IsMonster()/IsStone() gate
-     * (just battle_is_attackable + distance), so a nearby stone is as valid a pick as a monster.
-     */
     private findRandomNearbyAttackableMob(): Monster | Stone | undefined {
         let picked: Monster | Stone | undefined;
         let count = 0;
@@ -759,10 +730,6 @@ export class PlayerSkill {
         return true;
     }
 
-    /** Splashes damage around `target` and, for a chain skill, kicks off its own hop sequence. Shared
-     * by useSkillAttack() (the normal Attack/Shoot hit phase) and useRegularActiveSkill()'s
-     * resolvesInstantlyOnCast() branch (SKILL_BYEURAK, the one ATTACK skill that resolves at cast
-     * time instead). */
     private resolveAttackDamage(skillProto: ActiveSkill, target: SkillTarget, context: SkillCalcContext): void {
         for (const splashTarget of this.getSplashTargets(skillProto, target)) {
             this.computeSkill(skillProto, splashTarget, context, splashTarget === target);
@@ -785,12 +752,13 @@ export class PlayerSkill {
         this.player.addEventTimer({
             id: `CHAIN_${skillProto.id}`,
             eventFunction: () => {
-                if (this.player.isDead() || fromVictim.isDead()) return;
+                if (this.player.isDead()) return;
 
                 const nextTarget = this.findNextChainTarget(fromVictim, except);
                 if (!nextTarget) return;
 
                 except.add(nextTarget.getVirtualId());
+                fromVictim.createFlyEffect(nextTarget.getVirtualId(), FlyEnum.CHAIN_LIGHTNING);
                 this.computeSkill(skillProto, nextTarget, { ...context, chain: chainIndex }, true);
                 this.scheduleNextChainHit(skillProto, nextTarget, except, chainIndex + 1, context);
             },
@@ -802,18 +770,12 @@ export class PlayerSkill {
         let picked: SkillTarget | undefined;
         let count = 0;
 
-        for (const entity of from.getNearbyEntities().values()) {
-            if (except.has(entity.getVirtualId())) continue;
-            if (entity.getEntityType() !== from.getEntityType()) continue;
-            if (!(entity.isPlayer() || entity.isMonster() || entity.isStone())) continue;
+        const candidates = from.getArea()?.queryEntitiesAround(from, 1000) ?? new Map();
 
-            const distance = MathUtil.calcDistance(
-                from.getPositionX(),
-                from.getPositionY(),
-                entity.getPositionX(),
-                entity.getPositionY(),
-            );
-            if (distance >= 1000) continue;
+        for (const entity of candidates.values()) {
+            if (entity.getVirtualId() === this.player.getVirtualId()) continue;
+            if (except.has(entity.getVirtualId())) continue;
+            if (!(entity.isPlayer() || entity.isMonster() || entity.isStone())) continue;
 
             count++;
             if (count === 1 || MathUtil.getRandomInt(1, count) === 1) {
@@ -1170,6 +1132,12 @@ export class PlayerSkill {
         target.addPoint(apply.pointOn, amount);
     }
 
+    /**
+     * Mirrors FuncSplashDamage scanning the SECTREE around the impact point (char_skill.cpp:990-1162)
+     * via Area.queryEntitiesAround, rather than `primaryTarget.getNearbyEntities()` - see
+     * findNextChainTarget's comment for why a monster/stone's own nearbyEntities map can't be used as
+     * the candidate pool.
+     */
     private getSplashTargets(skillProto: ActiveSkill, primaryTarget: SkillTarget): Array<SkillTarget> {
         if (!skillProto.flags.has(SkillFlagsEnum.SPLASH) || skillProto.splashRange <= 0) {
             return [primaryTarget];
@@ -1177,18 +1145,15 @@ export class PlayerSkill {
 
         const targets: Array<SkillTarget> = [primaryTarget];
 
-        for (const entity of primaryTarget.getNearbyEntities().values()) {
-            if (targets.length >= skillProto.maxHit) break;
-            if (!(entity.isPlayer() || entity.isMonster() || entity.isStone())) continue;
-            if (entity.getEntityType() !== primaryTarget.getEntityType()) continue;
+        const candidates =
+            primaryTarget.getArea()?.queryEntitiesAround(primaryTarget, skillProto.splashRange) ?? new Map();
 
-            const distance = MathUtil.calcDistance(
-                entity.getPositionX(),
-                entity.getPositionY(),
-                primaryTarget.getPositionX(),
-                primaryTarget.getPositionY(),
-            );
-            if (distance <= skillProto.splashRange) targets.push(entity);
+        for (const entity of candidates.values()) {
+            if (targets.length >= skillProto.maxHit) break;
+            if (entity.getVirtualId() === primaryTarget.getVirtualId()) continue;
+            if (!(entity.isPlayer() || entity.isMonster() || entity.isStone())) continue;
+
+            targets.push(entity);
         }
 
         return targets;

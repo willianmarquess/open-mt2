@@ -9,6 +9,7 @@ import { SkillApplyKindEnum } from '@/core/enum/SkillApplyKindEnum';
 import { SkillDamageTypeEnum } from '@/core/enum/SkillDamageTypeEnum';
 import { AffectBitsTypeEnum } from '@/core/enum/AffectBitsTypeEnum';
 import { ChatMessageTypeEnum } from '@/core/enum/ChatMessageTypeEnum';
+import { FlyEnum } from '@/core/enum/FlyEnum';
 import { SkillManager } from '@/core/domain/manager/SkillManager';
 import MathUtil from '@/core/domain/util/MathUtil';
 import { Skill } from '@/core/domain/entities/game/skill/Skill';
@@ -1134,6 +1135,248 @@ describe('PlayerSkill', () => {
             expect(applySkillDamage.calledOnce, 'damage should land on the nearby stone').to.be.true;
             expect(applySkillDamage.firstCall.args[0]).to.equal(50);
             expect(applySkillDamage.firstCall.args[2]).to.equal(stone);
+        });
+    });
+
+    describe('useSkillAttack - splash/chain candidate pool (issue: only the primary target was ever hit)', () => {
+        function createAttackPlayer(overrides: Record<string, unknown> = {}): Player {
+            return createPlayer({
+                isDead: sinon.stub().returns(false),
+                getPrivateShop: sinon.stub().returns(undefined),
+                isAffectByFlag: sinon.stub().returns(false),
+                getWeaponValues: sinon.stub().returns({
+                    physic: { min: 0, max: 0, bonus: 0 },
+                    magic: { min: 0, max: 0, bonus: 0 },
+                }),
+                getLevel: sinon.stub().returns(1),
+                getAttack: sinon.stub().returns(0),
+                getHorseLevel: sinon.stub().returns(0),
+                getVirtualId: sinon.stub().returns(1),
+                getAttackRating: sinon.stub().returns(0),
+                getDefense: sinon.stub().returns(0),
+                getRotation: sinon.stub().returns(0),
+                getWeapon: sinon.stub().returns(undefined),
+                getPositionX: sinon.stub().returns(0),
+                getPositionY: sinon.stub().returns(0),
+                applySkillDamage: sinon.stub(),
+                addAffect: sinon.stub(),
+                addEventTimer: sinon.stub(),
+                ...overrides,
+            });
+        }
+
+        function createMob(virtualId: number, positionX: number, positionY: number) {
+            return {
+                isMonster: () => true,
+                isPlayer: () => false,
+                isStone: () => false,
+                getEntityType: () => 'MONSTER',
+                getVirtualId: () => virtualId,
+                getPositionX: () => positionX,
+                getPositionY: () => positionY,
+                isDead: () => false,
+                isAffectByFlag: () => false,
+                getRotation: () => 0,
+                addPoint: sinon.stub(),
+                createFlyEffect: sinon.stub(),
+                getArea: () => undefined as any,
+            };
+        }
+
+        /** Wires every given mob's getArea() to a fake Area whose queryEntitiesAround() returns the
+         * full candidate set - real distance/cell filtering is SpatialGrid's job, not this test's. */
+        function linkFakeArea(mobs: Array<{ getArea: () => any }>, allEntities: Array<any>) {
+            const area = { queryEntitiesAround: () => new Map(allEntities.map((e) => [e.getVirtualId(), e])) };
+            for (const mob of mobs) {
+                (mob as any).getArea = () => area;
+            }
+        }
+
+        it("splashes onto a monster near the TARGET even though the target itself never tracks other monsters as nearby (Area only fills a mob's own nearbyEntities with Players)", () => {
+            const mainTarget = createMob(42, 100, 100);
+            const splashVictim = createMob(43, 150, 100);
+            // The bug: mainTarget.getNearbyEntities() would be empty of other mobs by construction -
+            // only the CASTER's own nearby list is ever populated with every entity type in view.
+            (mainTarget as any).getNearbyEntities = () => new Map();
+            linkFakeArea([mainTarget, splashVictim], [mainTarget, splashVictim]);
+            const player = createAttackPlayer({
+                getNearbyEntities: sinon.stub().returns(
+                    new Map([
+                        [42, mainTarget],
+                        [43, splashVictim],
+                    ]),
+                ),
+            });
+
+            const skillProto = createSkillProto({
+                flags: new Set([SkillFlagsEnum.ATTACK, SkillFlagsEnum.SPLASH]),
+                splashRange: 400,
+                maxHit: 15,
+                damageType: SkillDamageTypeEnum.MAGIC,
+                calculateCooldown: sinon.stub().returns(0),
+                calculateManaCost: sinon.stub().returns(0),
+                calculateDurationManaCost: sinon.stub().returns(0),
+                calculateSplashAroundDamageAdjust: sinon.stub().returns(0.8),
+                isChargeSkill: sinon.stub().returns(false),
+                isPeriodicAreaSkill: sinon.stub().returns(false),
+                isChainSkill: sinon.stub().returns(false),
+                resolvesInstantlyOnCast: sinon.stub().returns(true),
+                getAffectFlag: sinon.stub().returns(undefined),
+                applies: new Set([
+                    {
+                        kind: SkillApplyKindEnum.POINT,
+                        pointOn: PointsEnum.HEALTH,
+                        calculateAmount: () => -50,
+                        calculateDuration: () => 0,
+                    },
+                ]),
+            });
+
+            const playerSkill = new PlayerSkill({ player, skillManager: createSkillManager(skillProto), skills: [] });
+            setSkillState(playerSkill, TEST_SKILL, { level: 1 });
+
+            const used = playerSkill.useSkill(TEST_SKILL, mainTarget as any);
+
+            expect(used).to.be.true;
+
+            const applySkillDamage = player.applySkillDamage as SinonStub;
+            expect(
+                applySkillDamage.callCount,
+                'both the primary target and the nearby splash victim should be hit',
+            ).to.equal(2);
+            const hitVictims = applySkillDamage.getCalls().map((call) => call.args[2]);
+            expect(hitVictims).to.include(mainTarget);
+            expect(hitVictims).to.include(splashVictim);
+        });
+
+        it('chains onto a second monster near the previous victim, not just the primary target', () => {
+            // useSkillAttack gates on `performance.now() - lastSkillUseTime <= 1500`; lastSkillUseTime
+            // only gets set by a prior cast (payActivationCost), which this test skips, so pin
+            // performance.now() to keep that check trivially satisfied.
+            sandbox.stub(performance, 'now').returns(100);
+
+            const mainTarget = createMob(42, 100, 100);
+            const chainVictim = createMob(43, 150, 100);
+            (mainTarget as any).getNearbyEntities = () => new Map();
+            (chainVictim as any).getNearbyEntities = () => new Map();
+            linkFakeArea([mainTarget, chainVictim], [mainTarget, chainVictim]);
+
+            const player = createAttackPlayer({
+                getNearbyEntities: sinon.stub().returns(
+                    new Map([
+                        [42, mainTarget],
+                        [43, chainVictim],
+                    ]),
+                ),
+            });
+
+            const skillProto = createSkillProto({
+                flags: new Set([SkillFlagsEnum.ATTACK]),
+                splashRange: 0,
+                maxHit: 7,
+                damageType: SkillDamageTypeEnum.MAGIC,
+                calculateCooldown: sinon.stub().returns(0),
+                calculateManaCost: sinon.stub().returns(0),
+                calculateDurationManaCost: sinon.stub().returns(0),
+                calculateSplashAroundDamageAdjust: sinon.stub().returns(0.8),
+                isChargeSkill: sinon.stub().returns(false),
+                isPeriodicAreaSkill: sinon.stub().returns(false),
+                isChainSkill: sinon.stub().returns(true),
+                resolvesInstantlyOnCast: sinon.stub().returns(false),
+                getAffectFlag: sinon.stub().returns(undefined),
+                applies: new Set([
+                    {
+                        kind: SkillApplyKindEnum.POINT,
+                        pointOn: PointsEnum.HEALTH,
+                        calculateAmount: () => -50,
+                        calculateDuration: () => 0,
+                    },
+                ]),
+            });
+
+            const playerSkill = new PlayerSkill({ player, skillManager: createSkillManager(skillProto), skills: [] });
+            setSkillState(playerSkill, TEST_SKILL, { level: 1 });
+
+            const used = playerSkill.useSkillAttack(TEST_SKILL, mainTarget as any);
+            expect(used).to.be.true;
+
+            const applySkillDamage = player.applySkillDamage as SinonStub;
+            expect(applySkillDamage.calledOnce, 'the primary hit lands immediately').to.be.true;
+            expect(applySkillDamage.firstCall.args[2]).to.equal(mainTarget);
+
+            // Fire the scheduled chain hop timer manually (its eventFunction was captured by addEventTimer).
+            const addEventTimer = player.addEventTimer as SinonStub;
+            expect(addEventTimer.calledOnce, 'the chain hop should be scheduled').to.be.true;
+            addEventTimer.firstCall.args[0].eventFunction();
+
+            expect(applySkillDamage.callCount, 'the chain should hop onto the second nearby monster').to.equal(2);
+            expect(applySkillDamage.secondCall.args[2]).to.equal(chainVictim);
+
+            // char_skill.cpp:946 - the projectile visual flies from the PREVIOUS victim to the next one.
+            const createFlyEffect = mainTarget.createFlyEffect as SinonStub;
+            expect(createFlyEffect.calledOnceWith(chainVictim.getVirtualId(), FlyEnum.CHAIN_LIGHTNING)).to.be.true;
+        });
+
+        it('still hops when the previous victim died from the hit (ChainLightningEvent, char_skill.cpp:908-920, only bails when the caster or victim can no longer be resolved at all - never on victim.IsDead())', () => {
+            sandbox.stub(performance, 'now').returns(100);
+
+            const mainTarget = createMob(42, 100, 100);
+            const chainVictim = createMob(43, 150, 100);
+            (mainTarget as any).getNearbyEntities = () => new Map();
+            (chainVictim as any).getNearbyEntities = () => new Map();
+            linkFakeArea([mainTarget, chainVictim], [mainTarget, chainVictim]);
+
+            const player = createAttackPlayer({
+                getNearbyEntities: sinon.stub().returns(
+                    new Map([
+                        [42, mainTarget],
+                        [43, chainVictim],
+                    ]),
+                ),
+            });
+
+            const skillProto = createSkillProto({
+                flags: new Set([SkillFlagsEnum.ATTACK]),
+                splashRange: 0,
+                maxHit: 7,
+                damageType: SkillDamageTypeEnum.MAGIC,
+                calculateCooldown: sinon.stub().returns(0),
+                calculateManaCost: sinon.stub().returns(0),
+                calculateDurationManaCost: sinon.stub().returns(0),
+                calculateSplashAroundDamageAdjust: sinon.stub().returns(0.8),
+                isChargeSkill: sinon.stub().returns(false),
+                isPeriodicAreaSkill: sinon.stub().returns(false),
+                isChainSkill: sinon.stub().returns(true),
+                resolvesInstantlyOnCast: sinon.stub().returns(false),
+                getAffectFlag: sinon.stub().returns(undefined),
+                applies: new Set([
+                    {
+                        kind: SkillApplyKindEnum.POINT,
+                        pointOn: PointsEnum.HEALTH,
+                        calculateAmount: () => -50,
+                        calculateDuration: () => 0,
+                    },
+                ]),
+            });
+
+            const playerSkill = new PlayerSkill({ player, skillManager: createSkillManager(skillProto), skills: [] });
+            setSkillState(playerSkill, TEST_SKILL, { level: 1 });
+
+            playerSkill.useSkillAttack(TEST_SKILL, mainTarget as any);
+
+            // The 200ms chain hop is scheduled well before the 2s despawn delay, so the previous
+            // victim is still a resolvable (if now-dead) object when the hop fires - matches
+            // ChainLightningEvent still finding pkChrVictim via CHARACTER_MANAGER::Find.
+            (mainTarget as any).isDead = () => true;
+
+            const addEventTimer = player.addEventTimer as SinonStub;
+            addEventTimer.firstCall.args[0].eventFunction();
+
+            const applySkillDamage = player.applySkillDamage as SinonStub;
+            expect(applySkillDamage.callCount, 'the chain must not stop just because the origin victim died').to.equal(
+                2,
+            );
+            expect(applySkillDamage.secondCall.args[2]).to.equal(chainVictim);
         });
     });
 

@@ -185,6 +185,10 @@ export default class Area {
         this.entitiesToDespawn.enqueue(entity);
     }
 
+    queryEntitiesAround(entity: GameEntity, radius: number, filter?: EntityTypeEnum): Map<number, GameEntity> {
+        return this.aoi.queryAround(entity, radius, filter ?? null);
+    }
+
     onMonsterMove(monsterMovedEvent: MonsterMovedEvent) {
         const {
             entity: monster,
