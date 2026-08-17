@@ -210,24 +210,28 @@ export default class Behavior {
         const CLOSE_DISTANCE_TO_TURN_90_DEGREES = 500;
         const distance: number = MathUtil.distanceSQRT(targetX - monsterX, targetY - monsterY);
 
-        let fx: number, fy: number;
+        const MAX_RETRIES = 10;
+        let fx: number = 0,
+            fy: number = 0;
         const rot = MathUtil.getDegreeFromPositionXY(targetX, targetY, monsterX, monsterY);
+        const area = this.monster.getArea();
 
-        if (distance < CLOSE_DISTANCE_TO_TURN_90_DEGREES) {
-            const { dx, dy } = MathUtil.getDeltaByDegree(
-                (rot + MathUtil.getRandomInt(-90, 90) + MathUtil.getRandomInt(-90, 90)) % 360,
-                minDistance,
-            );
-            fx = dx;
-            fy = dy;
-        } else {
-            const { dx, dy } = MathUtil.getDeltaByDegree(MathUtil.getRandomInt(0, 359), minDistance);
-            fx = dx;
-            fy = dy;
+        for (let retry = 0; retry < MAX_RETRIES; retry++) {
+            if (distance < CLOSE_DISTANCE_TO_TURN_90_DEGREES) {
+                const { dx, dy } = MathUtil.getDeltaByDegree(
+                    (rot + MathUtil.getRandomInt(-90, 90) + MathUtil.getRandomInt(-90, 90)) % 360,
+                    minDistance,
+                );
+                fx = dx;
+                fy = dy;
+            } else {
+                const { dx, dy } = MathUtil.getDeltaByDegree(MathUtil.getRandomInt(0, 359), minDistance);
+                fx = dx;
+                fy = dy;
+            }
+
+            if (!area?.isPositionBlocked(targetX + fx, targetY + fy)) break;
         }
-
-        //TODO: we should implement map coordinates attributes to validate if the position is valid (not blocked or object)
-        //TODO: implement retries when implement map coord validation
 
         return {
             dx: targetX + fx,
@@ -346,6 +350,16 @@ export default class Behavior {
                 this.initialPositionY + MathUtil.getRandomInt(-POSITION_OFFSET, POSITION_OFFSET),
             ),
         );
+
+        const area = this.monster.getArea();
+        if (area) {
+            const monsterX = this.monster.getPositionX();
+            const monsterY = this.monster.getPositionY();
+            const halfwayX = monsterX + (x - monsterX) / 2;
+            const halfwayY = monsterY + (y - monsterY) / 2;
+
+            if (area.isPositionBlocked(x, y) || area.isPositionBlocked(halfwayX, halfwayY)) return;
+        }
 
         this.monster.goto(x, y);
     }

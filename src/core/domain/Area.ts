@@ -12,10 +12,15 @@ import EmpireUtil from './util/EmpireUtil';
 import Item from './entities/game/item/Item';
 import { AtlasInfoGoto } from '@/game/infra/config/GameConfig';
 import { EntityManager } from './manager/EntityManager';
+import MapAttributeGrid from '../util/MapAttributeGrid';
+import * as path from 'node:path';
 
 const SIZE_QUEUE = 5_000;
 export const CHAR_VIEW_SIZE = 8000;
 const SPAWN_POSITION_MULTIPLIER = 100;
+const DEFAULT_ATTR_CONFIG_PATH = 'src/core/infra/config/data/attr';
+const SPAWN_FREE_POSITION_RADIUS = 500;
+const SPAWN_FREE_POSITION_RETRIES = 16;
 
 export default class Area {
     private readonly name: string;
@@ -31,6 +36,7 @@ export default class Area {
     private readonly aoi: SpatialGrid;
     private readonly spawnManager: SpawnManager;
     private readonly entityManager: EntityManager;
+    private attributes: MapAttributeGrid;
 
     constructor(
         {
@@ -69,17 +75,45 @@ export default class Area {
 
         this.spawnManager = spawnManager;
         this.entityManager = entityManager;
+        this.attributes = MapAttributeGrid.empty(positionX, positionY);
     }
 
     //TODO: add system do choose which map will be generated on this server
     async load() {
+        this.attributes = MapAttributeGrid.load(
+            path.join(process.cwd(), DEFAULT_ATTR_CONFIG_PATH),
+            this.name.split('/').pop() ?? this.name,
+            this.positionX,
+            this.positionY,
+        );
+
         const entitiesToSpawn = await this.spawnManager.getEntities(this.name);
         entitiesToSpawn.forEach((entity) => {
             entity.setPositionY(this.positionY + entity.getPositionY() * SPAWN_POSITION_MULTIPLIER);
             entity.setPositionX(this.positionX + entity.getPositionX() * SPAWN_POSITION_MULTIPLIER);
+
+            const freePosition = this.attributes.findFreePositionNear(
+                entity.getPositionX(),
+                entity.getPositionY(),
+                SPAWN_FREE_POSITION_RADIUS,
+                SPAWN_FREE_POSITION_RETRIES,
+            );
+            if (freePosition) {
+                entity.setPositionX(freePosition.x);
+                entity.setPositionY(freePosition.y);
+            }
+
             entity.setRotation(MathUtil.calcRotationFromDirection(entity.getDirection()));
             this.spawn(entity);
         });
+    }
+
+    getAttributes() {
+        return this.attributes;
+    }
+
+    isPositionBlocked(x: number, y: number) {
+        return this.attributes.isPositionBlocked(x, y);
     }
 
     getPositionX() {
