@@ -23,7 +23,7 @@ export class AuraOfWordSkill extends ActiveSkill {
     public readonly applies: Set<SkillApplies> = new Set([
         {
             kind: SkillApplyKindEnum.POINT,
-            pointOn: PointsEnum.ATTACK_GRADE,
+            pointOn: PointsEnum.ATT_GRADE_BONUS,
             calculateAmount: (context: SkillCalcContext): number =>
                 (100 + context.str + context.casterLevel * 3) * context.skillLevel,
             calculateDuration: (context: SkillCalcContext): number => 30 + 50 * context.skillLevel,

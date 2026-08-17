@@ -23,7 +23,7 @@ export class DarkProtectionSkill extends ActiveSkill {
     public readonly applies: Set<SkillApplies> = new Set([
         {
             kind: SkillApplyKindEnum.POINT,
-            pointOn: PointsEnum.DEFENSE_GRADE,
+            pointOn: PointsEnum.DEF_GRADE_BONUS,
             calculateAmount: (context: SkillCalcContext): number => (0.5 * context.int + 15) * context.skillLevel,
             calculateDuration: (context: SkillCalcContext): number => 60 + 120 * context.skillLevel,
         },

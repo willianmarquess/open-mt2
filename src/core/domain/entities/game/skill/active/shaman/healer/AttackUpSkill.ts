@@ -22,7 +22,7 @@ export class AttackUpSkill extends ActiveSkill {
     public readonly applies: Set<SkillApplies> = new Set([
         {
             kind: SkillApplyKindEnum.POINT,
-            pointOn: PointsEnum.ATTACK_GRADE,
+            pointOn: PointsEnum.ATT_GRADE_BONUS,
             calculateAmount: (context: SkillCalcContext): number => 5 + (context.int * 0.2 + 15) * context.skillLevel,
             calculateDuration: (context: SkillCalcContext): number => 60 + 100 * context.skillLevel,
         },

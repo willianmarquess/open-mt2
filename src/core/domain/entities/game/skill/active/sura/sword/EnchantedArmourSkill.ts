@@ -23,7 +23,7 @@ export class EnchantedArmourSkill extends ActiveSkill {
     public readonly applies: Set<SkillApplies> = new Set([
         {
             kind: SkillApplyKindEnum.POINT,
-            pointOn: PointsEnum.DEFENSE_GRADE,
+            pointOn: PointsEnum.DEF_GRADE_BONUS,
             calculateAmount: (context: SkillCalcContext): number => (context.int + 30) * context.skillLevel,
             calculateDuration: (context: SkillCalcContext): number => 30 + 120 * context.skillLevel,
         },

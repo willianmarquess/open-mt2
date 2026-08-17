@@ -127,7 +127,7 @@ export class PlayerPoints extends Points {
     private readonly mount: number;
     private readonly partyHasteBonus: number;
     private readonly partyDefenderBonus: number;
-    private readonly statResetCount: number;
+    private statResetCount: number;
     private horseSkill: number;
     private readonly mallAttbonus: number;
     private readonly mallDefbonus: number;
@@ -144,7 +144,7 @@ export class PlayerPoints extends Points {
     private readonly pcBangDropBonus: number;
     private readonly ramadanCandyBonusExp: number;
     private readonly energy: number;
-    private readonly energyEndTime: number;
+    private energyEndTime: number;
     private readonly costumeAttrBonus: number;
     private readonly magicAttBonusPer: number;
     private readonly meleeMagicAttBonusPer: number;
@@ -683,10 +683,19 @@ export class PlayerPoints extends Points {
             afterAddHooks: () => [this.calcAttack],
             get: () => this.attackGrade,
         });
+        // POINT_ATT_GRADE_BONUS (char.h:219, skill.cpp:54): what a skill/item actually targets when
+        // its data names the point-on "ATT_GRADE" - NOT attackGrade itself. attackGrade is fully
+        // recomputed from scratch by calcAttack() on every stat change, so adding straight to it (as
+        // this port used to) gets silently wiped by the very next recompute; attGradeBonus survives
+        // that because calcAttack() folds it back in each time (char.cpp:2056-2058).
+        this.points.set(PointsEnum.ATT_GRADE_BONUS, {
+            get: () => this.attGradeBonus,
+            add: (value) => this.addCommonPoint(value, 'attGradeBonus'),
+            afterAddHooks: () => [this.calcAttack],
+        });
         this.points.set(PointsEnum.ATTACK_BONUS, {
             get: () => this.attackBonus,
             add: (value) => this.addCommonPoint(value, 'attackBonus'),
-            afterAddHooks: () => [this.calcAttack],
         });
         this.points.set(PointsEnum.MAGIC_ATT_GRADE, {
             get: () => this.magicAttGrade,
@@ -701,11 +710,20 @@ export class PlayerPoints extends Points {
         });
         this.points.set(PointsEnum.DEFENSE_GRADE, {
             get: () => this.defenseGrade,
+            add: (value) => this.addCommonPoint(value, 'defenseGrade'),
+            afterAddHooks: () => [this.calcDefense],
+        });
+        // POINT_DEF_GRADE_BONUS - mirrors ATT_GRADE_BONUS above: what a skill/item actually targets
+        // when its data names the point-on "DEF_GRADE", not defenseGrade itself (which calcDefense()
+        // fully recomputes from scratch).
+        this.points.set(PointsEnum.DEF_GRADE_BONUS, {
+            get: () => this.defGradeBonus,
+            add: (value) => this.addCommonPoint(value, 'defGradeBonus'),
+            afterAddHooks: () => [this.calcDefense],
         });
         this.points.set(PointsEnum.DEFENSE_BONUS, {
             get: () => this.defenseBonus,
             add: (value) => this.addCommonPoint(value, 'defenseBonus'),
-            afterAddHooks: () => [this.calcDefense],
         });
         this.points.set(PointsEnum.MAGIC_DEF_GRADE, {
             get: () => this.magicDefGrade,
@@ -874,6 +892,334 @@ export class PlayerPoints extends Points {
         });
         this.points.set(PointsEnum.HORSE_SKILL, {
             get: () => this.player.getHorseLevel(),
+        });
+
+        // Previously-unwired points: the fields/constructor plumbing already existed, but nothing
+        // registered them here, so addPoint()/getPoint() silently no-op'd for every skill/item that
+        // targets one of these (see issue: Aura of Sword not raising attack, same root cause class).
+        this.points.set(PointsEnum.CASTING_SPEED, {
+            get: () => this.castingSpeed,
+            add: (value) => this.addCommonPoint(value, 'castingSpeed'),
+        });
+        this.points.set(PointsEnum.BOW_DISTANCE, {
+            get: () => this.bowDistance,
+            add: (value) => this.addCommonPoint(value, 'bowDistance'),
+        });
+        this.points.set(PointsEnum.ATTBONUS_HUMAN, {
+            get: () => this.attbonusHuman,
+            add: (value) => this.addCommonPoint(value, 'attbonusHuman'),
+        });
+        this.points.set(PointsEnum.ATTBONUS_ANIMAL, {
+            get: () => this.attbonusAnimal,
+            add: (value) => this.addCommonPoint(value, 'attbonusAnimal'),
+        });
+        this.points.set(PointsEnum.ATTBONUS_ORC, {
+            get: () => this.attbonusOrc,
+            add: (value) => this.addCommonPoint(value, 'attbonusOrc'),
+        });
+        this.points.set(PointsEnum.ATTBONUS_MILGYO, {
+            get: () => this.attbonusMilgyo,
+            add: (value) => this.addCommonPoint(value, 'attbonusMilgyo'),
+        });
+        this.points.set(PointsEnum.ATTBONUS_UNDEAD, {
+            get: () => this.attbonusUndead,
+            add: (value) => this.addCommonPoint(value, 'attbonusUndead'),
+        });
+        this.points.set(PointsEnum.ATTBONUS_DEVIL, {
+            get: () => this.attbonusDevil,
+            add: (value) => this.addCommonPoint(value, 'attbonusDevil'),
+        });
+        this.points.set(PointsEnum.ATTBONUS_INSECT, {
+            get: () => this.attbonusInsect,
+            add: (value) => this.addCommonPoint(value, 'attbonusInsect'),
+        });
+        this.points.set(PointsEnum.ATTBONUS_FIRE, {
+            get: () => this.attbonusFire,
+            add: (value) => this.addCommonPoint(value, 'attbonusFire'),
+        });
+        this.points.set(PointsEnum.ATTBONUS_ICE, {
+            get: () => this.attbonusIce,
+            add: (value) => this.addCommonPoint(value, 'attbonusIce'),
+        });
+        this.points.set(PointsEnum.ATTBONUS_DESERT, {
+            get: () => this.attbonusDesert,
+            add: (value) => this.addCommonPoint(value, 'attbonusDesert'),
+        });
+        this.points.set(PointsEnum.ATTBONUS_MONSTER, {
+            get: () => this.attbonusMonster,
+            add: (value) => this.addCommonPoint(value, 'attbonusMonster'),
+        });
+        this.points.set(PointsEnum.ATTBONUS_TREE, {
+            get: () => this.attbonusTree,
+            add: (value) => this.addCommonPoint(value, 'attbonusTree'),
+        });
+        this.points.set(PointsEnum.POISON_REDUCE, {
+            get: () => this.poisonReduce,
+            add: (value) => this.addCommonPoint(value, 'poisonReduce'),
+        });
+        this.points.set(PointsEnum.EXP_DOUBLE_BONUS, {
+            get: () => this.expDoubleBonus,
+            add: (value) => this.addCommonPoint(value, 'expDoubleBonus'),
+        });
+        this.points.set(PointsEnum.POTION_BONUS, {
+            get: () => this.potionBonus,
+            add: (value) => this.addCommonPoint(value, 'potionBonus'),
+        });
+        this.points.set(PointsEnum.IMMUNE_STUN, {
+            get: () => this.immuneStun,
+            add: (value) => this.addCommonPoint(value, 'immuneStun'),
+        });
+        this.points.set(PointsEnum.PARTY_ATTACKER_BONUS, {
+            get: () => this.partyAttackerBonus,
+            add: (value) => this.addCommonPoint(value, 'partyAttackerBonus'),
+        });
+        this.points.set(PointsEnum.RESIST_NORMAL_DAMAGE, {
+            get: () => this.resistNormalDamage,
+            add: (value) => this.addCommonPoint(value, 'resistNormalDamage'),
+        });
+        this.points.set(PointsEnum.MANASHIELD, {
+            get: () => this.manashield,
+            add: (value) => this.addCommonPoint(value, 'manashield'),
+        });
+        this.points.set(PointsEnum.MALL_ATTBONUS, {
+            get: () => this.mallAttbonus,
+            add: (value) => this.addCommonPoint(value, 'mallAttbonus'),
+        });
+        // POINT_MAX_HP_PCT (char.cpp:3159-3160): folded into calcMaxHealth() as a capped percentage
+        // bonus on top of the base, mirroring `std::min(3500, hp * GetPoint(POINT_MAX_HP_PCT) / 100)`.
+        this.points.set(PointsEnum.MAX_HP_PCT, {
+            get: () => this.maxHpPct,
+            add: (value) => this.addCommonPoint(value, 'maxHpPct'),
+            afterAddHooks: () => [this.calcMaxHealth],
+        });
+        this.points.set(PointsEnum.SKILL_DAMAGE_BONUS, {
+            get: () => this.skillDamageBonus,
+            add: (value) => this.addCommonPoint(value, 'skillDamageBonus'),
+        });
+        this.points.set(PointsEnum.NORMAL_HIT_DAMAGE_BONUS, {
+            get: () => this.normalHitDamageBonus,
+            add: (value) => this.addCommonPoint(value, 'normalHitDamageBonus'),
+        });
+        this.points.set(PointsEnum.SKILL_DEFEND_BONUS, {
+            get: () => this.skillDefendBonus,
+            add: (value) => this.addCommonPoint(value, 'skillDefendBonus'),
+        });
+        this.points.set(PointsEnum.NORMAL_HIT_DEFEND_BONUS, {
+            get: () => this.normalHitDefendBonus,
+            add: (value) => this.addCommonPoint(value, 'normalHitDefendBonus'),
+        });
+        this.points.set(PointsEnum.MAGIC_ATT_BONUS_PER, {
+            get: () => this.magicAttBonusPer,
+            add: (value) => this.addCommonPoint(value, 'magicAttBonusPer'),
+        });
+        this.points.set(PointsEnum.MELEE_MAGIC_ATT_BONUS_PER, {
+            get: () => this.meleeMagicAttBonusPer,
+            add: (value) => this.addCommonPoint(value, 'meleeMagicAttBonusPer'),
+        });
+
+        // Remaining previously-unwired points (no consumer reads these yet anywhere in the codebase -
+        // wired here so addPoint()/getPoint() at least round-trip instead of silently no-oping, ready
+        // for whichever feature/skill/item ends up needing them).
+        this.points.set(PointsEnum.MAX_STAMINA, {
+            get: () => this.maxStamina,
+        });
+        this.points.set(PointsEnum.EMPIRE_POINT, {
+            get: () => this.empirePoint,
+            add: (value) => this.addCommonPoint(value, 'empirePoint'),
+        });
+        this.points.set(PointsEnum.LEVEL_STEP, {
+            get: () => this.levelStep,
+            add: (value) => this.addCommonPoint(value, 'levelStep'),
+        });
+        // MIN/MAX_WEAPON_DAMAGE: no POINT_MIN/MAX_WEAPON_DAMAGE exists in the original at all - reads
+        // straight off the equipped weapon, matching what a "weapon damage range" display would want.
+        this.points.set(PointsEnum.MIN_WEAPON_DAMAGE, {
+            get: () => this.player.getWeaponValues().physic.min,
+        });
+        this.points.set(PointsEnum.MAX_WEAPON_DAMAGE, {
+            get: () => this.player.getWeaponValues().physic.max,
+        });
+        this.points.set(PointsEnum.MIN_ATTACK_DAMAGE, {
+            get: () => this.minAttackDamage,
+            add: (value) => this.addCommonPoint(value, 'minAttackDamage'),
+        });
+        this.points.set(PointsEnum.MAX_ATTACK_DAMAGE, {
+            get: () => this.maxAttackDamage,
+            add: (value) => this.addCommonPoint(value, 'maxAttackDamage'),
+        });
+        this.points.set(PointsEnum.CURSE, {
+            get: () => this.curse,
+            add: (value) => this.addCommonPoint(value, 'curse'),
+        });
+        // ATTBONUS_WARRIOR/ASSASSIN/SURA/SHAMAN and RESIST_WARRIOR/ASSASSIN/SURA/SHAMAN
+        // (battle.cpp:280-310) are PvP-only (bonus/resist damage vs a specific job's attacks) - wired
+        // for when PvP damage lands (PlayerBattle.attack's Player branch is still a TODO stub).
+        this.points.set(PointsEnum.ATTBONUS_WARRIOR, {
+            get: () => this.attbonusWarrior,
+            add: (value) => this.addCommonPoint(value, 'attbonusWarrior'),
+        });
+        this.points.set(PointsEnum.ATTBONUS_ASSASSIN, {
+            get: () => this.attbonusAssassin,
+            add: (value) => this.addCommonPoint(value, 'attbonusAssassin'),
+        });
+        this.points.set(PointsEnum.ATTBONUS_SURA, {
+            get: () => this.attbonusSura,
+            add: (value) => this.addCommonPoint(value, 'attbonusSura'),
+        });
+        this.points.set(PointsEnum.ATTBONUS_SHAMAN, {
+            get: () => this.attbonusShaman,
+            add: (value) => this.addCommonPoint(value, 'attbonusShaman'),
+        });
+        this.points.set(PointsEnum.RESIST_WARRIOR, {
+            get: () => this.resistWarrior,
+            add: (value) => this.addCommonPoint(value, 'resistWarrior'),
+        });
+        this.points.set(PointsEnum.RESIST_ASSASSIN, {
+            get: () => this.resistAssassin,
+            add: (value) => this.addCommonPoint(value, 'resistAssassin'),
+        });
+        this.points.set(PointsEnum.RESIST_SURA, {
+            get: () => this.resistSura,
+            add: (value) => this.addCommonPoint(value, 'resistSura'),
+        });
+        this.points.set(PointsEnum.RESIST_SHAMAN, {
+            get: () => this.resistShaman,
+            add: (value) => this.addCommonPoint(value, 'resistShaman'),
+        });
+        this.points.set(PointsEnum.MANA_BURN_PCT, {
+            get: () => this.manaBurnPct,
+            add: (value) => this.addCommonPoint(value, 'manaBurnPct'),
+        });
+        this.points.set(PointsEnum.DAMAGE_SP_RECOVER, {
+            get: () => this.damageSpRecover,
+            add: (value) => this.addCommonPoint(value, 'damageSpRecover'),
+        });
+        this.points.set(PointsEnum.RESIST_FIRE, {
+            get: () => this.resistFire,
+            add: (value) => this.addCommonPoint(value, 'resistFire'),
+        });
+        this.points.set(PointsEnum.RESIST_ELEC, {
+            get: () => this.resistElec,
+            add: (value) => this.addCommonPoint(value, 'resistElec'),
+        });
+        this.points.set(PointsEnum.RESIST_WIND, {
+            get: () => this.resistWind,
+            add: (value) => this.addCommonPoint(value, 'resistWind'),
+        });
+        this.points.set(PointsEnum.REFLECT_CURSE, {
+            get: () => this.reflectCurse,
+            add: (value) => this.addCommonPoint(value, 'reflectCurse'),
+        });
+        this.points.set(PointsEnum.KILL_SP_RECOVER, {
+            get: () => this.killSpRecover,
+            add: (value) => this.addCommonPoint(value, 'killSpRecover'),
+        });
+        this.points.set(PointsEnum.GOLD_DOUBLE_BONUS, {
+            get: () => this.goldDoubleBonus,
+            add: (value) => this.addCommonPoint(value, 'goldDoubleBonus'),
+        });
+        this.points.set(PointsEnum.KILL_HP_RECOVERY, {
+            get: () => this.killHpRecovery,
+            add: (value) => this.addCommonPoint(value, 'killHpRecovery'),
+        });
+        this.points.set(PointsEnum.IMMUNE_SLOW, {
+            get: () => this.immuneSlow,
+            add: (value) => this.addCommonPoint(value, 'immuneSlow'),
+        });
+        this.points.set(PointsEnum.IMMUNE_FALL, {
+            get: () => this.immuneFall,
+            add: (value) => this.addCommonPoint(value, 'immuneFall'),
+        });
+        // PARTY_TANKER_BONUS/PARTY_SKILL_MASTER_BONUS: flat additions folded into max HP/SP on every
+        // recompute (char.cpp:3162,3179), unlike the *_PCT points which are percentages.
+        this.points.set(PointsEnum.PARTY_TANKER_BONUS, {
+            get: () => this.partyTankerBonus,
+            add: (value) => this.addCommonPoint(value, 'partyTankerBonus'),
+            afterAddHooks: () => [this.calcMaxHealth],
+        });
+        this.points.set(PointsEnum.PARTY_BUFFER_BONUS, {
+            get: () => this.partyBufferBonus,
+            add: (value) => this.addCommonPoint(value, 'partyBufferBonus'),
+        });
+        this.points.set(PointsEnum.PARTY_SKILL_MASTER_BONUS, {
+            get: () => this.partySkillMasterBonus,
+            add: (value) => this.addCommonPoint(value, 'partySkillMasterBonus'),
+            afterAddHooks: () => [this.calcMaxMana],
+        });
+        this.points.set(PointsEnum.HP_RECOVER_CONTINUE, {
+            get: () => this.hpRecoverContinue,
+            add: (value) => this.addCommonPoint(value, 'hpRecoverContinue'),
+        });
+        this.points.set(PointsEnum.SP_RECOVER_CONTINUE, {
+            get: () => this.spRecoverContinue,
+            add: (value) => this.addCommonPoint(value, 'spRecoverContinue'),
+        });
+        this.points.set(PointsEnum.PARTY_HASTE_BONUS, {
+            get: () => this.partyHasteBonus,
+            add: (value) => this.addCommonPoint(value, 'partyHasteBonus'),
+        });
+        this.points.set(PointsEnum.PARTY_DEFENDER_BONUS, {
+            get: () => this.partyDefenderBonus,
+            add: (value) => this.addCommonPoint(value, 'partyDefenderBonus'),
+        });
+        this.points.set(PointsEnum.STAT_RESET_COUNT, {
+            get: () => this.statResetCount,
+            add: (value) => this.addCommonPoint(value, 'statResetCount'),
+            set: (value) => (this.statResetCount = value),
+        });
+        this.points.set(PointsEnum.MALL_DEFBONUS, {
+            get: () => this.mallDefbonus,
+            add: (value) => this.addCommonPoint(value, 'mallDefbonus'),
+        });
+        this.points.set(PointsEnum.MALL_EXPBONUS, {
+            get: () => this.mallExpbonus,
+            add: (value) => this.addCommonPoint(value, 'mallExpbonus'),
+        });
+        this.points.set(PointsEnum.MALL_GOLDBONUS, {
+            get: () => this.mallGoldbonus,
+            add: (value) => this.addCommonPoint(value, 'mallGoldbonus'),
+        });
+        // MAX_SP_PCT: same fold-in as MAX_HP_PCT, capped at 800 (char.cpp:3177).
+        this.points.set(PointsEnum.MAX_SP_PCT, {
+            get: () => this.maxSpPct,
+            add: (value) => this.addCommonPoint(value, 'maxSpPct'),
+            afterAddHooks: () => [this.calcMaxMana],
+        });
+        this.points.set(PointsEnum.PC_BANG_EXP_BONUS, {
+            get: () => this.pcBangExpBonus,
+            add: (value) => this.addCommonPoint(value, 'pcBangExpBonus'),
+        });
+        this.points.set(PointsEnum.PC_BANG_DROP_BONUS, {
+            get: () => this.pcBangDropBonus,
+            add: (value) => this.addCommonPoint(value, 'pcBangDropBonus'),
+        });
+        this.points.set(PointsEnum.RAMADAN_CANDY_BONUS_EXP, {
+            get: () => this.ramadanCandyBonusExp,
+            add: (value) => this.addCommonPoint(value, 'ramadanCandyBonusExp'),
+        });
+        this.points.set(PointsEnum.ENERGY, {
+            get: () => this.energy,
+            add: (value) => this.addCommonPoint(value, 'energy'),
+        });
+        this.points.set(PointsEnum.ENERGY_END_TIME, {
+            get: () => this.energyEndTime,
+            add: (value) => this.addCommonPoint(value, 'energyEndTime'),
+            set: (value) => (this.energyEndTime = value),
+        });
+        this.points.set(PointsEnum.COSTUME_ATTR_BONUS, {
+            get: () => this.costumeAttrBonus,
+            add: (value) => this.addCommonPoint(value, 'costumeAttrBonus'),
+        });
+        // RESIST_CRITICAL/RESIST_PENETRATE (char_battle.cpp:1681,1728,1822,1854): subtracted from the
+        // ATTACKER's own crit/penetrate chance when this player is the victim - see
+        // MonsterBattle.calculateCriticalDamage/calculatePenetrateDamage.
+        this.points.set(PointsEnum.RESIST_CRITICAL, {
+            get: () => this.resistCritical,
+            add: (value) => this.addCommonPoint(value, 'resistCritical'),
+        });
+        this.points.set(PointsEnum.RESIST_PENETRATE, {
+            get: () => this.resistPenetrate,
+            add: (value) => this.addCommonPoint(value, 'resistPenetrate'),
         });
     }
 
@@ -1048,10 +1394,15 @@ export class PlayerPoints extends Points {
         const iq = this.getEffectiveStat(PointsEnum.IQ);
         let attack =
             this.level * 2 + this.attackPerStPoint * st + this.attackPerIqPoint * iq + this.attackPerDxPoint * dx;
-        attack += this.attackBonus;
         const { physic } = this.player.getWeaponValues();
         attack += MathUtil.getRandomInt(physic.min, physic.max) * 2;
         attack += physic.bonus * 2;
+        // iAtk += GetPoint(POINT_ATT_GRADE_BONUS) (char.cpp:2056): folds the persistent aura/item
+        // bonus back into the freshly recomputed base every time, so it survives a stat/gear change.
+        // attackBonus (POINT_ATT_BONUS) is NOT folded in here - the original only ever applies it as a
+        // battle-time percentage multiplier (battle.cpp:453,571), never a flat term in ComputePoints;
+        // adding it here too used to double-count it on top of that multiplier.
+        attack += this.attGradeBonus;
         this.attackGrade = Math.floor(attack);
     }
 
@@ -1073,6 +1424,8 @@ export class PlayerPoints extends Points {
             defense += flat;
             defense += multi * 2;
         });
+        // iArmor += GetPoint(POINT_DEF_GRADE_BONUS) (char.cpp:2091): same fold-in as calcAttack.
+        defense += this.defGradeBonus;
         this.defense = this.defenseGrade = Math.floor(defense);
     }
 
@@ -1087,7 +1440,11 @@ export class PlayerPoints extends Points {
 
     private calcMaxHealth() {
         const ht = this.getEffectiveStat(PointsEnum.HT);
-        this.maxHealth = this.baseHealth + ht * this.hpPerHtPoint + this.level * this.hpPerLvl;
+        const baseMaxHealth = this.baseHealth + ht * this.hpPerHtPoint + this.level * this.hpPerLvl;
+        // add_hp = min(3500, hp * GetPoint(POINT_MAX_HP_PCT) / 100) + GetPoint(POINT_PARTY_TANKER_BONUS)
+        // (char.cpp:3159-3162).
+        const maxHpPctBonus = Math.min(3500, (baseMaxHealth * this.maxHpPct) / 100);
+        this.maxHealth = baseMaxHealth + maxHpPctBonus + this.partyTankerBonus;
     }
 
     private resetHealth() {
@@ -1100,7 +1457,11 @@ export class PlayerPoints extends Points {
 
     private calcMaxMana() {
         const iq = this.getEffectiveStat(PointsEnum.IQ);
-        this.maxMana = this.baseMana + iq * this.mpPerIqPoint + this.level * this.mpPerLvl;
+        const baseMaxMana = this.baseMana + iq * this.mpPerIqPoint + this.level * this.mpPerLvl;
+        // add_sp = min(800, sp * GetPoint(POINT_MAX_SP_PCT) / 100) + GetPoint(POINT_PARTY_SKILL_MASTER_BONUS)
+        // (char.cpp:3176-3179).
+        const maxSpPctBonus = Math.min(800, (baseMaxMana * this.maxSpPct) / 100);
+        this.maxMana = baseMaxMana + maxSpPctBonus + this.partySkillMasterBonus;
     }
 
     private getEffectiveStat(point: PointsEnum): number {

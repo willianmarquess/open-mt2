@@ -141,7 +141,9 @@ export default class MonsterBattle {
 
                 damageFlags.set(DamageFlagEnum.NORMAL);
 
-                //TODO: apply buffs ()
+                if (victim.isAffectByFlag(AffectBitsTypeEnum.BLESSING)) {
+                    damage -= damage * (victim.getPoint(PointsEnum.RESIST_NORMAL_DAMAGE) / 100);
+                }
 
                 if (damageType === DamageTypeEnum.NORMAL) {
                     this.applyReflectDamage(damage, victim);
@@ -191,8 +193,7 @@ export default class MonsterBattle {
     }
 
     private calculateManaShield(damage: number, victim: Player) {
-        //TODO: verify if victim is a sura (can have manashield to avoid exploit)
-        if (victim.isAffectByFlag(AffectBitsTypeEnum.MANASHIELD)) {
+        if (victim.isAffectByFlag(AffectBitsTypeEnum.MANASHIELD) && victim.isSura()) {
             const manaShield = victim.getPoint(PointsEnum.MANASHIELD);
             const damageManaPart = damage / 3;
             const damageToMana = (damageManaPart * manaShield) / 100;
@@ -224,7 +225,8 @@ export default class MonsterBattle {
     }
 
     private calculateCriticalDamage(damage: number, damageFlags: BitFlag, victim: Player): number {
-        const criticalChance = this.attacker.getEnchant(MobEnchantEnum.CRITICAL);
+        const criticalChance =
+            this.attacker.getEnchant(MobEnchantEnum.CRITICAL) - victim.getPoint(PointsEnum.RESIST_CRITICAL);
         if (MathUtil.getRandomInt(1, 100) <= criticalChance) {
             damage *= 2;
             damageFlags.set(DamageFlagEnum.CRITICAL);
@@ -235,7 +237,8 @@ export default class MonsterBattle {
     }
 
     private calculatePenetrateDamage(damage: number, damageFlags: BitFlag, victim: Player): number {
-        const penetrateChance = this.attacker.getEnchant(MobEnchantEnum.PENETRATE);
+        const penetrateChance =
+            this.attacker.getEnchant(MobEnchantEnum.PENETRATE) - victim.getPoint(PointsEnum.RESIST_PENETRATE);
         if (MathUtil.getRandomInt(1, 100) <= penetrateChance) {
             damage += victim.getDefense(); //TODO: is this a bug or feature?
             damageFlags.set(DamageFlagEnum.PENETRATE);
@@ -313,8 +316,8 @@ export default class MonsterBattle {
     }
 
     private applySlow(victim: Player) {
-        //TODO: use antislow to calculate this chance to apply or not
         if (victim.isAffectByFlag(AffectBitsTypeEnum.SLOW)) return;
+        if (victim.getPoint(PointsEnum.IMMUNE_SLOW) && MathUtil.getRandomInt(1, 100) <= 80) return;
         const SLOW_VALUE = 30;
         victim.addPoint(PointsEnum.MOVE_SPEED, -SLOW_VALUE);
 

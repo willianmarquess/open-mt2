@@ -23,7 +23,7 @@ export class EnchantedBladeSkill extends ActiveSkill {
     public readonly applies: Set<SkillApplies> = new Set([
         {
             kind: SkillApplyKindEnum.POINT,
-            pointOn: PointsEnum.ATTACK_GRADE,
+            pointOn: PointsEnum.ATT_GRADE_BONUS,
             calculateAmount: (context: SkillCalcContext): number =>
                 (3 * context.int + 2 * context.casterLevel) * context.skillLevel,
             calculateDuration: (context: SkillCalcContext): number => 50 + 100 * context.skillLevel,

@@ -23,7 +23,7 @@ export class StrongBodySkill extends ActiveSkill {
     public readonly applies: Set<SkillApplies> = new Set([
         {
             kind: SkillApplyKindEnum.POINT,
-            pointOn: PointsEnum.DEFENSE_GRADE,
+            pointOn: PointsEnum.DEF_GRADE_BONUS,
             calculateAmount: (context: SkillCalcContext): number =>
                 (200 + context.str * 0.2 + context.con * 0.5) * context.skillLevel,
             calculateDuration: (context: SkillCalcContext): number => 60 + 90 * context.skillLevel,

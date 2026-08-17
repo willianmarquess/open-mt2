@@ -1,9 +1,13 @@
 import { expect } from 'chai';
+import sinon from 'sinon';
 import MonsterBattle from '@/core/domain/entities/game/mob/delegate/battle/MonsterBattle';
 import { AttackTypeEnum } from '@/core/enum/AttackTypeEnum';
 import { BattleTypeEnum } from '@/core/enum/BattleTypeEnum';
 import { DamageFlagEnum } from '@/core/enum/DamageFlagEnum';
 import { PointsEnum } from '@/core/enum/PointsEnum';
+import { AffectBitsTypeEnum } from '@/core/enum/AffectBitsTypeEnum';
+import { MobEnchantEnum } from '@/core/enum/MobEnchantEnum';
+import MathUtil from '@/core/domain/util/MathUtil';
 
 const REFLECT_PERCENTAGE = 50;
 
@@ -139,6 +143,115 @@ describe('MonsterBattle', () => {
 
         it('should not reflect back at the caster, who is never in melee reach', () => {
             expect(attack(BattleTypeEnum.MAGIC)).to.have.lengthOf(0);
+        });
+    });
+
+    describe('resist normal damage (Blessing, char_battle.cpp:1789-1790)', () => {
+        it('reduces damage by RESIST_NORMAL_DAMAGE while under the Blessing affect', () => {
+            const projectiles: Array<unknown> = [];
+            const attacker = createAttacker(BattleTypeEnum.MAGIC, [], projectiles);
+            const blessed = {
+                ...createVictim({ [PointsEnum.RESIST_NORMAL_DAMAGE]: 50 }),
+                isAffectByFlag: (flag: AffectBitsTypeEnum) => flag === AffectBitsTypeEnum.BLESSING,
+            };
+            const unblessed = createVictim({ [PointsEnum.RESIST_NORMAL_DAMAGE]: 50 });
+
+            new MonsterBattle(attacker as any, createLogger() as any).execute(AttackTypeEnum.NORMAL, blessed as any);
+            new MonsterBattle(attacker as any, createLogger() as any).execute(AttackTypeEnum.NORMAL, unblessed as any);
+
+            expect(blessed.taken[0], 'blessed halves it').to.equal(Math.round(unblessed.taken[0] / 2));
+        });
+
+        it('does not reduce damage without the Blessing affect, even with RESIST_NORMAL_DAMAGE set', () => {
+            const projectiles: Array<unknown> = [];
+            const attacker = createAttacker(BattleTypeEnum.MAGIC, [], projectiles);
+            const withPointNoAffect = createVictim({ [PointsEnum.RESIST_NORMAL_DAMAGE]: 50 });
+            const withNeither = createVictim({});
+
+            new MonsterBattle(attacker as any, createLogger() as any).execute(
+                AttackTypeEnum.NORMAL,
+                withPointNoAffect as any,
+            );
+            new MonsterBattle(attacker as any, createLogger() as any).execute(
+                AttackTypeEnum.NORMAL,
+                withNeither as any,
+            );
+
+            expect(withPointNoAffect.taken[0]).to.equal(withNeither.taken[0]);
+        });
+    });
+
+    describe('RESIST_CRITICAL / RESIST_PENETRATE (char_battle.cpp:1822,1854)', () => {
+        afterEach(() => sinon.restore());
+
+        const createEnchantAttacker = (enchant: MobEnchantEnum, chance: number) => ({
+            ...createAttacker(BattleTypeEnum.MAGIC, []),
+            getEnchant: (type: MobEnchantEnum) => (type === enchant ? chance : 0),
+        });
+
+        it('subtracts RESIST_CRITICAL from the attacker crit chance before the roll', () => {
+            sinon.stub(MathUtil, 'getRandomInt').returns(50);
+            const attacker = createEnchantAttacker(MobEnchantEnum.CRITICAL, 100);
+
+            const resisted = createVictim({ [PointsEnum.RESIST_CRITICAL]: 60 }); // 100 - 60 = 40, roll(50) misses
+            const unresisted = createVictim({ [PointsEnum.RESIST_CRITICAL]: 0 }); // 100 - 0 = 100, roll(50) hits
+
+            new MonsterBattle(attacker as any, createLogger() as any).execute(AttackTypeEnum.NORMAL, resisted as any);
+            new MonsterBattle(attacker as any, createLogger() as any).execute(AttackTypeEnum.NORMAL, unresisted as any);
+
+            expect(unresisted.taken[0], 'unresisted still crits').to.equal(resisted.taken[0] * 2);
+        });
+
+        it('subtracts RESIST_PENETRATE from the attacker penetrate chance before the roll', () => {
+            sinon.stub(MathUtil, 'getRandomInt').returns(50);
+            const attacker = createEnchantAttacker(MobEnchantEnum.PENETRATE, 100);
+
+            const resisted = { ...createVictim({ [PointsEnum.RESIST_PENETRATE]: 60 }), getDefense: () => 50 };
+            const unresisted = { ...createVictim({ [PointsEnum.RESIST_PENETRATE]: 0 }), getDefense: () => 50 };
+
+            new MonsterBattle(attacker as any, createLogger() as any).execute(AttackTypeEnum.NORMAL, resisted as any);
+            new MonsterBattle(attacker as any, createLogger() as any).execute(AttackTypeEnum.NORMAL, unresisted as any);
+
+            expect(unresisted.taken[0], 'unresisted still gets the penetrate bonus').to.be.greaterThan(
+                resisted.taken[0],
+            );
+        });
+    });
+
+    describe('IMMUNE_SLOW (mirrors IMMUNE_STUN, char.h:89)', () => {
+        afterEach(() => sinon.restore());
+
+        const createSlowOnlyAttacker = () => ({
+            ...createAttacker(BattleTypeEnum.MAGIC, []),
+            getEnchant: (type: MobEnchantEnum) => (type === MobEnchantEnum.SLOW ? 100 : 0),
+        });
+
+        it('has an 80% chance to suppress the slow when IMMUNE_SLOW is set', () => {
+            const attacker = createSlowOnlyAttacker();
+            const addPoint = sinon.stub();
+
+            // 50 satisfies both rolls: the slow-attempt roll (chance=100, any 1-100 passes) and the
+            // immunity suppression roll (50 <= 80, suppressed).
+            sinon.stub(MathUtil, 'getRandomInt').returns(50);
+
+            const victim = { ...createVictim({ [PointsEnum.IMMUNE_SLOW]: 1 }), addPoint };
+
+            new MonsterBattle(attacker as any, createLogger() as any).execute(AttackTypeEnum.NORMAL, victim as any);
+
+            expect(addPoint.called, 'MOVE_SPEED should never have been touched').to.be.false;
+        });
+
+        it('does not suppress the slow when IMMUNE_SLOW is not set', () => {
+            const attacker = createSlowOnlyAttacker();
+            const addPoint = sinon.stub();
+
+            sinon.stub(MathUtil, 'getRandomInt').returns(1);
+
+            const victim = { ...createVictim({}), addPoint };
+
+            new MonsterBattle(attacker as any, createLogger() as any).execute(AttackTypeEnum.NORMAL, victim as any);
+
+            expect(addPoint.calledWith(PointsEnum.MOVE_SPEED, -30)).to.be.true;
         });
     });
 });
