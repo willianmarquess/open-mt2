@@ -130,6 +130,7 @@ describe('MonsterBattle', () => {
                 const victim = {
                     ...createVictim({ [PointsEnum.MANASHIELD]: 100, [PointsEnum.MANA]: 10_000 }),
                     isAffectByFlag: () => true,
+                    isSura: () => true,
                 };
 
                 new MonsterBattle(attacker as any, createLogger() as any).execute(AttackTypeEnum.NORMAL, victim as any);

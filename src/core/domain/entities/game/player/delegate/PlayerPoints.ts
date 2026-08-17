@@ -22,10 +22,15 @@ export class PlayerPoints extends Points {
     private experience: number;
     private health: number;
     private maxHealth: number;
+    /** APPLY_MAX_HP (char.cpp:3558): a flat "+N HP" item bonus, separate from the HT-derived base -
+     * folded into calcMaxHealth() the same way maxHpPct/partyTankerBonus are. */
+    private maxHealthBonus: number = 0;
     private mana: number;
     private maxMana: number;
+    /** APPLY_MAX_SP - mirrors maxHealthBonus for mana. */
+    private maxManaBonus: number = 0;
     private readonly stamina: number;
-    private readonly maxStamina: number;
+    private maxStamina: number;
     private gold: number;
     private st: number;
     private ht: number;
@@ -94,6 +99,9 @@ export class PlayerPoints extends Points {
     private readonly resistElec: number;
     private readonly resistMagic: number;
     private readonly resistWind: number;
+    private resistIce: number = 0;
+    private resistEarth: number = 0;
+    private resistDark: number = 0;
     private readonly reflectMelee: number;
     private readonly reflectCurse: number;
     private readonly poisonReduce: number;
@@ -809,6 +817,8 @@ export class PlayerPoints extends Points {
         });
         this.points.set(PointsEnum.MAX_HEALTH, {
             get: () => this.maxHealth,
+            add: (value) => this.addCommonPoint(value, 'maxHealthBonus'),
+            afterAddHooks: () => [this.calcMaxHealth],
         });
         this.points.set(PointsEnum.MANA, {
             get: () => this.mana,
@@ -816,6 +826,8 @@ export class PlayerPoints extends Points {
         });
         this.points.set(PointsEnum.MAX_MANA, {
             get: () => this.maxMana,
+            add: (value) => this.addCommonPoint(value, 'maxManaBonus'),
+            afterAddHooks: () => [this.calcMaxMana],
         });
         this.points.set(PointsEnum.PLAY_TIME, {
             get: () => this.playTime,
@@ -823,29 +835,40 @@ export class PlayerPoints extends Points {
         this.points.set(PointsEnum.STAMINA, {
             get: () => this.stamina,
         });
+        // These weapon-type/magic resists used to be get-only: fine for a mob_proto's fixed base
+        // value, but a Player's only ever come from equipped items, so they need to be addable too
+        // (PlayerApplies on equip/unequip).
         this.points.set(PointsEnum.RESIST_SWORD, {
             get: () => this.resistSword,
+            add: (value) => this.addCommonPoint(value, 'resistSword'),
         });
         this.points.set(PointsEnum.RESIST_TWOHAND, {
             get: () => this.resistTwohand,
+            add: (value) => this.addCommonPoint(value, 'resistTwohand'),
         });
         this.points.set(PointsEnum.RESIST_DAGGER, {
             get: () => this.resistDagger,
+            add: (value) => this.addCommonPoint(value, 'resistDagger'),
         });
         this.points.set(PointsEnum.RESIST_BELL, {
             get: () => this.resistBell,
+            add: (value) => this.addCommonPoint(value, 'resistBell'),
         });
         this.points.set(PointsEnum.RESIST_FAN, {
             get: () => this.resistFan,
+            add: (value) => this.addCommonPoint(value, 'resistFan'),
         });
         this.points.set(PointsEnum.RESIST_BOW, {
             get: () => this.resistBow,
+            add: (value) => this.addCommonPoint(value, 'resistBow'),
         });
         this.points.set(PointsEnum.RESIST_MAGIC, {
             get: () => this.resistMagic,
+            add: (value) => this.addCommonPoint(value, 'resistMagic'),
         });
         this.points.set(PointsEnum.REFLECT_MELEE, {
             get: () => this.reflectMelee,
+            add: (value) => this.addCommonPoint(value, 'reflectMelee'),
         });
         this.points.set(PointsEnum.DODGE, {
             get: () => this.dodge,
@@ -1022,6 +1045,7 @@ export class PlayerPoints extends Points {
         // for whichever feature/skill/item ends up needing them).
         this.points.set(PointsEnum.MAX_STAMINA, {
             get: () => this.maxStamina,
+            add: (value) => this.addCommonPoint(value, 'maxStamina'),
         });
         this.points.set(PointsEnum.EMPIRE_POINT, {
             get: () => this.empirePoint,
@@ -1105,6 +1129,18 @@ export class PlayerPoints extends Points {
         this.points.set(PointsEnum.RESIST_WIND, {
             get: () => this.resistWind,
             add: (value) => this.addCommonPoint(value, 'resistWind'),
+        });
+        this.points.set(PointsEnum.RESIST_ICE, {
+            get: () => this.resistIce,
+            add: (value) => this.addCommonPoint(value, 'resistIce'),
+        });
+        this.points.set(PointsEnum.RESIST_EARTH, {
+            get: () => this.resistEarth,
+            add: (value) => this.addCommonPoint(value, 'resistEarth'),
+        });
+        this.points.set(PointsEnum.RESIST_DARK, {
+            get: () => this.resistDark,
+            add: (value) => this.addCommonPoint(value, 'resistDark'),
         });
         this.points.set(PointsEnum.REFLECT_CURSE, {
             get: () => this.reflectCurse,
@@ -1444,7 +1480,7 @@ export class PlayerPoints extends Points {
         // add_hp = min(3500, hp * GetPoint(POINT_MAX_HP_PCT) / 100) + GetPoint(POINT_PARTY_TANKER_BONUS)
         // (char.cpp:3159-3162).
         const maxHpPctBonus = Math.min(3500, (baseMaxHealth * this.maxHpPct) / 100);
-        this.maxHealth = baseMaxHealth + maxHpPctBonus + this.partyTankerBonus;
+        this.maxHealth = baseMaxHealth + maxHpPctBonus + this.partyTankerBonus + this.maxHealthBonus;
     }
 
     private resetHealth() {
@@ -1461,7 +1497,7 @@ export class PlayerPoints extends Points {
         // add_sp = min(800, sp * GetPoint(POINT_MAX_SP_PCT) / 100) + GetPoint(POINT_PARTY_SKILL_MASTER_BONUS)
         // (char.cpp:3176-3179).
         const maxSpPctBonus = Math.min(800, (baseMaxMana * this.maxSpPct) / 100);
-        this.maxMana = baseMaxMana + maxSpPctBonus + this.partySkillMasterBonus;
+        this.maxMana = baseMaxMana + maxSpPctBonus + this.partySkillMasterBonus + this.maxManaBonus;
     }
 
     private getEffectiveStat(point: PointsEnum): number {
