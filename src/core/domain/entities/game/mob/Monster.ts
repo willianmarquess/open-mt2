@@ -79,6 +79,7 @@ export default class Monster extends Mob {
     }
 
     stun() {
+        this.setAffectFlag(AffectBitsTypeEnum.STUN);
         super.stun();
         this.sendUpdateEvent();
     }

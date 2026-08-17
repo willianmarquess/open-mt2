@@ -35,13 +35,11 @@ const MAX_DISTANCE = 300;
 const MOB_ATTACK_RANGE_TOLERANCE = 1.15;
 
 /**
- * A metin stone takes normal-attack damage through the exact same CHARACTER::Damage/battle_hit
- * pipeline as a monster in the original (char_battle.cpp:1556, battle.cpp:620) - crit, penetrate,
- * resistances, weapon-type resist and HP steal (POINT_STEAL_HP, char_battle.cpp:1866-1882) all apply
- * unconditionally there, keyed off the ATTACKER's own points, with no IsStone() branch anywhere in
- * that function. The one deliberate difference here is status effects (poison/stun/slow/fire), which
- * this port skips for stones - they don't have the client-visible affect feedback these rely on
- * (Monster.sendUpdateEvent()).
+ * A metin stone takes normal-attack AND skill damage through the exact same CHARACTER::Damage/
+ * battle_hit pipeline as a monster in the original (char_battle.cpp:1556, battle.cpp:620) - crit,
+ * penetrate, resistances, weapon-type resist, HP steal (POINT_STEAL_HP, char_battle.cpp:1866-1882)
+ * and status effects (poison/stun/slow/fire) all apply unconditionally there, with no IsStone()
+ * branch anywhere in that function or in char_skill.cpp's skill pipeline.
  */
 export type AttackableMob = Monster | Stone;
 
@@ -459,9 +457,6 @@ export default class PlayerBattleAgainstMobStrategy extends PlayerBattleStrategy
      * used by on-hit equipment procs.
      */
     applyFire(victim: AttackableMob, damagePerTick?: number, durationMs: number = 10_000) {
-        // Status effects need the client-visible affect feedback only Monster has
-        // (sendUpdateEvent()) - a stone doesn't burn/poison/stun/slow in this port.
-        if (!(victim instanceof Monster)) return;
         if (victim.isAffectByFlag(AffectBitsTypeEnum.FIRE)) return;
 
         victim.setAffectFlag(AffectBitsTypeEnum.FIRE);
@@ -485,7 +480,6 @@ export default class PlayerBattleAgainstMobStrategy extends PlayerBattleStrategy
     }
 
     applyPoison(victim: AttackableMob) {
-        if (!(victim instanceof Monster)) return;
         if (victim.isImmuneByFlag(MobImmuneFlagEnum.POISON)) return;
         if (victim.isAffectByFlag(AffectBitsTypeEnum.POISON)) return;
 
@@ -515,7 +509,6 @@ export default class PlayerBattleAgainstMobStrategy extends PlayerBattleStrategy
      * unlike the fixed one used by on-hit equipment procs.
      */
     applyStun(victim: AttackableMob, durationMs: number = 5_000) {
-        if (!(victim instanceof Monster)) return;
         if (victim.isImmuneByFlag(MobImmuneFlagEnum.STUN)) return;
         if (victim.isAffectByFlag(AffectBitsTypeEnum.STUN)) return;
 
@@ -540,7 +533,6 @@ export default class PlayerBattleAgainstMobStrategy extends PlayerBattleStrategy
      * unlike the fixed one used by on-hit equipment procs.
      */
     applySlow(victim: AttackableMob, durationMs: number = 10_000) {
-        if (!(victim instanceof Monster)) return;
         if (victim.isImmuneByFlag(MobImmuneFlagEnum.SLOW)) return;
         if (victim.isAffectByFlag(AffectBitsTypeEnum.SLOW)) return;
         const SLOW_VALUE = 30;

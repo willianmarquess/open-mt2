@@ -17,7 +17,10 @@ import { SkillDamageTypeEnum } from '@/core/enum/SkillDamageTypeEnum';
 import { SkillStatusEffectEnum } from '@/core/enum/SkillStatusEffectEnum';
 import { ItemSubTypeEnum } from '@/core/enum/ItemSubTypeEnum';
 import Monster from '../../mob/Monster';
+import Stone from '../../mob/Stone';
 import { FlyEnum } from '@/core/enum/FlyEnum';
+
+type SkillTarget = Player | Monster | Stone;
 
 class SkillUseInfo {
     skillProto: Skill;
@@ -36,9 +39,6 @@ class SkillUseInfo {
 
     useSkill(coolTime: number): boolean {
         const currentTime = performance.now() / 1000;
-        // Mirrors the original's `bUsed && dwNextSkillUsableTime > dwCur`: bUsed alone never blocks
-        // reuse, it only gates whether the cooldown check applies (bUsed starts false, so the very
-        // first use always goes through regardless of nextUsableTime).
         if (this.wasUsed && currentTime < this.nextUsableTime) return false;
         this.wasUsed = true;
 
@@ -527,7 +527,7 @@ export class PlayerSkill {
         return skillProto.canBeUsedBy(this.player);
     }
 
-    useSkill(skillNum: SkillEnum, target?: Player | Monster): boolean {
+    useSkill(skillNum: SkillEnum, target?: SkillTarget): boolean {
         const skillProto = this.skillManager.getSkill(skillNum);
         if (!skillProto || !skillProto.isActive()) return false;
         if (!this.canUseSkill(skillProto)) return false;
@@ -566,11 +566,7 @@ export class PlayerSkill {
         this.player.removeAffect(AffectBitsTypeEnum.STEALTH);
     }
 
-    private useRegularActiveSkill(
-        skillProto: ActiveSkill,
-        skillUseInfo: SkillUseInfo,
-        target?: Player | Monster,
-    ): boolean {
+    private useRegularActiveSkill(skillProto: ActiveSkill, skillUseInfo: SkillUseInfo, target?: SkillTarget): boolean {
         if (this.tryToggleOff(skillProto)) return true;
 
         const isSelfOnly = skillProto.flags.has(SkillFlagsEnum.SELFONLY);
@@ -639,16 +635,16 @@ export class PlayerSkill {
      * attacker from their own splash). None of these hits count as the "main" target (the original
      * only marks one via SetMainTargetVID from the Attack/Shoot packets, never from a plain
      * self-cast), so every hit goes through the splash-around damage adjust.
-     * PvP is out of scope here (like getSplashTargets), so only monsters are considered.
+     * PvP is out of scope here (like getSplashTargets), so only monsters and stones are considered.
      */
-    private getSplashTargetsAroundSelf(skillProto: ActiveSkill): Array<Monster> {
+    private getSplashTargetsAroundSelf(skillProto: ActiveSkill): Array<Monster | Stone> {
         if (skillProto.splashRange <= 0) return [];
 
-        const targets: Array<Monster> = [];
+        const targets: Array<Monster | Stone> = [];
 
         for (const entity of this.player.getNearbyEntities().values()) {
             if (targets.length >= skillProto.maxHit) break;
-            if (!entity.isMonster()) continue;
+            if (!entity.isMonster() && !entity.isStone()) continue;
 
             const distance = MathUtil.calcDistance(
                 this.player.getPositionX(),
@@ -691,7 +687,7 @@ export class PlayerSkill {
 
     /**
      * Mirrors skill_muyoung_event (char_skill.cpp:2594-2630): every tick, pick one random
-     * attackable monster nearby, show the fireball flying to it (the client renders the actual
+     * attackable mob nearby, show the fireball flying to it (the client renders the actual
      * orbiting-fireball visual off the AFF_MUYEONG affect bit itself, not off this fly effect - this
      * is only the "shot fired" projectile), and burst it with the skill's own damage formula.
      */
@@ -704,7 +700,7 @@ export class PlayerSkill {
         const skillProto = this.skillManager.getSkill(SkillEnum.FLAME_SPIRIT);
         if (!skillProto || !skillProto.isActive()) return;
 
-        const victim = this.findRandomNearbyMonster();
+        const victim = this.findRandomNearbyAttackableMob();
         if (!victim) return;
 
         this.player.createFlyEffect(victim.getVirtualId(), FlyEnum.FLAME_SPIRIT);
@@ -714,16 +710,17 @@ export class PlayerSkill {
     }
 
     /**
-     * Mirrors FFindNearVictim (char_skill.cpp:835-892): picks a uniformly random attackable monster
+     * Mirrors FFindNearVictim (char_skill.cpp:835-892): picks a uniformly random attackable mob
      * within range via reservoir sampling, so every equally-near candidate has the same odds instead
-     * of always picking the first one found.
+     * of always picking the first one found. FFindNearVictim itself has no IsMonster()/IsStone() gate
+     * (just battle_is_attackable + distance), so a nearby stone is as valid a pick as a monster.
      */
-    private findRandomNearbyMonster(): Monster | undefined {
-        let picked: Monster | undefined;
+    private findRandomNearbyAttackableMob(): Monster | Stone | undefined {
+        let picked: Monster | Stone | undefined;
         let count = 0;
 
         for (const entity of this.player.getNearbyEntities().values()) {
-            if (!entity.isMonster()) continue;
+            if (!entity.isMonster() && !entity.isStone()) continue;
 
             const distance = MathUtil.calcDistance(
                 this.player.getPositionX(),
@@ -740,7 +737,7 @@ export class PlayerSkill {
         return picked;
     }
 
-    useSkillAttack(skillNum: SkillEnum, target: Player | Monster): boolean {
+    useSkillAttack(skillNum: SkillEnum, target: SkillTarget): boolean {
         const skillProto = this.skillManager.getSkill(skillNum);
         if (!skillProto || !skillProto.isActive()) return false;
         if (!skillProto.flags.has(SkillFlagsEnum.ATTACK)) return false;
@@ -766,7 +763,7 @@ export class PlayerSkill {
      * by useSkillAttack() (the normal Attack/Shoot hit phase) and useRegularActiveSkill()'s
      * resolvesInstantlyOnCast() branch (SKILL_BYEURAK, the one ATTACK skill that resolves at cast
      * time instead). */
-    private resolveAttackDamage(skillProto: ActiveSkill, target: Player | Monster, context: SkillCalcContext): void {
+    private resolveAttackDamage(skillProto: ActiveSkill, target: SkillTarget, context: SkillCalcContext): void {
         for (const splashTarget of this.getSplashTargets(skillProto, target)) {
             this.computeSkill(skillProto, splashTarget, context, splashTarget === target);
         }
@@ -778,7 +775,7 @@ export class PlayerSkill {
 
     private scheduleNextChainHit(
         skillProto: ActiveSkill,
-        fromVictim: Player | Monster,
+        fromVictim: SkillTarget,
         except: Set<number>,
         chainIndex: number,
         context: SkillCalcContext,
@@ -801,14 +798,14 @@ export class PlayerSkill {
         });
     }
 
-    private findNextChainTarget(from: Player | Monster, except: Set<number>): Player | Monster | undefined {
-        let picked: Player | Monster | undefined;
+    private findNextChainTarget(from: SkillTarget, except: Set<number>): SkillTarget | undefined {
+        let picked: SkillTarget | undefined;
         let count = 0;
 
         for (const entity of from.getNearbyEntities().values()) {
             if (except.has(entity.getVirtualId())) continue;
             if (entity.getEntityType() !== from.getEntityType()) continue;
-            if (!(entity.isPlayer() || entity.isMonster())) continue;
+            if (!(entity.isPlayer() || entity.isMonster() || entity.isStone())) continue;
 
             const distance = MathUtil.calcDistance(
                 from.getPositionX(),
@@ -839,7 +836,7 @@ export class PlayerSkill {
         return true;
     }
 
-    private useChargeSkill(skillProto: ActiveSkill, skillUseInfo: SkillUseInfo, target?: Player | Monster): boolean {
+    private useChargeSkill(skillProto: ActiveSkill, skillUseInfo: SkillUseInfo, target?: SkillTarget): boolean {
         const isDashing = this.player.isAffectByFlag(AffectBitsTypeEnum.TANHWAN_DASH);
         const isStriking = isDashing || (!!target && target !== this.player);
 
@@ -918,7 +915,7 @@ export class PlayerSkill {
 
     private computeSkill(
         skillProto: ActiveSkill,
-        target: Player | Monster,
+        target: SkillTarget,
         context: SkillCalcContext,
         isMainTarget: boolean = true,
     ): void {
@@ -957,7 +954,7 @@ export class PlayerSkill {
     private applyEffect(
         skillProto: ActiveSkill,
         apply: SkillApplies,
-        target: Player | Monster,
+        target: SkillTarget,
         context: SkillCalcContext,
     ): void {
         switch (apply.kind) {
@@ -975,7 +972,7 @@ export class PlayerSkill {
 
     private applyStatusApply(
         apply: SkillApplies & { kind: SkillApplyKindEnum.STATUS },
-        target: Player | Monster,
+        target: SkillTarget,
         context: SkillCalcContext,
     ): void {
         const chance = apply.calculateChance(context);
@@ -1000,10 +997,14 @@ export class PlayerSkill {
         }
     }
 
-    private applyCrush(skillProto: ActiveSkill, target: Player | Monster, isMainTarget: boolean): void {
+    private applyCrush(skillProto: ActiveSkill, target: SkillTarget, isMainTarget: boolean): void {
         const isCrush = skillProto.flags.has(SkillFlagsEnum.CRUSH) || skillProto.flags.has(SkillFlagsEnum.CRUSH_LONG);
         if (!isCrush) return;
         if (target.isMonster() && target.isImmovable()) return;
+        // A metin stone is a fixed map object, not a mobile character - CRUSH's knockback never
+        // applies to it (nothing to mirror in the original: a stone is never a mob a knockback skill
+        // meaningfully displaces).
+        if (target.isStone()) return;
 
         const slidingLength = skillProto.flags.has(SkillFlagsEnum.CRUSH_LONG) ? 400 : 200;
 
@@ -1031,7 +1032,7 @@ export class PlayerSkill {
     private applySpecialApply(
         skillProto: ActiveSkill,
         apply: SkillApplies & { kind: SkillApplyKindEnum.SPECIAL },
-        target: Player | Monster,
+        target: SkillTarget,
         context: SkillCalcContext,
     ): void {
         const chance = apply.calculateChance?.(context) ?? apply.calculateAmount?.(context) ?? 0;
@@ -1068,7 +1069,7 @@ export class PlayerSkill {
         skillProto: ActiveSkill,
         apply: SkillApplies & { kind: SkillApplyKindEnum.POINT },
         secondaries: Array<SkillApplies>,
-        target: Player | Monster,
+        target: SkillTarget,
         context: SkillCalcContext,
         isMainTarget: boolean,
     ): void {
@@ -1150,7 +1151,7 @@ export class PlayerSkill {
     private applyBuffPoint(
         skillProto: ActiveSkill,
         apply: SkillApplies,
-        target: Player | Monster,
+        target: SkillTarget,
         context: SkillCalcContext,
     ): void {
         if (apply.kind !== SkillApplyKindEnum.POINT) return;
@@ -1169,16 +1170,16 @@ export class PlayerSkill {
         target.addPoint(apply.pointOn, amount);
     }
 
-    private getSplashTargets(skillProto: ActiveSkill, primaryTarget: Player | Monster): Array<Player | Monster> {
+    private getSplashTargets(skillProto: ActiveSkill, primaryTarget: SkillTarget): Array<SkillTarget> {
         if (!skillProto.flags.has(SkillFlagsEnum.SPLASH) || skillProto.splashRange <= 0) {
             return [primaryTarget];
         }
 
-        const targets: Array<Player | Monster> = [primaryTarget];
+        const targets: Array<SkillTarget> = [primaryTarget];
 
         for (const entity of primaryTarget.getNearbyEntities().values()) {
             if (targets.length >= skillProto.maxHit) break;
-            if (!(entity.isPlayer() || entity.isMonster())) continue;
+            if (!(entity.isPlayer() || entity.isMonster() || entity.isStone())) continue;
             if (entity.getEntityType() !== primaryTarget.getEntityType()) continue;
 
             const distance = MathUtil.calcDistance(

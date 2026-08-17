@@ -1,4 +1,5 @@
 import Monster from '@/core/domain/entities/game/mob/Monster';
+import Stone from '@/core/domain/entities/game/mob/Stone';
 import Player from '@/core/domain/entities/game/player/Player';
 import { EntityManager } from '@/core/domain/manager/EntityManager';
 import Logger from '@/core/infra/logger/Logger';
@@ -22,7 +23,8 @@ export default class CharacterFlyTargetingService {
         // A client can send any VID it has in view (including dropped items, which are GameEntity but
         // not Player/Monster) - fall back to the raw position, matching the original's behavior when
         // CHARACTER_MANAGER::Find(dwTargetVID) comes back NULL.
-        const target = entity instanceof Player || entity instanceof Monster ? entity : undefined;
+        const target =
+            entity instanceof Player || entity instanceof Monster || entity instanceof Stone ? entity : undefined;
 
         if (targetVirtualId !== 0 && !target) {
             this.logger.info(

@@ -1080,6 +1080,61 @@ describe('PlayerSkill', () => {
                 .some((call) => call.args[0] === PointsEnum.HEALTH && call.args[1] < 0);
             expect(selfHealthChange, 'the caster must never take their own splash damage').to.be.false;
         });
+
+        function createStone(virtualId: number, positionX: number, positionY: number) {
+            return {
+                isMonster: () => false,
+                isStone: () => true,
+                isPlayer: () => false,
+                getEntityType: () => 'METIN_STONE',
+                getVirtualId: () => virtualId,
+                getPositionX: () => positionX,
+                getPositionY: () => positionY,
+                isDead: () => false,
+                isAffectByFlag: () => false,
+                getRotation: () => 0,
+                addPoint: sinon.stub(),
+            };
+        }
+
+        it('deals splash damage to a nearby metin stone too, not just monsters (char_skill.cpp has no IsStone() gate)', () => {
+            const stone = createStone(43, 100, 100);
+            const player = createBattlePlayer({ getNearbyEntities: sinon.stub().returns(new Map([[43, stone]])) });
+
+            const skillProto = createSkillProto({
+                flags: new Set([SkillFlagsEnum.ATTACK, SkillFlagsEnum.SELFONLY, SkillFlagsEnum.SPLASH]),
+                splashRange: 1000,
+                maxHit: 5,
+                damageType: SkillDamageTypeEnum.MAGIC,
+                calculateCooldown: sinon.stub().returns(0),
+                calculateManaCost: sinon.stub().returns(0),
+                calculateDurationManaCost: sinon.stub().returns(0),
+                calculateSplashAroundDamageAdjust: sinon.stub().returns(1),
+                isChargeSkill: sinon.stub().returns(false),
+                isPeriodicAreaSkill: sinon.stub().returns(false),
+                getAffectFlag: sinon.stub().returns(undefined),
+                applies: new Set([
+                    {
+                        kind: SkillApplyKindEnum.POINT,
+                        pointOn: PointsEnum.HEALTH,
+                        calculateAmount: () => -50,
+                        calculateDuration: () => 0,
+                    },
+                ]),
+            });
+
+            const playerSkill = new PlayerSkill({ player, skillManager: createSkillManager(skillProto), skills: [] });
+            setSkillState(playerSkill, TEST_SKILL, { level: 1 });
+
+            const used = playerSkill.useSkill(TEST_SKILL);
+
+            expect(used).to.be.true;
+
+            const applySkillDamage = player.applySkillDamage as SinonStub;
+            expect(applySkillDamage.calledOnce, 'damage should land on the nearby stone').to.be.true;
+            expect(applySkillDamage.firstCall.args[0]).to.equal(50);
+            expect(applySkillDamage.firstCall.args[2]).to.equal(stone);
+        });
     });
 
     describe('useSkill - periodic area skill (SKILL_MUYEONG/FlameSpirit)', () => {

@@ -631,12 +631,12 @@ export default class Player extends Character {
         this.updateView();
     }
 
-    useSkill(skillId: SkillEnum, target: Player | Monster) {
+    useSkill(skillId: SkillEnum, target: Player | Monster | Stone) {
         return this.skills.useSkill(skillId, target);
     }
 
     /** The "hit" half of a plain ATTACK skill, triggered by the Attack packet's skill vnum (see PlayerSkill.useSkillAttack). */
-    useSkillAttack(skillId: SkillEnum, target: Player | Monster) {
+    useSkillAttack(skillId: SkillEnum, target: Player | Monster | Stone) {
         return this.skills.useSkillAttack(skillId, target);
     }
 
@@ -683,7 +683,7 @@ export default class Player extends Character {
     applySkillDamage(
         damage: number,
         damageType: DamageTypeEnum,
-        victim: Monster | Player,
+        victim: Monster | Stone | Player,
         ignoreDefense: boolean = false,
     ) {
         this.battle.applySkillDamage(damage, damageType, victim, ignoreDefense);
@@ -692,7 +692,7 @@ export default class Player extends Character {
     /** Used by the skill engine (PlayerSkill.computeSkill) to trigger skill-declared STUN/SLOW/POISON/FIRE effects. */
     applySkillStatusEffect(
         effect: SkillStatusEffectEnum,
-        victim: Monster | Player,
+        victim: Monster | Stone | Player,
         durationSeconds?: number,
         amount?: number,
     ) {
@@ -700,12 +700,12 @@ export default class Player extends Character {
     }
 
     /** Used by the skill engine to evaluate a USE_MELEE_DAMAGE skill's formula against a specific target. */
-    calculateMeleeAttack(victim: Monster | Player, ignoreTargetRating: boolean): number {
+    calculateMeleeAttack(victim: Monster | Stone | Player, ignoreTargetRating: boolean): number {
         return this.battle.calculateMeleeAttack(victim, ignoreTargetRating);
     }
 
     /** Used by the skill engine to evaluate a USE_ARROW_DAMAGE skill's formula against a specific target. */
-    calculateArrowAttack(victim: Monster | Player): number {
+    calculateArrowAttack(victim: Monster | Stone | Player): number {
         return this.battle.calculateArrowAttack(victim);
     }
 
@@ -2135,14 +2135,7 @@ export default class Player extends Character {
         );
     }
 
-    /**
-     * Mirrors CHARACTER::FlyTarget (char_battle.cpp:3008): stages a resolved victim to be hit by the
-     * next Shoot packet - HEADER_CG_FLY_TARGETING (isAdd=false) replaces the single pending target,
-     * HEADER_CG_ADD_FLY_TARGETING (isAdd=true) appends another one for a multi-shot skill. When the
-     * client-picked VID doesn't resolve to an attackable entity, nothing is queued - only the
-     * projectile visual (with the raw fallback position) is still broadcast, exactly like the original.
-     */
-    flyTargeting(target: Player | Monster | undefined, positionX: number, positionY: number, isAdd: boolean) {
+    flyTargeting(target: Player | Monster | Stone | undefined, positionX: number, positionY: number, isAdd: boolean) {
         if (target) {
             if (isAdd) {
                 this.flyTargets.push(target.getVirtualId());

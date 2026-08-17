@@ -1,4 +1,5 @@
 import Monster from '@/core/domain/entities/game/mob/Monster';
+import Stone from '@/core/domain/entities/game/mob/Stone';
 import Player from '@/core/domain/entities/game/player/Player';
 import { EntityManager } from '@/core/domain/manager/EntityManager';
 import { AttackTypeEnum } from '@/core/enum/AttackTypeEnum';
@@ -25,7 +26,7 @@ export default class CharacterShootService {
         for (const targetVirtualId of targetVirtualIds) {
             const target = this.entityManager.getEntity(targetVirtualId);
 
-            if (!(target instanceof Player) && !(target instanceof Monster)) {
+            if (!(target instanceof Player) && !(target instanceof Monster) && !(target instanceof Stone)) {
                 this.logger.info(`[CharacterShootService] Invalid shoot target with virtualId ${targetVirtualId}`);
                 continue;
             }

@@ -173,23 +173,23 @@ describe('PlayerBattleAgainstMobStrategy against a metin stone', () => {
         expect(penetrateDamage).to.be.greaterThan(plainDamage);
     });
 
-    it('does not poison a stone even with a guaranteed poison chance', () => {
+    it('does poison a stone on a guaranteed poison chance (char_skill.cpp has no IsStone() gate on status effects either)', () => {
         const stone = makeStone();
         const player = makePlayer({ [PointsEnum.POISON_CHANCE]: 100 });
         const strategy = new PlayerBattleAgainstMobStrategy(player, { info: sinon.stub() } as any);
 
         strategy.execute(AttackTypeEnum.NORMAL, stone);
 
-        expect(stone.isAffectByFlag(AffectBitsTypeEnum.POISON)).to.be.false;
+        expect(stone.isAffectByFlag(AffectBitsTypeEnum.POISON)).to.be.true;
     });
 
-    it('does not stun a stone even with a guaranteed stun chance', () => {
+    it('does stun a stone on a guaranteed stun chance', () => {
         const stone = makeStone();
         const player = makePlayer({ [PointsEnum.STUN_CHANCE]: 100 });
         const strategy = new PlayerBattleAgainstMobStrategy(player, { info: sinon.stub() } as any);
 
         expect(() => strategy.execute(AttackTypeEnum.NORMAL, stone)).to.not.throw();
-        expect(stone.isAffectByFlag(AffectBitsTypeEnum.STUN)).to.be.false;
+        expect(stone.isAffectByFlag(AffectBitsTypeEnum.STUN)).to.be.true;
     });
 
     it('does drain the stone into the attacker on a guaranteed steal-health roll (char_battle.cpp:1866-1882 has no IsStone()/IsPC() check)', () => {

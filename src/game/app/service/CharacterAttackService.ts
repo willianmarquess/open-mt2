@@ -27,23 +27,12 @@ export default class CharacterAttackService {
             return;
         }
 
-        // if (victim instanceof Stone) {
-        //     if (skillVnum === 0) {
-        //         player.attack(AttackTypeEnum.NORMAL, victim);
-        //     } else {
-        //         this.logger.info(
-        //             `[CharacterAttackService] Rejected skill attack (vnum ${skillVnum}) from ${player.getName()} against a stone - not implemented yet`,
-        //         );
-        //     }
-        //     return;
-        // }
-
         if (skillVnum === 0) {
             player.attack(AttackTypeEnum.NORMAL, victim);
             return;
         }
 
-        if (!player.useSkillAttack(skillVnum, victim as Monster)) {
+        if (!player.useSkillAttack(skillVnum, victim)) {
             this.logger.info(
                 `[CharacterAttackService] Rejected skill attack (vnum ${skillVnum}) from ${player.getName()} against ${victimVirtualId}`,
             );

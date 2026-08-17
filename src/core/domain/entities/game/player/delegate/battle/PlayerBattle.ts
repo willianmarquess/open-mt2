@@ -36,7 +36,7 @@ export class PlayerBattle {
     applySkillDamage(
         damage: number,
         damageType: DamageTypeEnum,
-        victim: Monster | Player,
+        victim: Monster | Stone | Player,
         ignoreDefense: boolean = false,
     ) {
         if (victim instanceof Monster || victim instanceof Stone) {
@@ -48,8 +48,8 @@ export class PlayerBattle {
     }
 
     /** The "atk" a USE_MELEE_DAMAGE skill's formula should use against this victim (see PlayerBattleAgainstMobStrategy.calculateMeleeAttack). */
-    calculateMeleeAttack(victim: Monster | Player, ignoreTargetRating: boolean): number {
-        if (victim instanceof Monster) {
+    calculateMeleeAttack(victim: Monster | Stone | Player, ignoreTargetRating: boolean): number {
+        if (victim instanceof Monster || victim instanceof Stone) {
             return this.playerBattleAgainstMob.calculateMeleeAttack(victim, ignoreTargetRating);
         }
 
@@ -58,8 +58,8 @@ export class PlayerBattle {
     }
 
     /** The "atk" a USE_ARROW_DAMAGE skill's formula should use against this victim (see PlayerBattleAgainstMobStrategy.calculateArrowAttack). */
-    calculateArrowAttack(victim: Monster | Player): number {
-        if (victim instanceof Monster) {
+    calculateArrowAttack(victim: Monster | Stone | Player): number {
+        if (victim instanceof Monster || victim instanceof Stone) {
             return this.playerBattleAgainstMob.calculateArrowAttack(victim);
         }
 
@@ -74,11 +74,11 @@ export class PlayerBattle {
      */
     applySkillStatusEffect(
         effect: SkillStatusEffectEnum,
-        victim: Monster | Player,
+        victim: Monster | Stone | Player,
         durationSeconds?: number,
         amount?: number,
     ) {
-        if (!(victim instanceof Monster)) {
+        if (!(victim instanceof Monster || victim instanceof Stone)) {
             //TODO: pvp
             this.logger.info(`[PlayerBattle] Skill status effect against Player not implemented yet`);
             return;

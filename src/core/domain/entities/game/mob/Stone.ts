@@ -88,6 +88,17 @@ export default class Stone extends Mob {
         return this.points.getPoint(PointsEnum.DEFENSE);
     }
 
+    stun() {
+        this.setAffectFlag(AffectBitsTypeEnum.STUN);
+        super.stun();
+        this.sendUpdateEvent();
+    }
+
+    removeStun() {
+        super.removeStun();
+        this.sendUpdateEvent();
+    }
+
     die(killer?: Character) {
         super.die(killer);
 

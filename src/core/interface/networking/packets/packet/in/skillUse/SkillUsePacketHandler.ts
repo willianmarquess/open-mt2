@@ -5,6 +5,7 @@ import Logger from '@/core/infra/logger/Logger';
 import { EntityManager } from '@/core/domain/manager/EntityManager';
 import Player from '@/core/domain/entities/game/player/Player';
 import Monster from '@/core/domain/entities/game/mob/Monster';
+import Stone from '@/core/domain/entities/game/mob/Stone';
 
 export default class SkillUsePacketHandler extends PacketHandler<SkillUsePacket> {
     private readonly logger: Logger;
@@ -41,6 +42,6 @@ export default class SkillUsePacketHandler extends PacketHandler<SkillUsePacket>
             return;
         }
 
-        player.useSkill(packet.getSkillNum(), target as Player | Monster);
+        player.useSkill(packet.getSkillNum(), target as Player | Monster | Stone);
     }
 }
