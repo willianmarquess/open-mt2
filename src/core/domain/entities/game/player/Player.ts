@@ -520,7 +520,7 @@ export default class Player extends Character {
         //TODO: logout from party
         //TODO: logout from guild
         //TODO: save affect
-        //TODO: call quest disconnect callback
+        this.questManager.onDespawn(this);
         //TODO: close safebox, close mall
         //TODO: remove from pvp instance
         if (!this.skipSave) {
@@ -542,6 +542,8 @@ export default class Player extends Character {
     }
 
     die(killer: Character) {
+        this.stopRiding(true);
+
         super.die(killer);
 
         //TODO: death penalty
@@ -583,6 +585,8 @@ export default class Player extends Character {
             messageType: ChatMessageTypeEnum.COMMAND,
             message: 'CloseRestartWindow',
         });
+        if (!this.isDead()) return;
+
         this.connection?.setState(ConnectionStateEnum.GAME);
         this.setPos(PositionEnum.STANDING);
 

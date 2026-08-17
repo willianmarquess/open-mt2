@@ -1,4 +1,5 @@
 import Queue from '../util/Queue';
+import Logger from '../infra/logger/Logger';
 import GameEntity from './entities/game/GameEntity';
 import Player from './entities/game/player/Player';
 import MathUtil from './util/MathUtil';
@@ -30,6 +31,7 @@ export default class Area {
     private readonly height: number;
     private readonly aka?: string;
     private readonly goto?: AtlasInfoGoto;
+    private readonly logger: Logger;
 
     private readonly entitiesToSpawn = new Queue<GameEntity>(SIZE_QUEUE);
     private readonly entitiesToDespawn = new Queue<GameEntity>(SIZE_QUEUE);
@@ -59,9 +61,11 @@ export default class Area {
         {
             spawnManager,
             entityManager,
+            logger,
         }: {
             spawnManager: SpawnManager;
             entityManager: EntityManager;
+            logger: Logger;
         },
     ) {
         this.name = name;
@@ -71,6 +75,7 @@ export default class Area {
         this.height = height;
         this.aka = aka;
         this.goto = goto;
+        this.logger = logger;
         this.aoi = new SpatialGrid(CHAR_VIEW_SIZE * 2);
 
         this.spawnManager = spawnManager;
@@ -271,7 +276,7 @@ export default class Area {
     private processSpawnQueue() {
         for (const entity of this.entitiesToSpawn.dequeueIterator()) {
             if (!entity) continue;
-            void entity.onSpawn();
+            this.runIsolated(entity, 'spawn', () => entity.onSpawn());
             this.aoi.insert(entity);
             this.linkNearbyEntities(entity);
             this.entityManager.addEntity(entity);
@@ -303,7 +308,7 @@ export default class Area {
             this.unlinkNearbyEntities(entity);
             this.entityManager.removeEntity(entity);
             this.aoi.remove(entity);
-            void entity.onDespawn();
+            this.runIsolated(entity, 'despawn', () => entity.onDespawn());
         }
     }
 
@@ -325,5 +330,18 @@ export default class Area {
                 otherEntity.removeNearbyEntity(entity);
             }
         }
+    }
+    private runIsolated(entity: GameEntity, phase: string, run: () => Promise<void> | void) {
+        try {
+            Promise.resolve(run()).catch((error) => this.logLifecycleFailure(entity, phase, error));
+        } catch (error) {
+            this.logLifecycleFailure(entity, phase, error);
+        }
+    }
+
+    private logLifecycleFailure(entity: GameEntity, phase: string, error: unknown) {
+        this.logger.error(
+            `[AREA] Failed to ${phase} entity ${entity.getVirtualId()} on ${this.name}: ${(error as Error)?.stack ?? error}`,
+        );
     }
 }
