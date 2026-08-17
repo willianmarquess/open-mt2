@@ -223,7 +223,6 @@ export default abstract class Character extends GameEntity {
 
     /** Hook for subclasses that can notify a client (Player) when a timed affect starts/ends. No-op by default (e.g. Monster has no UI to update here). */
 
-     
     protected onAffectAdded(
         _flag: AffectBitsTypeEnum,
         _point: PointsEnum | undefined,

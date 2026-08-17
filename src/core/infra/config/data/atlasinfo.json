@@ -308,14 +308,14 @@
     "height": 3
   },
   {
-    "mapName": "metin2_map_monkeydungeon_02",
+    "mapName": "metin2_map_monkey_dungeon2",
     "posX": 128000,
     "posY": 640000,
     "width": 3,
     "height": 3
   },
   {
-    "mapName": "metin2_map_monkeydungeon_03",
+    "mapName": "metin2_map_monkey_dungeon3",
     "posX": 128000,
     "posY": 716800,
     "width": 3,
@@ -846,7 +846,7 @@
     "height": 2
   },
   {
-    "mapName": "metin2_map_devilsCatacomb",
+    "mapName": "metin2_map_devilcatacomb",
     "posX": 307200,
     "posY": 1203200,
     "width": 8,

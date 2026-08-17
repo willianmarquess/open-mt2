@@ -131,4 +131,26 @@ describe('Area map attributes', () => {
         expect(entity.getPositionX()).to.be.equal(9 * SPAWN_POSITION_MULTIPLIER);
         expect(entity.getPositionY()).to.be.equal(11 * SPAWN_POSITION_MULTIPLIER);
     });
+
+    it('strips a season1/season2 atlas prefix for both the attribute grid and spawn lookups (issue #267)', async () => {
+        // Attribute/spawn directories are flat ("metin2_map_WL_01"), but atlasinfo.json names this
+        // map "season1/metin2_map_WL_01" - both lookups must use the same stripped name.
+        writeGridFile(attrDir, 'metin2_map_WL_01', 4, 4, [[2, 1, MapAttributeFlagEnum.BLOCK]]);
+
+        const getEntities = sinon.stub().resolves([]);
+        const area = new Area(
+            { name: 'season1/metin2_map_WL_01', positionX: 0, positionY: 0, width: 1, height: 1 },
+            {
+                spawnManager: { getEntities } as any,
+                entityManager: { addEntity: sinon.stub(), removeEntity: sinon.stub() } as any,
+            },
+        );
+        sinon.stub(process, 'cwd').returns(tmpDir);
+
+        await area.load();
+
+        expect(getEntities.calledOnceWith('metin2_map_WL_01'), 'spawnManager.getEntities should receive the stripped name').to.be.equal(true);
+        expect(area.getAttributes().hasData()).to.be.equal(true);
+        expect(area.isPositionBlocked(2 * CELL_SIZE, 1 * CELL_SIZE)).to.be.equal(true);
+    });
 });

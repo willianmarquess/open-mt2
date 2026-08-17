@@ -80,14 +80,16 @@ export default class Area {
 
     //TODO: add system do choose which map will be generated on this server
     async load() {
+        const areaName = this.name.split('/').pop() ?? this.name;
+
         this.attributes = MapAttributeGrid.load(
             path.join(process.cwd(), DEFAULT_ATTR_CONFIG_PATH),
-            this.name.split('/').pop() ?? this.name,
+            areaName,
             this.positionX,
             this.positionY,
         );
 
-        const entitiesToSpawn = await this.spawnManager.getEntities(this.name);
+        const entitiesToSpawn = await this.spawnManager.getEntities(areaName);
         entitiesToSpawn.forEach((entity) => {
             entity.setPositionY(this.positionY + entity.getPositionY() * SPAWN_POSITION_MULTIPLIER);
             entity.setPositionX(this.positionX + entity.getPositionX() * SPAWN_POSITION_MULTIPLIER);
