@@ -29,6 +29,7 @@ export default class Monster extends Mob {
     private readonly dropManager: DropManager;
     private readonly experienceManager: ExperienceManager;
     protected readonly battle: MonsterBattle;
+    protected showProtectStone: boolean = false;
 
     constructor(
         params: Omit<MobParams, 'entityType'>,
@@ -89,6 +90,14 @@ export default class Monster extends Mob {
 
     getTarget(): Player {
         return this.target as Player;
+    }
+
+    setShouldProtectStone(value: boolean) {
+        this.showProtectStone = value;
+    }
+
+    getShouldProtectStone() {
+        return this.showProtectStone;
     }
 
     battleStateTick(): void {
@@ -174,22 +183,6 @@ export default class Monster extends Mob {
                 interval: this.regenCycle * 1_000,
             },
         });
-    }
-
-    public sendUpdateEvent() {
-        for (const entity of this.nearbyEntities.values()) {
-            if (entity instanceof Player) {
-                entity.otherEntityUpdated({
-                    affects: this.getAffectFlags(),
-                    attackSpeed: this.getAttackSpeed(),
-                    moveSpeed: this.getMovementSpeed(),
-                    bodyId: 0,
-                    hairId: 0,
-                    weaponId: 0,
-                    vid: this.getVirtualId(),
-                });
-            }
-        }
     }
 
     private regenHealth() {

@@ -4,6 +4,7 @@ import { SkillStatusEffectEnum } from '@/core/enum/SkillStatusEffectEnum';
 import Player from '../../Player';
 import PlayerBattleAgainstMobStrategy from './PlayerBattleAgainstMobStrategy';
 import Monster from '../../../mob/Monster';
+import Stone from '../../../mob/Stone';
 import Logger from '@/core/infra/logger/Logger';
 
 //TODO: add pretty singleton, instead of this;
@@ -20,8 +21,8 @@ export class PlayerBattle {
         this.playerBattleAgainstMob = new PlayerBattleAgainstMobStrategy(player, logger);
     }
 
-    attack(attackType: AttackTypeEnum, victim: Monster | Player) {
-        if (victim instanceof Monster) {
+    attack(attackType: AttackTypeEnum, victim: Monster | Player | Stone) {
+        if (victim instanceof Monster || victim instanceof Stone) {
             return this.playerBattleAgainstMob.execute(attackType, victim);
         }
 
@@ -38,7 +39,7 @@ export class PlayerBattle {
         victim: Monster | Player,
         ignoreDefense: boolean = false,
     ) {
-        if (victim instanceof Monster) {
+        if (victim instanceof Monster || victim instanceof Stone) {
             return this.playerBattleAgainstMob.applyDamage(damage, damageType, victim, ignoreDefense);
         }
 

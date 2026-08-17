@@ -135,7 +135,7 @@ export default class Behavior {
         if (this.monster.isDead()) return;
         if (this.monster.isAffectByFlag(AffectBitsTypeEnum.STUN)) return;
 
-        if (this.monster.isAggresive() && !this.monster.getTarget()) {
+        if ((this.monster.isAggresive() && !this.monster.getTarget()) || this.monster.getShouldProtectStone()) {
             this.findNextVictim();
         }
 

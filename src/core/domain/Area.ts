@@ -15,6 +15,7 @@ import { AtlasInfoGoto } from '@/game/infra/config/GameConfig';
 import { EntityManager } from './manager/EntityManager';
 import MapAttributeGrid from '../util/MapAttributeGrid';
 import * as path from 'node:path';
+import { AffectBitsTypeEnum } from '../enum/AffectBitsTypeEnum';
 
 const SIZE_QUEUE = 5_000;
 export const CHAR_VIEW_SIZE = 8000;
@@ -167,8 +168,13 @@ export default class Area {
      * Creates a mob with a proper virtualId and spawns it in this area.
      * Used for runtime spawns tied to a location (e.g. a player's horse).
      */
-    spawnMob(id: number, positionX: number, positionY: number, direction: number = 0) {
+    spawnMob(id: number, positionX: number, positionY: number, direction: number = 0, spawnEffect: boolean = false) {
         const mob = this.entityManager.createMob({ id, positionX, positionY, direction });
+
+        if (spawnEffect) {
+            mob?.setAffectFlag(AffectBitsTypeEnum.SPAWN);
+        }
+
         if (mob) {
             this.spawn(mob);
         }
@@ -281,6 +287,9 @@ export default class Area {
             this.linkNearbyEntities(entity);
             this.entityManager.addEntity(entity);
             entity.setArea(this);
+            if (entity.isMonster()) {
+                entity.removeAffectFlag(AffectBitsTypeEnum.SPAWN);
+            }
         }
     }
 

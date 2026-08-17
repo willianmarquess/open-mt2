@@ -13,6 +13,7 @@ import { MobResistEnum } from '@/core/enum/MobResistEnum';
 import { ItemWeaponSubTypeEnum } from '@/core/enum/ItemWeaponSubTypeEnum';
 import { MobRaceFlagEnum } from '@/core/enum/MobRaceFlagEnum';
 import Monster from '../../../mob/Monster';
+import Stone from '../../../mob/Stone';
 import Player from '../../Player';
 import MathUtil from '@/core/domain/util/MathUtil';
 import { FlyEnum } from '@/core/enum/FlyEnum';
@@ -33,7 +34,18 @@ const weaponResistanceMapper: { [key in ItemWeaponSubTypeEnum]: MobResistEnum } 
 const MAX_DISTANCE = 300;
 const MOB_ATTACK_RANGE_TOLERANCE = 1.15;
 
-export default class PlayerBattleAgainstMobStrategy extends PlayerBattleStrategy<Monster> {
+/**
+ * A metin stone takes normal-attack damage through the exact same CHARACTER::Damage/battle_hit
+ * pipeline as a monster in the original (char_battle.cpp:1556, battle.cpp:620) - crit, penetrate,
+ * resistances, weapon-type resist and HP steal (POINT_STEAL_HP, char_battle.cpp:1866-1882) all apply
+ * unconditionally there, keyed off the ATTACKER's own points, with no IsStone() branch anywhere in
+ * that function. The one deliberate difference here is status effects (poison/stun/slow/fire), which
+ * this port skips for stones - they don't have the client-visible affect feedback these rely on
+ * (Monster.sendUpdateEvent()).
+ */
+export type AttackableMob = Monster | Stone;
+
+export default class PlayerBattleAgainstMobStrategy extends PlayerBattleStrategy<AttackableMob> {
     private readonly logger: Logger;
 
     constructor(player: Player, logger: Logger) {
@@ -41,7 +53,7 @@ export default class PlayerBattleAgainstMobStrategy extends PlayerBattleStrategy
         this.logger = logger;
     }
 
-    execute(attackType: AttackTypeEnum, victim: Monster) {
+    execute(attackType: AttackTypeEnum, victim: AttackableMob) {
         if (attackType === AttackTypeEnum.NORMAL) {
             //we need to verify the battle type before to do this
             this.meleeAttack(victim);
@@ -59,7 +71,7 @@ export default class PlayerBattleAgainstMobStrategy extends PlayerBattleStrategy
         damage: number,
         damageType: DamageTypeEnum,
         damageFlags: BitFlag,
-        victim: Monster,
+        victim: AttackableMob,
         ignoreDefense: boolean = false,
     ): number {
         const isSkillDamage = [
@@ -91,7 +103,7 @@ export default class PlayerBattleAgainstMobStrategy extends PlayerBattleStrategy
         damage: number,
         damageType: DamageTypeEnum,
         damageFlags: BitFlag,
-        victim: Monster,
+        victim: AttackableMob,
     ): number {
         const isPoisonDamage = damageType === DamageTypeEnum.POISON;
         if (!isPoisonDamage) return damage;
@@ -106,7 +118,7 @@ export default class PlayerBattleAgainstMobStrategy extends PlayerBattleStrategy
         damage: number,
         damageType: DamageTypeEnum,
         damageFlags: BitFlag,
-        victim: Monster,
+        victim: AttackableMob,
     ): number {
         const isNormalDamage = [DamageTypeEnum.NORMAL, DamageTypeEnum.NORMAL_RANGE].includes(damageType);
         if (!isNormalDamage) return damage;
@@ -134,7 +146,7 @@ export default class PlayerBattleAgainstMobStrategy extends PlayerBattleStrategy
     }
 
     /** Public so the skill engine (PlayerSkill.computeSkill) can deal skill damage through the same pipeline as normal attacks. */
-    applyDamage(damage: number, damageType: DamageTypeEnum, victim: Monster, ignoreDefense: boolean = false) {
+    applyDamage(damage: number, damageType: DamageTypeEnum, victim: AttackableMob, ignoreDefense: boolean = false) {
         const damageFlags = new BitFlag();
 
         switch (damageType) {
@@ -168,7 +180,7 @@ export default class PlayerBattleAgainstMobStrategy extends PlayerBattleStrategy
         victim.takeDamage(this.attacker, damage);
     }
 
-    private meleeAttack(victim: Monster) {
+    private meleeAttack(victim: AttackableMob) {
         const distance = MathUtil.calcDistance(
             this.attacker.getPositionX(),
             this.attacker.getPositionY(),
@@ -232,7 +244,7 @@ export default class PlayerBattleAgainstMobStrategy extends PlayerBattleStrategy
      * this is used to feed a skill formula (defense is subtracted later, once, in
      * calculateSkillDamage, gated by the skill's own PENETRATE roll instead).
      */
-    calculateMeleeAttack(victim: Monster, ignoreTargetRating: boolean): number {
+    calculateMeleeAttack(victim: AttackableMob, ignoreTargetRating: boolean): number {
         const weapon = this.attacker.getWeapon();
         const weaponValues = this.attacker.getWeaponValues();
 
@@ -267,7 +279,7 @@ export default class PlayerBattleAgainstMobStrategy extends PlayerBattleStrategy
      * never lets a skill ignore the target's rating here (CalcAttackRating is always called with
      * bIgnoreTargetRating=false for arrows), so IGNORE_TARGET_RATING has no effect on arrow skills.
      */
-    calculateArrowAttack(victim: Monster): number {
+    calculateArrowAttack(victim: AttackableMob): number {
         const bow = this.attacker.getWeapon();
         const arrow = this.attacker.getArrow();
         if (!bow || bow.getSubType() !== ItemSubTypeEnum.WEAPON_BOW || !arrow) return 0;
@@ -305,7 +317,7 @@ export default class PlayerBattleAgainstMobStrategy extends PlayerBattleStrategy
         return Math.round((Math.max(0, atk) * percent) / 100);
     }
 
-    private calculateSkillDamageBonus(damage: number, victim: Monster): number {
+    private calculateSkillDamageBonus(damage: number, victim: AttackableMob): number {
         const normalHitDamageBonus = this.attacker.getPoint(PointsEnum.SKILL_DAMAGE_BONUS);
 
         if (normalHitDamageBonus > 0) {
@@ -327,7 +339,7 @@ export default class PlayerBattleAgainstMobStrategy extends PlayerBattleStrategy
         return Math.round(damage);
     }
 
-    private calculateStoneSkinner(damage: number, victim: Monster): number {
+    private calculateStoneSkinner(damage: number, victim: AttackableMob): number {
         if (victim.isStoneSkinner()) {
             if (victim.getHealthPercentage() < victim.getHpPercentToGetStoneSkin()) {
                 this.attacker.debugChat(`[STONE_SKINNER] Your damage was reduced from ${damage} to ${damage / 2}`);
@@ -348,7 +360,7 @@ export default class PlayerBattleAgainstMobStrategy extends PlayerBattleStrategy
         return Math.round(damage);
     }
 
-    private calculateNormalDamageBonus(damage: number, victim: Monster) {
+    private calculateNormalDamageBonus(damage: number, victim: AttackableMob) {
         const normalHitDamageBonus = this.attacker.getPoint(PointsEnum.NORMAL_HIT_DAMAGE_BONUS);
 
         if (normalHitDamageBonus > 0) {
@@ -360,7 +372,7 @@ export default class PlayerBattleAgainstMobStrategy extends PlayerBattleStrategy
         return Math.round(damage);
     }
 
-    private calculateAndApplyDrainSp(victim: Monster) {
+    private calculateAndApplyDrainSp(victim: AttackableMob) {
         const drainSp = victim.getDrainSp();
         const manaPoints = this.attacker.getPoint(PointsEnum.MANA);
 
@@ -374,7 +386,7 @@ export default class PlayerBattleAgainstMobStrategy extends PlayerBattleStrategy
         }
     }
 
-    private calculateWeaponDamageResistance(damage: number, victim: Monster): number {
+    private calculateWeaponDamageResistance(damage: number, victim: AttackableMob): number {
         const attackerWeapon = this.attacker.getWeapon();
         if (!attackerWeapon) return damage;
 
@@ -387,7 +399,7 @@ export default class PlayerBattleAgainstMobStrategy extends PlayerBattleStrategy
         return Math.round(damage);
     }
 
-    private calculateAndSendGoldSteal(victim: Monster) {
+    private calculateAndSendGoldSteal(victim: AttackableMob) {
         const attackerStealGoldChance = this.attacker.getPoint(PointsEnum.STEAL_GOLD);
 
         if (MathUtil.getRandomInt(1, 100) <= attackerStealGoldChance) {
@@ -398,7 +410,7 @@ export default class PlayerBattleAgainstMobStrategy extends PlayerBattleStrategy
         }
     }
 
-    private calculateRaceAttackBonus(attack: number, victim: Monster) {
+    private calculateRaceAttackBonus(attack: number, victim: AttackableMob) {
         switch (true) {
             case victim.isRaceByFlag(MobRaceFlagEnum.ANIMAL):
                 attack += attack * (this.attacker.getPoint(PointsEnum.ATTBONUS_ANIMAL) / 100);
@@ -446,7 +458,10 @@ export default class PlayerBattleAgainstMobStrategy extends PlayerBattleStrategy
      * Dragon Roar) carries its own damage and duration formula, unlike the fixed 5%-of-max-health
      * used by on-hit equipment procs.
      */
-    applyFire(victim: Monster, damagePerTick?: number, durationMs: number = 10_000) {
+    applyFire(victim: AttackableMob, damagePerTick?: number, durationMs: number = 10_000) {
+        // Status effects need the client-visible affect feedback only Monster has
+        // (sendUpdateEvent()) - a stone doesn't burn/poison/stun/slow in this port.
+        if (!(victim instanceof Monster)) return;
         if (victim.isAffectByFlag(AffectBitsTypeEnum.FIRE)) return;
 
         victim.setAffectFlag(AffectBitsTypeEnum.FIRE);
@@ -469,7 +484,8 @@ export default class PlayerBattleAgainstMobStrategy extends PlayerBattleStrategy
         });
     }
 
-    applyPoison(victim: Monster) {
+    applyPoison(victim: AttackableMob) {
+        if (!(victim instanceof Monster)) return;
         if (victim.isImmuneByFlag(MobImmuneFlagEnum.POISON)) return;
         if (victim.isAffectByFlag(AffectBitsTypeEnum.POISON)) return;
 
@@ -498,7 +514,8 @@ export default class PlayerBattleAgainstMobStrategy extends PlayerBattleStrategy
      * overridable because skill-triggered stuns (e.g. Stump) carry their own duration formula,
      * unlike the fixed one used by on-hit equipment procs.
      */
-    applyStun(victim: Monster, durationMs: number = 5_000) {
+    applyStun(victim: AttackableMob, durationMs: number = 5_000) {
+        if (!(victim instanceof Monster)) return;
         if (victim.isImmuneByFlag(MobImmuneFlagEnum.STUN)) return;
         if (victim.isAffectByFlag(AffectBitsTypeEnum.STUN)) return;
 
@@ -522,7 +539,8 @@ export default class PlayerBattleAgainstMobStrategy extends PlayerBattleStrategy
      * overridable because skill-triggered slows (e.g. Shockwave) carry their own duration formula,
      * unlike the fixed one used by on-hit equipment procs.
      */
-    applySlow(victim: Monster, durationMs: number = 10_000) {
+    applySlow(victim: AttackableMob, durationMs: number = 10_000) {
+        if (!(victim instanceof Monster)) return;
         if (victim.isImmuneByFlag(MobImmuneFlagEnum.SLOW)) return;
         if (victim.isAffectByFlag(AffectBitsTypeEnum.SLOW)) return;
         const SLOW_VALUE = 30;
@@ -557,7 +575,7 @@ export default class PlayerBattleAgainstMobStrategy extends PlayerBattleStrategy
         return Math.round(damage);
     }
 
-    protected calculatePenetrateDamage(damage: number, damageFlags: BitFlag, victim: Monster): number {
+    protected calculatePenetrateDamage(damage: number, damageFlags: BitFlag, victim: AttackableMob): number {
         const penetrateChance = this.attacker.getPoint(PointsEnum.PENETRATE_CHANCE);
         if (MathUtil.getRandomInt(1, 100) <= penetrateChance) {
             damage += victim.getDefense();
@@ -567,7 +585,8 @@ export default class PlayerBattleAgainstMobStrategy extends PlayerBattleStrategy
         return Math.round(damage);
     }
 
-    protected calculateAndSendHealthSteal(damage: number, victim: Monster) {
+    /** Mirrors POINT_STEAL_HP (char_battle.cpp:1866-1882): applies to any victim, no IsStone()/IsPC() check in the original. */
+    protected calculateAndSendHealthSteal(damage: number, victim: AttackableMob) {
         const attackerStealHealthValue = this.attacker.getPoint(PointsEnum.STEAL_HEALTH);
 
         if (attackerStealHealthValue > 0) {
@@ -589,22 +608,22 @@ export default class PlayerBattleAgainstMobStrategy extends PlayerBattleStrategy
         }
     }
 
-    protected calculateAndSendManaSteal(damage: number, victim: Monster) {
+    /**
+     * Mirrors POINT_STEAL_SP (char_battle.cpp:1884-1909): the attacker always gains SP, but the
+     * victim is only ever debited `if (IsPC())` - a Monster/Stone victim (never a PC in this
+     * codebase yet, PvP isn't implemented) uses its own HP as the steal basis instead of SP, and
+     * keeps every point of it. No IsStone() distinction here either - Monster gets the exact same
+     * treatment.
+     */
+    protected calculateAndSendManaSteal(damage: number, victim: AttackableMob) {
         const attackerStealManaValue = this.attacker.getPoint(PointsEnum.STEAL_MANA);
 
         if (attackerStealManaValue > 0) {
             const stealManaChance = 1;
             if (MathUtil.getRandomInt(1, 10) <= stealManaChance) {
                 const manaDamage = Math.round(
-                    (Math.min(
-                        damage,
-                        Math.max(0, victim.getPoint(PointsEnum.MAX_MANA) || victim.getPoint(PointsEnum.HEALTH)),
-                    ) *
-                        attackerStealManaValue) /
-                        100,
+                    (Math.min(damage, Math.max(0, victim.getPoint(PointsEnum.HEALTH))) * attackerStealManaValue) / 100,
                 );
-
-                victim.takeDamage(this.attacker, manaDamage);
 
                 this.attacker.addPoint(PointsEnum.MANA, manaDamage);
                 victim.createFlyEffect(this.attacker.getVirtualId(), FlyEnum.MANA_BIG);
@@ -614,7 +633,7 @@ export default class PlayerBattleAgainstMobStrategy extends PlayerBattleStrategy
         }
     }
 
-    protected calculateAndSendHealthHitRecovery(damage: number, victim: Monster) {
+    protected calculateAndSendHealthHitRecovery(damage: number, victim: AttackableMob) {
         const attackerHitHealthRecoveryPercentage = this.attacker.getPoint(PointsEnum.HIT_HEALTH_RECOVERY);
 
         if (attackerHitHealthRecoveryPercentage > 0) {
@@ -630,7 +649,7 @@ export default class PlayerBattleAgainstMobStrategy extends PlayerBattleStrategy
         }
     }
 
-    protected calculateAndSendManaHitRecovery(damage: number, victim: Monster) {
+    protected calculateAndSendManaHitRecovery(damage: number, victim: AttackableMob) {
         const attackerHitManaRecoveryPercentage = this.attacker.getPoint(PointsEnum.HIT_MANA_RECOVERY);
 
         if (attackerHitManaRecoveryPercentage > 0) {

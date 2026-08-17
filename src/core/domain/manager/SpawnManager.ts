@@ -6,6 +6,7 @@ import { Mob } from '../entities/game/mob/Mob';
 import MonsterGroup from '../entities/game/mob/MonsterGroup';
 import MathUtil from '../util/MathUtil';
 import Monster from '../entities/game/mob/Monster';
+import Stone from '../entities/game/mob/Stone';
 import Logger from '@/core/infra/logger/Logger';
 import { GameConfig, GroupCollection, Groups } from '@/game/infra/config/GameConfig';
 import { SpawnConfigTypeEnum } from '@/core/enum/SpawnConfigTypeEnum';
@@ -85,9 +86,16 @@ export default class SpawnManager {
                     rangeX: spawn.getRangeX(),
                     rangeY: spawn.getRangeY(),
                 });
-                if (entity && entity instanceof Monster) {
+
+                if (entity instanceof Monster) {
                     monsterGroup.addMember(entity);
                     entitiesToSpawn.push(entity);
+                } else if (entity instanceof Stone) {
+                    entitiesToSpawn.push(entity);
+                } else if (entity) {
+                    this.logger.error(
+                        `[SpawnManager] Unexpected mob type for spawn (vnum ${spawn.getId()}): ${entity.constructor.name}`,
+                    );
                 }
                 break;
             }

@@ -38,6 +38,7 @@ const createMonster = (grid?: MapAttributeGrid, positionX = 500, positionY = 500
         isDead: () => false,
         isAffectByFlag: () => false,
         isAggresive: () => false,
+        getShouldProtectStone: () => false,
         getAttackRange: () => 200,
         getMovementSpeed: () => 100,
         getNearbyEntities: () => new Map(),

@@ -50,6 +50,7 @@ import { AttackTypeEnum } from '@/core/enum/AttackTypeEnum';
 import { DamageTypeEnum } from '@/core/enum/DamageTypeEnum';
 import { SkillStatusEffectEnum } from '@/core/enum/SkillStatusEffectEnum';
 import type Monster from '../mob/Monster';
+import type Stone from '../mob/Stone';
 import { AffectBitsTypeEnum } from '@/core/enum/AffectBitsTypeEnum';
 import { AffectTypeEnum } from '@/core/enum/AffectTypeEnum';
 import SpecialEffectPacket from '@/core/interface/networking/packets/packet/out/SpecialEffectPacket';
@@ -639,7 +640,7 @@ export default class Player extends Character {
         return this.skills.useSkillAttack(skillId, target);
     }
 
-    attack(attackType: AttackTypeEnum, victim: Player | Monster) {
+    attack(attackType: AttackTypeEnum, victim: Player | Monster | Stone) {
         if (this.horse.isTemporaryRiding()) {
             this.chat({
                 messageType: ChatMessageTypeEnum.INFO,

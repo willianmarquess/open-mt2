@@ -317,6 +317,22 @@ export abstract class Mob extends Character {
         }
     }
 
+    public sendUpdateEvent() {
+        for (const entity of this.nearbyEntities.values()) {
+            if (entity.isPlayer()) {
+                entity.otherEntityUpdated({
+                    affects: this.getAffectFlags(),
+                    attackSpeed: this.getAttackSpeed(),
+                    moveSpeed: this.getMovementSpeed(),
+                    bodyId: 0,
+                    hairId: 0,
+                    weaponId: 0,
+                    vid: this.getVirtualId(),
+                });
+            }
+        }
+    }
+
     private addResist(type: MobResistEnum, value: number) {
         this.resists.push(new MobResist({ type, value }));
     }

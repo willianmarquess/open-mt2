@@ -41,6 +41,8 @@ const createEntity = (
         getPositionY: () => 1_000,
         getTargetPosition: () => ({ x: 1_000, y: 1_000 }),
         getEntityType: () => EntityTypeEnum.MONSTER,
+        isMonster: () => true,
+        removeAffectFlag: () => {},
         setCell: (value: any) => (cell = value),
         getCell: () => cell,
         setArea: (area: any) => areas.push(area),

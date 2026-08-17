@@ -31,6 +31,8 @@ const makeEntity = (virtualId: number, entityType: EntityTypeEnum, x = 100, y = 
         onSpawn: () => {},
         onDespawn: () => {},
         isPlayer: () => entityType === EntityTypeEnum.PLAYER,
+        isMonster: () => entityType === EntityTypeEnum.MONSTER,
+        removeAffectFlag: () => {},
     });
 
     return entity;

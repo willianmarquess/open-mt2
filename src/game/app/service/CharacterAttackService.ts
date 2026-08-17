@@ -1,4 +1,5 @@
 import Monster from '@/core/domain/entities/game/mob/Monster';
+import Stone from '@/core/domain/entities/game/mob/Stone';
 import Player from '@/core/domain/entities/game/player/Player';
 import { EntityManager } from '@/core/domain/manager/EntityManager';
 import { AttackTypeEnum } from '@/core/enum/AttackTypeEnum';
@@ -21,23 +22,28 @@ export default class CharacterAttackService {
     async execute(player: Player, skillVnum: number, victimVirtualId: number) {
         const victim = this.entityManager.getEntity(victimVirtualId);
 
-        // Only players and monsters can be attacked. A client can send any VID
-        // it has in view (including dropped items, which are GameEntity but not
-        // Character), and getEntity's generic is only a cast — so validate the
-        // real type before the damage pipeline calls methods like isDead() that
-        // only exist on attackable entities. Without this a crafted VID crashes
-        // the server with an unhandled TypeError.
-        if (!(victim instanceof Player) && !(victim instanceof Monster)) {
+        if (!(victim instanceof Player) && !(victim instanceof Monster) && !(victim instanceof Stone)) {
             this.logger.info(`[CharacterAttackService] Invalid attack victim with virtualId ${victimVirtualId}`);
             return;
         }
+
+        // if (victim instanceof Stone) {
+        //     if (skillVnum === 0) {
+        //         player.attack(AttackTypeEnum.NORMAL, victim);
+        //     } else {
+        //         this.logger.info(
+        //             `[CharacterAttackService] Rejected skill attack (vnum ${skillVnum}) from ${player.getName()} against a stone - not implemented yet`,
+        //         );
+        //     }
+        //     return;
+        // }
 
         if (skillVnum === 0) {
             player.attack(AttackTypeEnum.NORMAL, victim);
             return;
         }
 
-        if (!player.useSkillAttack(skillVnum, victim)) {
+        if (!player.useSkillAttack(skillVnum, victim as Monster)) {
             this.logger.info(
                 `[CharacterAttackService] Rejected skill attack (vnum ${skillVnum}) from ${player.getName()} against ${victimVirtualId}`,
             );
