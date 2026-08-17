@@ -58,8 +58,7 @@ export default abstract class Packet {
     }
 
     /** On-wire bytes at the start of the buffer, or null when more are needed to tell. */
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    getFrameLength(buffer: Buffer): number | null {
+    getFrameLength(_buffer: Buffer): number | null {
         return this.size + this.getSequenceLength();
     }
 

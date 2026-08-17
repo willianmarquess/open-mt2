@@ -161,7 +161,7 @@ export abstract class AbstractQuest {
                         console.error('[QUEST] condition error', err);
                     } finally {
                         this.rearmLetter(context.eventType, callbackResult);
-                        this.autoDone();
+                        await this.autoDone();
                         await this.endRunning(callbackResult);
                     }
                 } catch (err) {
@@ -175,13 +175,13 @@ export abstract class AbstractQuest {
         return this.currentState?.tasks.filter((routine) => routine.when === event) ?? [];
     }
 
-    private autoDone() {
+    private async autoDone() {
         const playerInteracted = this.shouldSendDone;
         this.shouldSendDone = false;
 
         if (this.src.length < 1 && !playerInteracted) return;
 
-        this.done();
+        await this.done();
     }
 
     private rearmLetter(eventType: QuestEventEnum, result?: TaskResult) {
@@ -290,12 +290,12 @@ export abstract class AbstractQuest {
 
     public unselect(answer: number) {
         this.shouldSendDone = true;
-        this.currentChoicePromise.resolve(answer);
+        void this.currentChoicePromise.resolve(answer);
     }
 
     public unpause() {
         this.shouldSendDone = true;
-        this.nextPagePromise.resolve();
+        void this.nextPagePromise.resolve();
     }
 
     /**
@@ -306,13 +306,13 @@ export abstract class AbstractQuest {
     public cancel() {
         if (this.status === QuestStatusEnum.SELECT) {
             this.shouldSendDone = true;
-            this.currentChoicePromise.resolve(CLOSE_WINDOW_ANSWER);
+            void this.currentChoicePromise.resolve(CLOSE_WINDOW_ANSWER);
             return;
         }
 
         if (this.status === QuestStatusEnum.PAUSE) {
             this.shouldSendDone = true;
-            this.nextPagePromise.resolve();
+            void this.nextPagePromise.resolve();
         }
     }
 

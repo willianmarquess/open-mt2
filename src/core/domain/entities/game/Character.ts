@@ -222,7 +222,6 @@ export default abstract class Character extends GameEntity {
     }
 
     /** Hook for subclasses that can notify a client (Player) when a timed affect starts/ends. No-op by default (e.g. Monster has no UI to update here). */
-
     protected onAffectAdded(
         _flag: AffectBitsTypeEnum,
         _point: PointsEnum | undefined,
@@ -232,7 +231,6 @@ export default abstract class Character extends GameEntity {
         // intentional no-op
     }
 
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
     protected onAffectRemoved(_flag: AffectBitsTypeEnum, _point: PointsEnum | undefined): void {
         // intentional no-op
     }
@@ -326,7 +324,6 @@ export default abstract class Character extends GameEntity {
         this.pos = pos;
     }
 
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
     die(_killer?: Character) {
         this.pos = PositionEnum.DEAD;
         this.removeTimers();

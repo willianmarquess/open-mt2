@@ -173,8 +173,8 @@ export class HuntQuest extends AbstractQuest {
         this.text(`Gold: ${rewards.gold}`);
         this.text(`Exp: ${exp}`);
 
-        this.giveGold(rewards.gold);
-        this.giveExp(exp);
+        await this.giveGold(rewards.gold);
+        await this.giveExp(exp);
 
         this.clearLetter();
         return this.nextState(HuntQuestState.START);

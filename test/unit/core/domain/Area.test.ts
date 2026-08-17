@@ -149,7 +149,10 @@ describe('Area map attributes', () => {
 
         await area.load();
 
-        expect(getEntities.calledOnceWith('metin2_map_WL_01'), 'spawnManager.getEntities should receive the stripped name').to.be.equal(true);
+        expect(
+            getEntities.calledOnceWith('metin2_map_WL_01'),
+            'spawnManager.getEntities should receive the stripped name',
+        ).to.be.equal(true);
         expect(area.getAttributes().hasData()).to.be.equal(true);
         expect(area.isPositionBlocked(2 * CELL_SIZE, 1 * CELL_SIZE)).to.be.equal(true);
     });

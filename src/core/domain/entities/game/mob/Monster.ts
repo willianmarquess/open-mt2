@@ -226,7 +226,7 @@ export default class Monster extends Mob {
         if (this.points.getPoint(PointsEnum.HEALTH) <= 0) {
             this.die();
             this.reward();
-            this.questManager.onKill(attacker, this);
+            void this.questManager.onKill(attacker, this);
         }
     }
 

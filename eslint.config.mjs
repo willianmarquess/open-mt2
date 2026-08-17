@@ -23,7 +23,12 @@ export default [
   {
     rules: {
       "@typescript-eslint/no-explicit-any": "off",
-      "@typescript-eslint/no-unused-expressions": "off"
+      "@typescript-eslint/no-unused-expressions": "off",
+      // Project convention for an intentionally-unused parameter (e.g. a base-class hook a
+      // subclass may override) is a leading underscore, not a disable directive comment placed
+      // above it - a directive like that only silences violations on the single line right below
+      // it, which breaks the moment Prettier reflows a long signature onto multiple lines.
+      "@typescript-eslint/no-unused-vars": ["error", { argsIgnorePattern: "^_", varsIgnorePattern: "^_", caughtErrorsIgnorePattern: "^_" }],
     },
   },
 ];

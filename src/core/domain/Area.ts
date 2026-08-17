@@ -271,7 +271,7 @@ export default class Area {
     private processSpawnQueue() {
         for (const entity of this.entitiesToSpawn.dequeueIterator()) {
             if (!entity) continue;
-            entity.onSpawn();
+            void entity.onSpawn();
             this.aoi.insert(entity);
             this.linkNearbyEntities(entity);
             this.entityManager.addEntity(entity);
@@ -303,7 +303,7 @@ export default class Area {
             this.unlinkNearbyEntities(entity);
             this.entityManager.removeEntity(entity);
             this.aoi.remove(entity);
-            entity.onDespawn();
+            void entity.onDespawn();
         }
     }
 

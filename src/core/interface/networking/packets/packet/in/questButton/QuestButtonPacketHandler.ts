@@ -32,6 +32,6 @@ export default class QuestButtonPacketHandler extends PacketHandler<QuestButtonP
             return;
         }
 
-        this.questManager.onButton(player, packet.getQuestId());
+        await this.questManager.onButton(player, packet.getQuestId());
     }
 }

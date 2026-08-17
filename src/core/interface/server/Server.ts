@@ -84,7 +84,9 @@ export default abstract class Server {
         connection.startHandShake();
         connection.startKeepalive();
 
-        socket.on('close', this.onClose.bind(this, connection));
+        socket.on('close', () => {
+            this.onClose(connection).catch((err) => this.logger.error(err));
+        });
         socket.on('data', (chunk: Buffer) => {
             this.handleData(connection, chunk).catch((err) => this.logger.error(err));
         });
@@ -201,7 +203,7 @@ export default abstract class Server {
         return true;
     }
 
-    async onError(connection: Connection, err: Error) {
+    onError(connection: Connection, err: Error) {
         this.logger.debug(`[IN][ERROR SOCKET EVENT] Closing connection: ID: ${connection.getId()}`);
         this.logger.debug(`[IN][ERROR SOCKET EVENT] Error ${err.message || err}`);
         connection.setState(ConnectionStateEnum.CLOSE);

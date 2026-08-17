@@ -70,19 +70,21 @@ export class EntityManager {
     }
 
     init() {
-        setInterval(async () => {
-            if (this.players.size < 1) return;
+        setInterval(() => {
+            void (async () => {
+                if (this.players.size < 1) return;
 
-            const promises: Array<Promise<PromiseSettledResult<unknown>[]>> = [];
+                const promises: Array<Promise<PromiseSettledResult<unknown>[]>> = [];
 
-            for (const entity of this.players.values()) {
-                this.logger.debug(`[EntityManager] Saving player: ${entity.getId()}, ${entity.getName()}`);
-                promises.push(this.saveCharacterService.execute(entity));
-            }
+                for (const entity of this.players.values()) {
+                    this.logger.debug(`[EntityManager] Saving player: ${entity.getId()}, ${entity.getName()}`);
+                    promises.push(this.saveCharacterService.execute(entity));
+                }
 
-            await Promise.allSettled(promises).catch((error) =>
-                this.logger.error('[EntityManager] Error when try to save player: ', error),
-            );
+                await Promise.allSettled(promises).catch((error) =>
+                    this.logger.error('[EntityManager] Error when try to save player: ', error),
+                );
+            })();
         }, SAVE_PLAYERS_INTERVAL);
     }
 

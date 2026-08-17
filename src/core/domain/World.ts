@@ -215,7 +215,7 @@ export default class World {
         return Promise.allSettled(promises);
     }
 
-    async tick() {
+    tick() {
         const startTickTime = performance.now();
 
         for (const area of this.areas.values()) {

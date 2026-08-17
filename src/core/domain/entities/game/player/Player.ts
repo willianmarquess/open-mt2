@@ -435,7 +435,7 @@ export default class Player extends Character {
     }
 
     levelUp() {
-        this.questManager.onLevelUp(this);
+        void this.questManager.onLevelUp(this);
         this.broadcastLevelUp();
     }
 
@@ -492,7 +492,7 @@ export default class Player extends Character {
         this.sendQuickSlot();
 
         await this.questManager.addQuests(this);
-        this.questManager.onLogin(this);
+        await this.questManager.onLogin(this);
     }
 
     private applyInvisibleAffect(durationInSecs: number) {
@@ -900,7 +900,9 @@ export default class Player extends Character {
             // this.points.calcPointsAndResetValues();
             this.die(attacker);
             if (attacker instanceof Player) {
-                this.questManager.onKill(attacker, this);
+                // takeDamage() runs synchronously from the melee/skill damage pipeline; quest
+                // kill-count processing happens in the background rather than blocking the hit.
+                void this.questManager.onKill(attacker, this);
             }
         }
     }
