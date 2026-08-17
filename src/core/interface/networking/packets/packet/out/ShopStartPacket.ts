@@ -2,6 +2,7 @@ import PacketHeaderEnum from '@/core/enum/PacketHeaderEnum';
 import PacketOut from '@/core/interface/networking/packets/packet/out/PacketOut';
 import { ShopSubHeaderGC } from '@/core/enum/ShopSubHeaderEnum';
 import { ShopItem } from '@/core/domain/shop/ShopItem';
+import Item from '@/core/domain/entities/game/item/Item';
 import { SHOP_MAX_ITEMS } from '@/core/domain/shop/Shop';
 
 const SOCKETS_COUNT = 3;
@@ -59,15 +60,25 @@ export default class ShopStartPacket extends PacketOut {
             this.bufferWriter.writeUint8(shopItem?.count || 0);
             this.bufferWriter.writeUint8(shopItem?.position || 0);
 
-            // Write 3 sockets (all zero for shop items)
+            const item = shopItem?.item instanceof Item ? shopItem.item : undefined;
+
+            const sockets = [item?.getSocket0(), item?.getSocket1(), item?.getSocket2()];
             for (let s = 0; s < SOCKETS_COUNT; s++) {
-                this.bufferWriter.writeUint32LE(0);
+                this.bufferWriter.writeUint32LE(sockets[s] ?? 0);
             }
 
-            // Write 7 bonuses (all zero for shop items)
+            const attributes = [
+                [item?.getAttributeType0(), item?.getAttributeValue0()],
+                [item?.getAttributeType1(), item?.getAttributeValue1()],
+                [item?.getAttributeType2(), item?.getAttributeValue2()],
+                [item?.getAttributeType3(), item?.getAttributeValue3()],
+                [item?.getAttributeType4(), item?.getAttributeValue4()],
+                [item?.getAttributeType5(), item?.getAttributeValue5()],
+                [item?.getAttributeType6(), item?.getAttributeValue6()],
+            ];
             for (let b = 0; b < BONUSES_COUNT; b++) {
-                this.bufferWriter.writeUint8(0); // id
-                this.bufferWriter.writeUint16LE(0); // value
+                this.bufferWriter.writeUint8(attributes[b][0] ?? 0); // id
+                this.bufferWriter.writeUint16LE(attributes[b][1] ?? 0); // value
             }
         }
 
