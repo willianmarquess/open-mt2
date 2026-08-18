@@ -1,5 +1,7 @@
 import { expect } from 'chai';
+import sinon from 'sinon';
 import BitFlag from '@/core/util/BitFlag';
+import { ItemEquipmentSlotEnum } from '@/core/enum/ItemEquipmentSlotEnum';
 import Item from '@/core/domain/entities/game/item/Item';
 import Inventory from '@/core/domain/entities/game/inventory/Inventory';
 import { ItemTypeEnum } from '@/core/enum/ItemTypeEnum';
@@ -54,6 +56,16 @@ function createItem(id: number, dbId: number, size: number = 1) {
 
 function createInventory() {
     return new Inventory({ config: { INVENTORY_PAGES: 2 } as GameConfig, ownerId: 1 });
+}
+
+function equipWeapon(inventory: Inventory, type: ItemTypeEnum, values: Array<number>) {
+    const weapon = createItem(1, 100);
+    sinon.stub(weapon, 'getType').returns(type);
+    sinon.stub(weapon, 'getValues').returns(values);
+
+    inventory.addItemAt(weapon, inventory.size() + ItemEquipmentSlotEnum.WEAPON);
+
+    return weapon;
 }
 
 describe('Inventory', () => {
@@ -162,5 +174,29 @@ describe('Inventory', () => {
 
         expect(inventory.getItem(0)).to.equal(null);
         expect(inventory.haveAvailablePosition(0, 2)).to.equal(true);
+    });
+
+    it('should read the physical damage of a real weapon from its proto values', () => {
+        const inventory = createInventory();
+        const sword = equipWeapon(inventory, ItemTypeEnum.ITEM_WEAPON, [0, 15, 19, 13, 15, 0]);
+
+        expect(sword.getPosition()).to.equal(inventory.size() + ItemEquipmentSlotEnum.WEAPON);
+        expect(inventory.getWeaponValues().physic).to.deep.equal({ min: 13, max: 15, bonus: 0 });
+    });
+
+    it('should not read a fishing rod value3/value4 as physical damage', () => {
+        const inventory = createInventory();
+
+        equipWeapon(inventory, ItemTypeEnum.ITEM_ROD, [10, 5, 10, 100, 27400, 0]);
+
+        expect(inventory.getWeaponValues().physic).to.deep.equal({ min: 0, max: 1, bonus: 0 });
+    });
+
+    it('should not read a pickaxe value3/value4 as physical damage', () => {
+        const inventory = createInventory();
+
+        equipWeapon(inventory, ItemTypeEnum.ITEM_PICK, [10, 1, 6000, 100, 29101, 0]);
+
+        expect(inventory.getWeaponValues().physic).to.deep.equal({ min: 0, max: 1, bonus: 0 });
     });
 });
