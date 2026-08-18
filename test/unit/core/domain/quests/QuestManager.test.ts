@@ -1,6 +1,7 @@
 import { expect } from 'chai';
 import sinon from 'sinon';
 import { QuestManager } from '@/core/domain/quests/QuestManager';
+import { AbstractQuest } from '@/core/domain/quests/AbstractQuest';
 import { QuestStatusEnum } from '@/core/domain/quests/decorators/QuestDecorator';
 import { QuestEventEnum } from '@/core/enum/QuestEventEnum';
 
@@ -118,6 +119,102 @@ describe('QuestManager', () => {
         });
     });
 
+    describe('click -> select() -> answer, end to end (real AbstractQuest, like SkillQuest confirmOnClickSkillTeacher)', () => {
+        const CLICK_QUEST_ID = 99;
+        const CLICK_STATE = 'CONFIRM';
+        const CLICK_NPC_VNUM = 20300;
+
+        class YesNoQuest extends AbstractQuest {
+            public reachedYes = false;
+
+            async onClickNpc() {
+                this.title('Confirm?');
+                const option = await this.select(['Yes', 'No']);
+                if (option === 0) this.reachedYes = true;
+                return this.done();
+            }
+        }
+
+        async function makeRealQuestSetup() {
+            const sentPackets: Array<unknown> = [];
+            const questsById = new Map<number, AbstractQuest>();
+
+            const player: any = {
+                getId: () => 1,
+                sendQuestScript: (skin: unknown, src: unknown) => sentPackets.push({ skin, src }),
+                sendQuestInfoPacket: () => {},
+                setCurrentQuest: (quest: AbstractQuest) => (player.currentQuest = quest),
+                getCurrentQuest: () => player.currentQuest,
+                isQuestRunning: () => player.currentQuest?.isRunning() ?? false,
+                addQuest: (id: number, quest: AbstractQuest) => questsById.set(id, quest),
+                getQuest: (id: number) => questsById.get(id) ?? null,
+                getQuestByStatus: (status: QuestStatusEnum) => {
+                    for (const quest of questsById.values()) {
+                        if (quest.getStatus() === status) return quest;
+                    }
+                    return null;
+                },
+            };
+
+            const quest = new YesNoQuest({ player, itemManager: {} as any, questTargetManager: {} as any });
+            quest.addState({
+                name: CLICK_STATE,
+                tasks: [
+                    {
+                        when: QuestEventEnum.CLICK,
+                        target: CLICK_NPC_VNUM,
+                        callback: (quest as any).onClickNpc.bind(quest),
+                        handlerName: 'onClickNpc',
+                    },
+                ],
+            });
+            player.addQuest(CLICK_QUEST_ID, quest);
+            await quest.setState(CLICK_STATE);
+
+            const questManager = new QuestManager({ logger, shopManager: {} as any } as any);
+            (questManager as any).registerClickTask(CLICK_QUEST_ID, CLICK_STATE, CLICK_NPC_VNUM);
+
+            const npc = { isNPC: () => true, getId: () => CLICK_NPC_VNUM };
+
+            return { questManager, player, quest, npc, sentPackets };
+        }
+
+        it('sends the select() question on the first click', async () => {
+            const { questManager, player, npc, sentPackets } = await makeRealQuestSetup();
+
+            const handled = await questManager.onClick(player, npc);
+
+            expect(handled, 'the click was routed to the quest').to.be.equal(true);
+            expect(sentPackets.length, 'the select() question was sent to the client').to.equal(1);
+        });
+
+        it('unblocks after the answer, so the player is not stuck forever (no more packets ever again)', async () => {
+            const { questManager, player, quest, npc, sentPackets } = await makeRealQuestSetup();
+
+            await questManager.onClick(player, npc);
+            // run() is detached (fire-and-forget) up to the suspend point inside select();
+            // give the microtask queue a tick to reach it.
+            await new Promise((resolve) => setImmediate(resolve));
+
+            expect(quest.getStatus(), 'setup: the quest is suspended awaiting the answer').to.equal(
+                QuestStatusEnum.SELECT,
+            );
+
+            questManager.onAnswer(player, 0); // "Yes" - onAnswer's answer is 0-indexed (see chatOptions[answer] below)
+            await new Promise((resolve) => setImmediate(resolve));
+
+            expect(quest.reachedYes, 'the answer actually reached the quest body').to.be.equal(true);
+            expect(player.isQuestRunning(), 'the quest must not stay stuck running forever').to.equal(false);
+
+            // A second click must still be handled - this is what silently breaks (no packet, ever
+            // again) if isQuestRunning()/status never gets reset after the first answer.
+            sentPackets.length = 0;
+            const handledAgain = await questManager.onClick(player, npc);
+
+            expect(handledAgain, 'a later click on the same NPC must not be silently swallowed').to.equal(true);
+        });
+    });
+
     describe('onLogout', () => {
         it('should dispatch the logout event to a quest subscribed in its current state', async () => {
             const quest = { getCurrentState: () => ({ name: STATE_NAME }), runState: sinon.stub().resolves() };
@@ -171,6 +268,7 @@ describe('QuestManager', () => {
                 getName: () => 'TestQuest',
                 getCurrentState: () => ({ name: STATE }),
                 runState: sinon.stub().resolves(),
+                run: sinon.spy(),
             };
             (questManager as any).eventQuestMap.set(QuestEventEnum.BUTTON, new Map([[QUEST_ID, new Set([STATE])]]));
         });
@@ -178,14 +276,18 @@ describe('QuestManager', () => {
         it('should dispatch the button event when no quest is running', async () => {
             await questManager.onButton(createPlayer(false), QUEST_ID);
 
-            expect(quest.runState.calledOnce, 'the button reaches the quest').to.be.equal(true);
+            // Dispatched via run(), not a directly-awaited runState() - see the comment on
+            // QuestManager.onButton: awaiting it here would deadlock the corked socket if the
+            // button handler leads into a select() (issue: quest skill click hangs the client).
+            expect(quest.run.calledOnce, 'the button reaches the quest').to.be.equal(true);
+            expect(quest.run.firstCall.args[0]).to.deep.equal({ eventType: QuestEventEnum.BUTTON });
         });
 
         it('should refuse a button press while another quest is mid-flight', async () => {
             await questManager.onButton(createPlayer(true), QUEST_ID);
 
             expect(
-                quest.runState.called,
+                quest.run.called,
                 'a second dispatch would strand the suspended coroutine on an orphaned promise',
             ).to.be.equal(false);
         });

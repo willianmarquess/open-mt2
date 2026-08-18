@@ -81,6 +81,7 @@ CREATE TABLE game.player (
     horseName VARCHAR(24) NOT NULL DEFAULT '',
     horseRiding TINYINT UNSIGNED NOT NULL DEFAULT 0,
     skills JSON NOT NULL,
+    quickSlot JSON NOT NULL,
     deletedAt TIMESTAMP NULL DEFAULT NULL
 );
 
@@ -113,19 +114,6 @@ CREATE TABLE game.item (
     attributeType6 INT UNSIGNED DEFAULT 0,
     attributeValue6 INT UNSIGNED DEFAULT 0,
     FOREIGN KEY (ownerId)
-        REFERENCES game.player(id)
-        ON DELETE CASCADE
-);
-
-DROP TABLE IF EXISTS game.quick_slot;
-
-CREATE TABLE game.quick_slot (
-    playerId INT UNSIGNED NOT NULL,
-    slot TINYINT UNSIGNED NOT NULL,
-    type TINYINT UNSIGNED NOT NULL,
-    position TINYINT UNSIGNED NOT NULL,
-    PRIMARY KEY (playerId, slot),
-    FOREIGN KEY (playerId)
         REFERENCES game.player(id)
         ON DELETE CASCADE
 );

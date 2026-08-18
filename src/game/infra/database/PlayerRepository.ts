@@ -4,6 +4,7 @@ import { PlayerState, SkillState } from '@/core/domain/entities/state/player/Pla
 import { IPlayerRepository } from '@/core/domain/repository/IPlayerRepository';
 
 type PlayerRow = RowDataPacket & PlayerState;
+type QuickSlotEntry = { slot: number; type: number; position: number };
 
 export default class PlayerRepository implements IPlayerRepository {
     private readonly databaseManager: DatabaseManager;
@@ -16,29 +17,29 @@ export default class PlayerRepository implements IPlayerRepository {
         const [result] = await this.databaseManager.getConnection().execute<ResultSetHeader>(
             `
         insert into game.player (
-            accountId, 
-            createdAt, 
-            updatedAt, 
-            empire, 
-            playerClass, 
-            skillGroup, 
-            playTime, 
-            level, 
-            experience, 
-            gold, 
-            st, 
-            ht, 
-            dx, 
-            iq, 
-            positionX, 
-            positionY, 
-            health, 
-            mana, 
-            stamina, 
-            bodyPart, 
-            hairPart, 
-            name, 
-            givenStatusPoints, 
+            accountId,
+            createdAt,
+            updatedAt,
+            empire,
+            playerClass,
+            skillGroup,
+            playTime,
+            level,
+            experience,
+            gold,
+            st,
+            ht,
+            dx,
+            iq,
+            positionX,
+            positionY,
+            health,
+            mana,
+            stamina,
+            bodyPart,
+            hairPart,
+            name,
+            givenStatusPoints,
             availableStatusPoints,
             availableSkillPoints,
             slot,
@@ -47,11 +48,12 @@ export default class PlayerRepository implements IPlayerRepository {
             horseStamina,
             horseName,
             horseRiding,
-            skills
+            skills,
+            quickSlot
         )
             values
         (
-            ?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?
+            ?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?
         );
         `,
             [
@@ -87,11 +89,9 @@ export default class PlayerRepository implements IPlayerRepository {
                 player.horseName,
                 player.horseRiding,
                 this.getSkillJson(player.skills),
+                this.getQuickSlotJson(player.quickSlot),
             ],
         );
-        if (player.quickSlot.size > 0) {
-            await this.bulkUpsertQuickSlots(player);
-        }
         return result.insertId;
     }
 
@@ -119,33 +119,53 @@ export default class PlayerRepository implements IPlayerRepository {
         return skillsJson;
     }
 
+    /** Mirrors getSkillJson's pattern: a Map isn't itself JSON-serializable, so it's flattened into
+     * an array of {slot, type, position} entries first (only the slots actually set, keeping the
+     * column small), then reconstructed back into a Map in mapToEntity. */
+    private getQuickSlotJson(quickSlot: Map<number, { type: number; position: number }>): string {
+        let quickSlotJson: string = '[]';
+        try {
+            const entries: Array<QuickSlotEntry> = Array.from(quickSlot.entries()).map(
+                ([slot, { type, position }]) => ({
+                    slot,
+                    type,
+                    position,
+                }),
+            );
+            quickSlotJson = JSON.stringify(entries);
+        } catch (error) {
+            console.error('Error serializing quick slots:', error);
+        }
+        return quickSlotJson;
+    }
+
     async update(player: PlayerState) {
         await this.databaseManager.getConnection().query<ResultSetHeader>(
             `
-        UPDATE game.player SET 
-            accountId = ?, 
-            createdAt = ?, 
-            updatedAt = ?, 
-            empire = ?, 
-            playerClass = ?, 
-            skillGroup = ?, 
-            playTime = ?, 
-            level = ?, 
-            experience = ?, 
-            gold = ?, 
-            st = ?, 
-            ht = ?, 
-            dx = ?, 
-            iq = ?, 
-            positionX = ?, 
-            positionY = ?, 
-            health = ?, 
-            mana = ?, 
-            stamina = ?, 
-            bodyPart = ?, 
-            hairPart = ?, 
-            name = ?, 
-            givenStatusPoints = ?, 
+        UPDATE game.player SET
+            accountId = ?,
+            createdAt = ?,
+            updatedAt = ?,
+            empire = ?,
+            playerClass = ?,
+            skillGroup = ?,
+            playTime = ?,
+            level = ?,
+            experience = ?,
+            gold = ?,
+            st = ?,
+            ht = ?,
+            dx = ?,
+            iq = ?,
+            positionX = ?,
+            positionY = ?,
+            health = ?,
+            mana = ?,
+            stamina = ?,
+            bodyPart = ?,
+            hairPart = ?,
+            name = ?,
+            givenStatusPoints = ?,
             availableStatusPoints = ?,
             availableSkillPoints = ?,
             slot = ?,
@@ -154,7 +174,8 @@ export default class PlayerRepository implements IPlayerRepository {
             horseStamina = ?,
             horseName = ?,
             horseRiding = ?,
-            skills = ?
+            skills = ?,
+            quickSlot = ?
         WHERE id = ?;
         `,
             [
@@ -190,25 +211,10 @@ export default class PlayerRepository implements IPlayerRepository {
                 player.horseName,
                 player.horseRiding,
                 this.getSkillJson(player.skills),
+                this.getQuickSlotJson(player.quickSlot),
                 player.id,
             ],
         );
-        if (player.quickSlot.size > 0) {
-            await this.bulkUpsertQuickSlots(player);
-        }
-    }
-
-    private async getQuickSlots(playerId: number): Promise<Map<number, { type: number; position: number }>> {
-        const [quickSlots] = await this.databaseManager
-            .getConnection()
-            .query<RowDataPacket[]>(`SELECT slot, type, position FROM game.quick_slot WHERE playerId = ?;`, [playerId]);
-
-        const quickSlotMap = new Map<number, { type: number; position: number }>();
-        for (const quickSlot of quickSlots) {
-            quickSlotMap.set(quickSlot.slot, { type: quickSlot.type, position: quickSlot.position });
-        }
-
-        return quickSlotMap;
     }
 
     async getById(id: number): Promise<PlayerState | null> {
@@ -222,9 +228,7 @@ export default class PlayerRepository implements IPlayerRepository {
 
         const [player] = players;
 
-        const quickSlot = await this.getQuickSlots(player.id);
-
-        return this.mapToEntity(player, quickSlot);
+        return this.mapToEntity(player);
     }
 
     async getByAccountId(accountId: number): Promise<PlayerState[]> {
@@ -232,9 +236,7 @@ export default class PlayerRepository implements IPlayerRepository {
             .getConnection()
             .query<PlayerRow[]>(`SELECT * FROM game.player WHERE accountId = ? AND deletedAt IS NULL;`, [accountId]);
 
-        const quickSlots = await Promise.all(players.map((p) => this.getQuickSlots(p.id)));
-
-        return players.map((p, i) => this.mapToEntity(p, quickSlots[i])) as PlayerState[];
+        return players.map((p) => this.mapToEntity(p)) as PlayerState[];
     }
 
     async getByAccountIdAndSlot(accountId: number, slot: number): Promise<PlayerState | null> {
@@ -250,43 +252,10 @@ export default class PlayerRepository implements IPlayerRepository {
 
         const [player] = players;
 
-        const quickSlot = await this.getQuickSlots(player.id);
-
-        return this.mapToEntity(player, quickSlot);
+        return this.mapToEntity(player);
     }
 
-    private async bulkUpsertQuickSlots(player: PlayerState): Promise<void> {
-        const { id: playerId, quickSlot: quickSlots } = player;
-        if (quickSlots.size === 0) return;
-
-        const values: (number | string)[] = [];
-        const placeholders: string[] = [];
-
-        for (const [slot, quickSlot] of quickSlots.entries()) {
-            placeholders.push('(?, ?, ?, ?)');
-            values.push(playerId, slot, quickSlot.type, quickSlot.position);
-        }
-
-        await this.databaseManager
-            .getConnection()
-            .query<ResultSetHeader>(`DELETE FROM game.quick_slot WHERE playerId = ?;`, [playerId]);
-
-        await this.databaseManager.getConnection().query<ResultSetHeader>(
-            `
-            INSERT INTO game.quick_slot (playerId, slot, type, position)
-            VALUES ${placeholders.join(', ')}
-            ON DUPLICATE KEY UPDATE
-                type = VALUES(type),
-                position = VALUES(position);
-            `,
-            values,
-        );
-    }
-
-    private mapToEntity(
-        player?: PlayerRow,
-        quickSlot?: Map<number, { type: number; position: number }>,
-    ): PlayerState | null {
+    private mapToEntity(player?: PlayerRow): PlayerState | null {
         if (!player) return null;
 
         const {
@@ -323,7 +292,14 @@ export default class PlayerRepository implements IPlayerRepository {
             horseRiding,
             availableSkillPoints,
             skills,
+            quickSlot,
         } = player;
+
+        const quickSlotEntries = (quickSlot ?? []) as unknown as Array<QuickSlotEntry>;
+        const quickSlotMap = new Map<number, { type: number; position: number }>();
+        for (const { slot: quickSlotIndex, type, position } of quickSlotEntries) {
+            quickSlotMap.set(quickSlotIndex, { type, position });
+        }
 
         return new PlayerState({
             id,
@@ -352,7 +328,7 @@ export default class PlayerRepository implements IPlayerRepository {
             givenStatusPoints,
             availableStatusPoints,
             slot,
-            quickSlot,
+            quickSlot: quickSlotMap,
             horseLevel,
             horseHealth,
             horseStamina,
