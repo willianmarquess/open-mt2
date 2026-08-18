@@ -443,7 +443,7 @@ export class QuestManager {
         if (!quest) return;
         const current = quest.getCurrentState()?.name;
         if (states.has(current ?? '')) {
-            await quest.runState({ eventType: event });
+            quest.run({ eventType: event });
         }
     }
 
