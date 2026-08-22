@@ -11,6 +11,7 @@ import MyShopPacket from '@/core/interface/networking/packets/packet/in/myshop/M
 import EmpirePacket from '@/core/interface/networking/packets/packet/bidirectional/empire/EmpirePacket';
 import { ShopSubHeaderCG } from '@/core/enum/ShopSubHeaderEnum';
 import AuthServer from '@/auth/interface/server/AuthServer';
+import { asValue, createContainer } from 'awilix';
 
 type LogLine = { level: string; message: string };
 const logged: Array<LogLine> = [];
@@ -214,6 +215,77 @@ describe('Unknown header log level', () => {
         expect(unknown).to.have.lengthOf(1);
         expect(unknown[0].level).to.be.equal('debug');
 
+        socket.emit('close');
+    });
+});
+
+describe('Packets the server cannot serve (issue #217)', () => {
+    /**
+     * A real awilix container, so resolving a service it does not register throws
+     * the way it does in production. A plain object would silently inject
+     * undefined and never reproduce the failure.
+     */
+    const authLikeServer = (packets = makePackets()) => {
+        const containerInstance = createContainer();
+        containerInstance.register({
+            logger: asValue(logger),
+            config: asValue({}),
+            packets: asValue(packets),
+            containerInstance: asValue({ createScope: () => {} }),
+        });
+        return new AuthServer(containerInstance.cradle as any);
+    };
+
+    /** The auth container has no selectEmpireService, so EMPIRE cannot be built there. */
+    const empirePacket = () => sequenced(new BufferWriter(PacketHeaderEnum.EMPIRE, 2).writeUint8(1).getBuffer());
+
+    it('should ignore the packet instead of killing the connection', async () => {
+        logged.length = 0;
+        const server = authLikeServer();
+        const socket = createFakeSocket();
+        server.onListener(socket);
+
+        socket.emit('data', empirePacket());
+        await settle();
+
+        expect(socket.destroy.called, 'the connection must survive an unroutable packet').to.be.equal(false);
+        const refused = logged.filter((line) => String(line.message).includes('is not served by this server'));
+        expect(refused, 'the refusal is logged loudly').to.have.lengthOf(1);
+        expect(refused[0].level).to.be.equal('error');
+
+        socket.emit('close');
+    });
+
+    it('should keep serving the connection afterwards', async () => {
+        const server = authLikeServer();
+        const socket = createFakeSocket();
+        server.onListener(socket);
+
+        socket.emit('data', Buffer.concat([empirePacket(), empirePacket()]));
+        await settle();
+
+        expect(socket.destroy.called).to.be.equal(false);
+        socket.emit('close');
+    });
+
+    it('should still propagate a handler constructor failure that is not a resolution error', async () => {
+        const packets = makePackets();
+        const entry = packets.get(PacketHeaderEnum.EMPIRE)!;
+        packets.set(PacketHeaderEnum.EMPIRE, {
+            ...entry,
+            createHandler: () => {
+                throw new TypeError('a real defect in the handler');
+            },
+        });
+
+        const server = authLikeServer(packets);
+        const socket = createFakeSocket();
+        server.onListener(socket);
+
+        socket.emit('data', empirePacket());
+        await settle();
+
+        expect(socket.destroy.called, 'a genuine defect must not be swallowed').to.be.equal(true);
         socket.emit('close');
     });
 });

@@ -1,4 +1,5 @@
 import { createServer, Server as SocketServer, Socket } from 'node:net';
+import { AwilixResolutionError } from 'awilix';
 import Connection from '@/core/interface/networking/Connection';
 import Logger from '@/core/infra/logger/Logger';
 import { PacketMapValue } from '@/core/interface/networking/packets/Packets';
@@ -43,6 +44,20 @@ export default abstract class Server {
 
     abstract createConnection(socket: Socket): Connection;
     abstract onData(connection: Connection, data: Buffer): Promise<void>;
+
+    /** The packet map is shared by both servers but the containers are not, so an unservable handler is refused, not fatal. */
+    protected createHandlerFor(connection: Connection, header: number, packetBuilder: PacketMapValue<any>) {
+        try {
+            return packetBuilder.createHandler(this.container);
+        } catch (error) {
+            if (!(error instanceof AwilixResolutionError)) throw error;
+
+            this.logger.error(
+                `[IN][PACKET] Header ${header} is not served by this server from connection: ID: ${connection.getId()}, ignoring. ${error.message}`,
+            );
+            return null;
+        }
+    }
 
     protected isAllowedInPhase(connection: Connection, header: number, packetBuilder: PacketMapValue<any>): boolean {
         if (packetBuilder.phases.has(connection.getState())) return true;
