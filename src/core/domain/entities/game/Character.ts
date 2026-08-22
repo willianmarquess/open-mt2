@@ -24,6 +24,10 @@ type MovementNodeProvider = () => { x: number; y: number } | null;
 const MOVEMENT_NODE_HANDOFF_RATE = 0.9;
 const SPEED_REFERENCE_DISTANCE = 10_000;
 
+const PLAYER_ATTACK_SPEED_LIMIT = 170;
+const PLAYER_MOVE_SPEED_LIMIT = 200;
+const MOB_SPEED_LIMIT = 250;
+
 export default abstract class Character extends GameEntity {
     protected id: number;
     protected classId: number = 0;
@@ -409,11 +413,7 @@ export default abstract class Character extends GameEntity {
         );
 
         if (animation) {
-            this.movementDuration = AnimationUtil.calcAnimationDuration(
-                animation,
-                this.getPoint(PointsEnum.MOVE_SPEED),
-                distance,
-            );
+            this.movementDuration = AnimationUtil.calcAnimationDuration(animation, this.getMovementSpeed(), distance);
         } else {
             this.movementDuration = 0;
         }
@@ -546,7 +546,8 @@ export default abstract class Character extends GameEntity {
     }
 
     getMovementSpeed() {
-        return this.getPoint(PointsEnum.MOVE_SPEED);
+        const limit = this.isPlayer() ? PLAYER_MOVE_SPEED_LIMIT : MOB_SPEED_LIMIT;
+        return Math.max(0, Math.min(limit, this.getPoint(PointsEnum.MOVE_SPEED)));
     }
 
     /** Null when the class has no run animation, the case gotoInternal() also gives no duration. */
@@ -561,7 +562,7 @@ export default abstract class Character extends GameEntity {
 
         const duration = AnimationUtil.calcAnimationDuration(
             animation,
-            this.getPoint(PointsEnum.MOVE_SPEED),
+            this.getMovementSpeed(),
             SPEED_REFERENCE_DISTANCE,
         );
 
@@ -569,7 +570,8 @@ export default abstract class Character extends GameEntity {
     }
 
     getAttackSpeed() {
-        return this.getPoint(PointsEnum.ATTACK_SPEED);
+        const limit = this.isPlayer() ? PLAYER_ATTACK_SPEED_LIMIT : MOB_SPEED_LIMIT;
+        return Math.max(0, Math.min(limit, this.getPoint(PointsEnum.ATTACK_SPEED)));
     }
 
     getLevel() {
