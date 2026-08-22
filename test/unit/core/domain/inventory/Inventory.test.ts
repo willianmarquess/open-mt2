@@ -10,7 +10,7 @@ import { GameConfig } from '@/game/infra/config/GameConfig';
 
 const PAGE_SIZE = 45; // 5 x 9
 
-function createItem(id: number, dbId: number, size: number = 1) {
+function createItem(id: number, dbId: number | null, size: number = 1) {
     return new Item({
         id,
         name: `item-${id}`,
@@ -198,5 +198,66 @@ describe('Inventory', () => {
         equipWeapon(inventory, ItemTypeEnum.ITEM_PICK, [10, 1, 6000, 100, 29101, 0]);
 
         expect(inventory.getWeaponValues().physic).to.deep.equal({ min: 0, max: 1, bonus: 0 });
+    });
+});
+
+describe('Inventory items collection (issue #118)', () => {
+    it('should keep every item added before its database insert, not just the last', () => {
+        const inventory = createInventory();
+        const first = createItem(27003, null);
+        const second = createItem(27004, null);
+
+        inventory.addItem(first);
+        inventory.addItem(second);
+
+        const listed = [...inventory.getItems().values()];
+        expect(listed, 'both fresh items were filed under one key, so the second evicted the first').to.have.members([
+            first,
+            second,
+        ]);
+    });
+
+    it('should keep an item placed at a fixed position before its database insert', () => {
+        const inventory = createInventory();
+        const first = createItem(27003, null);
+        const second = createItem(27004, null);
+
+        inventory.addItemAt(first, 0);
+        inventory.addItemAt(second, 1);
+
+        expect([...inventory.getItems().values()]).to.have.members([first, second]);
+    });
+
+    it('should still list an item after it gains its database id', () => {
+        const inventory = createInventory();
+        const item = createItem(27003, null);
+
+        inventory.addItem(item);
+        item.setDbId(4242);
+
+        expect([...inventory.getItems().values()]).to.have.members([item]);
+    });
+
+    it('should drop exactly the removed instance and keep the other fresh item', () => {
+        const inventory = createInventory();
+        const first = createItem(27003, null);
+        const second = createItem(27004, null);
+
+        inventory.addItemAt(first, 0);
+        inventory.addItemAt(second, 1);
+        inventory.removeItem(0, 1);
+
+        expect([...inventory.getItems().values()]).to.have.members([second]);
+    });
+
+    it('should drop an unequipped fresh item from the collection', () => {
+        const inventory = createInventory();
+        const armor = createItem(11299, null, 2);
+        const equipmentSlot = inventory.size() + 1;
+
+        inventory.addItemAt(armor, equipmentSlot);
+        inventory.removeItem(equipmentSlot, 1);
+
+        expect([...inventory.getItems().values()]).to.deep.equal([]);
     });
 });
