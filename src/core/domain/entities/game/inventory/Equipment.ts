@@ -195,6 +195,17 @@ export default class Equipment {
         return 24;
     }
 
+    getWornItems() {
+        const worn: Array<Item> = [];
+
+        for (const slot of this.slots.values()) {
+            const item = slot.get();
+            if (item) worn.push(item);
+        }
+
+        return worn;
+    }
+
     getWeapon() {
         return this.weapon;
     }

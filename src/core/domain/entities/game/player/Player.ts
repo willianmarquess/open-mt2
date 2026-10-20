@@ -98,6 +98,7 @@ import SkillLevelPacket from '@/core/interface/networking/packets/packet/out/Ski
 import { PlayerSkill } from './delegate/PlayerSkill';
 import { SkillManager } from '@/core/domain/manager/SkillManager';
 import { SkillEnum } from '@/core/enum/SkillEnum';
+import { RESTART_HEALTH } from '@/core/util/Constants';
 
 const REGEN_INTERVAL = 3000;
 const MAX_DISTANCE_FROM_TARGET = 3500;
@@ -141,7 +142,6 @@ const SHOUT_COOLDOWN_MS = 15_000;
 const RECOVERY_PERCENT_BY_STEP = [1, 5, 5, 5, 5, 5, 5, 5, 5, 5];
 const RECOVERY_FLAT_HEALTH = 15;
 
-const RESTART_HEALTH = 50;
 const RESTART_INVISIBLE_SECONDS = 5;
 
 export default class Player extends Character {
@@ -864,6 +864,10 @@ export default class Player extends Character {
 
     getArmorValues() {
         return this.inventory.getArmorValues();
+    }
+
+    getEquippedItems() {
+        return this.inventory.getEquippedItems();
     }
 
     private init() {

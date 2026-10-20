@@ -9,6 +9,8 @@ import { Points } from '../../shared/Points';
 import { HORSE_STATS } from '@/core/domain/entities/game/horse/HorseStats';
 import MobManager from '@/core/domain/manager/MobManager';
 import { AffectBitsTypeEnum } from '@/core/enum/AffectBitsTypeEnum';
+import { ApplyTypeEnum } from '@/core/enum/ApplyTypeEnum';
+import { RESTART_HEALTH } from '@/core/util/Constants';
 
 type StatPoints = {
     st: number;
@@ -751,11 +753,11 @@ export class PlayerPoints extends Points {
         });
         this.points.set(PointsEnum.ATTACK_SPEED, {
             get: () => this.attackSpeed,
-            add: (value) => this.addCommonPoint(value, 'attackSpeed', MathUtil.MAX_TINY),
+            add: (value) => this.addCommonPoint(value, 'attackSpeed'),
         });
         this.points.set(PointsEnum.MOVE_SPEED, {
             get: () => this.moveSpeed,
-            add: (value) => this.addCommonPoint(value, 'moveSpeed', MathUtil.MAX_TINY),
+            add: (value) => this.addCommonPoint(value, 'moveSpeed'),
         });
         this.points.set(PointsEnum.NEEDED_EXPERIENCE, {
             get: () => this.experienceManager.getNeededExperience(this.level),
@@ -1286,8 +1288,8 @@ export class PlayerPoints extends Points {
         this.calcMagicAttack();
         this.calcDefense();
         this.calcMagicDefense();
-        this.resetHealth();
-        this.resetMana();
+        this.clampHealth();
+        this.clampMana();
         this.calcPoints();
         this.resetAttackSpeed();
         this.resetMoveSpeed();
@@ -1421,6 +1423,8 @@ export class PlayerPoints extends Points {
         this.addPoint(PointsEnum.SUB_SKILL, value < 10 ? 0 : Math.max(this.level, 9));
 
         this.calcPointsAndResetValues();
+        this.resetHealth();
+        this.resetMana();
         this.player.levelUp();
     }
 
@@ -1491,6 +1495,14 @@ export class PlayerPoints extends Points {
         this.mana = this.maxMana;
     }
 
+    private clampHealth() {
+        this.health = this.health > 0 ? Math.min(this.health, this.maxHealth) : RESTART_HEALTH;
+    }
+
+    private clampMana() {
+        this.mana = Math.min(this.mana, this.maxMana);
+    }
+
     private calcMaxMana() {
         const iq = this.getEffectiveStat(PointsEnum.IQ);
         const baseMaxMana = this.baseMana + iq * this.mpPerIqPoint + this.level * this.mpPerLvl;
@@ -1544,12 +1556,34 @@ export class PlayerPoints extends Points {
         }
     }
 
+    private getEquipmentApplyTotal(type: ApplyTypeEnum) {
+        let total = 0;
+
+        for (const item of this.player.getEquippedItems()) {
+            for (const apply of item.getApplies()) {
+                if (apply.type === type) total += Number(apply.value);
+            }
+        }
+
+        return total;
+    }
+
     private resetMoveSpeed() {
-        this.moveSpeed = this.baseMovementSpeed;
+        this.moveSpeed = Math.max(
+            0,
+            this.baseMovementSpeed +
+                this.getEquipmentApplyTotal(ApplyTypeEnum.MOV_SPEED) +
+                this.player.getAffectPointTotal(PointsEnum.MOVE_SPEED),
+        );
     }
 
     private resetAttackSpeed() {
-        this.attackSpeed = this.baseAttackSpeed;
+        this.attackSpeed = Math.max(
+            0,
+            this.baseAttackSpeed +
+                this.getEquipmentApplyTotal(ApplyTypeEnum.ATT_SPEED) +
+                this.player.getAffectPointTotal(PointsEnum.ATTACK_SPEED),
+        );
     }
 
     getGivenStatusPoints() {

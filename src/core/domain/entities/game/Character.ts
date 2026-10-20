@@ -118,6 +118,14 @@ export default abstract class Character extends GameEntity {
         return this.affectBitFlag.getFlags();
     }
 
+    getAffectPointTotal(point: PointsEnum) {
+        let total = 0;
+        for (const affect of this.activeAffects.values()) {
+            if (affect.point === point) total += affect.value;
+        }
+        return total;
+    }
+
     isAffectByFlag(value: AffectBitsTypeEnum) {
         return this.affectBitFlag.isSet(value);
     }
