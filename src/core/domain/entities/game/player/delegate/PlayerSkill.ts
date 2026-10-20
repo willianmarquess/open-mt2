@@ -454,7 +454,27 @@ export class PlayerSkill {
     }
 
     private resetSkill() {
-        for (const skill of this.skills) {
+        const preservedSkills = new Set<SkillEnum>([
+            SkillEnum.LEADERSHIP,
+            SkillEnum.COMBO,
+            SkillEnum.MINING,
+            SkillEnum.LANGUAGE1,
+            SkillEnum.LANGUAGE2,
+            SkillEnum.LANGUAGE3,
+            SkillEnum.POLYMORPH,
+            SkillEnum.HORSE,
+            SkillEnum.HORSE_SUMMON,
+            SkillEnum.HORSE_WILDATTACK,
+            SkillEnum.HORSE_CHARGE,
+            SkillEnum.HORSE_ESCAPE,
+            SkillEnum.HORSE_WILDATTACK_RANGE,
+            SkillEnum.ADD_HP,
+            SkillEnum.RESIST_PENETRATE,
+        ]);
+
+        for (const [skillNum, skill] of this.skills.entries()) {
+            if (preservedSkills.has(skillNum)) continue;
+
             skill.level = 0;
             skill.rank = SkillRankEnum.NORMAL;
             skill.readCount = 0;
