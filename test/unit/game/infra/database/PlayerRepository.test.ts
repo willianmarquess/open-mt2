@@ -186,3 +186,35 @@ describe('PlayerRepository quick slot persistence (moved from a dedicated table 
         });
     });
 });
+
+describe('PlayerRepository sub-skill persistence (#209)', () => {
+    for (const balance of [0, 7]) {
+        it(`writes and reads balance ${balance}`, async () => {
+            const state = makePlayerState({ subSkill: balance });
+            const execute = sinon.stub().resolves([{ insertId: 42 }]);
+            const query = sinon.stub().resolves([{}]);
+            const repository = new PlayerRepository({
+                databaseManager: {
+                    getConnection: () => ({ execute, query }),
+                } as any,
+            });
+            await repository.create(state);
+            const [sql, params] = execute.firstCall.args;
+            const columns = sql
+                .match(/game\.player\s*\(([^)]+)\)/i)[1]
+                .split(',')
+                .map((s: string) => s.trim());
+            expect(columns).to.include('subSkill');
+            expect(params[columns.indexOf('subSkill')]).to.equal(balance);
+            await repository.update(state);
+            const [update, values] = query.firstCall.args;
+            const assignments = update.split(/set/i)[1].split(/where/i)[0].split(',');
+            const index = assignments.findIndex((s: string) => s.trim().startsWith('subSkill ='));
+            expect(index).to.be.at.least(0);
+            expect(values[index]).to.equal(balance);
+            query.resolves([[{ ...state, skills: [], quickSlot: [], subSkill: balance }]]);
+            const loaded = await repository.getById(42);
+            expect((loaded as any).subSkill).to.equal(balance);
+        });
+    }
+});

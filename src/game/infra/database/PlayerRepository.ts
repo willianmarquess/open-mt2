@@ -42,6 +42,7 @@ export default class PlayerRepository implements IPlayerRepository {
             givenStatusPoints,
             availableStatusPoints,
             availableSkillPoints,
+            subSkill,
             slot,
             horseLevel,
             horseHealth,
@@ -53,7 +54,7 @@ export default class PlayerRepository implements IPlayerRepository {
         )
             values
         (
-            ?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?
+            ?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?
         );
         `,
             [
@@ -82,6 +83,7 @@ export default class PlayerRepository implements IPlayerRepository {
                 player.givenStatusPoints,
                 player.availableStatusPoints,
                 player.availableSkillPoints,
+                player.subSkill,
                 player.slot,
                 player.horseLevel,
                 player.horseHealth,
@@ -168,6 +170,7 @@ export default class PlayerRepository implements IPlayerRepository {
             givenStatusPoints = ?,
             availableStatusPoints = ?,
             availableSkillPoints = ?,
+            subSkill = ?,
             slot = ?,
             horseLevel = ?,
             horseHealth = ?,
@@ -204,6 +207,7 @@ export default class PlayerRepository implements IPlayerRepository {
                 player.givenStatusPoints,
                 player.availableStatusPoints,
                 player.availableSkillPoints,
+                player.subSkill,
                 player.slot,
                 player.horseLevel,
                 player.horseHealth,
@@ -291,6 +295,7 @@ export default class PlayerRepository implements IPlayerRepository {
             horseName,
             horseRiding,
             availableSkillPoints,
+            subSkill,
             skills,
             quickSlot,
         } = player;
@@ -335,6 +340,7 @@ export default class PlayerRepository implements IPlayerRepository {
             horseName,
             horseRiding,
             availableSkillPoints,
+            subSkill,
             skills,
         });
     }

@@ -1391,6 +1391,7 @@ export class PlayerPoints extends Points {
 
         if (this.player.getSkillGroup() > 0) {
             this.addPoint(PointsEnum.SKILL, 1);
+            if (this.level >= 9) this.addPoint(PointsEnum.SUB_SKILL, 1);
         }
 
         this.level += validatedValue;
@@ -1401,6 +1402,7 @@ export class PlayerPoints extends Points {
         const validatedValue = MathUtil.toUnsignedNumber(value);
         if (validatedValue < 1 || validatedValue > this.config.MAX_LEVEL) return;
 
+        const oldLevel = this.level;
         this.level = validatedValue;
 
         this.givenStatusPoints = 0;
@@ -1418,7 +1420,7 @@ export class PlayerPoints extends Points {
                 4 + (this.getPoint(PointsEnum.LEVEL) - 5) - this.getPoint(PointsEnum.SKILL),
             );
         }
-        this.addPoint(PointsEnum.SUB_SKILL, value < 10 ? 0 : Math.max(this.level, 9));
+        this.addPoint(PointsEnum.SUB_SKILL, validatedValue < 10 ? 0 : validatedValue - Math.max(oldLevel, 9));
 
         this.calcPointsAndResetValues();
         this.player.levelUp();

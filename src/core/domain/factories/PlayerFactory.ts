@@ -46,6 +46,7 @@ export type PlayerFactoryParams = {
     horseName?: string;
     horseRiding?: number;
     availableSkillPoints?: number;
+    subSkill?: number;
     skills?: Array<SkillState>;
 };
 
@@ -85,6 +86,7 @@ export class PlayerFactory {
             horseName,
             horseRiding,
             availableSkillPoints,
+            subSkill,
             skills,
         }: PlayerFactoryParams,
         {
@@ -159,6 +161,7 @@ export class PlayerFactory {
                 horseName: horseName || '',
                 horseRiding: horseRiding || 0,
                 availableSkillPoints: availableSkillPoints || 0,
+                subSkill: subSkill || 0,
                 skills: skills || [],
             },
             {
