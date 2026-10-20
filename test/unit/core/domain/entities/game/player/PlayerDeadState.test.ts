@@ -1,4 +1,9 @@
 import { expect } from 'chai';
+import sinon from 'sinon';
+import GlobalEventTimerManager from '@/core/domain/manager/GlobalEventTimeManager';
+import MonsterBattle from '@/core/domain/entities/game/mob/delegate/battle/MonsterBattle';
+import { AffectBitsTypeEnum } from '@/core/enum/AffectBitsTypeEnum';
+import { TimedEventsEnum } from '@/core/enum/TimedEventsEnum';
 import { PlayerFactory } from '@/core/domain/factories/PlayerFactory';
 import Player from '@/core/domain/entities/game/player/Player';
 import Character from '@/core/domain/entities/game/Character';
@@ -35,7 +40,7 @@ const config: any = {
     },
 };
 
-const createPlayer = (virtualId: number, name: string): Player =>
+const createPlayer = (virtualId: number, name: string, eventTimerManager = new GlobalEventTimerManager()): Player =>
     PlayerFactory.create(
         {
             playerClass: 0,
@@ -61,13 +66,7 @@ const createPlayer = (virtualId: number, name: string): Player =>
             logger,
             saveCharacterService: { execute: async () => {} } as any,
             questManager: { getQuestsByEvent: () => [], onKill: () => {} } as any,
-            eventTimerManager: {
-                addTimer: () => {},
-                removeTimer: () => {},
-                isTimerActive: () => false,
-                clearTimersByOwner: () => {},
-                removeAllTimersFromOwner: () => {},
-            } as any,
+            eventTimerManager,
             mobManager: { getMobProto: () => undefined } as any,
             skillManager: { getSkillProto: () => undefined } as any,
         },
@@ -106,6 +105,92 @@ const kill = (player: Player) => {
 };
 
 describe('Player dead state legality', () => {
+    afterEach(() => sinon.restore());
+
+    describe('temporary stun lifecycle (issue #254)', () => {
+        const applyStun = (player: Player) => {
+            const battle = new MonsterBattle({} as Monster, logger);
+            (battle as any).applyStun(player);
+            expect(player.isAffectByFlag(AffectBitsTypeEnum.STUN)).to.be.true;
+        };
+
+        it('should resume attacking when the real monster stun timer expires', () => {
+            const clock = sinon.useFakeTimers({ now: 10_000, toFake: ['Date'] });
+            const timers = new GlobalEventTimerManager();
+            const player = createPlayer(1, 'Swinger', timers);
+            const attack = sinon.stub((player as any).battle, 'attack');
+            applyStun(player);
+            player.attack(AttackTypeEnum.NORMAL, createVictim(77));
+            expect(attack.called).to.be.false;
+
+            clock.tick(2_000);
+            timers.tick();
+            player.attack(AttackTypeEnum.NORMAL, createVictim(77));
+
+            expect(player.isAffectByFlag(AffectBitsTypeEnum.STUN)).to.be.false;
+            expect(attack.calledOnce).to.be.true;
+        });
+
+        it('should notify self and observers through affect updates without temporary death packets', () => {
+            const player = createPlayer(1, 'Swinger');
+            const observer = createPlayer(2, 'Observer');
+            const ownPackets: Buffer[] = [];
+            const observedPackets: Buffer[] = [];
+            player.setConnection({ send: (packet: any) => ownPackets.push(packet.pack()) } as any);
+            observer.setConnection({ send: (packet: any) => observedPackets.push(packet.pack()) } as any);
+            player.getNearbyEntities().set(observer.getVirtualId(), observer);
+            player.setAffectFlag(AffectBitsTypeEnum.POISON);
+
+            applyStun(player);
+            player.removeStun();
+
+            for (const packets of [ownPackets, observedPackets]) {
+                expect(packets.map((packet) => packet[0])).to.deep.equal([0x13, 0x13]);
+                expect(packets.map((packet) => packet.readUInt32LE(16))).to.deep.equal([0x28, 0x08]);
+            }
+        });
+
+        for (const type of ['HERE', 'TOWN'] as const) {
+            it(`should resume attacking after death during stun and restart ${type}`, () => {
+                const clock = sinon.useFakeTimers({ now: 10_000, toFake: ['Date'] });
+                const timers = new GlobalEventTimerManager();
+                const player = createPlayer(1, 'Restarter', timers);
+                player.setConnection(createConnection());
+                player.setArea({
+                    getStartPositionByEmpire: () => ({ x: 100, y: 200 }),
+                    onCharacterMove: () => {},
+                } as any);
+                const attack = sinon.stub((player as any).battle, 'attack');
+                applyStun(player);
+                expect(player.isEventTimerActive(TimedEventsEnum.STUN)).to.be.true;
+
+                kill(player);
+                expect(player.isEventTimerActive(TimedEventsEnum.STUN)).to.be.false;
+                player.restart(type);
+                clock.tick(2_000);
+                timers.tick();
+
+                expect(player.isDead()).to.be.false;
+                if (type === 'TOWN') {
+                    expect(player.getPositionX()).to.equal(100);
+                    expect(player.getPositionY()).to.equal(200);
+                }
+                expect(player.isAffectByFlag(AffectBitsTypeEnum.STUN)).to.be.false;
+                player.attack(AttackTypeEnum.NORMAL, createVictim(77));
+                expect(attack.calledOnce).to.be.true;
+            });
+
+            it(`should not clear stun through an invalid living restart ${type}`, () => {
+                const player = createPlayer(1, 'Swinger');
+                applyStun(player);
+
+                player.restart(type);
+
+                expect(player.isAffectByFlag(AffectBitsTypeEnum.STUN)).to.be.true;
+            });
+        }
+    });
+
     describe('restart', () => {
         it('should clear the dead position on /restart_here', () => {
             const player = createPlayer(1, 'Restarter');

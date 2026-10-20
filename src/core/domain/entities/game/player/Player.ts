@@ -590,6 +590,7 @@ export default class Player extends Character {
 
         this.connection?.setState(ConnectionStateEnum.GAME);
         this.setPos(PositionEnum.STANDING);
+        if (this.isAffectByFlag(AffectBitsTypeEnum.STUN)) this.removeStun();
 
         if (type === 'TOWN') {
             const position = this.area?.getStartPositionByEmpire(this.empire);
@@ -649,7 +650,7 @@ export default class Player extends Character {
             return;
         }
 
-        if (this.isDead()) return;
+        if (this.isDead() || this.isAffectByFlag(AffectBitsTypeEnum.STUN)) return;
 
         if (victim.isDead()) {
             this.setPos(PositionEnum.STANDING);
