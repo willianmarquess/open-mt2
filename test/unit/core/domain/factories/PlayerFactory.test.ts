@@ -154,4 +154,44 @@ describe('PlayerFactory', () => {
 
         expect(player).to.be.an.instanceof(Player);
     });
+    for (const balance of [0, 7]) {
+        it(`preserves the spent sub-skill balance ${balance} through factory and database state`, () => {
+            const dependencies: any = {
+                config,
+                animationManager,
+                experienceManager,
+                logger,
+                saveCharacterService,
+                questManager,
+                eventTimerManager,
+                mobManager,
+            };
+            const player = PlayerFactory.create(
+                {
+                    playerClass: 1,
+                    accountId: 1,
+                    slot: 0,
+                    empire: 1,
+                    name: 'SubSkill',
+                    level: 50,
+                    subSkill: balance,
+                } as any,
+                dependencies,
+            );
+            expect(player.getPoint(PointsEnum.SUB_SKILL)).to.equal(balance);
+            const state = player.toDatabase();
+            expect((state as any).subSkill).to.equal(balance);
+            const reloaded = PlayerFactory.create(state, dependencies);
+            expect(reloaded.getPoint(PointsEnum.SUB_SKILL)).to.equal(balance);
+            let wire: Buffer | undefined;
+            (reloaded as any).connection = {
+                send: (packet: any) => {
+                    wire = packet.pack();
+                },
+            };
+            reloaded.sendPoints();
+            expect(wire!.length).to.equal(1021);
+            expect(wire!.readUInt32LE(1 + 27 * 4)).to.equal(balance);
+        });
+    }
 });
