@@ -179,7 +179,14 @@ export default class AttackHarness {
      * cache (bypassing the auth server), then connect and walk the enter-game
      * handshake. Returns a session bound to that character.
      */
-    async login({ username = 'attacker', x = 958870, y = 272760 } = {}) {
+    async login({
+        username = 'attacker',
+        x = 958870,
+        y = 272760,
+        health = 15950,
+        mana = 5570,
+        items = [] as Array<{ protoId: number; window: number; position: number }>,
+    } = {}) {
         const hash = '$2b$05$KXeREc2TNuUR6IcgzUiX4.WA/0i3Yd3WpUHMtAcQi1ojWRdeQ9ExS'; // 'admin'
         await this.db.getConnection().query('DELETE FROM auth.account WHERE username = ?', [username]);
         const [res] = await this.db
@@ -190,14 +197,25 @@ export default class AttackHarness {
             );
         const accountId = res.insertId;
         await this.db.getConnection().query('DELETE FROM game.player WHERE name = ?', [username]);
-        await this.db.getConnection().query(
+        const [character] = await this.db.getConnection().query(
             `INSERT INTO game.player (accountId, empire, playerClass, skillGroup, playTime, level, experience,
                 gold, st, ht, dx, iq, positionX, positionY, health, mana, stamina, bodyPart, hairPart, name,
-                givenStatusPoints, availableStatusPoints, slot, skills)
-             VALUES (?, 2, 4, 0, 9105, 99, 0, 12038002, 17, 107, 12, 6, ?, ?, 15950, 5570, 1000, 0, 0, ?, 396, 192, 0, '[]')`,
-            [accountId, x, y, username],
+                givenStatusPoints, availableStatusPoints, slot, skills, quickSlot)
+             VALUES (?, 2, 4, 0, 9105, 99, 0, 12038002, 17, 107, 12, 6, ?, ?, ?, ?, 1000, 0, 0, ?, 396, 192, 0, '[]', '[]')`,
+            [accountId, x, y, health, mana, username],
         );
         this.seededAccounts.push(username);
+
+        for (const item of items) {
+            await this.db
+                .getConnection()
+                .query('INSERT INTO game.item (ownerId, window, position, count, protoId) VALUES (?, ?, ?, 1, ?)', [
+                    character.insertId,
+                    item.window,
+                    item.position,
+                    item.protoId,
+                ]);
+        }
 
         // The auth server would have written this; we inject it directly.
         const key = 0x0badf00d;

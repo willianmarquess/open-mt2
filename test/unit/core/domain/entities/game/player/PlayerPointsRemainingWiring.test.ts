@@ -15,6 +15,8 @@ const makePoints = (overrides: Record<string, unknown> = {}) => {
             magic: { min: 0, max: 0, bonus: 0 },
         }),
         getArmorValues: () => [],
+        getEquippedItems: () => [],
+        getAffectPointTotal: () => 0,
     };
 
     return new PlayerPoints(
