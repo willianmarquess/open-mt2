@@ -174,7 +174,8 @@ export default class Behavior {
 
         if (
             !this.monster.getTarget() ||
-            this.damageMap.get(attacker.getVirtualId())! > this.damageMap.get(this.monster.getTarget().getVirtualId())!
+            this.damageMap.get(attacker.getVirtualId())!.damage >
+                (this.damageMap.get(this.monster.getTarget().getVirtualId())?.damage ?? 0)
         ) {
             this.monster.setTarget(attacker);
         }
