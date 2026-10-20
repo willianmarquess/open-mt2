@@ -1546,8 +1546,8 @@ export default class Player extends Character {
         this.connection?.send(
             new CharacterUpdatePacket({
                 vid: this.virtualId,
-                attackSpeed: this.points.getPoint(PointsEnum.ATTACK_SPEED),
-                moveSpeed: this.points.getPoint(PointsEnum.MOVE_SPEED),
+                attackSpeed: this.getAttackSpeed(),
+                moveSpeed: this.getMovementSpeed(),
                 parts: [this.getBody()?.getId() ?? 0, this.getWeapon()?.getId() ?? 0, 0, this.getHair()?.getId() ?? 0],
                 affects: this.getAffectFlags(),
                 guildId: 0, //TODO
@@ -1561,8 +1561,8 @@ export default class Player extends Character {
         for (const entity of this.nearbyEntities.values()) {
             if (entity instanceof Player) {
                 entity.otherEntityUpdated({
-                    attackSpeed: this.points.getPoint(PointsEnum.ATTACK_SPEED),
-                    moveSpeed: this.points.getPoint(PointsEnum.MOVE_SPEED),
+                    attackSpeed: this.getAttackSpeed(),
+                    moveSpeed: this.getMovementSpeed(),
                     vid: this.virtualId,
                     bodyId: this.getBodyId() ?? 0,
                     weaponId: this.getWeaponId() ?? 0,
@@ -2507,8 +2507,8 @@ export default class Player extends Character {
         this.connection?.send(
             new CharacterUpdatePacket({
                 vid: this.virtualId,
-                attackSpeed: this.points.getPoint(PointsEnum.ATTACK_SPEED),
-                moveSpeed: this.points.getPoint(PointsEnum.MOVE_SPEED),
+                attackSpeed: this.getAttackSpeed(),
+                moveSpeed: this.getMovementSpeed(),
                 parts: parts,
                 affects: this.getAffectFlags(),
                 guildId: 0,
@@ -2530,8 +2530,8 @@ export default class Player extends Character {
                 // Also send CharacterUpdatePacket with the new mount info
                 entity.otherEntityUpdated({
                     vid: this.getVirtualId(),
-                    attackSpeed: this.points.getPoint(PointsEnum.ATTACK_SPEED),
-                    moveSpeed: this.points.getPoint(PointsEnum.MOVE_SPEED),
+                    attackSpeed: this.getAttackSpeed(),
+                    moveSpeed: this.getMovementSpeed(),
                     bodyId: this.getBody()?.getId() ?? 0,
                     weaponId: this.getWeapon()?.getId() ?? 0,
                     hairId: this.getHair()?.getId() ?? 0,
