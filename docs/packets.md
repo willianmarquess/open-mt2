@@ -607,26 +607,6 @@
 
 ---
 
-### ItemUsePacket
-
-**Type:** Out
-
-**Header:** 0x0b
-
-**Size:** 4 bytes
-
-**Description:** Sends the use of an item at a given window cell.
-
-**Fields:**
-
-| Name        | Type       | Size (bytes)   | Description               |
-|-------------|------------|----------------|---------------------------|
-| header | `byte` | 1 | Packet header |
-| window | `byte` | 1 | Window the cell belongs to (See WindowTypeEnum) |
-| position | `short` | 2 | Cell position inside the window |
-
----
-
 ### LoginFailedPacket
 
 **Type:** Out
