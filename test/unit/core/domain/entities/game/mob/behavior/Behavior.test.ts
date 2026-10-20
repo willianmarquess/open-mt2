@@ -1,5 +1,6 @@
 import { expect } from 'chai';
 import sinon from 'sinon';
+import MathUtil from '@/core/domain/util/MathUtil';
 import Behavior from '@/core/domain/entities/game/mob/behavior/Behavior';
 import MapAttributeGrid from '@/core/util/MapAttributeGrid';
 import { MapAttributeFlagEnum } from '@/core/enum/MapAttributeFlagEnum';
@@ -72,9 +73,14 @@ describe('Behavior map attribute awareness', () => {
             for (let y = 0; y < 16; y++)
                 for (let x = 0; x < 16; x++) if (!(x === 5 && y === 5)) cells.push([x, y, MapAttributeFlagEnum.BLOCK]);
 
-            const monster = createMonster(buildGrid(16, 16, cells));
+            const grid = buildGrid(16, 16, cells);
+            const monster = createMonster(grid);
             const behavior = new Behavior(monster as any);
+            sinon.stub(MathUtil, 'getRandomInt').callThrough().withArgs(-600, 600).returns(100);
             behavior.init();
+
+            expect(grid.isPositionBlocked(600, 600)).to.equal(true);
+            expect(grid.isPositionBlocked(550, 550)).to.equal(false);
 
             wander(behavior);
 
