@@ -2,6 +2,9 @@ import { expect } from 'chai';
 import sinon from 'sinon';
 import Player from '@/core/domain/entities/game/player/Player';
 import Character from '@/core/domain/entities/game/Character';
+import AffectBitFlag from '@/core/util/AffectBitFlag';
+import { AffectBitsTypeEnum } from '@/core/enum/AffectBitsTypeEnum';
+import { AttackTypeEnum } from '@/core/enum/AttackTypeEnum';
 import { PositionEnum } from '@/core/enum/PositionEnum';
 
 /**
@@ -29,7 +32,8 @@ describe('Player.attack throttle across rotating victims (issue #101)', () => {
         attacker.getId = () => ATTACKER_ID;
         attacker.getAttackSpeed = () => 100;
         attacker.isDead = () => false;
-        attacker.isStun = () => false;
+        attacker.affectBitFlag = new AffectBitFlag();
+        attacker.updateView = sinon.spy();
         attacker.setPos = sinon.spy();
         attacker.onMove = sinon.spy();
         attacker.horse = { isTemporaryRiding: () => false };
@@ -37,7 +41,49 @@ describe('Player.attack throttle across rotating victims (issue #101)', () => {
         return attacker;
     };
 
+    afterEach(() => sinon.restore());
+
     const landedHits = (attacker: any) => attacker.battle.attack.callCount;
+
+    it('should reject a normal attack while stunned (issue #254)', () => {
+        const attacker = createAttacker();
+        attacker.setAffectFlag(AffectBitsTypeEnum.STUN);
+
+        attacker.attack(AttackTypeEnum.NORMAL, createVictim(1));
+
+        expect(landedHits(attacker)).to.equal(0);
+    });
+
+    it('should reject stun before consuming cooldown or changing combat and movement state', () => {
+        const attacker = createAttacker();
+        const victim = createVictim(1);
+        attacker.lastTimeInBattle = 123;
+        attacker.setAffectFlag(AffectBitsTypeEnum.STUN);
+        const recordAttack = sinon.spy(victim, 'recordAttackedBy');
+
+        attacker.attack(AttackTypeEnum.NORMAL, victim);
+
+        expect(attacker.lastAttackVictimVid).to.equal(0);
+        expect(attacker.lastAttackTime).to.equal(0);
+        expect(attacker.lastTimeInBattle).to.equal(123);
+        expect(recordAttack.called).to.be.false;
+        expect(attacker.setPos.called).to.be.false;
+        expect(attacker.onMove.called).to.be.false;
+    });
+
+    it('should allow an immediate attack after stun removal without a rejected hit consuming cooldown', () => {
+        const attacker = createAttacker();
+        const victim = createVictim(1);
+        sinon.stub(performance, 'now').returns(10_000);
+        attacker.setAffectFlag(AffectBitsTypeEnum.STUN);
+        attacker.attack(AttackTypeEnum.NORMAL, victim);
+        expect(landedHits(attacker)).to.equal(0);
+
+        attacker.removeStun();
+        attacker.attack(AttackTypeEnum.NORMAL, victim);
+
+        expect(landedHits(attacker)).to.equal(1);
+    });
 
     it('should reject a second immediate hit on the same victim', () => {
         const attacker = createAttacker();

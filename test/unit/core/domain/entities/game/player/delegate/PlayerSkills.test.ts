@@ -85,6 +85,22 @@ describe('PlayerSkill', () => {
         sandbox.restore();
     });
 
+    for (const method of ['useSkill', 'useSkillAttack'] as const) {
+        it(`should keep rejecting ${method} while stunned (issue #254)`, () => {
+            const player = createPlayer({
+                isDead: () => false,
+                getPrivateShop: () => undefined,
+                isAffectByFlag: (flag: AffectBitsTypeEnum) => flag === AffectBitsTypeEnum.STUN,
+            });
+            const skill = createSkillProto({ flags: new Set([SkillFlagsEnum.ATTACK]) });
+            const playerSkill = new PlayerSkill({ player, skillManager: createSkillManager(skill), skills: [] });
+            setSkillState(playerSkill, TEST_SKILL, { level: 1 });
+
+            expect(playerSkill[method](TEST_SKILL, {} as any)).to.be.false;
+            expect((player.addPoint as SinonStub).called).to.be.false;
+        });
+    }
+
     describe('initial state', () => {
         it('initializes 255 skill slots with default values', () => {
             const playerSkill = new PlayerSkill({
