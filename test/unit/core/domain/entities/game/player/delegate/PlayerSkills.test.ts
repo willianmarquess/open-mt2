@@ -15,6 +15,7 @@ import MathUtil from '@/core/domain/util/MathUtil';
 import { Skill } from '@/core/domain/entities/game/skill/Skill';
 import Player from '@/core/domain/entities/game/player/Player';
 import { PlayerSkill } from '@/core/domain/entities/game/player/delegate/PlayerSkill';
+import SkillLevelPacket from '@/core/interface/networking/packets/packet/out/SkillLevelPacket';
 
 const RANK = {
     NORMAL: 0,
@@ -792,6 +793,69 @@ describe('PlayerSkill', () => {
     });
 
     describe('clearSkill', () => {
+        const preservedSkills = [
+            SkillEnum.LEADERSHIP,
+            SkillEnum.COMBO,
+            SkillEnum.MINING,
+            SkillEnum.LANGUAGE1,
+            SkillEnum.LANGUAGE2,
+            SkillEnum.LANGUAGE3,
+            SkillEnum.POLYMORPH,
+            SkillEnum.HORSE,
+            SkillEnum.HORSE_SUMMON,
+            SkillEnum.HORSE_WILDATTACK,
+            SkillEnum.HORSE_CHARGE,
+            SkillEnum.HORSE_ESCAPE,
+            SkillEnum.HORSE_WILDATTACK_RANGE,
+            SkillEnum.ADD_HP,
+            SkillEnum.RESIST_PENETRATE,
+        ];
+
+        for (const skillNum of preservedSkills) {
+            it(`preserves the complete ${SkillEnum[skillNum]} state when clearing active skills`, () => {
+                const player = createPlayer();
+                const playerSkill = new PlayerSkill({
+                    player,
+                    skillManager: createSkillManager(undefined),
+                    skills: [],
+                });
+                const state = { level: 25, rank: RANK.MASTER, readCount: 4, timeToNextRead: 555 };
+                setSkillState(playerSkill, skillNum, state);
+                (player.sendSkillLevel as SinonStub).callsFake(() => {
+                    expect(playerSkill.getSkills()[skillNum]).to.deep.equal(state);
+                });
+
+                playerSkill.clearSkill();
+
+                expect(playerSkill.getSkills()[skillNum]).to.deep.equal(state);
+                expect((player.sendSkillLevel as SinonStub).calledOnce).to.be.true;
+            });
+        }
+
+        it('sends the complete reset state in the 40K skill-level packet', () => {
+            const player = createPlayer();
+            const playerSkill = new PlayerSkill({ player, skillManager: createSkillManager(undefined), skills: [] });
+            for (const state of playerSkill.getSkills()) {
+                Object.assign(state, { level: 25, rank: RANK.MASTER, readCount: 4, timeToNextRead: 1700000000 });
+            }
+            let packet: Buffer | undefined;
+            (player.sendSkillLevel as SinonStub).callsFake(() => {
+                packet = new SkillLevelPacket({ skills: playerSkill.getSkills() }).pack();
+            });
+
+            playerSkill.clearSkill();
+
+            expect(packet).to.not.equal(undefined);
+            expect(packet!.length).to.equal(1531);
+            expect(packet![0]).to.equal(0x4c);
+            for (let id = 0; id < 255; id++) {
+                const preserved = preservedSkills.includes(id);
+                expect(packet![1 + id * 6], `rank ${id}`).to.equal(preserved ? RANK.MASTER : RANK.NORMAL);
+                expect(packet![2 + id * 6], `level ${id}`).to.equal(preserved ? 25 : 0);
+                expect(packet!.readInt32LE(3 + id * 6), `next read ${id}`).to.equal(preserved ? 1700000000 : 0);
+            }
+        });
+
         function createPlayerWithSkillPool(level: number, initialPool: number) {
             const pool = { value: initialPool };
             const player = createPlayer({
@@ -828,7 +892,7 @@ describe('PlayerSkill', () => {
             expect(pool.value).to.equal(29);
         });
 
-        it('recalculates the SKILL point pool and resets every skill slot', () => {
+        it('recalculates the SKILL point pool and resets active skill state', () => {
             const getPoint = sinon.stub().callsFake((point: PointsEnum) => {
                 if (point === PointsEnum.LEVEL) return 30;
                 if (point === PointsEnum.SKILL) return 3;
@@ -853,16 +917,25 @@ describe('PlayerSkill', () => {
             expect((player.sendSkillLevel as SinonStub).called).to.be.true;
         });
 
-        it('resets all 255 slots, not just the ones touched previously', () => {
+        it('resets every non-preserved slot, including unregistered skills', () => {
             const player = createPlayer();
             const playerSkill = new PlayerSkill({ player, skillManager: createSkillManager(undefined), skills: [] });
 
-            setSkillState(playerSkill, TEST_SKILL, { level: 10 });
-            setSkillState(playerSkill, SkillEnum.DASH, { level: 5, rank: RANK.MASTER });
+            for (const state of playerSkill.getSkills()) {
+                Object.assign(state, { level: 10, rank: RANK.MASTER, readCount: 4, timeToNextRead: 555 });
+            }
 
             playerSkill.clearSkill();
 
-            expect(playerSkill.getSkills().every((s) => s.level === 0 && s.rank === RANK.NORMAL)).to.be.true;
+            for (const [skillNum, state] of playerSkill.getSkills().entries()) {
+                if (preservedSkills.includes(skillNum)) continue;
+                expect(state, `skill ${skillNum}`).to.deep.equal({
+                    level: 0,
+                    rank: RANK.NORMAL,
+                    readCount: 0,
+                    timeToNextRead: 0,
+                });
+            }
         });
     });
 
