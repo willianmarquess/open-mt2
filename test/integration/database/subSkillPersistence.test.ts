@@ -80,13 +80,73 @@ databaseTests('Sub-skill persistence on fresh and upgraded MySQL schemas', () =>
                             }),
                         } as any,
                     });
-                    const id = await repository.create(makePlayerState({ level: 50, subSkill: 7 }));
+                    const verifyRow = async (id: number, state: PlayerState) => {
+                        const [rows]: any = await connection.query(`SELECT * FROM ${database}.player WHERE id = ?`, [
+                            id,
+                        ]);
+                        const expected = {
+                            ...state,
+                            id,
+                            deletedAt: null,
+                            skills: state.skills,
+                            quickSlot: Array.from(state.quickSlot, ([slot, entry]) => ({ slot, ...entry })),
+                        };
+                        expect(rows[0]).to.deep.equal(expected);
+                    };
+                    const initial = makePlayerState({
+                        accountId: 4,
+                        empire: 2,
+                        playerClass: 1,
+                        skillGroup: 1,
+                        playTime: 123,
+                        level: 50,
+                        experience: 456,
+                        gold: 789,
+                        st: 11,
+                        ht: 12,
+                        dx: 13,
+                        iq: 14,
+                        positionX: -150,
+                        positionY: 250,
+                        health: 345,
+                        mana: 234,
+                        stamina: 123,
+                        bodyPart: 4,
+                        hairPart: 5,
+                        name: 'Persistence',
+                        givenStatusPoints: 100,
+                        availableStatusPoints: 20,
+                        availableSkillPoints: 10,
+                        subSkill: 7,
+                        slot: 1,
+                        horseLevel: 12,
+                        horseHealth: 300,
+                        horseStamina: 200,
+                        horseName: 'Horse',
+                        horseRiding: 1,
+                        createdAt: new Date('2026-01-02T03:04:05Z'),
+                        updatedAt: new Date('2026-02-03T04:05:06Z'),
+                        skills: [{ rank: 0, level: 2, timeToNextRead: 3, readCount: 4 }],
+                        quickSlot: new Map([[3, { type: 1, position: 5 }]]),
+                    });
+                    const id = await repository.create(initial);
+                    await verifyRow(id, initial);
                     let loaded = await repository.getById(id);
-                    expect((loaded as any).subSkill).to.equal(7);
-                    await repository.update(makePlayerState({ id, level: 50, subSkill: 0 }));
+                    expect(loaded).to.deep.equal(new PlayerState({ ...initial, id }));
+                    const updated = makePlayerState({
+                        id,
+                        level: 50,
+                        subSkill: 0,
+                        createdAt: initial.createdAt,
+                        updatedAt: new Date('2026-03-04T05:06:07Z'),
+                        horseName: '',
+                        skills: [],
+                        quickSlot: new Map(),
+                    });
+                    await repository.update(updated);
+                    await verifyRow(id, updated);
                     loaded = await repository.getById(id);
-                    expect((loaded as any).subSkill).to.equal(0);
-                    expect(loaded!.level).to.equal(50);
+                    expect(loaded).to.deep.equal(updated);
                 } finally {
                     await connection.end();
                 }

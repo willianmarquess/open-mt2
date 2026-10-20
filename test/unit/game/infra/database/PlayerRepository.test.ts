@@ -218,3 +218,90 @@ describe('PlayerRepository sub-skill persistence (#209)', () => {
         });
     }
 });
+
+describe('PlayerRepository SQL field mapping', () => {
+    const columns = [
+        'accountId',
+        'createdAt',
+        'updatedAt',
+        'empire',
+        'playerClass',
+        'skillGroup',
+        'playTime',
+        'level',
+        'experience',
+        'gold',
+        'st',
+        'ht',
+        'dx',
+        'iq',
+        'positionX',
+        'positionY',
+        'health',
+        'mana',
+        'stamina',
+        'bodyPart',
+        'hairPart',
+        'name',
+        'givenStatusPoints',
+        'availableStatusPoints',
+        'availableSkillPoints',
+        'subSkill',
+        'slot',
+        'horseLevel',
+        'horseHealth',
+        'horseStamina',
+        'horseName',
+        'horseRiding',
+        'skills',
+        'quickSlot',
+    ];
+
+    for (const scenario of ['distinct values', 'zero values', 'null and undefined values']) {
+        it(`preserves every INSERT/UPDATE column and parameter for ${scenario}`, async () => {
+            const values: Record<string, any> = {};
+            columns.forEach((column, index) => {
+                values[column] = scenario === 'zero values' ? 0 : index + 10;
+            });
+            Object.assign(values, {
+                createdAt: new Date('2026-01-02T03:04:05Z'),
+                updatedAt: new Date('2026-02-03T04:05:06Z'),
+                name: 'Mapping',
+                horseName: '',
+                skills: [{ rank: 0, level: 2, timeToNextRead: 3, readCount: 4 }],
+                quickSlot: new Map([[3, { type: 1, position: 5 }]]),
+            });
+            if (scenario === 'null and undefined values')
+                Object.assign(values, { horseName: null, createdAt: null, updatedAt: undefined, subSkill: undefined });
+            const player = { ...makePlayerState(), ...values, id: 404 } as PlayerState;
+            const expected = {
+                ...values,
+                skills: JSON.stringify(values.skills),
+                quickSlot: '[{"slot":3,"type":1,"position":5}]',
+            };
+            const execute = sinon.stub().resolves([{ insertId: 501 }]);
+            const query = sinon.stub().resolves([{}]);
+            const repository = new PlayerRepository({
+                databaseManager: { getConnection: () => ({ execute, query }) } as any,
+            });
+            expect(await repository.create(player)).to.equal(501);
+            await repository.update(player);
+            const [insertSql, insertParams] = execute.firstCall.args;
+            const insertColumns = insertSql
+                .match(/game\.player\s*\(([^)]+)\)/i)[1]
+                .split(',')
+                .map((s: string) => s.trim());
+            const [updateSql, updateParams] = query.firstCall.args;
+            const updateColumns = updateSql
+                .match(/SET\s+([\s\S]+?)\s+WHERE id = \?/i)[1]
+                .split(',')
+                .map((s: string) => s.trim().replace(/ = \?$/, ''));
+            expect(insertColumns).to.deep.equal(columns);
+            expect(updateColumns).to.deep.equal(columns);
+            expect(insertSql.match(/\?/g)).to.have.length(columns.length);
+            expect(updateSql.match(/\?/g)).to.have.length(columns.length + 1);
+            expect(insertParams).to.deep.equal(columns.map((column) => expected[column]));
+            expect(updateParams).to.deep.equal([...insertParams, 404]);
+        });
+    }
+});

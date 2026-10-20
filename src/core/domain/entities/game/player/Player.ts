@@ -11,7 +11,7 @@ import { ChatMessageTypeEnum } from '@/core/enum/ChatMessageTypeEnum';
 import { ItemAntiFlagEnum } from '@/core/enum/ItemAntiFlagEnum';
 import Item, { MAX_ITEM_STACK } from '../item/Item';
 import DroppedItem from '../item/DroppedItem';
-import { PlayerState, SkillState } from '../../state/player/PlayerState';
+import { PlayerState, SkillState, type PlayerStateParams } from '../../state/player/PlayerState';
 import Character from '../Character';
 import { SpecialItemEnum } from '@/core/enum/SpecialItemEnum';
 import { FlyEnum } from '@/core/enum/FlyEnum';
@@ -2696,33 +2696,7 @@ export default class Player extends Character {
             horseName,
             horseRiding,
             skills,
-        }: {
-            id: number;
-            accountId: number;
-            empire: number;
-            playerClass: number;
-            skillGroup: number;
-            playTime: number;
-            level: number;
-            experience: number;
-            gold: number;
-            st: number;
-            ht: number;
-            dx: number;
-            iq: number;
-            positionX: number;
-            positionY: number;
-            health: number;
-            mana: number;
-            stamina: number;
-            bodyPart: number;
-            hairPart: number;
-            name: string;
-            givenStatusPoints: number;
-            availableStatusPoints: number;
-            availableSkillPoints: number;
-            subSkill?: number;
-            slot: number;
+        }: Omit<PlayerStateParams, 'createdAt' | 'updatedAt' | 'quickSlot'> & {
             virtualId: number;
             hpPerLvl: number;
             hpPerHtPoint: number;
@@ -2738,12 +2712,6 @@ export default class Player extends Character {
             baseAttackSpeed: number;
             baseMovementSpeed: number;
             quickSlot: Map<number, { type: QuickSlotTypeEnum; position: number }>;
-            horseLevel?: number;
-            horseHealth?: number;
-            horseStamina?: number;
-            horseName?: string;
-            horseRiding?: number;
-            skills: Array<SkillState>;
         },
         {
             animationManager,

@@ -14,86 +14,14 @@ export default class PlayerRepository implements IPlayerRepository {
     }
 
     async create(player: PlayerState) {
-        const [result] = await this.databaseManager.getConnection().execute<ResultSetHeader>(
-            `
-        insert into game.player (
-            accountId,
-            createdAt,
-            updatedAt,
-            empire,
-            playerClass,
-            skillGroup,
-            playTime,
-            level,
-            experience,
-            gold,
-            st,
-            ht,
-            dx,
-            iq,
-            positionX,
-            positionY,
-            health,
-            mana,
-            stamina,
-            bodyPart,
-            hairPart,
-            name,
-            givenStatusPoints,
-            availableStatusPoints,
-            availableSkillPoints,
-            subSkill,
-            slot,
-            horseLevel,
-            horseHealth,
-            horseStamina,
-            horseName,
-            horseRiding,
-            skills,
-            quickSlot
-        )
-            values
-        (
-            ?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?
-        );
-        `,
-            [
-                player.accountId,
-                player.createdAt,
-                player.updatedAt,
-                player.empire,
-                player.playerClass,
-                player.skillGroup,
-                player.playTime,
-                player.level,
-                player.experience,
-                player.gold,
-                player.st,
-                player.ht,
-                player.dx,
-                player.iq,
-                player.positionX,
-                player.positionY,
-                player.health,
-                player.mana,
-                player.stamina,
-                player.bodyPart,
-                player.hairPart,
-                player.name,
-                player.givenStatusPoints,
-                player.availableStatusPoints,
-                player.availableSkillPoints,
-                player.subSkill,
-                player.slot,
-                player.horseLevel,
-                player.horseHealth,
-                player.horseStamina,
-                player.horseName,
-                player.horseRiding,
-                this.getSkillJson(player.skills),
-                this.getQuickSlotJson(player.quickSlot),
-            ],
-        );
+        const fields = this.getWriteFields(player);
+        const columns = Object.keys(fields);
+        const [result] = await this.databaseManager
+            .getConnection()
+            .execute<ResultSetHeader>(
+                `INSERT INTO game.player (${columns.join(', ')}) VALUES (${columns.map(() => '?').join(', ')});`,
+                Object.values(fields),
+            );
         return result.insertId;
     }
 
@@ -142,83 +70,53 @@ export default class PlayerRepository implements IPlayerRepository {
     }
 
     async update(player: PlayerState) {
-        await this.databaseManager.getConnection().query<ResultSetHeader>(
-            `
-        UPDATE game.player SET
-            accountId = ?,
-            createdAt = ?,
-            updatedAt = ?,
-            empire = ?,
-            playerClass = ?,
-            skillGroup = ?,
-            playTime = ?,
-            level = ?,
-            experience = ?,
-            gold = ?,
-            st = ?,
-            ht = ?,
-            dx = ?,
-            iq = ?,
-            positionX = ?,
-            positionY = ?,
-            health = ?,
-            mana = ?,
-            stamina = ?,
-            bodyPart = ?,
-            hairPart = ?,
-            name = ?,
-            givenStatusPoints = ?,
-            availableStatusPoints = ?,
-            availableSkillPoints = ?,
-            subSkill = ?,
-            slot = ?,
-            horseLevel = ?,
-            horseHealth = ?,
-            horseStamina = ?,
-            horseName = ?,
-            horseRiding = ?,
-            skills = ?,
-            quickSlot = ?
-        WHERE id = ?;
-        `,
-            [
-                player.accountId,
-                player.createdAt,
-                player.updatedAt,
-                player.empire,
-                player.playerClass,
-                player.skillGroup,
-                player.playTime,
-                player.level,
-                player.experience,
-                player.gold,
-                player.st,
-                player.ht,
-                player.dx,
-                player.iq,
-                player.positionX,
-                player.positionY,
-                player.health,
-                player.mana,
-                player.stamina,
-                player.bodyPart,
-                player.hairPart,
-                player.name,
-                player.givenStatusPoints,
-                player.availableStatusPoints,
-                player.availableSkillPoints,
-                player.subSkill,
-                player.slot,
-                player.horseLevel,
-                player.horseHealth,
-                player.horseStamina,
-                player.horseName,
-                player.horseRiding,
-                this.getSkillJson(player.skills),
-                this.getQuickSlotJson(player.quickSlot),
+        const fields = this.getWriteFields(player);
+        const assignments = Object.keys(fields).map((column) => `${column} = ?`);
+        await this.databaseManager
+            .getConnection()
+            .query<ResultSetHeader>(`UPDATE game.player SET ${assignments.join(', ')} WHERE id = ?;`, [
+                ...Object.values(fields),
                 player.id,
-            ],
-        );
+            ]);
+    }
+
+    private getWriteFields(player: PlayerState) {
+        return {
+            accountId: player.accountId,
+            createdAt: player.createdAt,
+            updatedAt: player.updatedAt,
+            empire: player.empire,
+            playerClass: player.playerClass,
+            skillGroup: player.skillGroup,
+            playTime: player.playTime,
+            level: player.level,
+            experience: player.experience,
+            gold: player.gold,
+            st: player.st,
+            ht: player.ht,
+            dx: player.dx,
+            iq: player.iq,
+            positionX: player.positionX,
+            positionY: player.positionY,
+            health: player.health,
+            mana: player.mana,
+            stamina: player.stamina,
+            bodyPart: player.bodyPart,
+            hairPart: player.hairPart,
+            name: player.name,
+            givenStatusPoints: player.givenStatusPoints,
+            availableStatusPoints: player.availableStatusPoints,
+            availableSkillPoints: player.availableSkillPoints,
+            subSkill: player.subSkill,
+            slot: player.slot,
+            horseLevel: player.horseLevel,
+            horseHealth: player.horseHealth,
+            horseStamina: player.horseStamina,
+            horseName: player.horseName,
+            horseRiding: player.horseRiding,
+            skills: this.getSkillJson(player.skills),
+            quickSlot: this.getQuickSlotJson(player.quickSlot),
+        };
     }
 
     async getById(id: number): Promise<PlayerState | null> {

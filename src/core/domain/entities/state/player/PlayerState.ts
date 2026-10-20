@@ -8,6 +8,21 @@ export interface SkillState {
     readCount: number;
 }
 
+type OptionalPlayerStateFields =
+    | 'createdAt'
+    | 'updatedAt'
+    | 'subSkill'
+    | 'quickSlot'
+    | 'horseLevel'
+    | 'horseHealth'
+    | 'horseStamina'
+    | 'horseName'
+    | 'horseRiding';
+
+export type PlayerStateParams = Omit<PlayerState, keyof StateEntity | OptionalPlayerStateFields> &
+    Pick<StateEntity, 'id'> &
+    Partial<Pick<PlayerState, OptionalPlayerStateFields>>;
+
 export class PlayerState extends StateEntity {
     public readonly accountId: number;
     public readonly empire: number;
@@ -78,43 +93,7 @@ export class PlayerState extends StateEntity {
         horseName = '',
         horseRiding = 0,
         skills,
-    }: {
-        id: number;
-        updatedAt?: Date;
-        createdAt?: Date;
-        accountId: number;
-        empire: number;
-        playerClass: number;
-        skillGroup: number;
-        playTime: number;
-        level: number;
-        experience: number;
-        gold: number;
-        st: number;
-        ht: number;
-        dx: number;
-        iq: number;
-        positionX: number;
-        positionY: number;
-        health: number;
-        mana: number;
-        stamina: number;
-        bodyPart: number;
-        hairPart: number;
-        name: string;
-        givenStatusPoints: number;
-        availableStatusPoints: number;
-        availableSkillPoints: number;
-        subSkill?: number;
-        slot: number;
-        quickSlot?: Map<number, { type: number; position: number }>;
-        horseLevel?: number;
-        horseHealth?: number;
-        horseStamina?: number;
-        horseName?: string;
-        horseRiding?: number;
-        skills: Array<SkillState>;
-    }) {
+    }: PlayerStateParams) {
         super(id, createdAt, updatedAt);
         this.accountId = accountId;
         this.empire = empire;
