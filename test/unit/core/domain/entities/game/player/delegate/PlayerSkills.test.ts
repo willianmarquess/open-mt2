@@ -14,6 +14,7 @@ import { SkillManager } from '@/core/domain/manager/SkillManager';
 import MathUtil from '@/core/domain/util/MathUtil';
 import { Skill } from '@/core/domain/entities/game/skill/Skill';
 import Player from '@/core/domain/entities/game/player/Player';
+import { PlayerPoints } from '@/core/domain/entities/game/player/delegate/PlayerPoints';
 import { PlayerSkill } from '@/core/domain/entities/game/player/delegate/PlayerSkill';
 
 const RANK = {
@@ -538,6 +539,79 @@ describe('PlayerSkill', () => {
             return { player, skillProto, skillManager, playerSkill };
         }
 
+        for (const [level, experience, delta, expected] of [
+            [30, 20000, -20000, 0],
+            [30, 10000, -20000, 0],
+            [99, 50000, -20000, 30000],
+            [30, 50000, 1000, 51000],
+            [30, 50000, Number.NaN, 50000],
+            [30, 50000, Number.NEGATIVE_INFINITY, 50000],
+        ]) {
+            it(`handles experience delta ${delta} at level ${level} with balance ${experience}`, () => {
+                const points = new PlayerPoints(
+                    { level, experience } as any,
+                    {
+                        config: { MAX_LEVEL: 99 },
+                        experienceManager: { getNeededExperience: () => 1000000 },
+                        player: {},
+                        mobManager: {},
+                    } as any,
+                );
+
+                points.addPoint(PointsEnum.EXPERIENCE, delta);
+
+                expect(points.getPoint(PointsEnum.EXPERIENCE)).to.equal(expected);
+                expect(points.getPoint(PointsEnum.LEVEL)).to.equal(level);
+            });
+        }
+        for (const [roll, readCount] of [
+            [1, 0],
+            [100, 0],
+            [100, 5],
+        ]) {
+            it(`charges actual experience for a book read with roll ${roll} and readCount ${readCount}`, () => {
+                const points = new PlayerPoints(
+                    { level: 30, experience: 50000 } as any,
+                    {
+                        config: { MAX_LEVEL: 99 },
+                        experienceManager: { getNeededExperience: () => 1000000 },
+                        player: {},
+                        mobManager: {},
+                    } as any,
+                );
+                const addPoint = sandbox.spy(points, 'addPoint');
+                const { playerSkill } = createHappyPathContext({
+                    skillState: { readCount },
+                    player: {
+                        getPoint: (point: PointsEnum) => points.getPoint(point),
+                        addPoint: (point: PointsEnum, value: number) => points.addPoint(point, value),
+                    },
+                });
+                sandbox.stub(MathUtil, 'getRandomInt').returns(roll);
+
+                expect(playerSkill.learnSkillByBook(TEST_SKILL)).to.be.true;
+                expect(points.getPoint(PointsEnum.EXPERIENCE)).to.equal(30000);
+                expect(addPoint.calledOnceWith(PointsEnum.EXPERIENCE, -20000)).to.be.true;
+                expect(playerSkill.getSkills()[TEST_SKILL].level).to.equal(readCount === 5 ? 26 : 25);
+                expect(points.getPoint(PointsEnum.LEVEL)).to.equal(30);
+            });
+        }
+        for (const reason of ['experience', 'cooldown', 'rank']) {
+            it(`does not charge rejected reads: ${reason}`, () => {
+                const experience = reason === 'experience' ? 19999 : 50000;
+                const addPoint = sandbox.stub();
+                const { playerSkill } = createHappyPathContext({
+                    player: { getPoint: () => experience, addPoint },
+                    skillState: {
+                        rank: reason === 'rank' ? RANK.NORMAL : RANK.MASTER,
+                        timeToNextRead: reason === 'cooldown' ? NOW_SECONDS + 100 : 0,
+                    },
+                });
+
+                expect(playerSkill.learnSkillByBook(TEST_SKILL)).to.be.false;
+                expect(addPoint.called).to.be.false;
+            });
+        }
         it('returns false without chatting when the skill proto does not exist', () => {
             const player = createPlayer();
             const playerSkill = new PlayerSkill({ player, skillManager: createSkillManager(undefined), skills: [] });

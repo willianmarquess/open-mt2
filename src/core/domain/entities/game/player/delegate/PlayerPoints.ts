@@ -1319,9 +1319,14 @@ export class PlayerPoints extends Points {
     }
 
     private addExperience(value: number): void {
-        const validatedValue = MathUtil.toUnsignedNumber(value);
+        const validatedValue = MathUtil.toNumber(value);
 
-        if (validatedValue < 0 || (this.level >= this.config.MAX_LEVEL && this.experience === 0)) return;
+        if (validatedValue < 0) {
+            this.experience = Math.max(0, this.experience + validatedValue);
+            return;
+        }
+
+        if (this.level >= this.config.MAX_LEVEL && this.experience === 0) return;
 
         if (this.level >= this.config.MAX_LEVEL) {
             this.experience = 0;
