@@ -6,8 +6,8 @@ import PacketOut from '@/core/interface/networking/packets/packet/out/PacketOut'
  * @type Out
  * @name ItemDroppedHidePacket
  * @header 0x1b
- * @size 21
- * @description Tells the client to remove a dropped item from the ground. Only the 5 bytes listed below are written by pack(); the declared size of 21 makes the buffer 16 bytes longer than the payload, and those trailing bytes are sent as zeros. The client reads 5 bytes (TPacketGCItemGroundDel).
+ * @size 5
+ * @description Tells the client to remove a dropped item from the ground. Matches the 5-byte TPacketGCItemGroundDel client struct.
  * @fields
  *   - {byte} header 1 Packet header
  *   - {int} virtualId 4 Virtual id of the ground item to remove
@@ -20,7 +20,7 @@ export default class ItemDroppedHidePacket extends PacketOut {
         super({
             header: PacketHeaderEnum.ITEM_DROPPED_HIDE,
             name: 'ItemDroppedHidePacket',
-            size: 21,
+            size: 5,
         });
         this.virtualId = virtualId;
     }

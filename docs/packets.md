@@ -543,9 +543,9 @@
 
 **Header:** 0x1b
 
-**Size:** 21 bytes
+**Size:** 5 bytes
 
-**Description:** Tells the client to remove a dropped item from the ground. Only the 5 bytes listed below are written by pack(); the declared size of 21 makes the buffer 16 bytes longer than the payload, and those trailing bytes are sent as zeros. The client reads 5 bytes (TPacketGCItemGroundDel).
+**Description:** Tells the client to remove a dropped item from the ground. Matches the 5-byte TPacketGCItemGroundDel client struct. Previously sent 21 bytes including padding; consumers using fixed frame sizes must now read 5 bytes.
 
 **Fields:**
 
@@ -740,9 +740,9 @@
 
 **Header:** 0x7d
 
-**Size:** 51 bytes
+**Size:** 43 bytes
 
-**Description:** Used to create a quest target on the client minimap and, when the target is a character, the target effect in the world. pack() writes only the 43 bytes listed below, while the buffer is declared as 51 bytes, so 8 trailing zero bytes follow the type field.
+**Description:** Used to create a quest target on the client minimap and, when the target is a character, the target effect in the world. Matches the 43-byte TPacketGCTargetCreateNew client struct. Previously sent 51 bytes including padding; consumers using fixed frame sizes must now read 43 bytes.
 
 **Fields:**
 

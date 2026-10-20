@@ -6,8 +6,8 @@ import PacketOut from '@/core/interface/networking/packets/packet/out/PacketOut'
  * @type Out
  * @name QuestTargetCreatePacket
  * @header 0x7d
- * @size 51
- * @description Used to create a quest target on the client minimap and, when the target is a character, the target effect in the world. pack() writes only the 43 bytes listed below, while the buffer is declared as 51 bytes, so 8 trailing zero bytes follow the type field.
+ * @size 43
+ * @description Used to create a quest target on the client minimap and, when the target is a character, the target effect in the world. Matches the 43-byte TPacketGCTargetCreateNew client struct.
  * @fields
  *   - {byte} header 1 Packet header
  *   - {int} id 4 Identifier of the target, reused later to update or remove it
@@ -36,7 +36,7 @@ export default class QuestTargetCreatePacket extends PacketOut {
         super({
             header: PacketHeaderEnum.QUEST_TARGET_CREATE,
             name: 'QuestTargetCreatePacket',
-            size: 51,
+            size: 43,
         });
         this.id = id;
         this.targetName = targetName.substring(0, 32);
